@@ -1,0 +1,127 @@
+.card-material__sparkles,
+.card-material__edge,
+.card-material__inset-frame {
+  position: absolute;
+  box-sizing: border-box;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.card-material__sparkles {
+  z-index: 4;
+  object-fit: cover;
+  mix-blend-mode: screen;
+  opacity: 0.2;
+  filter: brightness(0.9) saturate(1.4);
+}
+
+.card-material__edge {
+  z-index: 19;
+  border-radius: var(--manager-card-radius);
+  object-fit: fill;
+  filter: sepia(0.62) saturate(1.3)
+    drop-shadow(
+      0 0 4px
+        color-mix(in srgb, var(--manager-accent, #d9b76a) 54%, transparent)
+    );
+}
+
+.card-material__inset-frame {
+  z-index: 20;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid
+    color-mix(in srgb, var(--manager-accent, #d9b76a) 78%, #f5deb0);
+  border-radius: var(--manager-card-radius);
+  transition:
+    border-color var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    box-shadow var(--app-motion-duration-fast) var(--app-motion-ease-surface);
+}
+
+.card-material__inset-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    url("/project-assets/userscript-deck/visual/cards/dragon-egg-edge.webp")
+    center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+
+.card-material__inset-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--manager-accent, #d9b76a);
+  pointer-events: none;
+  mix-blend-mode: color;
+  -webkit-mask-image: url("/project-assets/userscript-deck/visual/cards/dragon-egg-edge.webp");
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-image: url("/project-assets/userscript-deck/visual/cards/dragon-egg-edge.webp");
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+}
+
+.manager-card.is-dragging .card-material__inset-frame {
+  border-color: color-mix(in srgb, var(--manager-accent, #d9b76a) 86%, #fff);
+  box-shadow: inset 0 0 18px
+    color-mix(in srgb, var(--manager-accent, #d9b76a) 14%, transparent);
+}
+
+.manager-card.is-focused .card-material__inset-frame,
+.manager-card.is-targeting .card-material__inset-frame,
+.manager-card.is-casting .card-material__inset-frame {
+  border-color: color-mix(in srgb, var(--manager-accent, #d9b76a) 76%, #fff);
+  box-shadow: inset 0 0 24px
+    color-mix(in srgb, var(--manager-accent, #d9b76a) 22%, transparent);
+}
+
+.manager-card.is-dragging .card-material__inset-frame::after,
+.manager-card.is-focused .card-material__inset-frame::after,
+.manager-card.is-targeting .card-material__inset-frame::after,
+.manager-card.is-casting .card-material__inset-frame::after {
+  background: color-mix(in srgb, var(--manager-accent, #d9b76a) 72%, #fff);
+}
+
+.manager-card__face.is-forge .card-material__inset-frame {
+  border-color: #f0c768;
+}
+
+.manager-card__face.is-forge .card-material__inset-frame::after {
+  background: #f0c768;
+}
+
+@keyframes manager-ambient-card-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 2px, 0) rotateX(-5deg) rotateY(-8deg)
+      rotateZ(-1.2deg);
+  }
+
+  28% {
+    transform: translate3d(0, -7px, 0) rotateX(6deg) rotateY(-2deg)
+      rotateZ(0.8deg);
+  }
+
+  58% {
+    transform: translate3d(0, -3px, 0) rotateX(-2deg) rotateY(9deg)
+      rotateZ(1.4deg);
+  }
+
+  82% {
+    transform: translate3d(0, -9px, 0) rotateX(7deg) rotateY(3deg)
+      rotateZ(-0.7deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-material__inset-frame {
+    transition-duration: var(--app-motion-duration-reduced);
+    transition-delay: 0s;
+  }
+}

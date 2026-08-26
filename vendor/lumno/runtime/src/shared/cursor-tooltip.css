@@ -1,0 +1,129 @@
+._x_extension_tooltip_2026_unique_[data-tooltip-kind="cursor"] {
+  transform: translate3d(0, 4px, 0);
+}
+
+._x_extension_tooltip_2026_unique_[data-tooltip-kind="cursor"][data-visible="true"] {
+  transform: translate3d(0, 0, 0);
+}
+
+._x_extension_cursor_tooltip_host_2026_unique_[data-cursor-tooltip]::after {
+  content: none;
+}
+
+._x_extension_tooltip_2026_unique_._x_extension_cursor_tooltip_tag_2026_unique_[data-tooltip-kind="cursor-tag"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  justify-content: center;
+  padding: 6px 12px 6px 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--x-extension-tooltip-border, rgba(214, 219, 227, 0.95)) 82%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--x-extension-tooltip-bg-top, #ffffff) 96%, var(--x-extension-tooltip-text, #556070) 4%) 0%,
+    color-mix(in srgb, var(--x-extension-tooltip-bg-bottom, #f7f9fc) 94%, var(--x-extension-tooltip-text, #556070) 6%) 100%
+  );
+  color: var(--x-extension-tooltip-text, #556070);
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 650;
+  white-space: nowrap;
+  transform: translate3d(0, 4px, 0);
+}
+
+._x_extension_cursor_tooltip_tag_key_2026_unique_ {
+  --x-extension-cursor-tooltip-key-size: 20px;
+  display: inline-flex;
+  flex: 0 0 var(--x-extension-cursor-tooltip-key-size, 20px);
+  align-items: center;
+  justify-content: center;
+  width: var(--x-extension-cursor-tooltip-key-size, 20px);
+  min-width: var(--x-extension-cursor-tooltip-key-size, 20px);
+  max-width: var(--x-extension-cursor-tooltip-key-size, 20px);
+  height: var(--x-extension-cursor-tooltip-key-size, 20px);
+  padding: 0;
+  aspect-ratio: 1 / 1;
+  border-radius: 7px;
+  border: 2px solid #000000;
+  background: linear-gradient(180deg, #ededed 0%, #ffffff 100%);
+  box-shadow: 0 2px 0 #000000;
+  color: #000000;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  transform: translateY(-1px);
+}
+
+._x_extension_cursor_tooltip_windows_logo_2026_unique_ {
+  position: relative;
+  display: block;
+  width: 12px;
+  height: 11px;
+  transform: perspective(18px) rotateY(-14deg) skewY(-2deg);
+}
+
+._x_extension_cursor_tooltip_windows_logo_pane_2026_unique_ {
+  display: block;
+  position: absolute;
+  min-width: 0;
+  min-height: 0;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+._x_extension_cursor_tooltip_windows_logo_pane_2026_unique_[data-cursor-tooltip-windows-logo-pane="1"] {
+  left: 0;
+  top: 1px;
+  width: 5px;
+  height: 4px;
+  clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 88%);
+}
+
+._x_extension_cursor_tooltip_windows_logo_pane_2026_unique_[data-cursor-tooltip-windows-logo-pane="2"] {
+  left: 6px;
+  top: 0;
+  width: 6px;
+  height: 5px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 92%);
+}
+
+._x_extension_cursor_tooltip_windows_logo_pane_2026_unique_[data-cursor-tooltip-windows-logo-pane="3"] {
+  left: 0;
+  top: 6px;
+  width: 5px;
+  height: 4px;
+  clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 94%);
+}
+
+._x_extension_cursor_tooltip_windows_logo_pane_2026_unique_[data-cursor-tooltip-windows-logo-pane="4"] {
+  left: 6px;
+  top: 6px;
+  width: 6px;
+  height: 5px;
+  clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%);
+}
+
+._x_extension_cursor_tooltip_tag_label_2026_unique_ {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+._x_extension_tooltip_2026_unique_._x_extension_cursor_tooltip_tag_2026_unique_[data-tooltip-kind="cursor-tag"][data-visible="true"] {
+  transform: translate3d(0, 0, 0);
+}
+
+body[data-theme="dark"] ._x_extension_cursor_tooltip_tag_key_2026_unique_,
+[data-theme="dark"] ._x_extension_cursor_tooltip_tag_key_2026_unique_ {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(180deg, #5f5f5f 0%, #575757 100%) padding-box,
+    linear-gradient(180deg, #f2f2f2 0%, #d9d9d9 100%) border-box;
+  box-shadow: 0 2px 0 #ffffff;
+  color: #ffffff;
+}

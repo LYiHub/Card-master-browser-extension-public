@@ -1,0 +1,40 @@
+.manager-card__lock-effect {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgb(26 35 38 / 0.08) 0 34%,
+      rgb(7 12 14 / 0.42) 78%,
+      rgb(3 7 9 / 0.64) 100%
+    ),
+    rgb(8 13 15 / 0.2);
+  border-radius: inherit;
+  opacity: 1;
+  pointer-events: none;
+  transform: translateZ(6px);
+  transform-origin: 50% 50%;
+}
+
+.manager-card__lock-effect > i {
+  position: absolute;
+  top: 50%;
+  inset-inline: 0;
+  display: block;
+  width: 100%;
+  aspect-ratio: 303 / 251;
+  background-image: var(--manager-card-lock-image);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 1200%;
+  filter: drop-shadow(0 5px 7px rgb(0 0 0 / 0.72))
+    drop-shadow(0 0 8px rgb(150 172 179 / 0.22));
+  transform: translateY(-50%);
+}
+
+.manager-card__lock-effect:is(.is-locking, .is-unlocking),
+.manager-card__lock-effect:is(.is-locking, .is-unlocking, .is-inspecting) > i {
+  will-change: opacity, transform, background-position;
+}

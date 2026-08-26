@@ -1,0 +1,53 @@
+.manager-media-resources .app-ui-dialog__body {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.manager-media-resources__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-block: 1px solid var(--app-ui-border);
+}
+
+.manager-media-resources__facts span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 12px 14px;
+  color: var(--app-ui-muted);
+  text-align: center;
+}
+
+.manager-media-resources__facts span + span {
+  border-inline-start: 1px solid var(--app-ui-border);
+}
+
+.manager-media-resources__facts b {
+  color: var(--app-ui-ink);
+  font-size: 1rem;
+}
+
+.manager-media-resources__settings-section {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: var(--app-ui-surface);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-media-resources__settings-section header strong {
+  color: var(--app-ui-ink);
+  font: 800 16px / 1.25 var(--app-ui-font-display);
+}
+
+@container app-ui-dialog-body (max-width: 32rem) {
+  .manager-media-resources__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .manager-media-resources__facts span + span {
+    border-block-start: 1px solid var(--app-ui-border);
+    border-inline-start: 0;
+  }
+}

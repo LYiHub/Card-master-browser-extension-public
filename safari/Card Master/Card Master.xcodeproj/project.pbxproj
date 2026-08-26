@@ -1,0 +1,713 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D73044713017324300C1A24E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73044703017324300C1A24E /* AppDelegate.swift */; };
+		D73044753017324300C1A24E /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = D73044733017324300C1A24E /* Main.html */; };
+		D73044773017324300C1A24E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D73044763017324300C1A24E /* Icon.png */; };
+		D73044793017324300C1A24E /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = D73044783017324300C1A24E /* Style.css */; };
+		D730447B3017324300C1A24E /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = D730447A3017324300C1A24E /* Script.js */; };
+		D730447D3017324300C1A24E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730447C3017324300C1A24E /* ViewController.swift */; };
+		D73044803017324300C1A24E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D730447E3017324300C1A24E /* Main.storyboard */; };
+		D73044823017324400C1A24E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D73044813017324400C1A24E /* Assets.xcassets */; };
+		D73044893017324400C1A24E /* Card Master Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D73044883017324400C1A24E /* Card Master Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D730448E3017324400C1A24E /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730448D3017324400C1A24E /* SafariWebExtensionHandler.swift */; };
+		D73044BA3017324400C1A24E /* filters in Resources */ = {isa = PBXBuildFile; fileRef = D730449A3017324400C1A24E /* filters */; };
+		D73044BB3017324400C1A24E /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = D730449B3017324400C1A24E /* install.html */; };
+		D73044BC3017324400C1A24E /* theme-runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = D730449C3017324400C1A24E /* theme-runtime.js */; };
+		D73044BD3017324400C1A24E /* theme-proxy.js in Resources */ = {isa = PBXBuildFile; fileRef = D730449D3017324400C1A24E /* theme-proxy.js */; };
+		D73044C03017324400C1A24E /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D73044A03017324400C1A24E /* LICENSE */; };
+		D73044C23017324400C1A24E /* licenses in Resources */ = {isa = PBXBuildFile; fileRef = D73044A23017324400C1A24E /* licenses */; };
+		D73044C33017324400C1A24E /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044A33017324400C1A24E /* background.js */; };
+		D73044C53017324400C1A24E /* adguard-cosmetic-runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044A53017324400C1A24E /* adguard-cosmetic-runtime.js */; };
+		D73044C63017324400C1A24E /* web-accessible-resources in Resources */ = {isa = PBXBuildFile; fileRef = D73044A63017324400C1A24E /* web-accessible-resources */; };
+		D73044C73017324400C1A24E /* assistant-surface.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044A73017324400C1A24E /* assistant-surface.js */; };
+		D73044C93017324400C1A24E /* media-speed-proxy.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044A93017324400C1A24E /* media-speed-proxy.js */; };
+		D73044CA3017324400C1A24E /* THIRD_PARTY_NOTICES.md in Resources */ = {isa = PBXBuildFile; fileRef = D73044AA3017324400C1A24E /* THIRD_PARTY_NOTICES.md */; };
+		D73044CB3017324400C1A24E /* library.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044AB3017324400C1A24E /* library.js */; };
+		D73044CC3017324400C1A24E /* adguard-runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044AC3017324400C1A24E /* adguard-runtime.js */; };
+		D73044CE3017324400C1A24E /* project-assets in Resources */ = {isa = PBXBuildFile; fileRef = D73044AE3017324400C1A24E /* project-assets */; };
+		D73044CF3017324400C1A24E /* media-speed-content.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044AF3017324400C1A24E /* media-speed-content.js */; };
+		D73044D03017324400C1A24E /* adguard-content.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044B03017324400C1A24E /* adguard-content.js */; };
+		D73044D13017324400C1A24E /* adguard-hide-document-referrer.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044B13017324400C1A24E /* adguard-hide-document-referrer.js */; };
+		D73044D23017324400C1A24E /* install.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044B23017324400C1A24E /* install.js */; };
+		D73044D33017324400C1A24E /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = D73044B33017324400C1A24E /* manifest.json */; };
+		D73044D53017324400C1A24E /* adguard-gpc.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044B53017324400C1A24E /* adguard-gpc.js */; };
+		D73044D63017324400C1A24E /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044B63017324400C1A24E /* content.js */; };
+		D73044D73017324400C1A24E /* re2.wasm in Resources */ = {isa = PBXBuildFile; fileRef = D73044B73017324400C1A24E /* re2.wasm */; };
+		D73044D83017324400C1A24E /* assistant.html in Resources */ = {isa = PBXBuildFile; fileRef = D73044B83017324400C1A24E /* assistant.html */; };
+		D73044D93017324400C1A24E /* theme-content.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044B93017324400C1A24E /* theme-content.js */; };
+		D73044DB3017324400C1A24E /* safari-main-world-bootstrap.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044DA3017324400C1A24E /* safari-main-world-bootstrap.js */; };
+		D73044DD3017324400C1A24E /* safari-userscript-runtime.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044DC3017324400C1A24E /* safari-userscript-runtime.js */; };
+		D73044E23017324400C1A24E /* vendor in Resources */ = {isa = PBXBuildFile; fileRef = D73044DE3017324400C1A24E /* vendor */; };
+		D73044E33017324400C1A24E /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = D73044DF3017324400C1A24E /* _locales */; };
+		D73044E43017324400C1A24E /* bilibili-capability-content.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044E03017324400C1A24E /* bilibili-capability-content.js */; };
+		D73044E53017324400C1A24E /* bilibili-recommendation-proxy.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044E13017324400C1A24E /* bilibili-recommendation-proxy.js */; };
+		D73044E83017324400C1A24E /* gamepad-content.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044E63017324400C1A24E /* gamepad-content.js */; };
+		D73044E93017324400C1A24E /* gamepad-control-content.js in Resources */ = {isa = PBXBuildFile; fileRef = D73044E73017324400C1A24E /* gamepad-control-content.js */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D730448A3017324400C1A24E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D73044653017324300C1A24E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D73044873017324400C1A24E;
+			remoteInfo = "Card Master Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D73044953017324400C1A24E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				D73044893017324400C1A24E /* Card Master Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D730446D3017324300C1A24E /* Card Master.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Card Master.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D73044703017324300C1A24E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D73044743017324300C1A24E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		D73044763017324300C1A24E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		D73044783017324300C1A24E /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		D730447A3017324300C1A24E /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		D730447C3017324300C1A24E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D730447F3017324300C1A24E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D73044813017324400C1A24E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D73044833017324400C1A24E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D73044883017324400C1A24E /* Card Master Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Card Master Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D730448D3017324400C1A24E /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		D730448F3017324400C1A24E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D730449A3017324400C1A24E /* filters */ = {isa = PBXFileReference; lastKnownFileType = folder; name = filters; path = "../../../extension-dist/safari/filters"; sourceTree = "<group>"; };
+		D730449B3017324400C1A24E /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../../extension-dist/safari/install.html"; sourceTree = "<group>"; };
+		D730449C3017324400C1A24E /* theme-runtime.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "theme-runtime.js"; path = "../../../extension-dist/safari/theme-runtime.js"; sourceTree = "<group>"; };
+		D730449D3017324400C1A24E /* theme-proxy.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "theme-proxy.js"; path = "../../../extension-dist/safari/theme-proxy.js"; sourceTree = "<group>"; };
+		D73044A03017324400C1A24E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = "../../../extension-dist/safari/LICENSE"; sourceTree = "<group>"; };
+		D73044A23017324400C1A24E /* licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; name = licenses; path = "../../../extension-dist/safari/licenses"; sourceTree = "<group>"; };
+		D73044A33017324400C1A24E /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../../extension-dist/safari/background.js"; sourceTree = "<group>"; };
+		D73044A53017324400C1A24E /* adguard-cosmetic-runtime.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "adguard-cosmetic-runtime.js"; path = "../../../extension-dist/safari/adguard-cosmetic-runtime.js"; sourceTree = "<group>"; };
+		D73044A63017324400C1A24E /* web-accessible-resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "web-accessible-resources"; path = "../../../extension-dist/safari/web-accessible-resources"; sourceTree = "<group>"; };
+		D73044A73017324400C1A24E /* assistant-surface.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "assistant-surface.js"; path = "../../../extension-dist/safari/assistant-surface.js"; sourceTree = "<group>"; };
+		D73044A93017324400C1A24E /* media-speed-proxy.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "media-speed-proxy.js"; path = "../../../extension-dist/safari/media-speed-proxy.js"; sourceTree = "<group>"; };
+		D73044AA3017324400C1A24E /* THIRD_PARTY_NOTICES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = THIRD_PARTY_NOTICES.md; path = "../../../extension-dist/safari/THIRD_PARTY_NOTICES.md"; sourceTree = "<group>"; };
+		D73044AB3017324400C1A24E /* library.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = library.js; path = "../../../extension-dist/safari/library.js"; sourceTree = "<group>"; };
+		D73044AC3017324400C1A24E /* adguard-runtime.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "adguard-runtime.js"; path = "../../../extension-dist/safari/adguard-runtime.js"; sourceTree = "<group>"; };
+		D73044AE3017324400C1A24E /* project-assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "project-assets"; path = "../../../extension-dist/safari/project-assets"; sourceTree = "<group>"; };
+		D73044AF3017324400C1A24E /* media-speed-content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "media-speed-content.js"; path = "../../../extension-dist/safari/media-speed-content.js"; sourceTree = "<group>"; };
+		D73044B03017324400C1A24E /* adguard-content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "adguard-content.js"; path = "../../../extension-dist/safari/adguard-content.js"; sourceTree = "<group>"; };
+		D73044B13017324400C1A24E /* adguard-hide-document-referrer.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "adguard-hide-document-referrer.js"; path = "../../../extension-dist/safari/adguard-hide-document-referrer.js"; sourceTree = "<group>"; };
+		D73044B23017324400C1A24E /* install.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = install.js; path = "../../../extension-dist/safari/install.js"; sourceTree = "<group>"; };
+		D73044B33017324400C1A24E /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = "../../../extension-dist/safari/manifest.json"; sourceTree = "<group>"; };
+		D73044B53017324400C1A24E /* adguard-gpc.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "adguard-gpc.js"; path = "../../../extension-dist/safari/adguard-gpc.js"; sourceTree = "<group>"; };
+		D73044B63017324400C1A24E /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = "../../../extension-dist/safari/content.js"; sourceTree = "<group>"; };
+		D73044B73017324400C1A24E /* re2.wasm */ = {isa = PBXFileReference; lastKnownFileType = file; name = re2.wasm; path = "../../../extension-dist/safari/re2.wasm"; sourceTree = "<group>"; };
+		D73044B83017324400C1A24E /* assistant.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = assistant.html; path = "../../../extension-dist/safari/assistant.html"; sourceTree = "<group>"; };
+		D73044B93017324400C1A24E /* theme-content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "theme-content.js"; path = "../../../extension-dist/safari/theme-content.js"; sourceTree = "<group>"; };
+		D73044DA3017324400C1A24E /* safari-main-world-bootstrap.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "safari-main-world-bootstrap.js"; path = "../../../extension-dist/safari/safari-main-world-bootstrap.js"; sourceTree = "<group>"; };
+		D73044DC3017324400C1A24E /* safari-userscript-runtime.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "safari-userscript-runtime.js"; path = "../../../extension-dist/safari/safari-userscript-runtime.js"; sourceTree = "<group>"; };
+		D73044DE3017324400C1A24E /* vendor */ = {isa = PBXFileReference; lastKnownFileType = folder; name = vendor; path = "../../../extension-dist/safari/vendor"; sourceTree = "<group>"; };
+		D73044DF3017324400C1A24E /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _locales; path = "../../../extension-dist/safari/_locales"; sourceTree = "<group>"; };
+		D73044E03017324400C1A24E /* bilibili-capability-content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "bilibili-capability-content.js"; path = "../../../extension-dist/safari/bilibili-capability-content.js"; sourceTree = "<group>"; };
+		D73044E13017324400C1A24E /* bilibili-recommendation-proxy.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "bilibili-recommendation-proxy.js"; path = "../../../extension-dist/safari/bilibili-recommendation-proxy.js"; sourceTree = "<group>"; };
+		D73044E63017324400C1A24E /* gamepad-content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "gamepad-content.js"; path = "../../../extension-dist/safari/gamepad-content.js"; sourceTree = "<group>"; };
+		D73044E73017324400C1A24E /* gamepad-control-content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "gamepad-control-content.js"; path = "../../../extension-dist/safari/gamepad-control-content.js"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D730446A3017324300C1A24E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		D73044853017324400C1A24E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D73044643017324300C1A24E = {
+			isa = PBXGroup;
+			children = (
+				D730446F3017324300C1A24E /* Card Master */,
+				D730448C3017324400C1A24E /* Card Master Extension */,
+				D730446E3017324300C1A24E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D730446E3017324300C1A24E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D730446D3017324300C1A24E /* Card Master.app */,
+				D73044883017324400C1A24E /* Card Master Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D730446F3017324300C1A24E /* Card Master */ = {
+			isa = PBXGroup;
+			children = (
+				D73044703017324300C1A24E /* AppDelegate.swift */,
+				D730447C3017324300C1A24E /* ViewController.swift */,
+				D730447E3017324300C1A24E /* Main.storyboard */,
+				D73044813017324400C1A24E /* Assets.xcassets */,
+				D73044833017324400C1A24E /* Info.plist */,
+				D73044723017324300C1A24E /* Resources */,
+			);
+			path = "Card Master";
+			sourceTree = "<group>";
+		};
+		D73044723017324300C1A24E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D73044733017324300C1A24E /* Main.html */,
+				D73044763017324300C1A24E /* Icon.png */,
+				D73044783017324300C1A24E /* Style.css */,
+				D730447A3017324300C1A24E /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D730448C3017324400C1A24E /* Card Master Extension */ = {
+			isa = PBXGroup;
+			children = (
+				D73044993017324400C1A24E /* Resources */,
+				D730448D3017324400C1A24E /* SafariWebExtensionHandler.swift */,
+				D730448F3017324400C1A24E /* Info.plist */,
+			);
+			path = "Card Master Extension";
+			sourceTree = "<group>";
+		};
+		D73044993017324400C1A24E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D730449A3017324400C1A24E /* filters */,
+				D730449B3017324400C1A24E /* install.html */,
+				D730449C3017324400C1A24E /* theme-runtime.js */,
+				D730449D3017324400C1A24E /* theme-proxy.js */,
+				D73044A03017324400C1A24E /* LICENSE */,
+				D73044A23017324400C1A24E /* licenses */,
+				D73044A33017324400C1A24E /* background.js */,
+				D73044A53017324400C1A24E /* adguard-cosmetic-runtime.js */,
+				D73044A63017324400C1A24E /* web-accessible-resources */,
+				D73044A73017324400C1A24E /* assistant-surface.js */,
+				D73044A93017324400C1A24E /* media-speed-proxy.js */,
+				D73044AA3017324400C1A24E /* THIRD_PARTY_NOTICES.md */,
+				D73044AB3017324400C1A24E /* library.js */,
+				D73044AC3017324400C1A24E /* adguard-runtime.js */,
+				D73044AE3017324400C1A24E /* project-assets */,
+				D73044AF3017324400C1A24E /* media-speed-content.js */,
+				D73044B03017324400C1A24E /* adguard-content.js */,
+				D73044B13017324400C1A24E /* adguard-hide-document-referrer.js */,
+				D73044B23017324400C1A24E /* install.js */,
+				D73044B33017324400C1A24E /* manifest.json */,
+				D73044B53017324400C1A24E /* adguard-gpc.js */,
+				D73044B63017324400C1A24E /* content.js */,
+				D73044B73017324400C1A24E /* re2.wasm */,
+				D73044B83017324400C1A24E /* assistant.html */,
+				D73044B93017324400C1A24E /* theme-content.js */,
+				D73044DA3017324400C1A24E /* safari-main-world-bootstrap.js */,
+				D73044DC3017324400C1A24E /* safari-userscript-runtime.js */,
+				D73044DE3017324400C1A24E /* vendor */,
+				D73044DF3017324400C1A24E /* _locales */,
+				D73044E03017324400C1A24E /* bilibili-capability-content.js */,
+				D73044E13017324400C1A24E /* bilibili-recommendation-proxy.js */,
+				D73044E63017324400C1A24E /* gamepad-content.js */,
+				D73044E73017324400C1A24E /* gamepad-control-content.js */,
+			);
+			name = Resources;
+			path = "Card Master Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D730446C3017324300C1A24E /* Card Master */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D73044963017324400C1A24E /* Build configuration list for PBXNativeTarget "Card Master" */;
+			buildPhases = (
+				D73044693017324300C1A24E /* Sources */,
+				D730446A3017324300C1A24E /* Frameworks */,
+				D730446B3017324300C1A24E /* Resources */,
+				D73044953017324400C1A24E /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D730448B3017324400C1A24E /* PBXTargetDependency */,
+			);
+			name = "Card Master";
+			productName = "Card Master";
+			productReference = D730446D3017324300C1A24E /* Card Master.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D73044873017324400C1A24E /* Card Master Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D73044923017324400C1A24E /* Build configuration list for PBXNativeTarget "Card Master Extension" */;
+			buildPhases = (
+				D73044843017324400C1A24E /* Sources */,
+				D73044853017324400C1A24E /* Frameworks */,
+				D73044863017324400C1A24E /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "Card Master Extension";
+			productName = "Card Master Extension";
+			productReference = D73044883017324400C1A24E /* Card Master Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D73044653017324300C1A24E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					D730446C3017324300C1A24E = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					D73044873017324400C1A24E = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = D73044683017324300C1A24E /* Build configuration list for PBXProject "Card Master" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D73044643017324300C1A24E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D730446E3017324300C1A24E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D730446C3017324300C1A24E /* Card Master */,
+				D73044873017324400C1A24E /* Card Master Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D730446B3017324300C1A24E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				D73044773017324300C1A24E /* Icon.png in Resources */,
+				D73044803017324300C1A24E /* Main.storyboard in Resources */,
+				D730447B3017324300C1A24E /* Script.js in Resources */,
+				D73044753017324300C1A24E /* Main.html in Resources */,
+				D73044823017324400C1A24E /* Assets.xcassets in Resources */,
+				D73044793017324300C1A24E /* Style.css in Resources */,
+			);
+		};
+		D73044863017324400C1A24E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				D73044C63017324400C1A24E /* web-accessible-resources in Resources */,
+				D73044C23017324400C1A24E /* licenses in Resources */,
+				D73044BB3017324400C1A24E /* install.html in Resources */,
+				D73044BC3017324400C1A24E /* theme-runtime.js in Resources */,
+				D73044C33017324400C1A24E /* background.js in Resources */,
+				D73044D53017324400C1A24E /* adguard-gpc.js in Resources */,
+				D73044CE3017324400C1A24E /* project-assets in Resources */,
+				D73044C03017324400C1A24E /* LICENSE in Resources */,
+				D73044D73017324400C1A24E /* re2.wasm in Resources */,
+				D73044BA3017324400C1A24E /* filters in Resources */,
+				D73044D63017324400C1A24E /* content.js in Resources */,
+				D73044D13017324400C1A24E /* adguard-hide-document-referrer.js in Resources */,
+				D73044CC3017324400C1A24E /* adguard-runtime.js in Resources */,
+				D73044BD3017324400C1A24E /* theme-proxy.js in Resources */,
+				D73044C93017324400C1A24E /* media-speed-proxy.js in Resources */,
+				D73044D33017324400C1A24E /* manifest.json in Resources */,
+				D73044CF3017324400C1A24E /* media-speed-content.js in Resources */,
+				D73044C73017324400C1A24E /* assistant-surface.js in Resources */,
+				D73044D93017324400C1A24E /* theme-content.js in Resources */,
+				D73044D23017324400C1A24E /* install.js in Resources */,
+				D73044C53017324400C1A24E /* adguard-cosmetic-runtime.js in Resources */,
+				D73044D03017324400C1A24E /* adguard-content.js in Resources */,
+				D73044CB3017324400C1A24E /* library.js in Resources */,
+				D73044CA3017324400C1A24E /* THIRD_PARTY_NOTICES.md in Resources */,
+				D73044D83017324400C1A24E /* assistant.html in Resources */,
+				D73044DB3017324400C1A24E /* safari-main-world-bootstrap.js in Resources */,
+				D73044DD3017324400C1A24E /* safari-userscript-runtime.js in Resources */,
+				D73044E23017324400C1A24E /* vendor in Resources */,
+				D73044E33017324400C1A24E /* _locales in Resources */,
+				D73044E43017324400C1A24E /* bilibili-capability-content.js in Resources */,
+				D73044E53017324400C1A24E /* bilibili-recommendation-proxy.js in Resources */,
+				D73044E83017324400C1A24E /* gamepad-content.js in Resources */,
+				D73044E93017324400C1A24E /* gamepad-control-content.js in Resources */,
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D73044693017324300C1A24E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				D730447D3017324300C1A24E /* ViewController.swift in Sources */,
+				D73044713017324300C1A24E /* AppDelegate.swift in Sources */,
+			);
+		};
+		D73044843017324400C1A24E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				D730448E3017324400C1A24E /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D730448B3017324400C1A24E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D73044873017324400C1A24E /* Card Master Extension */;
+			targetProxy = D730448A3017324400C1A24E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D73044733017324300C1A24E /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D73044743017324300C1A24E /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		D730447E3017324300C1A24E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D730447F3017324300C1A24E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D73044903017324400C1A24E /* Debug configuration for PBXProject "Card Master" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D73044913017324400C1A24E /* Release configuration for PBXProject "Card Master" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		D73044933017324400C1A24E /* Debug configuration for PBXNativeTarget "Card Master Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Card Master Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Card Master Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 LYiHub.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lyihub.cardmaster.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D73044943017324400C1A24E /* Release configuration for PBXNativeTarget "Card Master Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Card Master Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Card Master Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 LYiHub.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lyihub.cardmaster.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D73044973017324400C1A24E /* Debug configuration for PBXNativeTarget "Card Master" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Card Master/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Card Master";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 LYiHub.";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lyihub.cardmaster;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D73044983017324400C1A24E /* Release configuration for PBXNativeTarget "Card Master" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Card Master/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Card Master";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 LYiHub.";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lyihub.cardmaster;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D73044683017324300C1A24E /* Build configuration list for PBXProject "Card Master" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D73044903017324400C1A24E /* Debug configuration for PBXProject "Card Master" */,
+				D73044913017324400C1A24E /* Release configuration for PBXProject "Card Master" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D73044923017324400C1A24E /* Build configuration list for PBXNativeTarget "Card Master Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D73044933017324400C1A24E /* Debug configuration for PBXNativeTarget "Card Master Extension" */,
+				D73044943017324400C1A24E /* Release configuration for PBXNativeTarget "Card Master Extension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D73044963017324400C1A24E /* Build configuration list for PBXNativeTarget "Card Master" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D73044973017324400C1A24E /* Debug configuration for PBXNativeTarget "Card Master" */,
+				D73044983017324400C1A24E /* Release configuration for PBXNativeTarget "Card Master" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D73044653017324300C1A24E /* Project object */;
+	validationLevel = 1;
+}

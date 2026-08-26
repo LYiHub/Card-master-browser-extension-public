@@ -1,0 +1,123 @@
+.manager-card__state {
+  --manager-card-state-cut: 3.2cqi;
+  --manager-card-state-stroke: max(1px, 0.65cqi);
+  --manager-card-state-border: rgb(194 229 190 / 0.34);
+  --manager-card-state-surface: rgb(4 9 10 / 0.84);
+  position: absolute;
+  z-index: 8;
+  top: 5.4cqi;
+  left: 5.4cqi;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  inline-size: max-content;
+  max-inline-size: calc(100% - 10.8cqi);
+  min-block-size: 12.4cqi;
+  gap: 2.6cqi;
+  padding: 1.7cqi 4.2cqi 1.8cqi;
+  isolation: isolate;
+  overflow: hidden;
+  color: #e6f7e8;
+  font: 700 clamp(8px, 7.4cqi, 11px) / 1.08 var(--app-ui-font-display);
+  white-space: nowrap;
+  background: var(--manager-card-state-border);
+  border: 0;
+  clip-path: polygon(
+    var(--manager-card-state-cut) 0,
+    calc(100% - var(--manager-card-state-cut)) 0,
+    100% var(--manager-card-state-cut),
+    100% calc(100% - var(--manager-card-state-cut)),
+    calc(100% - var(--manager-card-state-cut)) 100%,
+    var(--manager-card-state-cut) 100%,
+    0 calc(100% - var(--manager-card-state-cut)),
+    0 var(--manager-card-state-cut)
+  );
+  text-shadow: 0 1px 2px #000;
+}
+
+.manager-card__state::before {
+  position: absolute;
+  z-index: -1;
+  inset: var(--manager-card-state-stroke);
+  content: "";
+  background: var(--manager-card-state-surface);
+  clip-path: polygon(
+    calc(var(--manager-card-state-cut) - var(--manager-card-state-stroke)) 0,
+    calc(
+        100% -
+        var(--manager-card-state-cut) +
+        var(--manager-card-state-stroke)
+      )
+      0,
+    100% calc(var(--manager-card-state-cut) - var(--manager-card-state-stroke)),
+    100%
+      calc(
+        100% -
+        var(--manager-card-state-cut) +
+        var(--manager-card-state-stroke)
+      ),
+    calc(
+        100% -
+        var(--manager-card-state-cut) +
+        var(--manager-card-state-stroke)
+      )
+      100%,
+    calc(var(--manager-card-state-cut) - var(--manager-card-state-stroke)) 100%,
+    0
+      calc(
+        100% -
+        var(--manager-card-state-cut) +
+        var(--manager-card-state-stroke)
+      ),
+    0 calc(var(--manager-card-state-cut) - var(--manager-card-state-stroke))
+  );
+}
+
+.manager-card__state i {
+  display: block;
+  flex: 0 0 auto;
+  width: 3.6cqi;
+  height: 3.6cqi;
+  background: #7ee0a4;
+  box-shadow: 0 0 7px #6ee4a0;
+  rotate: 45deg;
+}
+
+.manager-card__state span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manager-card__state.is-inactive {
+  --manager-card-state-border: rgb(173 187 188 / 0.3);
+  --manager-card-state-surface: rgb(7 10 11 / 0.86);
+  color: #d2dcdd;
+}
+
+.manager-card__state.is-inactive i {
+  background: #848b8b;
+  box-shadow: none;
+}
+
+.manager-card__state.is-pending {
+  --manager-card-state-border: rgb(232 187 88 / 0.46);
+  --manager-card-state-surface: rgb(18 13 5 / 0.88);
+  color: #f2dfae;
+}
+
+.manager-card__state.is-pending i {
+  background: #e8bb58;
+  box-shadow: 0 0 7px rgb(232 187 88 / 0.72);
+}
+
+.manager-card__state.is-error {
+  --manager-card-state-border: rgb(255 128 104 / 0.52);
+  --manager-card-state-surface: rgb(24 8 8 / 0.88);
+  color: #ffd0c6;
+}
+
+.manager-card__state.is-error i {
+  background: #ff8068;
+  box-shadow: 0 0 7px #ff8068;
+}

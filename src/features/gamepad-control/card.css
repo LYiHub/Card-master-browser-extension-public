@@ -1,0 +1,14 @@
+.manager-card__face.is-gamepad-control {
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgb(50 57 56 / 0.88),
+      rgb(9 14 16 / 0.98) 72%
+    ),
+    #0a0f11;
+}
+
+.manager-card__face.is-gamepad-control > .manager-card__cover {
+  filter: sepia(0.08) saturate(0.88) brightness(0.9)
+    drop-shadow(0 12px 12px rgb(0 0 0 / 0.54));
+}

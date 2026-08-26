@@ -1,0 +1,570 @@
+/**
+ * 小于10的数字前面加0
+ * @param {Number} date 
+ * @returns {String|Number}
+ */
+function appendZero(date) {
+    return parseInt(date) < 10 ? `0${date}` : date;
+}
+
+/**
+ * 秒转格式化成时间
+ * @param {Number} sec 
+ * @returns {String}
+ */
+function secToTime(sec) {
+    let hour = (sec / 3600) | 0;
+    let min = ((sec % 3600) / 60) | 0;
+    sec = (sec % 60) | 0;
+    let time = hour > 0 ? hour + ":" : "";
+    time += min.toString().padStart(2, '0') + ":";
+    time += sec.toString().padStart(2, '0');
+    return time;
+}
+
+/**
+* 格式化比特率
+* @param {Number} bps 比特率
+* @return {String} 格式化后的比特率字符串
+*/
+function formatBitrate(bps) {
+    if (bps >= 1000 * 1000) {
+        return (bps / 1000 / 1000).toFixed(2) + ' Mbps';
+    }
+    return (bps / 1000).toFixed(2) + ' kbps';
+}
+
+/**
+ * 字节转换成大小
+ * @param {Number} byte 大小
+ * @returns {String} 格式化后的文件大小
+ */
+function byteToSize(byte) {
+    if (!byte || byte < 1024) { return 0; }
+    if (byte < 1024 * 1024) {
+        return (byte / 1024).toFixed(1) + "KB";
+    } else if (byte < 1024 * 1024 * 1024) {
+        return (byte / 1024 / 1024).toFixed(1) + "MB";
+    } else {
+        return (byte / 1024 / 1024 / 1024).toFixed(1) + "GB";
+    }
+}
+
+/**
+ * Firefox download API 无法下载 data URL
+ * @param {String} url 
+ * @param {String} fileName 文件名
+ */
+function downloadDataURL(url, fileName) {
+    let link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    link = null;
+}
+
+/**
+ * 判断变量是否为空
+ * @param {Object|String} obj 判断的变量
+ * @returns {Boolean}
+ */
+function isEmpty(obj) {
+    return (typeof obj == "undefined" ||
+        obj == null ||
+        obj == "" ||
+        obj == " ")
+}
+
+/**
+ * 修改请求头
+ * @param {Object} data 请求头数据
+ * @param {Function} callback 
+ */
+function setRequestHeaders(data = {}, callback = undefined) {
+    chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [1] });
+    chrome.tabs.getCurrent(function (tabs) {
+        const rules = { removeRuleIds: [tabs ? tabs.id : 1] };
+        if (Object.keys(data).length) {
+            rules.addRules = [{
+                "id": tabs ? tabs.id : 1,
+                "priority": tabs ? tabs.id : 1,
+                "action": {
+                    "type": "modifyHeaders",
+                    "requestHeaders": Object.keys(data).map(key => ({ header: key, operation: "set", value: data[key] }))
+                },
+                "condition": {
+                    "resourceTypes": ["xmlhttprequest", "media", "image"],
+                }
+            }];
+            if (tabs) {
+                rules.addRules[0].condition.tabIds = [tabs.id];
+            } else {
+                // initiatorDomains 只支持 chrome 101+ firefox 113+
+                if (G.version < 101 || (G.isFirefox && G.version < 113)) {
+                    callback && callback();
+                    return;
+                }
+                const domain = G.isFirefox
+                    ? new URL(chrome.runtime.getURL("")).hostname
+                    : chrome.runtime.id;
+                rules.addRules[0].condition.initiatorDomains = [domain];
+            }
+        }
+        chrome.declarativeNetRequest.updateSessionRules(rules, function () {
+            callback && callback();
+        });
+    });
+}
+
+/**
+ * 指定标签页修改 urlFilter请求头
+ * @param {Object} data 需要修改请求头的对象数组
+ * @param {*} callBack 回调函数
+ * @param {*} tabId 需要修改的tabId
+ */
+function setHeaders(data, callBack, tabId = -1) {
+    if (!tabId == -1) {
+        tabId = G.tabId;
+    }
+    const rules = { removeRuleIds: [], addRules: [] };
+    if (!Array.isArray(data)) {
+        data = [data];
+    }
+    for (let item of data) {
+        if (!item.requestHeaders) { continue; }
+        const rule = {
+            "id": parseInt(item.requestId),
+            "action": {
+                "type": "modifyHeaders",
+                "requestHeaders": Object.keys(item.requestHeaders).map(key => ({ header: key, operation: "set", value: item.requestHeaders[key] }))
+            },
+            "condition": {
+                "resourceTypes": ["xmlhttprequest", "media", "image"],
+                "tabIds": [tabId],
+                "urlFilter": item.url
+            }
+        }
+        if (item.cookie) {
+            rule.action.requestHeaders.push({ header: "Cookie", operation: "set", value: item.cookie });
+        }
+        rules.removeRuleIds.push(parseInt(item.requestId));
+        rules.addRules.push(rule);
+    }
+    chrome.declarativeNetRequest.updateSessionRules(rules, () => {
+        callBack && callBack();
+    });
+}
+
+/**
+ * 等待全局变量G初始化完成
+ * @param {Function} callback 
+ * @param {Number} sec
+ */
+function awaitG(callback, sec = 0) {
+    const timer = setInterval(() => {
+        if (G.initSyncComplete && G.initLocalComplete) {
+            clearInterval(timer);
+            callback();
+        }
+    }, sec);
+}
+
+
+
+/**
+ * 从url中获取文件名
+ * @param {String} url 
+ * @returns {String} 文件名
+ */
+function getUrlFileName(url) {
+    let pathname = new URL(url).pathname;
+    let filename = pathname.split("/").pop();
+    return filename ? filename : "NULL";
+}
+
+/**
+ * 解析json字符串 尝试修复键名没有双引号 解析错误返回默认值
+ * @param {string} str json字符串
+ * @param {object} error 解析错误返回的默认值
+ * @param {number} attempt 尝试修复次数
+ * @returns {object} 返回解析后的对象
+ */
+function JSONparse(str, error = {}, attempt = 0) {
+    if (!str) { return error; }
+    try {
+        return JSON.parse(str);
+    } catch (e) {
+        if (attempt === 0) {
+            // 第一次解析失败，修正字符串后递归调用
+            reJSONparse.lastIndex = 0;
+            const fixedStr = str.replace(reJSONparse, '$1"$2"$3');
+            return JSONparse(fixedStr, error, ++attempt);
+        } else {
+            // 第二次解析仍然失败，返回 error 对象
+            return error;
+        }
+    }
+}
+
+/**
+ * ArrayBuffer转Blob 大于2G的做切割
+ * @param {ArrayBuffer|Uint8Array} buffer 原始数据
+ * @param {Object} options Blob配置
+ * @returns {Blob} 返回Blob对象
+ */
+function ArrayBufferToBlob(buffer, options = {}) {
+    if (buffer instanceof Blob) {
+        return buffer;
+    }
+    if (buffer instanceof Uint8Array) {
+        buffer = buffer.buffer;
+    }
+    if (!buffer.byteLength) {
+        return new Blob();
+    }
+    if (!buffer instanceof ArrayBuffer) {
+        return new Blob();
+    }
+    if (buffer.byteLength >= 2 * 1024 * 1024 * 1024) {
+        const MAX_CHUNK_SIZE = 1024 * 1024 * 1024;
+        let offset = 0;
+        const blobs = [];
+        while (offset < buffer.byteLength) {
+            const chunkSize = Math.min(MAX_CHUNK_SIZE, buffer.byteLength - offset);
+            const chunk = buffer.slice(offset, offset + chunkSize);
+            blobs.push(new Blob([chunk]));
+            offset += chunkSize;
+        }
+        return new Blob(blobs, options);
+    }
+    return new Blob([buffer], options);
+}
+
+/**
+ * 替换掉文件名中的特殊字符 包含路径
+ * @param {String} str 需要处理的文本
+ * @param {String} text 需要替换的文本
+ * @returns {String} 返回替换后的字符串
+ */
+function stringModify(str, text) {
+    if (!str) { return str; }
+    str = filterFileName(str, text);
+    str = str.replace(/[\\/]/g, function (match) {
+        return text || {
+            '\\': '&bsol;',
+            '/': '&sol;'
+        }[match];
+    });
+    return str;
+}
+
+/**
+ * 替换掉文件名中的特殊字符 不包含路径
+ * @param {String} str 需要处理的文本
+ * @param {String} text 需要替换的文本
+ * @returns {String} 返回替换后的字符串
+ */
+function filterFileName(str, text) {
+    if (!str) { return str; }
+    reFilterFileName.lastIndex = 0;
+    str = str.replaceAll(/\u200B/g, "").replaceAll(/\u200C/g, "").replaceAll(/\u200D/g, "");
+    str = str.replace(reFilterFileName, function (match) {
+        return text || {
+            '<': '&lt;',
+            '>': '&gt;',
+            ':': '&colon;',
+            '"': '&quot;',
+            '|': '&vert;',
+            '?': '&quest;',
+            '*': '&ast;',
+            '~': '_'
+        }[match];
+    });
+
+    // 前后不能是 “.”
+    if (str.endsWith(".")) {
+        str = str + "catCatch";
+    }
+    if (str.startsWith(".")) {
+        str = "catCatch" + str;
+    }
+    return str;
+}
+
+/**
+ * 展平嵌套对象的函数
+ * @param {Object} obj 参数对象
+ * @param {String} prefix 前缀
+ * @returns 嵌套对象扁平化
+ */
+function flattenObject(obj, prefix = '') {
+    let result = {};
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            const value = obj[key];
+            const newKey = prefix ? `${prefix}[${key}]` : key;
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                // 递归处理嵌套对象
+                Object.assign(result, flattenObject(value, newKey));
+            } else {
+                // 处理基本类型和数组
+                result[newKey] = value;
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ * 核心发送请求逻辑 (公共函数)
+ * @param {Object|String} postData 最终组装好要发送的 Payload 数据
+ * @param {Object} templateContext 用于替换 URL 和 Header 模板的上下文变量 (包含 tabId, action 等)
+ */
+function executeCoreRequest(postData, templateContext) {
+    return new Promise((resolve, reject) => {
+        const option = { method: G.send2localMethod };
+
+        try {
+            // 1. 处理 URL 模板并检查合法性
+            let send2localURL = templates(G.send2localURL, templateContext);
+            send2localURL = new URL(send2localURL);
+
+            // 2. 处理 GET 请求的参数拼接
+            if (option.method === 'GET') {
+                const flattenedObj = flattenObject(postData);
+                const urlParams = new URLSearchParams(flattenedObj);
+                send2localURL.search = send2localURL.search
+                    ? `${send2localURL.search}&${urlParams}`
+                    : `?${urlParams}`;
+            }
+            // 3. 处理非 GET 请求的不同 Content-Type
+            else {
+                const contentType = {
+                    0: 'application/json;charset=utf-8',
+                    1: 'multipart/form-data',
+                    2: 'application/x-www-form-urlencoded',
+                    3: 'text/plain'
+                }[G.send2localType];
+
+                option.headers = { 'Content-Type': contentType };
+
+                switch (contentType) {
+                    case 'application/json;charset=utf-8':
+                        option.body = JSON.stringify(postData);
+                        break;
+                    case 'multipart/form-data':
+                        const formData = new FormData();
+                        const flattened = flattenObject(postData);
+                        Object.entries(flattened).forEach(([key, value]) => {
+                            formData.append(key, value);
+                        });
+                        option.body = formData;
+                        delete option.headers['Content-Type']; // 让浏览器自动生成 boundary
+                        break;
+                    case 'application/x-www-form-urlencoded':
+                        const flattenedObj = flattenObject(postData);
+                        const urlParams = new URLSearchParams(flattenedObj);
+                        option.body = urlParams.toString();
+                        break;
+                    case 'text/plain':
+                        option.body = typeof postData === 'object'
+                            ? JSON.stringify(postData)
+                            : String(postData);
+                        break;
+                    default:
+                        option.body = JSON.stringify(postData);
+                        break;
+                }
+            }
+
+            // 4. 处理自定义 Headers
+            if (G.send2localHeaders) {
+                let customHeaders = templates(G.send2localHeaders, templateContext);
+                customHeaders = JSONparse(customHeaders);
+                if (!option.headers) { option.headers = {}; }
+                for (let key in customHeaders) {
+                    option.headers[key] = customHeaders[key];
+                }
+            }
+            // 5. 发起请求
+            fetch(send2localURL.toString(), option)
+                .then(response => resolve(response))
+                .catch(error => reject(error));
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+/**
+ * 发送单条数据到本地
+ * @param {String} action 发送类型
+ * @param {Object|String} data 发送的数据
+ * @param {Number} tabId 发送数据的标签页ID
+ */
+function send2local(action, data, tabId = 0) {
+    let body = G.send2localBody;
+
+    // 处理 addKey 请求 或 字符串数据
+    if (action === 'addKey' || typeof data === 'string') {
+        body = G.send2localBody.replaceAll('${data}', `"${data}"`);
+        data = { tabId: tabId };
+    }
+    data.action = action;
+    let postData = templates(body, data);
+    postData = JSONparse(postData, { action, data, tabId });
+    return executeCoreRequest(postData, data);
+}
+
+/**
+ * 批量发送对象数组到本地 (一次性发送)
+ * @param {String} action 发送类型
+ * @param {Array} arrayData 发送的对象数组 (例: [{id: 1}, {id: 2}])
+ * @param {Number} tabId 发送数据的标签页ID
+ */
+function send2localArray(action, arrayData, tabId = 0) {
+    if (!Array.isArray(arrayData)) {
+        arrayData = [arrayData];
+    }
+
+    const results = [];
+    arrayData.forEach((item, index) => {
+        results.push(templates("${data}", { ...item, action, index, tabId }));
+    });
+    let body = G.send2localBody.replaceAll('${data}', `[${results.join(",")}]`);
+    let postData = templates(body, { action, tabId });
+    postData = JSONparse(postData, arrayData[0]);
+    return executeCoreRequest(postData, { action, tabId });
+}
+
+function isDamnUrl(url) {
+    for (let key in G.damnUrl) {
+        G.damnUrl[key].lastIndex = 0;
+        if (G.damnUrl[key].test(url)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * 判断url是否在屏蔽网址中
+ * @param {String} url 
+ * @returns {Boolean}
+ */
+function isLockUrl(url) {
+    for (let key in G.blockUrl) {
+        if (!G.blockUrl[key].state) { continue; }
+        G.blockUrl[key].url.lastIndex = 0;
+        if (G.blockUrl[key].url.test(url)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * 关闭标签页 如果tabId为0 则关闭当前标签
+ * 当前只有一个标签页面 创建新标签页 再关闭
+ * @param {Number|Array} tabId 
+ */
+function closeTab(tabId = 0) {
+    chrome.tabs.query({}, async function (tabs) {
+        if (tabs.length === 1) {
+            await chrome.tabs.create({ url: 'chrome://newtab' });
+            tabId ? chrome.tabs.remove(tabId) : window.close();
+        } else {
+            tabId ? chrome.tabs.remove(tabId) : window.close();
+        }
+    });
+}
+
+/**
+ * 打开解析器
+ * @param {Object} data 资源对象
+ * @param {Object} options 选项
+ */
+function openParser(data, options = {}) {
+    chrome.tabs.get(G.tabId, function (tab) {
+        const url = `/${data.parsing ? data.parsing : "m3u8"}.html?${new URLSearchParams({
+            url: data.url,
+            title: data.title,
+            filename: data.downFileName,
+            tabid: data.tabId == -1 ? G.tabId : data.tabId,
+            initiator: data.initiator,
+            requestHeaders: data.requestHeaders ? JSON.stringify(data.requestHeaders) : undefined,
+            ...Object.fromEntries(Object.entries(options).map(([key, value]) => [key, typeof value === 'boolean' ? (value ? 1 : 0) : value])),
+        })}`
+        chrome.tabs.create({
+            url: url,
+            index: tab.index + 1,
+            active: G.isMobile || !options.autoDown
+        });
+    });
+}
+/**
+ * 加载CSS样式
+ */
+function loadCSS() {
+    if (G.isMobile) {
+        const mobileCssLink = document.createElement('link');
+        mobileCssLink.rel = 'stylesheet';
+        mobileCssLink.type = 'text/css';
+        mobileCssLink.href = 'css/mobile.css';
+        document.head.appendChild(mobileCssLink);
+    }
+    const styleElement = document.createElement('style');
+    styleElement.textContent = G.css;
+    document.head.appendChild(styleElement);
+}
+
+/**
+ * 修建数据 不发送不必要的数据
+ * @param {Object} originalData 原始数据
+ * @returns {Object} 返回处理后的数据
+ */
+function trimData(originalData) {
+    const data = { ...originalData };
+    // 不发送HTML内容
+    data.html = undefined;
+    data.panelHeading = undefined;
+    data.urlPanel = undefined;
+    data.urlPanelShow = undefined;
+    return data;
+}
+
+/**
+ * 获取文件大小
+ * @param {String} url 
+ * @returns {Promise<number>} 文件大小（字节）
+ * 先尝试使用 HEAD 请求获取 Content-Length，如果失败则使用 GET+ Range 请求并解析 Content-Range 来获取大小
+ */
+function getRemoteFileSize(url) {
+    return fetch(url, { method: "HEAD" })
+        .then(function (res) {
+            const size = parseInt(res.headers.get("content-length"), 10);
+            if (size && !isNaN(size)) return size;
+            throw new Error("HEAD no content-length");
+        })
+        .catch(function () {
+            return fetch(url, {
+                method: "GET",
+                headers: {
+                    Range: "bytes=0-0"
+                }
+            }).then(function (res) {
+                const contentRange = res.headers.get("content-range");
+                if (contentRange) {
+                    const match = contentRange.match(/\/(\d+)$/);
+                    if (match) {
+                        const size = parseInt(match[1], 10);
+                        if (size && !isNaN(size)) return size;
+                    }
+                }
+                const size = parseInt(res.headers.get("content-length"), 10);
+                if (size && !isNaN(size)) return size;
+                throw new Error("GET range no size");
+            });
+        });
+}

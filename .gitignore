@@ -1,0 +1,33 @@
+node_modules
+.codegraph/
+.agents/
+AGENTS.md
+CLAUDE.md
+.cursor/
+extension-dist
+release-dist
+.release-dist-*
+run.log
+.DS_Store
+*.local
+.env
+.env.*
+assets/**/.DS_Store
+tmp/
+.local/
+refs/
+/docs/
+/examples/
+/experiments/
+/skills-lock.json
+/work/
+/scripts/manual-probes/
+/scripts/optimize-runtime-media.mjs
+/scripts/prepare-card-lock-vfx.mjs
+/scripts/prepare-combo-kill-vfx.mjs
+/scripts/prepare-content-blocking-vfx.mjs
+/scripts/prepare-media-speed-vfx.mjs
+/scripts/runtime-media-optimization.json
+/scripts/safari-alpha-vfx.mjs
+/safari/Card Master/Card Master/Assets.xcassets/AppIcon.appiconset/*.png
+/safari/Card Master/Card Master/Resources/Icon.png

@@ -1,0 +1,294 @@
+{
+  "name": "卡牌大师",
+  "short_name": "卡牌大师",
+  "version": "0.1.0",
+  "description": "以游戏化卡牌统一管理用户脚本与网页能力：AI 创建脚本、原生内容过滤、页面光影、媒体控制、视频增强与游戏手柄交互。",
+  "default_locale": "zh_CN",
+  "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "icons": {
+    "16": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png",
+    "32": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png",
+    "48": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png",
+    "128": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png"
+  },
+  "action": {
+    "default_title": "卡牌大师",
+    "default_icon": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png"
+  },
+  "options_ui": {
+    "page": "new-tab-settings.html",
+    "open_in_tab": true
+  },
+  "chrome_url_overrides": {
+    "newtab": "new-tab.html"
+  },
+  "commands": {
+    "toggle-card-deck": {
+      "suggested_key": {
+        "default": "Ctrl+E",
+        "mac": "Command+E"
+      },
+      "description": "展开或收起当前页面的卡牌"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["theme-proxy.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["theme-content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["*://*.bilibili.com/*"],
+      "js": ["bilibili-recommendation-proxy.js"],
+      "run_at": "document_start",
+      "all_frames": false,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://*.bilibili.com/*"],
+      "js": ["bilibili-capability-content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://*.bilibili.com/*"],
+      "exclude_matches": [
+        "https://www.bilibili.com/robots.txt?pakku_sandbox",
+        "https://message.bilibili.com/*"
+      ],
+      "js": ["vendor/bilibili/pakku/generated/xhr_hook.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://*.bilibili.com/*"],
+      "exclude_matches": ["https://www.bilibili.com/robots.txt?pakku_sandbox"],
+      "js": ["vendor/bilibili/pakku/generated/content_script.js"],
+      "css": ["vendor/bilibili/pakku/generated/injected.css"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://www.bilibili.com/video/*",
+        "https://www.bilibili.com/bangumi/*",
+        "https://www.bilibili.com/list/*",
+        "https://www.bilibili.com/watchlater*",
+        "https://www.bilibili.com/medialist/*",
+        "https://www.bilibili.com/blackboard/newplayer.html",
+        "https://m.bilibili.com/video/*",
+        "https://m.bilibili.com/bangumi/*",
+        "https://m.bilibili.com/list/*",
+        "https://m.bilibili.com/watchlater*",
+        "https://m.bilibili.com/medialist/*",
+        "https://player.bilibili.com/*"
+      ],
+      "exclude_matches": ["https://live.bilibili.com/*"],
+      "js": [
+        "vendor/bilibili/sponsor/runtime-adapter.js",
+        "vendor/bilibili/sponsor/js/content.js"
+      ],
+      "css": [
+        "vendor/bilibili/sponsor/content.css",
+        "vendor/bilibili/sponsor/shared.css",
+        "vendor/bilibili/sponsor/integration.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "https://www.bilibili.com/video/*",
+        "https://www.bilibili.com/bangumi/*",
+        "https://www.bilibili.com/list/*",
+        "https://www.bilibili.com/watchlater*",
+        "https://www.bilibili.com/medialist/*",
+        "https://www.bilibili.com/blackboard/newplayer.html",
+        "https://m.bilibili.com/video/*",
+        "https://m.bilibili.com/bangumi/*",
+        "https://m.bilibili.com/list/*",
+        "https://m.bilibili.com/watchlater*",
+        "https://m.bilibili.com/medialist/*",
+        "https://player.bilibili.com/*"
+      ],
+      "exclude_matches": ["https://live.bilibili.com/*"],
+      "js": ["vendor/bilibili/sponsor/js/document.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://*.youtube.com/*",
+        "https://www.youtube-nocookie.com/embed/*"
+      ],
+      "exclude_matches": ["https://accounts.youtube.com/RotateCookiesPage*"],
+      "js": [
+        "vendor/youtube/sponsor/runtime-adapter.js",
+        "vendor/youtube/sponsor/js/content.js"
+      ],
+      "css": [
+        "vendor/youtube/sponsor/content.css",
+        "vendor/youtube/sponsor/shared.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "https://*.youtube.com/*",
+        "https://www.youtube-nocookie.com/embed/*"
+      ],
+      "exclude_matches": ["https://accounts.youtube.com/RotateCookiesPage*"],
+      "js": ["vendor/youtube/sponsor/js/document.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["media-speed-proxy.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["gamepad-content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["media-speed-content.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["js/card-master-adapter.js", "js/content-script.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["adguard-content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "adguard-runtime.js",
+        "adguard-cosmetic-runtime.js",
+        "theme-runtime.js",
+        "gamepad-control-content.js",
+        "popup.html",
+        "css/*",
+        "js/*",
+        "lib/*",
+        "img/*",
+        "catch-script/*",
+        "install.html",
+        "project-assets/*",
+        "vendor/bilibili/pakku/generated/*",
+        "vendor/bilibili/pakku/assets/*",
+        "vendor/bilibili/sponsor/icons/*",
+        "vendor/bilibili/sponsor/js/*",
+        "vendor/bilibili/sponsor/*.css",
+        "vendor/bilibili/sponsor/*.html",
+        "vendor/bilibili/sponsor/options/*",
+        "vendor/bilibili/sponsor/help/*",
+        "vendor/bilibili/sponsor/permissions/*",
+        "vendor/bilibili/sponsor/res/*",
+        "vendor/youtube/sponsor/icons/*",
+        "vendor/youtube/sponsor/js/*",
+        "vendor/youtube/sponsor/libs/*",
+        "vendor/youtube/sponsor/*.css",
+        "vendor/youtube/sponsor/*.html",
+        "vendor/youtube/sponsor/options/*",
+        "vendor/youtube/sponsor/help/*",
+        "vendor/youtube/sponsor/permissions/*",
+        "vendor/youtube/sponsor/res/*",
+        "vendor/pinyin-ime/google-pinyin-dictionary.json",
+        "web-accessible-resources/redirects/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_2",
+        "enabled": true,
+        "path": "filters/declarative/ruleset_2/ruleset_2.json"
+      },
+      {
+        "id": "ruleset_3",
+        "enabled": true,
+        "path": "filters/declarative/ruleset_3/ruleset_3.json"
+      },
+      {
+        "id": "ruleset_17",
+        "enabled": true,
+        "path": "filters/declarative/ruleset_17/ruleset_17.json"
+      },
+      {
+        "id": "ruleset_208",
+        "enabled": true,
+        "path": "filters/declarative/ruleset_208/ruleset_208.json"
+      },
+      {
+        "id": "ruleset_224",
+        "enabled": true,
+        "path": "filters/declarative/ruleset_224/ruleset_224.json"
+      },
+      {
+        "id": "ruleset_4",
+        "enabled": false,
+        "path": "filters/declarative/ruleset_4/ruleset_4.json"
+      },
+      {
+        "id": "ruleset_18",
+        "enabled": false,
+        "path": "filters/declarative/ruleset_18/ruleset_18.json"
+      },
+      {
+        "id": "ruleset_19",
+        "enabled": false,
+        "path": "filters/declarative/ruleset_19/ruleset_19.json"
+      },
+      {
+        "id": "ruleset_256",
+        "enabled": false,
+        "path": "filters/declarative/ruleset_256/ruleset_256.json"
+      },
+      {
+        "id": "ruleset_257",
+        "enabled": false,
+        "path": "filters/declarative/ruleset_257/ruleset_257.json"
+      }
+    ]
+  }
+}

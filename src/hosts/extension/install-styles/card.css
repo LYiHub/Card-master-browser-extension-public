@@ -1,0 +1,277 @@
+.install-layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(250px, 318px) minmax(320px, 560px);
+  gap: clamp(42px, 7vw, 100px);
+  align-items: center;
+  justify-content: center;
+  width: min(1080px, 100%);
+  margin: 28px auto 0;
+  transition:
+    grid-template-columns 520ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    gap 520ms cubic-bezier(0.2, 0.76, 0.2, 1);
+}
+
+.install-layout.is-complete {
+  grid-template-columns: 0 minmax(320px, 620px);
+  gap: 0;
+}
+
+.install-card-stage {
+  --manager-accent: #8acdb3;
+  position: relative;
+  width: min(100%, 318px);
+  margin: 0 auto;
+  overflow: visible;
+  perspective: 1200px;
+}
+
+.install-card-wait {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.install-layout.is-complete .install-card-stage {
+  visibility: hidden;
+}
+
+.install-card-motion {
+  --manager-card-radius-x: 4%;
+  --manager-card-radius-y: 3%;
+  --manager-card-radius:
+    var(--manager-card-radius-x) / var(--manager-card-radius-y);
+  --card-glow-strength: 0;
+  --hover-glow: 0;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: visible;
+  border-radius: var(--manager-card-radius);
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.install-card-idle,
+.install-card-tilt,
+.install-card {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.install-card-idle {
+  animation: manager-ambient-card-drift 6.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.install-card-motion.is-card-pointer-active {
+  --hover-glow: 1;
+}
+
+.install-card-motion.is-card-pointer-active .install-card-idle {
+  animation-play-state: paused;
+}
+
+.install-card-tilt {
+  will-change: transform;
+}
+
+.install-card {
+  overflow: visible;
+  border-radius: var(--manager-card-radius);
+  box-shadow:
+    0 32px 56px
+    rgb(0 0 0 / calc(0.62 * max(var(--card-glow-strength), var(--hover-glow)))),
+    0 0 20px 10px
+    color-mix(
+      in srgb,
+      var(--manager-accent)
+        calc(44% * max(var(--card-glow-strength), var(--hover-glow))),
+      transparent
+    ),
+    0 0 42px
+    color-mix(
+      in srgb,
+      var(--manager-accent)
+        calc(62% * max(var(--card-glow-strength), var(--hover-glow))),
+      transparent
+    ),
+    inset 0 0 28px
+    color-mix(
+      in srgb,
+      var(--manager-accent) calc(22% * var(--hover-glow)),
+      transparent
+    );
+  transform: rotateY(0deg);
+  transition: box-shadow 220ms ease;
+  will-change: transform;
+}
+
+.install-card__front,
+.install-card__back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: var(--manager-card-radius);
+  transform-style: preserve-3d;
+}
+
+.install-card__front {
+  overflow: visible;
+}
+
+.install-card__back {
+  overflow: hidden;
+  background: #071011;
+  border: 1px solid rgb(220 184 96 / 0.58);
+  box-shadow:
+    0 28px 80px rgb(0 0 0 / 0.72),
+    inset 0 0 0 2px rgb(255 236 174 / 0.08);
+  transform: rotateY(180deg);
+}
+
+.install-card__back img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.install-card__surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #0c1516;
+  border-radius: var(--manager-card-radius);
+  box-shadow:
+    0 28px 80px rgb(0 0 0 / 0.72),
+    0 0 44px rgb(84 173 143 / 0.16),
+    inset 0 0 0 1px rgb(255 236 174 / 0.1);
+}
+
+.install-card-motion.is-forging .install-card__surface {
+  box-shadow:
+    0 28px 80px rgb(0 0 0 / 0.72),
+    inset 0 0 0 1px rgb(255 236 174 / 0.1);
+}
+
+.install-card__surface > :is(video, img) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.install-card-identity {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  width: 100%;
+  padding: 42px 22px 20px;
+  color: #ece5d5;
+  background: linear-gradient(transparent, rgb(4 7 9 / 0.94) 52%);
+  text-shadow: 0 2px 5px #000;
+  pointer-events: none;
+}
+
+.install-card-identity strong {
+  color: #f2dfaa;
+  font: 800 22px / 1.1 var(--app-ui-font-display);
+}
+
+.install-card-identity small {
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--manager-accent) 72%, #fff);
+  font-family: var(--app-ui-font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.install-card-bottom {
+  position: absolute;
+  z-index: 24;
+  bottom: -4%;
+  left: -2%;
+  width: 104%;
+  height: auto;
+  pointer-events: none;
+}
+
+.install-card-reflection {
+  width: 84%;
+  height: 30px;
+  margin: 12px auto 0;
+  background: radial-gradient(
+    ellipse,
+    rgb(79 157 132 / 0.16) 0 18%,
+    rgb(79 157 132 / 0.08) 38%,
+    transparent 72%
+  );
+  transition: opacity 180ms ease;
+}
+
+.install-layout.is-stowing .install-card-reflection,
+.install-layout.is-complete .install-card-reflection {
+  opacity: 0;
+}
+
+.install-layout.is-stowing .install-card-idle,
+.install-layout.is-complete .install-card-idle {
+  animation: none;
+}
+
+.install-deck-landing {
+  position: fixed;
+  z-index: 40;
+  right: calc(
+    var(--install-deck-entry-anchor-x, 124px) -
+    var(--install-deck-entry-width, 84px) /
+    2
+  );
+  bottom: calc(
+    var(--install-deck-entry-anchor-y, 124px) -
+    var(--install-deck-entry-height, 100px) /
+    2
+  );
+  width: var(--install-deck-entry-width, 84px);
+  height: var(--install-deck-entry-height, 100px);
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 50% 50%;
+}
+
+.install-deck-landing.has-custom-position {
+  top: clamp(
+    var(--install-deck-entry-top-inset),
+    var(--install-deck-entry-y),
+    calc(100% - var(--install-deck-entry-bottom-inset))
+  );
+  right: auto;
+  bottom: auto;
+  left: clamp(
+    var(--install-deck-entry-left-inset),
+    var(--install-deck-entry-x),
+    calc(100% - var(--install-deck-entry-right-inset))
+  );
+  translate: -50% -50%;
+}
+
+.install-deck-landing__slot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--install-deck-entry-logo-size, 56px);
+  height: var(--install-deck-entry-logo-size, 56px);
+  translate: -50% -50%;
+}

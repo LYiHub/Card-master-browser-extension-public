@@ -1,0 +1,112 @@
+:is(:root, :host, .app-ui-theme) {
+  --app-ui-cursor-default:
+    url("/project-assets/userscript-deck/visual/cursors/default.png") 2 1,
+    default;
+  --app-ui-cursor-pointer:
+    url("/project-assets/userscript-deck/visual/cursors/pointer.png") 2 1,
+    pointer;
+  --app-ui-cursor-text: text;
+  --app-ui-cursor-disabled: not-allowed;
+  --app-ui-cursor-wait: wait;
+  --app-ui-cursor-grab: grab;
+  --app-ui-cursor-grabbing: grabbing;
+  cursor: var(--app-ui-cursor-default);
+}
+
+.app-ui-theme {
+  --app-ui-font-body:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  --app-ui-font-display: "Cinzel", "Songti SC", STSong, SimSun, serif;
+  --app-ui-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    monospace;
+  --app-ui-ink: #f3e8c8;
+  --app-ui-muted: #c1ccc7;
+  --app-ui-subtle: #a0afa8;
+  --app-ui-disabled: #84918c;
+  --app-ui-disabled-opacity: 0.68;
+  --app-ui-accent: #d0aa59;
+  --app-ui-accent-hover: #efcf85;
+  --app-ui-on-accent: #17130d;
+  --app-ui-info: #9bc7c0;
+  --app-ui-success: #8fc9aa;
+  --app-ui-warning: #efd18a;
+  --app-ui-error: #e87863;
+  --app-ui-canvas: #07100e;
+  --app-ui-surface: #101917;
+  --app-ui-surface-strong: #0a100f;
+  --app-ui-surface-muted: #16211f;
+  --app-ui-control: #07100e;
+  --app-ui-selected: #24332c;
+  --app-ui-hover: #1d2a26;
+  --app-ui-list: #0d1513;
+  --app-ui-card: #07100e;
+  --app-ui-rule: rgb(139 165 151 / 0.16);
+  --app-ui-border: rgb(208 170 89 / 0.24);
+  --app-ui-border-strong: rgb(208 170 89 / 0.42);
+  --app-ui-accent-soft: rgb(208 170 89 / 0.12);
+  --app-ui-user-accent: #7ca78f;
+  --app-ui-user-soft: rgb(79 119 99 / 0.2);
+  --app-ui-agent-accent: #d0aa59;
+  --app-ui-shadow-subtle: rgb(0 0 0 / 0.32);
+  --app-ui-shadow-menu: rgb(0 0 0 / 0.58);
+  --app-ui-shadow-modal: rgb(0 0 0 / 0.76);
+  --app-ui-status-active: var(--app-ui-success);
+  --app-ui-status-inactive: #b89b77;
+  --app-ui-status-neutral: var(--app-ui-muted);
+  color-scheme: dark;
+}
+
+:is(:root, :host, .app-ui-theme)
+  :where(
+    a[href],
+    button:not(:disabled),
+    summary,
+    label:has(input:not(:disabled)),
+    input:is(
+      [type="button"],
+      [type="checkbox"],
+      [type="color"],
+      [type="file"],
+      [type="radio"],
+      [type="range"],
+      [type="reset"],
+      [type="submit"]
+    ):not(:disabled),
+    [role="button"]:not([aria-disabled="true"]),
+    [role="link"]:not([aria-disabled="true"]),
+    [role="menuitem"]:not([aria-disabled="true"]),
+    [role="option"]:not([aria-disabled="true"])
+  ) {
+  cursor: var(--app-ui-cursor-pointer);
+}
+
+:is(:root, :host, .app-ui-theme)
+  :where(
+    input:not(
+      [type="button"],
+      [type="checkbox"],
+      [type="color"],
+      [type="file"],
+      [type="radio"],
+      [type="range"],
+      [type="reset"],
+      [type="submit"]
+    ),
+    textarea,
+    [contenteditable="true"]
+  ) {
+  cursor: var(--app-ui-cursor-text);
+}
+
+:is(:root, :host, .app-ui-theme)
+  :where(
+    button:disabled,
+    input:disabled,
+    select:disabled,
+    textarea:disabled,
+    [aria-disabled="true"]
+  ) {
+  cursor: var(--app-ui-cursor-disabled);
+}

@@ -1,0 +1,180 @@
+{
+  "manifest_version": 3,
+  "permissions": [
+    "alarms",
+    "clipboardWrite",
+    "cookies",
+    "declarativeNetRequestWithHostAccess",
+    "scripting",
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "webNavigation",
+    "webRequest"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["background.js"]
+  },
+  "commands": {
+    "toggle-card-deck": {
+      "suggested_key": {
+        "default": "Alt+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "展开或收起当前页面的卡牌"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["media-speed-proxy.js", "safari-main-world-bootstrap.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["theme-content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["*://*.bilibili.com/*"],
+      "js": ["bilibili-capability-content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://*.bilibili.com/*"],
+      "exclude_matches": [
+        "https://www.bilibili.com/robots.txt?pakku_sandbox",
+        "https://message.bilibili.com/*"
+      ],
+      "js": ["vendor/bilibili/pakku/assets/xhr_hook_injector.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["*://*.bilibili.com/*"],
+      "exclude_matches": ["https://www.bilibili.com/robots.txt?pakku_sandbox"],
+      "js": ["vendor/bilibili/pakku/generated/content_script.js"],
+      "css": ["vendor/bilibili/pakku/generated/injected.css"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://www.bilibili.com/video/*",
+        "https://www.bilibili.com/bangumi/*",
+        "https://www.bilibili.com/list/*",
+        "https://www.bilibili.com/watchlater*",
+        "https://www.bilibili.com/medialist/*",
+        "https://www.bilibili.com/blackboard/newplayer.html",
+        "https://m.bilibili.com/video/*",
+        "https://m.bilibili.com/bangumi/*",
+        "https://m.bilibili.com/list/*",
+        "https://m.bilibili.com/watchlater*",
+        "https://m.bilibili.com/medialist/*",
+        "https://player.bilibili.com/*"
+      ],
+      "exclude_matches": ["https://live.bilibili.com/*"],
+      "js": [
+        "vendor/bilibili/sponsor/runtime-adapter.js",
+        "vendor/bilibili/sponsor/js/content.js"
+      ],
+      "css": [
+        "vendor/bilibili/sponsor/content.css",
+        "vendor/bilibili/sponsor/shared.css",
+        "vendor/bilibili/sponsor/integration.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "https://*.youtube.com/*",
+        "https://www.youtube-nocookie.com/embed/*"
+      ],
+      "exclude_matches": ["https://accounts.youtube.com/RotateCookiesPage*"],
+      "js": [
+        "vendor/youtube/sponsor/runtime-adapter.js",
+        "vendor/youtube/sponsor/js/content.js"
+      ],
+      "css": [
+        "vendor/youtube/sponsor/content.css",
+        "vendor/youtube/sponsor/shared.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["media-speed-content.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["gamepad-content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["safari-userscript-runtime.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["adguard-content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "adguard-runtime.js",
+        "adguard-cosmetic-runtime.js",
+        "theme-runtime.js",
+        "gamepad-control-content.js",
+        "theme-proxy.js",
+        "media-speed-proxy.js",
+        "bilibili-recommendation-proxy.js",
+        "install.html",
+        "project-assets/*",
+        "vendor/bilibili/pakku/generated/*",
+        "vendor/bilibili/pakku/assets/*",
+        "vendor/bilibili/sponsor/icons/*",
+        "vendor/bilibili/sponsor/js/*",
+        "vendor/bilibili/sponsor/*.css",
+        "vendor/bilibili/sponsor/*.html",
+        "vendor/bilibili/sponsor/options/*",
+        "vendor/bilibili/sponsor/help/*",
+        "vendor/bilibili/sponsor/permissions/*",
+        "vendor/bilibili/sponsor/res/*",
+        "vendor/youtube/sponsor/icons/*",
+        "vendor/youtube/sponsor/js/*",
+        "vendor/youtube/sponsor/libs/*",
+        "vendor/youtube/sponsor/*.css",
+        "vendor/youtube/sponsor/*.html",
+        "vendor/youtube/sponsor/options/*",
+        "vendor/youtube/sponsor/help/*",
+        "vendor/youtube/sponsor/permissions/*",
+        "vendor/youtube/sponsor/res/*",
+        "vendor/pinyin-ime/google-pinyin-dictionary.json",
+        "web-accessible-resources/redirects/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

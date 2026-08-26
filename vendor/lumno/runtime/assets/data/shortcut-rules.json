@@ -1,0 +1,430 @@
+{
+  "items": [
+    {
+      "type": "browserPage",
+      "keys": [
+        "extension",
+        "extensions",
+        "ext",
+        "extension manager",
+        "extensions manager",
+        "扩展",
+        "扩展程序",
+        "插件",
+        "擴充功能",
+        "擴展",
+        "拡張",
+        "拡張機能",
+        "ブラウザ拡張"
+      ],
+      "path": "extensions/"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "flags",
+        "flag",
+        "chrome flags",
+        "实验功能",
+        "实验",
+        "實驗功能",
+        "實驗",
+        "フラグ",
+        "実験機能"
+      ],
+      "path": "flags/"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "settings",
+        "setting",
+        "set",
+        "preferences",
+        "prefs",
+        "设置",
+        "设定",
+        "設定",
+        "偏好设置",
+        "偏好設定",
+        "設定画面"
+      ],
+      "path": "settings/"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "shortcuts",
+        "shortcut",
+        "short",
+        "sc",
+        "keyboard shortcuts",
+        "extensions shortcuts",
+        "快捷键",
+        "扩展快捷键",
+        "快捷鍵",
+        "擴充功能快捷鍵",
+        "ショートカット",
+        "キーボードショートカット"
+      ],
+      "path": "extensions/shortcuts"
+    },
+    {
+      "type": "url",
+      "keys": [
+        "webstore",
+        "webs",
+        "ws",
+        "web store",
+        "chrome web store",
+        "chromewebstore",
+        "应用商店",
+        "网上应用店",
+        "chrome 网上应用店",
+        "網路應用程式商店",
+        "線上應用程式商店",
+        "chrome 網路應用程式商店",
+        "ウェブストア",
+        "chrome ウェブストア"
+      ],
+      "url": "https://chromewebstore.google.com/"
+    },
+    {
+      "type": "browserPage",
+      "searchSourceType": "history",
+      "keys": [
+        "history",
+        "hist",
+        "browser history",
+        "浏览历史",
+        "历史",
+        "历史记录",
+        "瀏覽紀錄",
+        "歷史",
+        "歷史紀錄",
+        "履歴",
+        "閲覧履歴"
+      ],
+      "path": "history"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "downloads",
+        "download",
+        "dl",
+        "download history",
+        "下载",
+        "下载记录",
+        "下載",
+        "下載紀錄",
+        "ダウンロード"
+      ],
+      "path": "downloads"
+    },
+    {
+      "type": "browserPage",
+      "searchSourceType": "bookmark",
+      "keys": [
+        "bookmarks",
+        "bookmark",
+        "bm",
+        "favorites",
+        "favourites",
+        "书签",
+        "书签管理",
+        "書籤",
+        "書籤管理",
+        "ブックマーク"
+      ],
+      "path": "bookmarks"
+    },
+    {
+      "type": "searchScope",
+      "searchSourceType": "topSite",
+      "keys": [
+        "frequent",
+        "frequently visited",
+        "top site",
+        "top sites",
+        "common",
+        "常用",
+        "常用网站",
+        "常用站点",
+        "常用網站",
+        "よく使う",
+        "よく見るサイト"
+      ]
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "passwords",
+        "password",
+        "password manager",
+        "pwd",
+        "pass",
+        "密码",
+        "密码管理",
+        "密碼",
+        "密碼管理",
+        "パスワード",
+        "パスワードマネージャー"
+      ],
+      "path": "password-manager/passwords"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "newtab",
+        "new tab",
+        "nt",
+        "新标签",
+        "新标签页",
+        "新分頁",
+        "新分頁頁面",
+        "新規タブ",
+        "新しいタブ"
+      ],
+      "path": "newtab"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "version",
+        "versions",
+        "ver",
+        "about chrome",
+        "chrome version",
+        "版本",
+        "版本信息",
+        "版本資訊",
+        "バージョン"
+      ],
+      "path": "version"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "about",
+        "chrome about",
+        "internal pages",
+        "internal urls",
+        "chrome internal pages",
+        "内部页面",
+        "内部网页",
+        "内部网址",
+        "內部頁面",
+        "內部網址",
+        "内部ページ",
+        "内部url"
+      ],
+      "path": "about"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "chrome urls",
+        "chrome-urls",
+        "chrome url",
+        "chrome urls list",
+        "chrome 内部页面",
+        "chrome 內部頁面",
+        "chrome 内部ページ"
+      ],
+      "path": "chrome-urls"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "gpu",
+        "graphics",
+        "hardware acceleration",
+        "gpu status",
+        "硬件加速",
+        "硬體加速",
+        "图形",
+        "圖形",
+        "gpu 状态",
+        "gpu 狀態",
+        "グラフィック",
+        "gpuステータス"
+      ],
+      "path": "gpu"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "net-export",
+        "net export",
+        "network log",
+        "network logs",
+        "net log",
+        "网络日志",
+        "网络记录",
+        "網路日誌",
+        "網路記錄",
+        "ネットワークログ"
+      ],
+      "path": "net-export"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "dns",
+        "dns cache",
+        "dns 缓存",
+        "dns 快取",
+        "dnsキャッシュ"
+      ],
+      "path": "dns"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "crashes",
+        "crash",
+        "crash reports",
+        "崩溃",
+        "崩溃记录",
+        "當機",
+        "當機記錄",
+        "クラッシュ",
+        "クラッシュレポート"
+      ],
+      "path": "crashes"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "inspect",
+        "inspect devices",
+        "devtools inspect",
+        "remote debug",
+        "remote debugging",
+        "检查",
+        "检查设备",
+        "檢查",
+        "檢查裝置",
+        "検証",
+        "検証デバイス",
+        "インスペクト"
+      ],
+      "path": "inspect"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "service worker",
+        "service workers",
+        "serviceworker",
+        "serviceworker internals",
+        "服务工作线程",
+        "服务工作器",
+        "服務工作者",
+        "服務工作執行緒",
+        "サービスワーカー"
+      ],
+      "path": "serviceworker-internals"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "quota",
+        "quota internals",
+        "storage quota",
+        "存储配额",
+        "储存配额",
+        "儲存空間配額",
+        "儲存配額",
+        "ストレージクォータ",
+        "クォータ"
+      ],
+      "path": "quota-internals"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "site engagement",
+        "site score",
+        "站点参与度",
+        "网站参与度",
+        "網站參與度",
+        "サイトエンゲージメント"
+      ],
+      "path": "site-engagement"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "discards",
+        "discarded tabs",
+        "tab discards",
+        "tabs memory",
+        "memory tabs",
+        "标签页丢弃",
+        "标签页内存",
+        "分頁捨棄",
+        "分頁記憶體",
+        "タブ破棄",
+        "タブメモリ"
+      ],
+      "path": "discards"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "webrtc",
+        "webrtc internals",
+        "webrtc debug",
+        "实时音视频",
+        "实时通信",
+        "即時通訊",
+        "webrtcデバッグ"
+      ],
+      "path": "webrtc-internals"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "tracing",
+        "trace",
+        "performance trace",
+        "性能追踪",
+        "性能追蹤",
+        "跟踪",
+        "追蹤",
+        "トレース"
+      ],
+      "path": "tracing"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "policy",
+        "policies",
+        "browser policy",
+        "enterprise policy",
+        "策略",
+        "浏览器策略",
+        "瀏覽器政策",
+        "ポリシー"
+      ],
+      "path": "policy"
+    },
+    {
+      "type": "browserPage",
+      "keys": [
+        "management",
+        "managed",
+        "browser management",
+        "管理",
+        "管理页面",
+        "管理頁面",
+        "管理ページ",
+        "マネージメント"
+      ],
+      "path": "management"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "adguard-base",
+    "filterId": 2,
+    "name": "AdGuard 基础过滤器",
+    "description": "EasyList 与 AdGuard 英文广告规则",
+    "group": "ads",
+    "defaultEnabled": true,
+    "ruleCount": 75777
+  },
+  {
+    "id": "adguard-tracking",
+    "filterId": 3,
+    "name": "AdGuard 跟踪保护",
+    "description": "分析、计数器与跨站跟踪规则",
+    "group": "privacy",
+    "defaultEnabled": true,
+    "ruleCount": 93970
+  },
+  {
+    "id": "adguard-url-tracking",
+    "filterId": 17,
+    "name": "AdGuard URL 跟踪保护",
+    "description": "移除链接中的常见跟踪参数",
+    "group": "privacy",
+    "defaultEnabled": true,
+    "ruleCount": 2403
+  },
+  {
+    "id": "online-malicious-url",
+    "filterId": 208,
+    "name": "Online Malicious URL Blocklist",
+    "description": "恶意软件与间谍软件传播地址",
+    "group": "security",
+    "defaultEnabled": true,
+    "ruleCount": 9394
+  },
+  {
+    "id": "adguard-chinese",
+    "filterId": 224,
+    "name": "AdGuard 中文过滤器",
+    "description": "EasyList China 与 AdGuard 中文规则",
+    "group": "regional",
+    "defaultEnabled": true,
+    "ruleCount": 12953
+  },
+  {
+    "id": "adguard-social",
+    "filterId": 4,
+    "name": "AdGuard 社交媒体过滤器",
+    "description": "点赞、分享与社交小部件",
+    "group": "social",
+    "defaultEnabled": false,
+    "ruleCount": 630
+  },
+  {
+    "id": "adguard-cookie-notices",
+    "filterId": 18,
+    "name": "AdGuard Cookie 提醒",
+    "description": "Cookie 同意与隐私提示",
+    "group": "annoyances",
+    "defaultEnabled": false,
+    "ruleCount": 2733
+  },
+  {
+    "id": "adguard-popups",
+    "filterId": 19,
+    "name": "AdGuard 弹窗过滤器",
+    "description": "非必要站内弹窗与覆盖层",
+    "group": "annoyances",
+    "defaultEnabled": false,
+    "ruleCount": 2150
+  },
+  {
+    "id": "durable-napkin-scam",
+    "filterId": 256,
+    "name": "Scam Blocklist",
+    "description": "不可信与欺诈网站",
+    "group": "security",
+    "defaultEnabled": false,
+    "ruleCount": 974
+  },
+  {
+    "id": "ublock-badware",
+    "filterId": 257,
+    "name": "uBlock Origin - Badware risks",
+    "description": "风险站点与潜在有害内容",
+    "group": "security",
+    "defaultEnabled": false,
+    "ruleCount": 4092
+  }
+]

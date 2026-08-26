@@ -1,0 +1,19 @@
+.cat-catch-popup-frame {
+  position: fixed;
+  z-index: 120;
+  min-height: 6rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: transparent;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 24%);
+  pointer-events: auto;
+}
+
+.cat-catch-popup-frame iframe {
+  display: block;
+  width: 100%;
+  height: var(--cat-catch-popup-content-height, 6rem);
+  background: transparent;
+  border: 0;
+}

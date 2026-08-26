@@ -1,0 +1,113 @@
+.page-target-frame {
+  isolation: isolate;
+  box-sizing: border-box;
+  background:
+    linear-gradient(135deg, rgb(117 75 17 / 0.13), transparent 42%),
+    rgb(35 23 9 / 0.14);
+  border: 0;
+  box-shadow:
+    0 2px 7px rgb(18 12 6 / 0.3),
+    0 0 20px rgb(190 149 70 / 0.3),
+    0 0 38px rgb(89 66 31 / 0.2);
+  animation: page-target-frame-lock 760ms ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.page-target-frame::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 0.5px),
+      rgb(244 211 132 / 0.28) 50%,
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(
+      0deg,
+      transparent calc(50% - 0.5px),
+      rgb(244 211 132 / 0.22) 50%,
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(
+      180deg,
+      transparent 0 43%,
+      rgb(244 207 116 / 0.08) 46%,
+      rgb(255 224 145 / 0.34) 50%,
+      rgb(244 207 116 / 0.08) 54%,
+      transparent 57% 100%
+    );
+  background-position:
+    center,
+    center,
+    center -180%;
+  background-repeat: no-repeat;
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 280%;
+  border-radius: inherit;
+  opacity: 0.78;
+  animation: page-target-frame-scan 1.35s ease-in-out infinite;
+}
+
+.page-target-frame::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  box-sizing: border-box;
+  content: "";
+  border: 8px solid transparent;
+  border-radius: inherit;
+  border-image-source: url("/project-assets/userscript-deck/visual/ui/interface/surfaces/badge-frame.webp");
+  border-image-slice: 12;
+  border-image-repeat: round;
+  filter: saturate(1.1) contrast(1.12) brightness(1.12)
+    drop-shadow(0 1px 1px rgb(17 12 6 / 0.96))
+    drop-shadow(0 0 4px rgb(229 200 126 / 0.72))
+    drop-shadow(0 0 11px rgb(126 94 43 / 0.5));
+  transition: filter 180ms ease;
+}
+
+@keyframes page-target-frame-lock {
+  from {
+    box-shadow:
+      0 2px 6px rgb(18 12 6 / 0.26),
+      0 0 16px rgb(178 137 63 / 0.24),
+      0 0 30px rgb(89 66 31 / 0.17);
+  }
+  to {
+    box-shadow:
+      0 2px 8px rgb(18 12 6 / 0.34),
+      0 0 26px rgb(211 173 91 / 0.4),
+      0 0 46px rgb(100 75 36 / 0.25);
+  }
+}
+
+@keyframes page-target-frame-scan {
+  0% {
+    background-position:
+      center,
+      center,
+      center -180%;
+  }
+  54%,
+  100% {
+    background-position:
+      center,
+      center,
+      center 180%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-target-frame,
+  .page-target-frame::before,
+  .page-target-frame::after {
+    animation-duration: 120ms;
+    animation-iteration-count: 1;
+    transition-duration: 80ms;
+  }
+}

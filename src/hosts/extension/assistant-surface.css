@@ -1,0 +1,62 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+}
+
+html,
+body,
+#assistant-surface-root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  min-width: 280px;
+  background: #07100e;
+}
+
+#assistant-surface-root[data-error="true"] {
+  box-sizing: border-box;
+  padding: 20px;
+  overflow: auto;
+  color: #ee9a82;
+  font:
+    13px / 1.6 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+  white-space: pre-wrap;
+  background: #0a100f;
+  border-left: 2px solid #ee9a82;
+}
+
+.assistant-surface-fatal {
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: 20px;
+  overflow: auto;
+  color: #ee9a82;
+  font:
+    13px / 1.6 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+  white-space: pre-wrap;
+  background: #0a100f;
+  border-left: 2px solid #ee9a82;
+}
+
+.assistant-surface-fatal strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.assistant-surface-fatal p {
+  margin: 0;
+}

@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "minimum_chrome_version": "135",
+  "permissions": [
+    "alarms",
+    "bookmarks",
+    "clipboardWrite",
+    "cookies",
+    "declarativeNetRequestWithHostAccess",
+    "downloads",
+    "favicon",
+    "history",
+    "notifications",
+    "offscreen",
+    "search",
+    "scripting",
+    "sidePanel",
+    "storage",
+    "tabs",
+    "topSites",
+    "unlimitedStorage",
+    "userScripts",
+    "webNavigation",
+    "webRequest"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "assistant.html"
+  },
+  "incognito": "split"
+}

@@ -1,0 +1,217 @@
+.app-ui-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 12px;
+  color: var(--app-ui-ink);
+  cursor: var(--app-ui-cursor-pointer);
+  background: var(--app-ui-surface);
+  border: 1px solid var(--app-ui-border);
+  transition:
+    background-color var(--app-motion-duration-fast)
+    var(--app-motion-ease-surface),
+    border-color var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    box-shadow var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    transform var(--app-motion-duration-fast) var(--app-motion-ease-surface);
+}
+
+.app-ui-toggle.is-compact {
+  min-height: 44px;
+  padding: 6px 8px;
+  background: transparent;
+}
+
+.app-ui-toggle > span:first-child {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.app-ui-toggle strong {
+  color: var(--app-ui-ink);
+  font-size: 14px;
+}
+
+.app-ui-toggle small {
+  color: var(--app-ui-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.app-ui-toggle input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-ui-toggle__control {
+  position: relative;
+  display: block;
+  width: 68px;
+  height: 30px;
+  overflow: hidden;
+  color: var(--app-ui-muted);
+  background: color-mix(
+    in srgb,
+    var(--app-ui-surface-muted) 82%,
+    var(--app-ui-ink)
+  );
+  border: 2px solid var(--app-ui-border-strong);
+  border-radius: 15px;
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.14),
+    0 1px 0 rgb(255 255 255 / 0.42);
+  transition:
+    background-color var(--app-motion-duration-fast)
+    var(--app-motion-ease-surface),
+    border-color var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    box-shadow var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    color var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    transform var(--app-motion-duration-fast) var(--app-motion-ease-surface);
+}
+
+.app-ui-toggle__control > i {
+  --app-motion-toggle-travel: 36px;
+  --app-motion-toggle-overshoot: 3px;
+  --app-motion-toggle-settle: 2px;
+  --app-motion-toggle-off-rotation: 0deg;
+  --app-motion-toggle-on-rotation: 0deg;
+  position: absolute;
+  z-index: 2;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  content: "";
+  background: var(--app-ui-surface-strong);
+  border: 1px solid color-mix(in srgb, var(--app-ui-ink) 30%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 2px 5px rgb(0 0 0 / 0.28),
+    inset 0 1px rgb(255 255 255 / 0.72);
+  transition:
+    background-color var(--app-motion-duration-fast)
+    var(--app-motion-ease-surface),
+    border-color var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    box-shadow var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    translate var(--app-motion-duration-medium) var(--app-motion-ease-pop);
+}
+
+.app-ui-toggle__control > b {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  color: currentcolor;
+  font-family: var(--app-ui-font-mono, ui-monospace);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  translate: 0 -50%;
+}
+
+.app-ui-toggle:is(:hover, :focus-within):not(.is-disabled) {
+  border-color: color-mix(
+    in srgb,
+    var(--app-ui-accent) 48%,
+    var(--app-ui-border)
+  );
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-ui-accent) 9%, transparent);
+}
+
+.app-ui-toggle:is(:hover, :focus-within):not(.is-disabled)
+  .app-ui-toggle__control {
+  border-color: color-mix(
+    in srgb,
+    var(--app-ui-accent) 64%,
+    var(--app-ui-border-strong)
+  );
+}
+
+.app-ui-toggle.is-checked {
+  background: color-mix(
+    in srgb,
+    var(--app-ui-success) 7%,
+    var(--app-ui-surface)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--app-ui-success) 42%,
+    var(--app-ui-border)
+  );
+}
+
+.app-ui-toggle.is-checked strong {
+  color: var(--app-ui-success);
+}
+
+.app-ui-toggle.is-checked .app-ui-toggle__control {
+  color: #fff;
+  background: var(--app-ui-success);
+  border-color: color-mix(in srgb, var(--app-ui-success) 72%, #10281d);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.18),
+    0 0 0 3px color-mix(in srgb, var(--app-ui-success) 14%, transparent);
+}
+
+.app-ui-toggle.is-checked .app-ui-toggle__control > i {
+  background: #fffdf5;
+  border-color: rgb(20 58 40 / 0.4);
+  box-shadow:
+    0 2px 6px rgb(0 0 0 / 0.32),
+    0 0 0 1px rgb(255 255 255 / 0.3);
+  translate: var(--app-motion-toggle-travel) 0;
+}
+
+.app-ui-toggle.is-checked .app-ui-toggle__control > b {
+  right: auto;
+  left: 10px;
+}
+
+.app-ui-toggle.is-interacted.is-checked .app-ui-toggle__control > i {
+  animation: app-motion-toggle-on var(--app-motion-duration-medium)
+    var(--app-motion-ease-pop) both;
+}
+
+.app-ui-toggle.is-interacted:not(.is-checked) .app-ui-toggle__control > i {
+  animation: app-motion-toggle-off var(--app-motion-duration-medium)
+    var(--app-motion-ease-pop) both;
+}
+
+.app-ui-toggle.is-disabled {
+  cursor: var(--app-ui-cursor-disabled);
+  opacity: var(--app-ui-disabled-opacity);
+}
+
+.app-ui-toggle.is-disabled .app-ui-toggle__control {
+  filter: grayscale(0.7);
+  box-shadow: none;
+}
+
+:host([data-card-master-input-modality="gamepad"])
+  .app-ui-toggle:has(input:focus),
+:root[data-card-master-input-modality="gamepad"]
+  .app-ui-toggle:has(input:focus),
+.app-ui-toggle:has(input:focus-visible) {
+  outline: 0;
+  border-color: var(--app-ui-accent);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--app-ui-accent) 22%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-ui-toggle,
+  .app-ui-toggle__control,
+  .app-ui-toggle__control > i {
+    transition-duration: var(--app-motion-duration-reduced);
+    transition-delay: 0s;
+  }
+
+  .app-ui-toggle__control > i {
+    animation-duration: 120ms;
+  }
+}

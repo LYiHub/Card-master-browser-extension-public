@@ -1,0 +1,156 @@
+:root {
+  color: #ece5d5;
+  background: #070b0c;
+  font-family:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  cursor: var(--app-ui-cursor-default);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img,
+video {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+button {
+  color: inherit;
+  font: inherit;
+}
+
+:where(button, a, summary, [role="button"]) {
+  cursor: var(--app-ui-cursor-pointer);
+}
+
+:where(button, a, input, select, textarea, summary):focus,
+:where(button, a, input, select, textarea, summary):focus-visible {
+  outline: 0;
+}
+
+:where(input, select, textarea):focus-visible {
+  border-color: rgb(220 184 96 / 0.68);
+  box-shadow: 0 0 0 1px rgb(220 184 96 / 0.2);
+}
+
+.userscript-installer {
+  position: relative;
+  min-height: 100dvh;
+  padding: 1px clamp(18px, 4vw, 64px) 56px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background:
+    radial-gradient(ellipse at 50% 18%, rgb(36 28 16 / 0.42), transparent 46%),
+    repeating-linear-gradient(
+      0deg,
+      rgb(214 179 99 / 0.018) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(214 179 99 / 0.014) 0 1px,
+      transparent 1px 5px
+    ),
+    linear-gradient(180deg, #0b1012, #070b0c 46%, #050708);
+  isolation: isolate;
+}
+
+.userscript-installer.is-loading-preview {
+  overflow: hidden;
+}
+
+.install-atmosphere {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(2 6 7 / 0.72),
+      transparent 34% 66%,
+      rgb(2 6 7 / 0.72)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 79px,
+      rgb(214 179 99 / 0.022) 80px
+    );
+  pointer-events: none;
+}
+
+.install-corner-back {
+  position: fixed;
+  z-index: 20;
+  top: 22px;
+  left: clamp(18px, 4vw, 64px);
+}
+
+.install-integrity {
+  position: fixed;
+  z-index: 20;
+  top: 29px;
+  right: clamp(18px, 4vw, 64px);
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  max-width: min(280px, calc(100vw - 92px));
+  color: #9fd0bc;
+  font:
+    700 13px / 1.35 ui-monospace,
+    monospace;
+  text-align: right;
+}
+
+.install-integrity.is-error {
+  color: #f0a38e;
+}
+
+.install-focus-header {
+  --context-plaque-width: min(760px, calc(100% - 84px));
+  --context-plaque-title-size: 38px;
+  --context-plaque-description-width: 620px;
+  --context-plaque-description-size: 14px;
+  position: relative;
+  z-index: 2;
+  top: auto;
+  left: auto;
+  width: var(--context-plaque-width);
+  min-height: 0;
+  margin: 68px auto 0;
+  padding: 0;
+  overflow: visible;
+  color: #eadfbe;
+  text-align: center;
+  transform: none;
+  pointer-events: none;
+}
+
+.install-focus-header::before {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: min(880px, 96vw);
+  height: 100%;
+  min-height: 230px;
+  content: "";
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(5 10 12 / 0.78),
+    rgb(5 10 12 / 0.42) 52%,
+    transparent 74%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}

@@ -1,0 +1,168 @@
+:root,
+:host {
+  --app-motion-duration-quick: 150ms;
+  --app-motion-duration-fast: 250ms;
+  --app-motion-duration-medium: 350ms;
+  --app-motion-duration-reduced: 80ms;
+  --app-motion-ease-surface: cubic-bezier(0.22, 1, 0.36, 1);
+  --app-motion-ease-swap: ease-in-out;
+  --app-motion-ease-pop: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --app-motion-distance-micro: 4px;
+  --app-motion-scale-modal: 0.96;
+  --app-motion-scale-dropdown: 0.97;
+  --app-motion-scale-dropdown-close: 0.99;
+}
+
+.app-motion-icon-swap {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: max-content;
+  height: max-content;
+  line-height: 0;
+  place-items: center;
+}
+
+.app-motion-icon-swap__item {
+  display: inline-grid;
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: scale(0.72);
+  transition:
+    opacity var(--app-motion-duration-fast) var(--app-motion-ease-swap),
+    transform var(--app-motion-duration-fast) var(--app-motion-ease-swap);
+  place-items: center;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.app-motion-icon-swap__item.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.app-motion-dropdown {
+  opacity: 0;
+  transform: scale(var(--app-motion-scale-dropdown));
+  transform-origin: top right;
+  transition:
+    opacity var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    transform var(--app-motion-duration-fast) var(--app-motion-ease-surface);
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.app-motion-dropdown.is-open {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.app-motion-dropdown.is-closing {
+  opacity: 0;
+  transform: scale(var(--app-motion-scale-dropdown-close));
+  transition-duration: var(--app-motion-duration-quick);
+  pointer-events: none;
+}
+
+.app-motion-backdrop {
+  opacity: 0;
+  transition: opacity var(--app-motion-duration-fast)
+    var(--app-motion-ease-surface);
+  will-change: opacity;
+}
+
+.app-motion-backdrop.is-open {
+  opacity: 1;
+}
+
+.app-motion-backdrop.is-closing {
+  opacity: 0;
+  transition-duration: var(--app-motion-duration-quick);
+}
+
+.app-motion-modal {
+  opacity: 0;
+  transform: scale(var(--app-motion-scale-modal));
+  transform-origin: center;
+  transition:
+    opacity var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    transform var(--app-motion-duration-fast) var(--app-motion-ease-surface);
+  will-change: opacity, transform;
+}
+
+.app-motion-modal.is-open {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.app-motion-modal.is-closing {
+  opacity: 0;
+  transform: scale(var(--app-motion-scale-modal));
+  transition-duration: var(--app-motion-duration-quick);
+  pointer-events: none;
+}
+
+@keyframes app-motion-toggle-on {
+  0% {
+    translate: 0 0;
+    rotate: var(--app-motion-toggle-off-rotation);
+  }
+
+  58% {
+    translate: calc(
+        var(--app-motion-toggle-travel) +
+        var(--app-motion-toggle-overshoot)
+      )
+      0;
+  }
+
+  82% {
+    translate: calc(
+        var(--app-motion-toggle-travel) -
+        var(--app-motion-toggle-settle)
+      )
+      0;
+  }
+
+  100% {
+    translate: var(--app-motion-toggle-travel) 0;
+    rotate: var(--app-motion-toggle-on-rotation);
+  }
+}
+
+@keyframes app-motion-toggle-off {
+  0% {
+    translate: var(--app-motion-toggle-travel) 0;
+    rotate: var(--app-motion-toggle-on-rotation);
+  }
+
+  58% {
+    translate: calc(0px - var(--app-motion-toggle-overshoot)) 0;
+  }
+
+  82% {
+    translate: var(--app-motion-toggle-settle) 0;
+  }
+
+  100% {
+    translate: 0 0;
+    rotate: var(--app-motion-toggle-off-rotation);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-motion-icon-swap__item,
+  .app-motion-dropdown,
+  .app-motion-dropdown.is-open,
+  .app-motion-dropdown.is-closing,
+  .app-motion-backdrop,
+  .app-motion-backdrop.is-open,
+  .app-motion-backdrop.is-closing,
+  .app-motion-modal,
+  .app-motion-modal.is-open,
+  .app-motion-modal.is-closing {
+    transition-duration: var(--app-motion-duration-reduced);
+    transition-delay: 0s;
+  }
+}

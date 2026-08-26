@@ -1,0 +1,119 @@
+.install-decision {
+  min-width: 0;
+  padding: 12px 0 12px clamp(24px, 4vw, 46px);
+  border-left: 1px solid rgb(219 181 96 / 0.24);
+}
+
+.install-layout.is-complete .install-decision {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.install-decision__title {
+  margin: 0 0 11px;
+  color: #f1e5c8;
+  font-size: 32px;
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+.install-decision__description {
+  max-width: 520px;
+  margin: 0;
+  color: #aebdb7;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.install-decision > .card-status-notice {
+  margin-top: 20px;
+}
+
+.install-readiness {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 13px;
+  align-items: start;
+  margin-top: 22px;
+  padding: 15px 16px;
+  color: #a9dbc6;
+  background: rgb(38 101 80 / 0.14);
+  border-left: 3px solid #66b598;
+}
+
+.install-readiness.is-error {
+  color: #f0a38e;
+  background: rgb(129 49 33 / 0.15);
+  border-color: #d07158;
+}
+
+.install-readiness.is-success {
+  color: #e7cc84;
+  background: rgb(123 91 26 / 0.14);
+  border-color: #d1ad53;
+}
+
+.install-readiness__title {
+  font-size: 13px;
+}
+
+.install-readiness__description {
+  margin: 5px 0 0;
+  color: #bdc8c3;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.install-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 20px;
+  background: rgb(101 151 133 / 0.16);
+  border: 1px solid rgb(101 151 133 / 0.16);
+}
+
+.install-summary > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-height: 62px;
+  padding: 11px 12px;
+  color: #85bca5;
+  background: rgb(7 15 16 / 0.88);
+}
+
+.install-summary > div > span {
+  display: grid;
+  min-width: 0;
+}
+
+.install-summary__title {
+  overflow: hidden;
+  color: #d9e3de;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.install-summary__description {
+  margin-top: 4px;
+  color: #71867d;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.install-decision__actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.install-decision__actions .app-ui-button {
+  min-width: 0;
+  white-space: nowrap;
+}

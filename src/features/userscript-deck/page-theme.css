@@ -1,0 +1,90 @@
+.manager-theme-primary-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: row;
+  width: 100%;
+}
+
+.manager-theme-primary-tabs > label {
+  width: 100%;
+  min-width: 0;
+}
+
+.manager-theme-panel {
+  display: grid;
+  grid-column: 1;
+  align-content: start;
+  gap: 16px;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.manager-theme-scope-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+  width: 100%;
+}
+
+.manager-theme-scope-tabs > button {
+  width: 100%;
+  min-width: 0;
+}
+
+.manager-theme-grid,
+.manager-theme-range-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.manager-theme-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-theme-panel .app-ui-field,
+.manager-theme-panel .app-ui-toggle,
+.manager-theme-panel .app-ui-notice {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.manager-theme-panel .app-ui-field input,
+.manager-theme-panel .app-ui-field select,
+.manager-theme-panel .app-ui-field textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.manager-theme-panel .app-ui-field textarea {
+  min-height: 132px;
+  resize: vertical;
+}
+
+.manager-theme-import {
+  display: none;
+}
+
+@container app-ui-dialog-body (max-width: 36rem) {
+  .manager-theme-panel {
+    gap: 12px;
+  }
+
+  .manager-theme-grid,
+  .manager-theme-range-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}

@@ -1,0 +1,46 @@
+.manager-bilibili-capability-intro {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px 16px;
+  color: var(--app-ui-ink);
+  background: var(--app-ui-surface);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-bilibili-capability-intro strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--app-ui-accent);
+  font-size: 16px;
+}
+
+.manager-bilibili-capability-intro p {
+  margin: 0;
+  color: var(--app-ui-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.manager-bilibili-capability-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+
+.manager-bilibili-capability-grid > :is(.app-ui-notice, .app-ui-segmented) {
+  grid-column: 1 / -1;
+}
+
+.manager-bilibili-capability-grid :is(input, select) {
+  width: 100%;
+  min-width: 0;
+}
+
+@container app-ui-dialog-body (max-width: 40rem) {
+  .manager-bilibili-capability-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

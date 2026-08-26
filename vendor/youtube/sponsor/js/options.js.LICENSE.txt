@@ -1,0 +1,1 @@
+This bundle shares its complete third-party license text with content.js.LICENSE.txt in this directory.

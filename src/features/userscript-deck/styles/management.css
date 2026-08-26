@@ -1,0 +1,466 @@
+.manager-management-workspace {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.manager-management-workspace > *,
+.manager-management-workspace :where(section, div, dl, label) {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.manager-management-section {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  color: var(--app-ui-ink);
+  background: var(--app-ui-surface);
+  border: 1px solid var(--app-ui-border);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.38),
+    0 12px 28px rgb(37 46 40 / 0.08);
+}
+
+.manager-section-heading {
+  display: grid;
+  gap: 5px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--app-ui-rule);
+}
+
+.manager-section-heading > strong {
+  color: var(--app-ui-ink);
+  font: 800 17px / 1.25 var(--app-ui-font-display);
+}
+
+.manager-section-heading > p {
+  margin: 0;
+  color: var(--app-ui-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.manager-card-identity-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.manager-cover-workspace {
+  display: grid;
+  grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.manager-cover-editor,
+.manager-card-copy-editor {
+  display: grid;
+  gap: 11px;
+}
+
+.manager-cover-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: rgb(1 5 6 / 0.92);
+  border: 1px solid rgb(210 173 88 / 0.3);
+  border-radius: 4% / 3%;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 244 205 / 0.04),
+    0 12px 24px rgb(0 0 0 / 0.28);
+}
+
+.manager-cover-preview img,
+.manager-cover-preview video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.manager-cover-generation-loader.app-ui-loader {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  min-height: 0;
+  padding: 16px 8px;
+  box-sizing: border-box;
+  background:
+    linear-gradient(rgb(4 9 10 / 0.88), rgb(5 10 11 / 0.94)),
+    url("/project-assets/userscript-deck/visual/ui/interface/surfaces/badge-texture.webp")
+    center / cover;
+}
+
+.manager-cover-generation-loader .app-ui-loader__label {
+  max-width: 150px;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.manager-cover-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.manager-cover-editor__label {
+  color: var(--app-ui-ink);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.manager-cover-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 12px;
+  align-items: center;
+}
+
+.manager-cover-upload-row > small {
+  flex: 1 1 260px;
+  color: var(--app-ui-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.manager-card-copy-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.manager-card-copy-editor .app-ui-field,
+.manager-card-copy-editor .app-ui-toggle,
+.manager-card-copy-fields .app-ui-field {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.manager-card-copy-editor .app-ui-field :where(input, textarea) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.manager-card-copy-fields .app-ui-field :where(input, textarea) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.manager-card-copy-editor textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.manager-script-description-field textarea {
+  min-height: 64px;
+  resize: vertical;
+}
+
+.manager-cover-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.manager-cover-actions .app-ui-button {
+  min-width: 128px;
+}
+
+.manager-update-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 13px 14px;
+  background: var(--app-ui-surface-strong);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-update-status {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding-right: 40px;
+}
+
+.manager-update-status > span {
+  color: var(--app-ui-success);
+  font: 800 14px / 1.2 var(--app-ui-font-display);
+}
+
+.manager-update-status > p {
+  margin: 0;
+  color: var(--app-ui-ink);
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.manager-update-status .diagnostic-copy-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.manager-update-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.manager-update-actions .app-ui-button {
+  min-width: 108px;
+}
+
+.manager-rule-overrides {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.manager-rule-overrides label {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  color: var(--app-ui-ink);
+  background: var(--app-ui-surface-strong);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-rule-overrides label > span {
+  font:
+    700 13px / 1.25 ui-monospace,
+    monospace;
+}
+
+.manager-rule-overrides textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 76px;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: vertical;
+  overflow: auto;
+  color: var(--app-ui-ink);
+  font:
+    500 13px / 1.5 ui-monospace,
+    monospace;
+  background: var(--app-ui-control);
+  border: 1px solid var(--app-ui-border);
+  border-radius: 0;
+  outline: none;
+}
+
+.manager-rule-overrides textarea:focus {
+  border-color: var(--app-ui-accent);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--app-ui-accent) 18%, transparent);
+}
+
+.manager-manifest {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.manager-manifest dl {
+  display: grid;
+  gap: 1px;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--app-ui-border);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-manifest dl > div {
+  display: grid;
+  grid-template-columns: minmax(96px, 118px) minmax(0, 1fr);
+  gap: 16px;
+  padding: 11px 13px;
+  background: var(--app-ui-surface-strong);
+}
+
+.manager-manifest dt {
+  color: var(--app-ui-accent);
+  font: 700 13px / 1.45 var(--app-ui-font-display);
+}
+
+.manager-manifest dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--app-ui-ink);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.manager-manifest-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.manager-manifest-links a {
+  color: var(--app-ui-info);
+  text-underline-offset: 3px;
+}
+
+.manager-metadata-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.manager-metadata-group {
+  padding: 12px;
+  background: var(--app-ui-surface-strong);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-metadata-group > span {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--app-ui-success);
+  font: 800 13px / 1.25 var(--app-ui-font-display);
+}
+
+.manager-metadata-group__values {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.manager-metadata-group code {
+  display: block;
+  width: 100%;
+  padding: 7px 8px;
+  box-sizing: border-box;
+  color: var(--app-ui-ink);
+  font:
+    600 12px / 1.45 ui-monospace,
+    monospace;
+  overflow-wrap: anywhere;
+  background: var(--app-ui-surface-muted);
+}
+
+.manager-runtime-diagnostic {
+  width: 100%;
+  overflow: hidden;
+  color: var(--app-ui-error);
+  background: color-mix(
+    in srgb,
+    var(--app-ui-error) 7%,
+    var(--app-ui-surface-strong)
+  );
+  border: 1px solid color-mix(in srgb, var(--app-ui-error) 32%, transparent);
+}
+
+.manager-runtime-diagnostic > summary {
+  padding: 10px 12px;
+  color: var(--app-ui-error);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: var(--app-ui-cursor-pointer);
+  list-style: none;
+}
+
+.manager-runtime-diagnostic > summary::-webkit-details-marker {
+  display: none;
+}
+
+.manager-runtime-diagnostic > pre {
+  max-width: 100%;
+  max-height: 240px;
+  margin: 0;
+  padding: 12px;
+  box-sizing: border-box;
+  overflow: auto;
+  color: var(--app-ui-ink);
+  font:
+    13px / 1.55 ui-monospace,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: rgb(255 255 255 / 0.42);
+  border-top: 1px solid color-mix(in srgb, var(--app-ui-error) 24%, transparent);
+}
+
+.manager-runtime-error {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 13px;
+  box-sizing: border-box;
+  color: var(--app-ui-error);
+  background: color-mix(
+    in srgb,
+    var(--app-ui-error) 8%,
+    var(--app-ui-surface-strong)
+  );
+  border: 1px solid color-mix(in srgb, var(--app-ui-error) 34%, transparent);
+}
+
+.manager-runtime-error p {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font:
+    600 13px / 1.5 ui-monospace,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.manager-runtime-error .app-ui-button {
+  flex: 0 0 auto;
+}
+
+@container app-ui-dialog-body (max-width: 40rem) {
+  .manager-card-identity-editor,
+  .manager-cover-workspace,
+  .manager-card-copy-fields,
+  .manager-rule-overrides,
+  .manager-metadata-groups,
+  .manager-update-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .manager-update-actions {
+    justify-content: flex-start;
+  }
+
+  .manager-manifest dl > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

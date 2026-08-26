@@ -1,0 +1,762 @@
+.manager-card-spread {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  pointer-events: none;
+}
+
+:where(.userscript-deck).mode-dragging .manager-card-spread {
+  z-index: 350;
+}
+
+.manager-card-creation-preview {
+  position: absolute;
+  z-index: 530;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 50% 43%,
+      rgb(42 37 25 / 0.3),
+      rgb(4 7 8 / 0.82) 68%
+    ),
+    rgb(3 6 7 / 0.38);
+  opacity: 0;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.manager-library-import-celebration {
+  position: absolute;
+  z-index: 530;
+  inset: 0;
+  overflow: hidden;
+  background: transparent;
+  opacity: 0;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.userscript-deck.host-extension.is-library-import-celebration {
+  pointer-events: auto;
+}
+
+.userscript-deck.is-library-import-celebration > .manager-detail-stage {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.manager-library-import-celebration__card {
+  --manager-preview-card-width: var(
+    --manager-import-card-width,
+    var(--manager-card-width, 150px)
+  );
+  will-change: transform, opacity;
+}
+
+:is(
+    .manager-library-import-celebration__card,
+    .manager-card.is-import-revealing
+  )
+  :is(
+    .manager-card-creation-preview__back,
+    .manager-card__back,
+    .manager-card__face
+  ) {
+  box-shadow:
+    0 2px 6px rgb(0 0 0 / 0.12),
+    0 0 4px color-mix(in srgb, var(--manager-accent) 8%, transparent);
+}
+
+:is(
+    .manager-library-import-celebration__card,
+    .manager-card.is-import-revealing
+  )
+  .card-material__edge {
+  filter: sepia(0.62) saturate(1.3)
+    drop-shadow(
+      0 0 2px
+        color-mix(in srgb, var(--manager-accent, #d9b76a) 18%, transparent)
+    );
+}
+
+.manager-library-import-celebration__card .manager-card__cover {
+  transform: scaleX(-1);
+}
+
+.manager-library-import-celebration__stage-line {
+  position: absolute;
+  z-index: 2;
+  top: calc(42% + 106px);
+  left: 50%;
+  width: min(720px, 72vw);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(211 174 86 / 0.28) 12%,
+    rgb(255 237 178 / 0.86) 50%,
+    rgb(211 174 86 / 0.28) 88%,
+    transparent
+  );
+  box-shadow:
+    0 0 10px rgb(239 198 97 / 0.34),
+    0 0 22px rgb(239 198 97 / 0.18);
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+
+.userscript-deck.host-extension.is-card-creation-preview {
+  pointer-events: auto;
+}
+
+.userscript-deck.is-card-creation-preview
+  > :is(.manager-card-spread, .manager-detail-stage) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+:where(.manager-card, .manager-card-creation-preview__card) {
+  --manager-card-title-size: 13px;
+  --manager-card-radius-x: 4%;
+  --manager-card-radius-y: 3%;
+  --manager-card-radius:
+    var(--manager-card-radius-x) / var(--manager-card-radius-y);
+}
+
+.manager-card-creation-preview__card {
+  --manager-accent: #d96b50;
+  --card-glow-strength: 0;
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  width: var(--manager-preview-card-width, 150px);
+  aspect-ratio: 3 / 4;
+  border-radius: var(--manager-card-radius);
+  transform-style: preserve-3d;
+}
+
+.manager-card-creation-preview .manager-card-creation-preview__card {
+  --manager-preview-card-width: 210px;
+}
+
+.manager-card-creation-preview__tilt,
+.manager-card-creation-preview__flipper,
+.manager-card-creation-preview__back,
+:where(.manager-card-creation-preview__card) .manager-card__face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--manager-card-radius);
+  transform-style: preserve-3d;
+}
+
+.manager-card-creation-preview__flipper {
+  overflow: visible;
+  box-shadow:
+    0 32px 56px rgb(0 0 0 / calc(0.62 * var(--card-glow-strength))),
+    0 0 20px 10px
+    color-mix(
+      in srgb,
+      var(--manager-accent) calc(44% * var(--card-glow-strength)),
+      transparent
+    ),
+    0 0 42px
+    color-mix(
+      in srgb,
+      var(--manager-accent) calc(62% * var(--card-glow-strength)),
+      transparent
+    );
+}
+
+.manager-card-creation-preview__tilt {
+  z-index: 3;
+  perspective: 900px;
+}
+
+.manager-card-creation-preview__back,
+:where(.manager-card-creation-preview__card) .manager-card__face {
+  backface-visibility: hidden;
+}
+
+.manager-card-creation-preview__back {
+  overflow: hidden;
+  background: #0a0d0e;
+  border: 1px solid rgb(225 188 95 / 0.56);
+  box-shadow:
+    0 18px 38px rgb(0 0 0 / 0.62),
+    inset 0 0 0 2px rgb(5 8 10 / 0.82);
+  transform: rotateY(180deg);
+}
+
+:where(.manager-card-creation-preview__card) .manager-card__face {
+  box-shadow: none;
+  transform: rotateY(0deg) translateZ(0.1px);
+}
+
+.manager-card-creation-preview__back img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.manager-card-spread.has-active-interaction .manager-card:not(.is-interacting) {
+  pointer-events: none;
+}
+
+.manager-card {
+  --manager-accent: #d9b76a;
+  --manager-holo-x: 50%;
+  --manager-holo-y: 50%;
+  position: absolute;
+  bottom: var(--manager-card-bottom, 38px);
+  left: calc(50% - var(--manager-card-half-width, 75px));
+  width: var(--manager-card-width, 150px);
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  appearance: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  background: none;
+  border: 0;
+  border-radius: var(--manager-card-radius);
+  cursor: var(--app-ui-cursor-pointer);
+  opacity: 1;
+  pointer-events: auto;
+  touch-action: none;
+  perspective: 900px;
+  transform-origin: 50% 100%;
+  transform-style: preserve-3d;
+  transition: filter 420ms cubic-bezier(0.2, 0.76, 0.2, 1);
+}
+
+:where(.userscript-deck):is(.mode-dealing, .is-dealing) .manager-card,
+:where(.userscript-deck).mode-collecting .manager-card,
+.manager-card:is(.is-focused, .is-dragging, .is-interacting, .is-casting) {
+  will-change: transform;
+}
+
+:where(.userscript-deck).mode-closed .manager-card,
+:where(.userscript-deck):is(.mode-dealing, .is-dealing) .manager-card,
+:where(.userscript-deck).mode-collecting .manager-card,
+:where(.userscript-deck).mode-detail .manager-card,
+:where(.userscript-deck).mode-forging .manager-card,
+:where(.userscript-deck).mode-returning .manager-card,
+:where(.userscript-deck).mode-targeting .manager-card,
+:where(.userscript-deck).mode-element-targeting .manager-card,
+:where(.userscript-deck).mode-resolving .manager-card:not(.is-dragging) {
+  pointer-events: none;
+}
+
+:where(.userscript-deck).mode-closed:not(.is-card-creation-preview)
+  .manager-card {
+  visibility: hidden;
+  opacity: 0;
+}
+
+:where(.userscript-deck):is(.mode-dealing, .is-dealing)
+  .manager-card.is-deal-settled {
+  pointer-events: auto;
+}
+
+.manager-card__tilt,
+.manager-card__flipper,
+.manager-card__back,
+.manager-card__face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--manager-card-radius);
+  transform-style: preserve-3d;
+}
+
+.manager-card__tilt {
+  perspective: 900px;
+}
+
+.manager-card__flipper {
+  z-index: 2;
+}
+
+.manager-card:is(.is-focused, .is-dragging, .is-interacting, .is-casting)
+  :is(.manager-card__tilt, .manager-card__flipper) {
+  will-change: transform;
+}
+
+.manager-card.is-import-revealing {
+  will-change: transform, opacity;
+}
+
+.manager-card-glow-effect {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  border-radius: var(--manager-card-radius);
+  pointer-events: none;
+}
+
+.manager-card__charge-aura,
+.manager-card__charge-ring,
+.manager-card__charge-rays,
+.manager-card__charge-flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  opacity: 0;
+  translate: -50% -50%;
+  transform-origin: 50% 50%;
+  visibility: hidden;
+}
+
+:is(.manager-card, .manager-card-creation-preview__card).is-casting
+  .manager-card__charge-aura,
+:is(.manager-card, .manager-card-creation-preview__card).is-casting
+  .manager-card__charge-ring,
+:is(.manager-card, .manager-card-creation-preview__card).is-casting
+  .manager-card__charge-rays,
+:is(.manager-card, .manager-card-creation-preview__card).is-casting
+  .manager-card__charge-flash,
+.manager-card-glow-effect.is-active .manager-card__charge-aura,
+.manager-card-glow-effect.is-active .manager-card__charge-ring,
+.manager-card-glow-effect.is-active .manager-card__charge-rays,
+.manager-card-glow-effect.is-active .manager-card__charge-flash {
+  visibility: visible;
+  will-change: transform, opacity;
+}
+
+.manager-card.is-shadow-casting .manager-card__charge-aura {
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(5 8 16 / 0.96) 0 15%,
+    rgb(16 27 43 / 0.88) 30%,
+    color-mix(in srgb, var(--manager-accent) 34%, rgb(8 13 22 / 0.78)) 48%,
+    transparent 72%
+  );
+  scale: 1.04;
+  mix-blend-mode: multiply;
+}
+
+.manager-card.is-shadow-casting .manager-card__charge-rays,
+.manager-card.is-shadow-casting .manager-card__charge-ring,
+.manager-card.is-shadow-casting .manager-card__charge-flash {
+  visibility: hidden;
+}
+
+.manager-card__charge-aura {
+  z-index: 1;
+  width: 194%;
+  height: 168%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(255 252 226 / 0.92) 0 5%,
+    color-mix(in srgb, var(--action-color) 76%, transparent) 17%,
+    color-mix(in srgb, var(--action-color) 34%, transparent) 38%,
+    color-mix(in srgb, var(--action-color) 12%, transparent) 55%,
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+}
+
+.manager-card__charge-ring {
+  z-index: 3;
+  width: 116%;
+  height: 112%;
+  border: 2px solid
+    color-mix(in srgb, var(--action-color) 78%, rgb(255 247 218 / 0.88));
+  border-radius:
+    calc(var(--manager-card-radius-x, 4%) + 8px) /
+    calc(var(--manager-card-radius-y, 3%) + 8px);
+  box-shadow:
+    0 0 8px rgb(255 248 220 / 0.72),
+    0 0 22px color-mix(in srgb, var(--action-color) 72%, transparent),
+    0 0 48px color-mix(in srgb, var(--action-color) 38%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--action-color) 44%, transparent);
+  mix-blend-mode: screen;
+}
+
+.manager-card__charge-rays {
+  z-index: 4;
+  width: 202%;
+  aspect-ratio: 1;
+  background: repeating-conic-gradient(
+    from 0deg,
+    transparent 0 7deg,
+    color-mix(in srgb, var(--action-color) 78%, #fff) 8deg 9.5deg,
+    transparent 11deg 20deg
+  );
+  filter: drop-shadow(
+    0 0 8px color-mix(in srgb, var(--action-color) 82%, transparent)
+  );
+  mask-image: radial-gradient(
+    circle at center,
+    transparent 0 22%,
+    #000 36%,
+    rgb(0 0 0 / 0.88) 54%,
+    transparent 73%
+  );
+  mix-blend-mode: screen;
+}
+
+.manager-card__charge-flash {
+  z-index: 5;
+  width: 164%;
+  height: 146%;
+  background: radial-gradient(
+    ellipse at center,
+    #fff 0 7%,
+    rgb(255 247 216 / 0.98) 16%,
+    color-mix(in srgb, var(--action-color) 68%, transparent) 36%,
+    color-mix(in srgb, var(--action-color) 18%, transparent) 56%,
+    transparent 74%
+  );
+  filter: drop-shadow(
+    0 0 30px color-mix(in srgb, var(--action-color) 92%, transparent)
+  );
+  mix-blend-mode: screen;
+}
+
+.manager-card__face,
+.manager-card__back {
+  backface-visibility: hidden;
+}
+
+.manager-card__back {
+  overflow: hidden;
+  background: #0a0d0e;
+  border: 1px solid rgb(225 188 95 / 0.56);
+  box-shadow:
+    0 18px 38px rgb(0 0 0 / 0.62),
+    inset 0 0 0 2px rgb(5 8 10 / 0.82);
+  transform: rotateY(180deg);
+  transition:
+    border-color 240ms ease,
+    box-shadow 320ms ease,
+    filter 260ms ease;
+}
+
+.manager-card__back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.manager-card__face {
+  container-type: inline-size;
+  overflow: hidden;
+  isolation: isolate;
+  background: #0b1114;
+  transform: rotateY(0deg) translateZ(0.1px);
+  box-shadow:
+    0 14px 28px rgb(0 0 0 / 0.44),
+    0 0 20px 6px color-mix(in srgb, var(--manager-accent) 16%, transparent);
+  transition:
+    filter 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.manager-card.is-dragging .manager-card__face {
+  box-shadow:
+    0 24px 44px rgb(0 0 0 / 0.56),
+    0 0 28px 8px color-mix(in srgb, var(--manager-accent) 32%, transparent);
+}
+
+.manager-card.is-focused .manager-card__face {
+  box-shadow:
+    0 32px 56px rgb(0 0 0 / 0.62),
+    0 0 20px 10px color-mix(in srgb, var(--manager-accent) 44%, transparent),
+    0 0 42px color-mix(in srgb, var(--manager-accent) 62%, transparent),
+    inset 0 0 28px color-mix(in srgb, var(--manager-accent) 22%, transparent);
+}
+
+.manager-card.is-focused .manager-card__face.is-enabled {
+  filter: saturate(1.22) brightness(1.1);
+}
+
+.manager-card.is-collecting
+  :is(
+    .manager-card__face,
+    .manager-card__face.is-enabled,
+    .manager-card__back
+  ) {
+  box-shadow: none;
+}
+
+.manager-card__action-frame {
+  --action-color: #f0c66e;
+  position: absolute;
+  z-index: 40;
+  bottom: var(--card-bottom-frame-bottom);
+  left: 50%;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--card-bottom-frame-aspect);
+  opacity: 0;
+  filter: drop-shadow(
+    0 0 18px color-mix(in srgb, var(--action-color) 66%, transparent)
+  );
+  pointer-events: none;
+  transform: translateX(-50%) translateZ(8px) translateY(8px)
+    scale(calc(var(--card-bottom-frame-scale) * 0.94));
+  transform-origin: 50% 100%;
+  transition:
+    opacity var(--manager-action-attachment-duration, 0.42s)
+    cubic-bezier(0.16, 0.84, 0.22, 1),
+    filter var(--manager-action-attachment-duration, 0.42s) ease,
+    transform var(--manager-action-attachment-duration, 0.42s)
+    cubic-bezier(0.16, 0.84, 0.22, 1),
+    --action-color var(--manager-action-attachment-duration, 0.42s)
+    cubic-bezier(0.2, 0.76, 0.2, 1);
+  user-select: none;
+}
+
+.manager-card__action-frame::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--action-color) 58%, #f3dfae 42%),
+    var(--action-color) 34%,
+    color-mix(in srgb, var(--action-color) 82%, #6b4331 18%) 78%,
+    color-mix(in srgb, var(--action-color) 62%, #f3dfae 38%)
+  );
+  opacity: 0.88;
+  -webkit-mask: var(--card-bottom-frame-image) center / contain no-repeat;
+  mask: var(--card-bottom-frame-image) center / contain no-repeat;
+  pointer-events: none;
+}
+
+.manager-card__action-frame-image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: grayscale(1) brightness(1.28) contrast(1.08);
+  opacity: 0.34;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.manager-card__action-frame.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateZ(8px) translateY(0)
+    scale(var(--card-bottom-frame-scale));
+  will-change: opacity, filter, transform;
+}
+
+:where(.userscript-deck).mode-closed:not(.is-card-creation-preview)
+  .manager-card__face {
+  visibility: hidden;
+}
+
+.manager-card__face > :is(video, img) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--manager-card-radius);
+  clip-path: inset(0 round var(--manager-card-radius));
+  object-fit: cover;
+  pointer-events: none;
+  transition: filter 220ms ease;
+}
+
+.manager-card__face.is-sleeping > :is(video, .manager-card__cover) {
+  filter: grayscale(0.88) saturate(0.28) brightness(0.62) contrast(1.08);
+}
+
+.manager-card__face.is-forge {
+  box-shadow:
+    0 22px 46px rgb(0 0 0 / 0.66),
+    0 0 24px rgb(232 187 88 / 0.38),
+    inset 0 0 22px rgb(232 187 88 / 0.14);
+}
+
+.manager-card__forge-mark {
+  position: absolute;
+  z-index: 10;
+  top: 13px;
+  left: 50%;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgb(245 204 101 / 0.7);
+  border-radius: 50%;
+  box-shadow:
+    0 0 18px rgb(238 192 80 / 0.44),
+    inset 0 0 12px rgb(238 192 80 / 0.2);
+  translate: -50% 0;
+  animation: manager-rune-turn 8s linear infinite;
+}
+
+.manager-card__forge-mark i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: #f1cd71;
+  box-shadow: 0 0 8px #f1c454;
+  rotate: 45deg;
+}
+
+.manager-card__forge-mark i:nth-child(1) {
+  translate: -50% -20px;
+}
+.manager-card__forge-mark i:nth-child(2) {
+  translate: 12px 8px;
+}
+.manager-card__forge-mark i:nth-child(3) {
+  translate: -20px 8px;
+}
+
+.manager-card__identity {
+  position: absolute;
+  z-index: 9;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 22px 10px 8px;
+  background: linear-gradient(transparent, rgb(4 7 9 / 0.92) 48%);
+  text-shadow: 0 1px 3px #000;
+  pointer-events: none;
+}
+
+.manager-card__identity strong {
+  display: -webkit-box;
+  font: 800 var(--manager-card-title-size) / 1.08 var(--app-ui-font-display);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.manager-card__identity small {
+  margin-top: 2px;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--manager-accent) 72%, #fff);
+  font-family: var(--app-ui-font-body);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.24;
+}
+
+.manager-card.is-burning .manager-card__tilt {
+  visibility: hidden;
+}
+
+.manager-card-removal-effect {
+  position: absolute;
+  z-index: 420;
+  display: block;
+  filter: drop-shadow(0 16px 28px rgb(0 0 0 / 0.44));
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.manager-aim-line {
+  position: absolute;
+  z-index: 2147483647;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.manager-aim-line__aura,
+.manager-aim-line__core {
+  fill: none;
+  stroke: #efc75e;
+  stroke-linecap: round;
+}
+
+.manager-aim-line__aura {
+  stroke-width: 9;
+  opacity: 0.28;
+}
+
+.manager-aim-line__core {
+  stroke-width: 2.2;
+  stroke-dasharray: 4 9;
+  animation: manager-aim-flow 640ms linear infinite;
+}
+
+.manager-aim-line__origin {
+  fill: rgb(239 199 94 / 0.34);
+  stroke: #efc75e;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 7px rgb(239 199 94 / 0.76));
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: manager-aim-pulse 900ms ease-in-out infinite;
+}
+
+.manager-aim-line.is-page-targeting .manager-aim-line__aura {
+  stroke: #241b0f;
+  stroke-width: 7.5;
+  opacity: 0.72;
+  filter: drop-shadow(0 0 4px rgb(211 174 91 / 0.48));
+}
+
+.manager-aim-line.is-page-targeting .manager-aim-line__core {
+  stroke: #efd58f;
+  stroke-width: 2.6;
+  stroke-dasharray: 3 7;
+  filter: drop-shadow(0 1px 1px rgb(18 12 6 / 0.92))
+    drop-shadow(0 0 3px rgb(222 187 106 / 0.58));
+  animation-duration: 440ms;
+}
+
+.manager-aim-line.is-page-targeting .manager-aim-line__origin {
+  fill: rgb(45 33 17 / 0.76);
+  stroke: #efd58f;
+  stroke-width: 2;
+  filter: drop-shadow(0 1px 1px rgb(15 10 5 / 0.9))
+    drop-shadow(0 0 7px rgb(205 167 82 / 0.68));
+}
+
+.manager-page-target {
+  position: fixed;
+  z-index: 92;
+  transition:
+    top 80ms linear,
+    left 80ms linear,
+    width 80ms linear,
+    height 80ms linear,
+    filter 180ms ease;
+}
+
+.page-target-frame--destructive {
+  background:
+    linear-gradient(135deg, rgb(117 75 17 / 0.13), transparent 42%),
+    repeating-linear-gradient(
+      135deg,
+      rgb(238 203 122 / 0.055) 0 1px,
+      transparent 1px 12px
+    ),
+    rgb(35 23 9 / 0.14);
+}
+
+.page-target-frame--destructive.is-resolving {
+  filter: brightness(1.65);
+  animation: manager-page-target-resolve 420ms cubic-bezier(0.7, 0, 0.84, 0)
+    both;
+}
+
+.page-target-frame--destructive.is-resolving::after {
+  background-color: rgb(133 34 16 / 0.2);
+  opacity: 1;
+}
+
+@property --action-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f0c66e;
+}

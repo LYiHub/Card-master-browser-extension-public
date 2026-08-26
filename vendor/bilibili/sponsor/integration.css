@@ -1,0 +1,75 @@
+:root {
+  --cm-sponsor-control-size: 34px;
+  --cm-sponsor-icon-size: 24px;
+  --cm-sponsor-motion: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.playerButton {
+  position: relative;
+  display: inline-grid !important;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--cm-sponsor-control-size);
+  min-width: var(--cm-sponsor-control-size);
+  height: var(--cm-sponsor-control-size);
+  padding: 0 !important;
+  margin: 0 1px !important;
+  color: inherit;
+  background: transparent !important;
+  border: 0;
+  border-radius: 4px;
+  transition:
+    background-color var(--cm-sponsor-motion),
+    transform var(--cm-sponsor-motion);
+}
+
+.playerButtonImage {
+  display: block;
+  width: var(--cm-sponsor-icon-size) !important;
+  height: var(--cm-sponsor-icon-size) !important;
+  object-fit: contain;
+  opacity: 0.86;
+  transform: scale(1);
+  transform-origin: center;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.42));
+  transition:
+    filter var(--cm-sponsor-motion),
+    opacity var(--cm-sponsor-motion),
+    transform var(--cm-sponsor-motion);
+}
+
+.playerButton:hover {
+  background: rgb(255 255 255 / 0.1) !important;
+}
+
+.playerButton:hover .playerButtonImage {
+  opacity: 1;
+  transform: scale(1.08);
+  filter:
+    brightness(1.08)
+    drop-shadow(0 0 5px rgb(var(--sb-brand-blue-rgb) / 0.56));
+}
+
+.playerButton:active {
+  transform: scale(0.94);
+}
+
+.playerButton:focus {
+  outline: none;
+}
+
+.playerButton:focus-visible {
+  box-shadow: 0 0 0 2px rgb(var(--sb-brand-blue-rgb) / 0.82);
+}
+
+.playerButtonTooltip {
+  transition:
+    opacity 150ms ease-out,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.playerButton:hover .playerButtonTooltip {
+  transition:
+    opacity 150ms ease-out 80ms,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1) 80ms;
+}

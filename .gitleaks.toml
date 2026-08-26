@@ -1,0 +1,14 @@
+title = "Card Master"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "SponsorBlock upstream browser client Google API key"
+rules = ["gcp-api-key"]
+paths = ['''^vendor/youtube/sponsor/js/(content|options|popup)\.js$''']
+
+[[allowlists]]
+description = "Minified BilibiliSponsorBlock key iteration false positives"
+rules = ["generic-api-key"]
+paths = ['''^vendor/bilibili/sponsor/js/(options|popup)\.js$''']

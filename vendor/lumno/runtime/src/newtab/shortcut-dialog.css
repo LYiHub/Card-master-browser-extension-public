@@ -1,0 +1,391 @@
+      .x-nt-shortcut-dialog-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 10040;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding:
+          max(24px, calc(var(--x-nt-top-occupied-inset, 0px) + 12px))
+          max(24px, env(safe-area-inset-right))
+          max(24px, var(--x-nt-bottom-safe-inset, env(safe-area-inset-bottom)))
+          max(24px, env(safe-area-inset-left));
+        box-sizing: border-box;
+        background: rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease, backdrop-filter 160ms ease;
+      }
+      .x-nt-shortcut-dialog-backdrop[hidden] {
+        display: none;
+      }
+      .x-nt-shortcut-dialog-backdrop[data-open="true"] {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .x-nt-shortcut-dialog {
+        --x-nt-shortcut-dialog-enter-x: 0px;
+        --x-nt-shortcut-dialog-enter-y: 12px;
+        --input-focus-color: rgba(59, 130, 246, 0.65);
+        --input-focus-shadow: rgba(59, 130, 246, 0.2);
+        --input-placeholder: rgba(100, 116, 139, 0.7);
+        --input-focus-bg: rgba(59, 130, 246, 0.08);
+        --control-bg: rgba(15, 23, 42, 0.04);
+        --tab-border: rgba(15, 23, 42, 0.05);
+        --panel-text: #111827;
+        width: min(420px, 100%);
+        border-radius: 27px;
+        background: var(--x-nt-shortcut-dialog-bg, rgb(255 255 255 / 0.98));
+        border: 0;
+        box-shadow: var(--x-nt-panel-shadow-focus, 0 18px 44px rgba(0, 0, 0, 0.1));
+        backdrop-filter: blur(var(--x-nt-panel-blur, 24px)) saturate(var(--x-nt-panel-saturate, 165%));
+        -webkit-backdrop-filter: blur(var(--x-nt-panel-blur, 24px)) saturate(var(--x-nt-panel-saturate, 165%));
+        box-sizing: border-box;
+        color: #111827;
+        opacity: 0;
+        max-height: calc(
+          100dvh - var(--x-nt-top-occupied-inset, 0px) -
+          var(--x-nt-bottom-safe-inset, 0px) - 48px
+        );
+        overflow: hidden auto;
+        overscroll-behavior: contain;
+        filter: blur(6px);
+        transform: translate3d(var(--x-nt-shortcut-dialog-enter-x, 0px), var(--x-nt-shortcut-dialog-enter-y, 12px), 0) scale(0.98);
+        transform-origin: center bottom;
+        transition:
+          opacity 160ms ease,
+          transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+          filter 180ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: auto;
+      }
+      .x-nt-shortcut-dialog-backdrop[data-open="true"] .x-nt-shortcut-dialog {
+        opacity: 1;
+        filter: blur(0);
+        transform: translate3d(0, 0, 0) scale(1);
+        will-change: transform, opacity, filter;
+      }
+      .x-nt-shortcut-dialog-backdrop[data-preparing="true"] .x-nt-shortcut-dialog {
+        transition: none;
+        will-change: transform, opacity, filter;
+      }
+      body[data-theme="dark"] .x-nt-shortcut-dialog {
+        --x-nt-shortcut-dialog-bg: rgb(20 20 20 / 0.98);
+        --input-focus-color: rgba(191, 219, 254, 0.7);
+        --input-focus-shadow: rgba(59, 130, 246, 0.3);
+        --input-placeholder: rgba(148, 163, 184, 0.7);
+        --input-focus-bg: #383838;
+        --control-bg: #2f2f2f;
+        --tab-border: rgba(255, 255, 255, 0.12);
+        --panel-text: #f8fafc;
+        color: #f8fafc;
+      }
+      .x-nt-shortcut-form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .x-nt-shortcut-dialog-title {
+        margin: 0;
+        color: inherit;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.25;
+      }
+      .x-nt-shortcut-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        color: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1;
+      }
+      .x-nt-shortcut-icon-label-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .x-nt-shortcut-icon-info {
+        margin: -4px 0 -4px -2px;
+      }
+      .x-nt-shortcut-dialog-tooltip {
+        --x-extension-tooltip-z-index: 10060;
+      }
+      .x-nt-shortcut-visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+      }
+      .x-nt-shortcut-icon-control {
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+      }
+      .x-nt-shortcut-icon-upload-tile {
+        width: 64px;
+        flex: 0 0 64px;
+      }
+      .x-nt-shortcut-icon-upload-tile .x-nt-shortcut-icon-preview {
+        width: 64px;
+        height: 64px;
+        aspect-ratio: 1 / 1;
+        border-radius: 14px;
+      }
+      .x-nt-shortcut-icon-upload-tile[data-has-icon="true"] .x-nt-shortcut-icon-preview {
+        border-style: solid;
+        border-color: var(--tab-border);
+        background: var(--control-bg);
+      }
+      .x-nt-shortcut-icon-upload-tile .x-nt-shortcut-icon-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: inherit;
+        box-sizing: border-box;
+        -webkit-user-drag: none;
+        user-select: none;
+      }
+      .x-nt-shortcut-icon-upload-tile[data-has-icon="false"] .x-nt-shortcut-icon-preview img {
+        display: none;
+      }
+      .x-nt-shortcut-icon-upload-tile[data-has-icon="true"] .x-nt-shortcut-icon-preview img {
+        display: block;
+      }
+      .x-nt-shortcut-icon-upload-tile[data-has-icon="true"] .x-nt-shortcut-icon-placeholder {
+        display: none;
+      }
+      .x-nt-shortcut-icon-remove[hidden] {
+        display: none;
+      }
+      .x-nt-shortcut-icon-input {
+        position: fixed;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .x-nt-shortcut-icon-error {
+        display: none;
+        color: #dc2626;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 16px;
+      }
+      .x-nt-shortcut-icon-error[data-visible="true"] {
+        display: block;
+      }
+      body[data-theme="dark"] .x-nt-shortcut-icon-error {
+        color: #fca5a5;
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_affix_2026_unique_ {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        border-radius: 10px;
+        border: 1px solid var(--tab-border);
+        background: var(--control-bg);
+        transition: border-color 180ms ease, background-color 200ms ease;
+        overflow: hidden;
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_affix_2026_unique_:focus-within,
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_affix_2026_unique_:hover {
+        border-color: var(--input-focus-color);
+        background: var(--input-focus-bg);
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_2024_unique_ {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--tab-border);
+        background: var(--control-bg);
+        color: var(--panel-text);
+        font-size: 13px;
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 180ms ease, background-color 200ms ease;
+        outline: none;
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_affix_2026_unique_ ._x_extension_shortcut_input_2024_unique_ {
+        border: none;
+        background: transparent;
+        border-radius: 0;
+        padding-left: 2px;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_affix_2026_unique_[data-has-prefix="false"] ._x_extension_shortcut_input_2024_unique_ {
+        padding-left: 10px;
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_affix_2026_unique_ ._x_extension_shortcut_input_2024_unique_:focus,
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_affix_2026_unique_ ._x_extension_shortcut_input_2024_unique_:hover {
+        border: none;
+        background: transparent;
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_2024_unique_::placeholder {
+        color: var(--input-placeholder);
+      }
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_2024_unique_:hover,
+      .x-nt-shortcut-dialog ._x_extension_shortcut_input_2024_unique_:focus {
+        border-color: var(--input-focus-color);
+        background: var(--input-focus-bg);
+      }
+      .x-nt-shortcut-error {
+        min-height: 16px;
+        color: #dc2626;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 16px;
+      }
+      .x-nt-shortcut-error[data-visible="false"] {
+        visibility: hidden;
+      }
+      body[data-theme="dark"] .x-nt-shortcut-error {
+        color: #fca5a5;
+      }
+      .x-nt-shortcut-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+      .x-lumno-action-button {
+        all: unset;
+        position: relative;
+        min-height: 36px;
+        padding: 0 16px;
+        border-radius: 999px;
+        border: 1px solid var(--x-lumno-action-border-color, transparent);
+        background: var(--x-lumno-action-bg, transparent);
+        background-clip: padding-box;
+        color: var(--x-lumno-action-color, #1f2937);
+        box-shadow: var(--x-lumno-action-shadow, none);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        box-sizing: border-box;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1;
+        white-space: nowrap;
+        cursor: pointer;
+        transition:
+          transform 120ms ease,
+          filter 120ms ease,
+          background 160ms ease,
+          border-color 160ms ease,
+          color 160ms ease,
+          box-shadow 160ms ease;
+      }
+      .x-lumno-action-button::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        box-shadow: var(--x-lumno-action-before-shadow, none);
+      }
+      .x-lumno-action-button:hover {
+        background: var(--x-lumno-action-hover-bg, var(--x-lumno-action-bg, transparent));
+        border-color: var(--x-lumno-action-hover-border-color, var(--x-lumno-action-border-color, transparent));
+        color: var(--x-lumno-action-hover-color, var(--x-lumno-action-color, #1f2937));
+        box-shadow: var(--x-lumno-action-hover-shadow, var(--x-lumno-action-shadow, none));
+      }
+      .x-lumno-action-button:active {
+        transform: translateY(1px) scale(0.98);
+        filter: brightness(0.96);
+      }
+      .x-lumno-action-button:focus-visible {
+        outline: 2px solid rgba(75, 84, 95, 0.35);
+        outline-offset: 2px;
+      }
+      .x-lumno-action-button:disabled {
+        opacity: 0.62;
+        cursor: not-allowed;
+        transform: none;
+        filter: none;
+      }
+      .x-lumno-action-button--primary {
+        --x-lumno-action-border-color: #040404;
+        --x-lumno-action-bg: linear-gradient(180deg, #404859 0%, #273042 100%);
+        --x-lumno-action-color: #ffffff;
+        --x-lumno-action-shadow:
+          0 10px 3px rgba(0, 0, 0, 0),
+          0 6px 2px rgba(0, 0, 0, 0.008),
+          0 3px 2px rgba(0, 0, 0, 0.035),
+          0 2px 2px rgba(0, 0, 0, 0.065),
+          0 0 1px rgba(0, 0, 0, 0.075);
+        --x-lumno-action-before-shadow: inset 0 1px 1.6px rgba(255, 255, 255, 0.34);
+        --x-lumno-action-hover-bg: linear-gradient(180deg, #4a5467 0%, #2f3a4f 100%);
+        --x-lumno-action-hover-shadow:
+          0 12px 4px rgba(0, 0, 0, 0),
+          0 7px 3px rgba(0, 0, 0, 0.015),
+          0 4px 3px rgba(0, 0, 0, 0.045),
+          0 2px 2px rgba(0, 0, 0, 0.075),
+          0 0 1px rgba(0, 0, 0, 0.09);
+      }
+      .x-lumno-action-button--secondary {
+        --x-lumno-action-border-color: rgba(15, 23, 42, 0.06);
+        --x-lumno-action-bg: #ffffff;
+        --x-lumno-action-color: #1f2937;
+        --x-lumno-action-shadow:
+          0 2px 2px rgba(15, 23, 42, 0.025),
+          0 1px 1px rgba(15, 23, 42, 0.035),
+          0 0 1px rgba(15, 23, 42, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        --x-lumno-action-hover-bg: #f8fafc;
+        --x-lumno-action-hover-border-color: rgba(15, 23, 42, 0.08);
+        --x-lumno-action-hover-shadow:
+          0 2px 3px rgba(15, 23, 42, 0.032),
+          0 1px 1px rgba(15, 23, 42, 0.045),
+          0 0 1px rgba(15, 23, 42, 0.07),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+      .x-nt-shortcut-dialog-button {
+        min-width: 72px;
+        height: 36px;
+      }
+      body[data-theme="dark"] .x-lumno-action-button--primary {
+        --x-lumno-action-bg: linear-gradient(180deg, #4a566c 0%, #334157 100%);
+        --x-lumno-action-color: #f8fafc;
+        --x-lumno-action-hover-bg: linear-gradient(180deg, #56647c 0%, #3a4b66 100%);
+      }
+      body[data-theme="dark"] .x-lumno-action-button--secondary {
+        --x-lumno-action-border-color: rgba(148, 163, 184, 0.18);
+        --x-lumno-action-bg: color-mix(in srgb, rgb(20 20 20) 86%, #475569 14%);
+        --x-lumno-action-color: #f8fafc;
+        --x-lumno-action-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+        --x-lumno-action-hover-bg: color-mix(in srgb, rgb(20 20 20) 78%, #5b6b84 22%);
+        --x-lumno-action-hover-border-color: rgba(164, 180, 207, 0.32);
+        --x-lumno-action-hover-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .x-nt-shortcut-dialog-backdrop {
+          transition: opacity 120ms ease;
+        }
+        .x-nt-shortcut-dialog {
+          filter: none;
+          transform: translate3d(0, 0, 0) scale(1);
+          transition: opacity 120ms ease;
+          will-change: auto;
+        }
+        .x-lumno-action-button {
+          transition:
+            background 160ms ease,
+            border-color 160ms ease,
+            color 160ms ease,
+            box-shadow 160ms ease;
+        }
+        .x-lumno-action-button:active {
+          transform: none;
+        }
+      }

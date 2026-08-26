@@ -1,0 +1,994 @@
+.userscript-deck {
+  --manager-gold: #d9b76a;
+  --manager-ink: #070a0c;
+  --manager-context-plaque-docked-top: clamp(18px, 4vh, 42px);
+  --manager-context-plaque-reserved-height: 240px;
+  --manager-center-stage-gap: clamp(10px, 1.6vh, 18px);
+  --manager-center-stage-top: calc(
+    var(--manager-context-plaque-docked-top) +
+    var(--manager-context-plaque-reserved-height) +
+    var(--manager-center-stage-gap)
+  );
+  --manager-center-stage-bottom: calc(
+    var(--manager-card-bottom, 38px) +
+    var(--manager-card-active-height, 262px) +
+    var(--manager-center-stage-gap)
+  );
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  color: #f2e6c5;
+  background: #090c0d;
+  cursor: var(--app-ui-cursor-default);
+  perspective: 1200px;
+  user-select: none;
+}
+
+.userscript-deck.host-extension {
+  position: fixed;
+  z-index: 2147483647;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.userscript-deck.host-extension.mode-closed {
+  pointer-events: none;
+}
+
+.manager-detail-stage {
+  position: absolute;
+  z-index: 180;
+  inset: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(8rem, 11rem) minmax(0, 56rem);
+  gap: clamp(24px, 4vw, 54px);
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(18px, 4vw, 44px);
+  box-sizing: border-box;
+}
+
+.manager-detail-card-slot {
+  position: relative;
+  width: 100%;
+  max-width: 176px;
+  aspect-ratio: 3 / 4;
+}
+
+.manager-detail-stage.is-centered {
+  grid-template-columns: minmax(0, 56rem);
+}
+
+.userscript-deck,
+.userscript-deck * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.userscript-deck img,
+.userscript-deck video {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.userscript-deck :where(button, a, input, select, textarea, summary):focus,
+.userscript-deck
+  :where(button, a, input, select, textarea, summary):focus-visible {
+  outline: 0;
+}
+
+.userscript-deck :where(input, select, textarea):focus-visible {
+  border-color: rgb(220 184 96 / 0.68);
+  box-shadow: 0 0 0 1px rgb(220 184 96 / 0.2);
+}
+
+.manager-detail-stage input,
+.manager-detail-stage select,
+.manager-rule-overrides textarea,
+.userscript-source-panel__source {
+  cursor: var(--app-ui-cursor-text);
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.userscript-deck:not(.mode-closed) {
+  cursor: var(--app-ui-cursor-default);
+  overscroll-behavior: contain;
+}
+
+.manager-stage-atmosphere {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--manager-atmosphere-duration, 620ms)
+    cubic-bezier(0.37, 0, 0.63, 1);
+  pointer-events: none;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.userscript-deck:not(.mode-closed) .manager-stage-atmosphere {
+  will-change: opacity;
+}
+
+:where(.userscript-deck):is(.mode-dealing, .is-dealing)
+  .manager-stage-atmosphere,
+:where(.userscript-deck).mode-reordering .manager-stage-atmosphere,
+:where(.userscript-deck).mode-spread .manager-stage-atmosphere,
+:where(.userscript-deck).mode-targeting .manager-stage-atmosphere,
+:where(.userscript-deck).mode-element-targeting .manager-stage-atmosphere,
+:where(.userscript-deck).mode-dragging .manager-stage-atmosphere,
+:where(.userscript-deck).mode-resolving .manager-stage-atmosphere,
+:where(.userscript-deck).mode-returning .manager-stage-atmosphere,
+:where(.userscript-deck).mode-detail .manager-stage-atmosphere,
+:where(.userscript-deck).mode-forging .manager-stage-atmosphere {
+  opacity: 1;
+}
+
+.manager-shade {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 48%,
+      rgb(8 13 15 / 0.32),
+      rgb(2 5 6 / 0.86) 74%
+    ),
+    rgb(2 5 7 / 0.42);
+  opacity: 1;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+:where(.userscript-deck).mode-element-targeting .manager-shade,
+:where(.userscript-deck).has-page-element-target .manager-shade {
+  opacity: 0;
+}
+
+:where(.userscript-deck):is(.mode-dealing, .is-dealing) .manager-host-page,
+:where(.userscript-deck).mode-reordering .manager-host-page,
+:where(.userscript-deck).mode-spread .manager-host-page,
+:where(.userscript-deck).mode-targeting .manager-host-page,
+:where(.userscript-deck).mode-dragging .manager-host-page,
+:where(.userscript-deck).mode-resolving .manager-host-page,
+:where(.userscript-deck).mode-returning .manager-host-page,
+:where(.userscript-deck).mode-detail .manager-host-page,
+:where(.userscript-deck).mode-forging .manager-host-page {
+  filter: saturate(0.6) brightness(0.62);
+  transform: scale(0.992);
+}
+
+.manager-stage-light {
+  position: absolute;
+  z-index: 1;
+  top: 42%;
+  left: 50%;
+  width: min(960px, 88vw);
+  height: min(520px, 64vh);
+  background: radial-gradient(ellipse, rgb(205 169 88 / 0.16), transparent 70%);
+  opacity: 1;
+  translate: -50% -50%;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+.manager-stage-light::before,
+.manager-stage-light::after {
+  position: absolute;
+  z-index: 1;
+  content: "";
+  pointer-events: none;
+}
+
+.manager-stage-light::before {
+  inset: 0 -8%;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgb(217 183 106 / 0.12) 16%,
+      rgb(238 204 123 / 0.36) 42%,
+      transparent 42% 58%,
+      rgb(238 204 123 / 0.36) 58%,
+      rgb(217 183 106 / 0.12) 84%,
+      transparent
+    )
+    center / 100% 1px no-repeat,
+    linear-gradient(
+      180deg,
+      transparent,
+      rgb(217 183 106 / 0.08) 12%,
+      rgb(238 204 123 / 0.26) 38%,
+      transparent 38% 62%,
+      rgb(238 204 123 / 0.26) 62%,
+      rgb(217 183 106 / 0.08) 88%,
+      transparent
+    )
+    center / 1px 82% no-repeat;
+  filter: drop-shadow(0 0 7px rgb(217 183 106 / 0.16));
+  opacity: 0.82;
+}
+
+.manager-stage-light::after {
+  top: 8%;
+  left: 50%;
+  width: min(780px, 82vw);
+  height: min(300px, 38vh);
+  border: 1px dashed rgb(217 183 106 / 0.2);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  box-shadow: 0 -7px 18px rgb(217 183 106 / 0.06);
+  transform: translateX(-50%);
+  mask-image: linear-gradient(90deg, transparent, #000 14% 86%, transparent);
+}
+
+:where(.userscript-deck).mode-element-targeting .manager-stage-light,
+:where(.userscript-deck).has-page-element-target .manager-stage-light {
+  opacity: 0;
+}
+
+.manager-dismiss-layer {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  padding: 0;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  cursor: var(--app-ui-cursor-default);
+  pointer-events: none;
+}
+
+:where(.userscript-deck).mode-spread .manager-dismiss-layer,
+:where(.userscript-deck).mode-targeting .manager-dismiss-layer,
+:where(.userscript-deck).mode-element-targeting .manager-dismiss-layer {
+  pointer-events: auto;
+}
+
+.manager-deck-launch-anchor {
+  position: absolute;
+  left: 50%;
+  bottom: -260px;
+  width: var(--manager-card-width, 150px);
+  aspect-ratio: 3 / 4;
+  visibility: hidden;
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.manager-deck-entry-cluster {
+  --manager-deck-entry-width: 186px;
+  --manager-deck-entry-height: 180px;
+  --manager-deck-entry-half-width: 93px;
+  --manager-deck-entry-half-height: 90px;
+  --manager-deck-entry-card-width: 62px;
+  --manager-deck-entry-card-height: 82.667px;
+  --manager-deck-entry-anchor-x: 124px;
+  --manager-deck-entry-anchor-y: 124px;
+  --manager-deck-entry-left-inset: 93px;
+  --manager-deck-entry-right-inset: 93px;
+  --manager-deck-entry-top-inset: 90px;
+  --manager-deck-entry-bottom-inset: 90px;
+  --manager-deck-entry-button-width: 84px;
+  --manager-deck-entry-button-height: 100px;
+  --manager-deck-entry-logo-size: 56px;
+  --manager-media-speed-radius: 68px;
+  --manager-media-speed-option-width: 47px;
+  --manager-media-speed-option-height: 39px;
+  --manager-media-speed-crowded-option-width: 42px;
+  --manager-media-speed-crowded-option-height: 35px;
+  --manager-media-speed-option-emphasis-scale: 1.28;
+  --manager-media-resources-size: 42px;
+  --manager-media-resources-combined-offset: 126px;
+  --manager-media-resources-offset: var(--manager-media-speed-radius);
+  position: absolute;
+  right: calc(
+    var(--manager-deck-entry-anchor-x) -
+    var(--manager-deck-entry-half-width)
+  );
+  bottom: calc(
+    var(--manager-deck-entry-anchor-y) -
+    var(--manager-deck-entry-half-height)
+  );
+  width: var(--manager-deck-entry-width);
+  height: var(--manager-deck-entry-height);
+  overflow: visible;
+  pointer-events: none;
+  transition:
+    opacity 420ms ease,
+    transform 680ms cubic-bezier(0.4, 0, 0.2, 1),
+    top 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.manager-deck-entry-cluster.has-custom-position {
+  top: calc(
+    clamp(
+      var(--manager-deck-entry-top-inset),
+      var(--manager-deck-entry-y),
+      calc(100% - var(--manager-deck-entry-bottom-inset))
+    ) -
+    var(--manager-deck-entry-half-height)
+  );
+  right: auto;
+  bottom: auto;
+  left: calc(
+    clamp(
+      var(--manager-deck-entry-left-inset),
+      var(--manager-deck-entry-x),
+      calc(100% - var(--manager-deck-entry-right-inset))
+    ) -
+    var(--manager-deck-entry-half-width)
+  );
+}
+
+.manager-deck-entry-cluster.is-dragging {
+  transition: none;
+}
+
+.userscript-deck:is(
+    .mode-dealing,
+    .mode-collecting,
+    .is-library-import-celebration,
+    .is-card-creation-preview
+  )
+  .manager-deck-entry-cluster {
+  z-index: 540;
+}
+
+.manager-deck-trigger {
+  position: absolute;
+  z-index: 40;
+  top: 50%;
+  left: 50%;
+  width: var(--manager-deck-entry-button-width, 84px);
+  height: var(--manager-deck-entry-button-height, 100px);
+  padding: 0;
+  color: #ead6a5;
+  background: none;
+  border: 0;
+  cursor: var(--app-ui-cursor-default);
+  opacity: 1;
+  scale: 1;
+  touch-action: none;
+  translate: -50% -50%;
+  visibility: visible;
+  transition:
+    filter 320ms ease,
+    opacity 360ms ease,
+    scale 440ms cubic-bezier(0.16, 1.18, 0.3, 1),
+    translate 440ms cubic-bezier(0.2, 0.86, 0.22, 1),
+    visibility 0s linear;
+}
+
+.manager-deck-trigger__logo-anchor {
+  position: absolute;
+  z-index: 30;
+  top: 50%;
+  left: 50%;
+  width: var(--manager-deck-entry-logo-size, 56px);
+  height: var(--manager-deck-entry-logo-size, 56px);
+  translate: -50% -50%;
+  transition: opacity 220ms ease;
+}
+
+.manager-deck-trigger__logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.38))
+    drop-shadow(0 0 10px rgb(225 181 77 / 0.18));
+  transition:
+    filter 220ms ease,
+    scale 180ms cubic-bezier(0.16, 0.84, 0.22, 1);
+}
+
+.manager-deck-trigger.is-ready {
+  cursor: var(--app-ui-cursor-pointer);
+}
+
+.manager-deck-trigger.is-import-receiving {
+  filter: drop-shadow(0 0 20px rgb(225 181 77 / 0.7));
+  scale: 1.04;
+  translate: -50% calc(-50% - 4px);
+  pointer-events: none;
+}
+
+.manager-deck-trigger:is(.is-hidden, .is-suppressed) {
+  opacity: 0;
+  scale: 0.86;
+  translate: -50% calc(-50% + 18px);
+  visibility: hidden;
+  pointer-events: none;
+  transition-delay: 0s, 0s, 0s, 0s, 440ms;
+}
+
+.manager-deck-trigger.is-transitioning {
+  filter: drop-shadow(0 0 16px rgb(225 181 77 / 0.48));
+  scale: 1.025;
+  translate: -50% calc(-50% - 3px);
+  pointer-events: none;
+}
+
+.manager-deck-trigger.is-dragging {
+  cursor: var(--app-ui-cursor-pointer);
+  filter: drop-shadow(0 0 20px rgb(225 181 77 / 0.68));
+  transition: none;
+}
+
+.manager-deck-trigger.is-ready {
+  z-index: 40;
+}
+
+.manager-media-resources-trigger {
+  position: absolute;
+  z-index: 46;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: var(--manager-media-resources-size, 42px);
+  height: var(--manager-media-resources-size, 42px);
+  min-width: var(--manager-media-resources-size, 42px);
+  min-height: var(--manager-media-resources-size, 42px);
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  opacity: 1;
+  scale: 1;
+  transform: translate(-50%, -50%);
+  cursor: var(--app-ui-cursor-pointer);
+  pointer-events: auto;
+  transition:
+    filter 180ms ease,
+    opacity 220ms ease,
+    scale 180ms cubic-bezier(0.16, 0.84, 0.22, 1);
+}
+
+.manager-deck-entry-cluster[data-media-resources-placement="top"]
+  .manager-media-resources-trigger {
+  transform: translate(-50%, -50%)
+    translateY(calc(0px - var(--manager-media-resources-offset, 68px)));
+}
+
+.manager-deck-entry-cluster.has-speed-radial.has-media-resources-trigger {
+  --manager-media-resources-offset: var(
+    --manager-media-resources-combined-offset,
+    126px
+  );
+}
+
+.manager-media-resources-trigger__logo {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 1;
+  display: block;
+  width: var(--manager-media-resources-size, 42px);
+  height: var(--manager-media-resources-size, 42px);
+  opacity: 1;
+  object-fit: contain;
+  transform: scale(1);
+  transition:
+    opacity 220ms ease,
+    transform 280ms cubic-bezier(0.16, 0.84, 0.22, 1);
+}
+
+.manager-media-resources-trigger__logo.is-hover {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+.manager-entry-count-badge {
+  position: absolute;
+  z-index: 24;
+  display: grid;
+  width: auto;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  color: #171006;
+  background: #edc760;
+  border: 1px solid rgb(255 244 207 / 0.98);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 999px;
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.38),
+    0 0 0 1px rgb(40 27 5 / 0.16),
+    inset 0 1px rgb(255 255 255 / 0.72),
+    inset 0 -2px 3px rgb(107 72 12 / 0.16);
+  text-shadow:
+    0 1px 0 rgb(255 250 229 / 0.82),
+    0 0 1px rgb(0 0 0 / 0.18);
+  -webkit-font-smoothing: antialiased;
+  pointer-events: none;
+  place-items: center;
+}
+
+.manager-entry-count-badge[data-compact="true"] {
+  font-size: 10px;
+}
+
+.manager-media-resources-trigger__badge {
+  top: auto;
+  right: -3px;
+  bottom: -3px;
+}
+
+.manager-media-resources-trigger:is(
+  :hover,
+  :focus-visible,
+  .is-gamepad-hovered
+) {
+  filter: brightness(1.14) drop-shadow(0 0 10px rgb(225 181 77 / 0.32));
+  scale: 1.06;
+}
+
+.manager-media-resources-trigger:is(:hover, :focus-visible, .is-gamepad-hovered)
+  .manager-media-resources-trigger__logo.is-default {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+.manager-media-resources-trigger:is(:hover, :focus-visible, .is-gamepad-hovered)
+  .manager-media-resources-trigger__logo.is-hover {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.manager-media-resources-trigger:is(:active, .is-gamepad-pressing) {
+  scale: 0.92;
+}
+
+.userscript-deck.host-extension.mode-closed .manager-deck-trigger.is-ready {
+  pointer-events: auto;
+}
+
+.manager-deck-trigger.is-ready:is(:hover, .is-gamepad-hovered) {
+  filter: drop-shadow(0 0 18px rgb(225 181 77 / 0.58));
+}
+
+.manager-deck-trigger.is-ready:is(:hover, .is-gamepad-hovered)
+  .manager-deck-trigger__logo {
+  filter: drop-shadow(0 5px 9px rgb(0 0 0 / 0.42))
+    drop-shadow(0 0 14px rgb(237 198 101 / 0.48));
+  scale: 1.06;
+}
+
+.manager-deck-trigger.is-gamepad-pressing {
+  filter: drop-shadow(0 0 24px rgb(244 204 95 / 0.76));
+  scale: 0.92;
+}
+
+.manager-deck-trigger.is-ready:focus-visible {
+  outline: 1px dashed rgb(225 181 77 / 0.78);
+  outline-offset: 5px;
+}
+
+.manager-deck-trigger__badge {
+  position: absolute;
+  z-index: 20;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: auto;
+}
+
+:where(.userscript-deck).mode-spread .manager-deck-trigger,
+:where(.userscript-deck).mode-reordering .manager-deck-trigger {
+  z-index: 18;
+}
+
+:where(.userscript-deck).mode-dealing .manager-deck-trigger,
+:where(.userscript-deck).mode-collecting .manager-deck-trigger {
+  z-index: 80;
+  pointer-events: none;
+}
+
+.userscript-deck.is-global-library-retreated .manager-deck-entry-cluster {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(320px) rotate(8deg) scale(0.78);
+}
+
+.manager-media-speed-radial {
+  position: absolute;
+  z-index: 50;
+  inset: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.manager-media-speed-radial.is-visible {
+  opacity: 1;
+}
+
+.manager-media-speed-radial > legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.manager-media-speed-radial__option {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: var(--manager-media-speed-option-width, 47px);
+  height: var(--manager-media-speed-option-height, 39px);
+  padding: 0;
+  color: color-mix(in srgb, var(--media-speed-color) 76%, #fff);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  opacity: 0;
+  cursor: var(--app-ui-cursor-pointer);
+  translate: -50% -50%;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  transition:
+    color 280ms ease,
+    filter 340ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
+}
+
+.manager-media-speed-radial__ring {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.manager-media-speed-radial__motion {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  pointer-events: none;
+  place-items: center;
+  will-change: transform, opacity, filter;
+}
+
+.manager-media-speed-radial__emphasis {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  scale: 1;
+  pointer-events: none;
+  place-items: center;
+  transition: scale 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: scale;
+}
+
+:where(.manager-media-speed-radial.is-expanded)
+  .manager-media-speed-radial__option,
+:where(.manager-media-speed-radial.is-collapsed)
+  .manager-media-speed-radial__option.is-selected {
+  pointer-events: auto;
+}
+
+.manager-media-speed-radial[data-option-count="11"]
+  .manager-media-speed-radial__option,
+.manager-media-speed-radial[data-option-count="12"]
+  .manager-media-speed-radial__option {
+  width: var(--manager-media-speed-crowded-option-width, 42px);
+  height: var(--manager-media-speed-crowded-option-height, 35px);
+}
+
+.manager-media-speed-radial__plate.manager-action-plate {
+  --action-color: var(--media-speed-color);
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  color: color-mix(in srgb, var(--media-speed-color) 74%, #fff);
+  background: none;
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.24));
+  font: 700 11px / 1 var(--app-ui-font-display);
+  place-items: center;
+  isolation: isolate;
+  transition:
+    color 260ms ease,
+    filter 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    font-size 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    font-weight 240ms ease;
+  will-change: transform;
+}
+
+:where(.manager-media-speed-radial.is-collapsed)
+  .manager-media-speed-radial__option.is-selected
+  .manager-media-speed-radial__plate {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.manager-media-speed-radial__plate.manager-action-plate::before {
+  -webkit-mask:
+    url("/project-assets/userscript-deck/visual/cards/action-frame-square.webp")
+    center / 100% 100% no-repeat;
+  mask:
+    url("/project-assets/userscript-deck/visual/cards/action-frame-square.webp")
+    center / 100% 100% no-repeat;
+  filter: drop-shadow(
+    0 0 5px color-mix(in srgb, var(--action-color) 22%, transparent)
+  );
+  opacity: 0.76;
+  transition:
+    opacity 280ms ease,
+    filter 340ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.manager-media-speed-radial__plate.manager-action-plate::after {
+  box-shadow:
+    inset 0 0 12px color-mix(in srgb, var(--action-color) 7%, transparent),
+    0 4px 9px rgb(0 0 0 / 0.24);
+  transition:
+    background 320ms ease,
+    box-shadow 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.manager-media-speed-radial__plate .manager-action__frame {
+  opacity: 0.42;
+  filter: brightness(0.62) saturate(0.8) contrast(1.08)
+    drop-shadow(
+      0 0 5px color-mix(in srgb, var(--action-color) 24%, transparent)
+    );
+  transition:
+    opacity 280ms ease,
+    filter 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.manager-media-speed-radial__copy {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  width: 62%;
+  height: 62%;
+  color: inherit;
+  place-items: center;
+  pointer-events: none;
+  transition:
+    color 260ms ease,
+    filter 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.manager-media-speed-radial__copy > b {
+  font: inherit;
+  font-family: var(--app-ui-font-body);
+  text-shadow:
+    0 1px 2px #000,
+    0 0 3px color-mix(in srgb, var(--media-speed-color) 24%, transparent);
+  transition: text-shadow 320ms ease;
+}
+
+.manager-media-speed-radial__option:is(:hover, :focus-visible) {
+  z-index: 3;
+  transition-duration: 220ms;
+}
+
+.manager-media-speed-radial__option:is(:hover, :focus-visible)
+  .manager-media-speed-radial__emphasis {
+  scale: 1.12;
+  transition-duration: 220ms;
+}
+
+.manager-media-speed-radial__option:is(:hover, :focus-visible)
+  .manager-media-speed-radial__plate {
+  color: #fff8df;
+  filter: brightness(1.12)
+    drop-shadow(
+      0 0 8px color-mix(in srgb, var(--media-speed-color) 54%, transparent)
+    );
+}
+
+.manager-media-speed-radial__option:is(:hover, :focus-visible)
+  .manager-media-speed-radial__plate::before {
+  filter: drop-shadow(
+    0 0 8px color-mix(in srgb, var(--action-color) 46%, transparent)
+  );
+  opacity: 0.92;
+}
+
+.manager-media-speed-radial__option:is(:hover, :focus-visible)
+  .manager-media-speed-radial__plate::after {
+  box-shadow:
+    inset 0 0 18px 4px color-mix(in srgb, var(--action-color) 42%, transparent),
+    inset 0 0 48px 18px color-mix(in srgb, var(--action-color) 18%, transparent),
+    0 0 24px color-mix(in srgb, var(--action-color) 44%, transparent),
+    0 6px 16px rgb(0 0 0 / 0.3);
+}
+
+.manager-media-speed-radial__option:is(:hover, :focus-visible)
+  .manager-action__frame {
+  opacity: 0.62;
+  filter: brightness(0.84) saturate(1.04) contrast(1.08)
+    drop-shadow(
+      0 0 10px color-mix(in srgb, var(--action-color) 56%, transparent)
+    );
+}
+
+.manager-media-speed-radial__option:active
+  .manager-media-speed-radial__emphasis {
+  scale: 0.94;
+  transition-duration: 120ms;
+}
+
+.manager-media-speed-radial__option:active .manager-media-speed-radial__plate {
+  filter: brightness(1.06)
+    drop-shadow(
+      0 0 6px color-mix(in srgb, var(--media-speed-color) 48%, transparent)
+    );
+  transition-duration: 120ms;
+}
+
+.manager-media-speed-radial__option:focus-visible {
+  outline: 1px dashed color-mix(in srgb, var(--media-speed-color) 84%, #fff);
+  outline-offset: 3px;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected
+  .manager-media-speed-radial__plate {
+  color: #fff8de;
+  filter: brightness(1.16)
+    drop-shadow(
+      0 0 9px color-mix(in srgb, var(--media-speed-color) 52%, transparent)
+    );
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected {
+  z-index: 4;
+  transition-duration: 360ms;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected
+  .manager-media-speed-radial__emphasis {
+  scale: 1.22;
+  transition-duration: 360ms;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected
+  .manager-media-speed-radial__plate::before {
+  opacity: 1;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected
+  .manager-media-speed-radial__plate::after {
+  box-shadow:
+    inset 0 0 12px 2px
+    color-mix(in srgb, var(--media-speed-color) 28%, transparent),
+    0 0 12px color-mix(in srgb, var(--media-speed-color) 32%, transparent);
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected
+  .manager-action__frame {
+  opacity: 0.72;
+  filter: brightness(0.92) saturate(1.12) contrast(1.08)
+    drop-shadow(
+      0 0 8px color-mix(in srgb, var(--action-color) 46%, transparent)
+    );
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected
+  .manager-media-speed-radial__copy {
+  color: #fff8de;
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--action-color) 50%, transparent)
+  );
+}
+
+.manager-media-speed-radial__option.is-landing
+  .manager-media-speed-radial__plate {
+  filter: brightness(1.24)
+    drop-shadow(
+      0 0 12px color-mix(in srgb, var(--action-color) 72%, transparent)
+    );
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected:is(:hover, :focus-visible) {
+  transition-duration: 220ms;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected:is(:hover, :focus-visible)
+  .manager-media-speed-radial__plate {
+  filter: brightness(1.22)
+    drop-shadow(
+      0 0 11px color-mix(in srgb, var(--media-speed-color) 64%, transparent)
+    );
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected:is(:hover, :focus-visible)
+  .manager-media-speed-radial__plate::after {
+  box-shadow:
+    inset 0 0 16px 3px
+    color-mix(in srgb, var(--media-speed-color) 36%, transparent),
+    0 0 18px color-mix(in srgb, var(--media-speed-color) 42%, transparent);
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected:is(:hover, :focus-visible)
+  .manager-media-speed-radial__emphasis {
+  scale: var(--manager-media-speed-option-emphasis-scale, 1.28);
+  transition-duration: 220ms;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected:active
+  .manager-media-speed-radial__emphasis {
+  scale: 1.04;
+  transition-duration: 120ms;
+}
+
+.manager-media-speed-radial.is-expanded
+  .manager-media-speed-radial__option.is-selected:active
+  .manager-media-speed-radial__plate {
+  filter: brightness(1.1)
+    drop-shadow(
+      0 0 7px color-mix(in srgb, var(--media-speed-color) 56%, transparent)
+    );
+  transition-duration: 120ms;
+}
+
+.userscript-deck.is-global-library-retreated .manager-stage-atmosphere {
+  opacity: 0;
+}
+
+.userscript-deck.host-extension.is-global-library-retreated:not(
+  .is-global-library-card-settings
+) {
+  pointer-events: none;
+}
+
+.userscript-deck.is-global-library-card-settings .manager-detail-stage {
+  background: rgb(0 3 4 / 0.58);
+}
+
+@media (max-width: 720px) {
+  .manager-deck-launch-anchor {
+    bottom: -220px;
+  }
+}

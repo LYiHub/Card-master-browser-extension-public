@@ -1,0 +1,130 @@
+.is-spinning {
+  animation: install-spin 900ms linear infinite;
+}
+
+@keyframes install-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes install-rune-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (width <= 820px) {
+  .userscript-installer {
+    padding-bottom: 40px;
+    overflow: auto;
+  }
+
+  .install-focus-header {
+    width: min(680px, calc(100% - 28px));
+    margin-top: 72px;
+  }
+
+  .install-focus-header .context-plaque__title {
+    font-size: 32px;
+  }
+
+  .install-layout {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    margin-top: 24px;
+  }
+
+  .install-layout.is-complete {
+    grid-template-columns: 1fr;
+  }
+
+  .install-card-stage {
+    width: min(66vw, 300px);
+  }
+
+  .install-card-tilt {
+    transform: none;
+  }
+
+  .install-decision {
+    width: min(620px, 100%);
+    margin: 0 auto;
+    padding: 26px 0 0;
+    border-top: 1px solid rgb(219 181 96 / 0.24);
+    border-left: 0;
+  }
+
+  .install-decision__heading {
+    text-align: center;
+  }
+
+  .install-decision__description {
+    margin-inline: auto;
+  }
+}
+
+@media (width <= 560px) {
+  .userscript-installer {
+    padding-inline: 16px;
+  }
+
+  .install-corner-back {
+    top: 16px;
+    left: 16px;
+  }
+
+  .install-integrity {
+    top: 23px;
+    right: 16px;
+    max-width: calc(100vw - 88px);
+  }
+
+  .install-focus-header {
+    width: 100%;
+    margin-top: 68px;
+  }
+
+  .install-focus-header .context-plaque__title {
+    font-size: 27px;
+  }
+
+  .install-focus-header .context-plaque__description {
+    font-size: 14px;
+  }
+
+  .install-card-stage {
+    width: min(76vw, 278px);
+  }
+
+  .install-summary {
+    align-items: stretch;
+  }
+
+  .install-decision__actions .app-ui-button {
+    gap: 4px;
+    padding-inline: 8px;
+    font-size: 12px;
+  }
+
+  .install-decision__actions kbd {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .install-card-idle,
+  .install-card-tilt,
+  .is-spinning {
+    animation: none;
+  }
+
+  .install-layout,
+  .install-card-reflection {
+    transition-duration: 80ms;
+  }
+
+  .install-card__surface > :is(video, img) {
+    display: none;
+  }
+}

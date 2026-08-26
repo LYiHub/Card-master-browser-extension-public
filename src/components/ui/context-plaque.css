@@ -1,0 +1,309 @@
+.context-plaque {
+  --context-plaque-width: min(620px, 92vw);
+  --context-plaque-title-size: 25px;
+  --context-plaque-description-width: 430px;
+  --context-plaque-description-size: 14px;
+  --context-plaque-content-inset-start: 12px;
+  --context-plaque-content-inset-end: 8px;
+  --context-plaque-content-inset-inline: 12px;
+  --context-plaque-background-overlap-start: 22px;
+  --context-plaque-background-overlap-end: 14px;
+  --context-plaque-bottom-overlap: 18px;
+  --context-plaque-support-gap: 10px;
+  --context-plaque-support-height: 26px;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, auto) auto;
+  width: var(--context-plaque-width);
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: visible;
+  justify-items: center;
+  isolation: isolate;
+}
+
+.context-plaque__ornament {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  width: 100%;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+.context-plaque__ornament--top {
+  aspect-ratio: 16 / 1;
+}
+
+.context-plaque__ornament--bottom {
+  aspect-ratio: 8 / 1;
+  margin-top: calc(-1 * var(--context-plaque-bottom-overlap));
+}
+
+.context-plaque__ornament-layer {
+  display: block;
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity var(--app-motion-duration-medium)
+    var(--app-motion-ease-surface);
+  will-change: opacity;
+}
+
+.context-plaque__ornament--top .context-plaque__ornament-layer {
+  object-position: center bottom;
+}
+
+.context-plaque__ornament--bottom .context-plaque__ornament-layer {
+  object-position: center top;
+}
+
+.context-plaque__ornament-layer.is-neutral {
+  filter: sepia(0.14) saturate(0.92) brightness(1.12)
+    drop-shadow(0 0 8px rgb(208 161 69 / 0.2));
+  opacity: 0.72;
+}
+
+.context-plaque__ornament-layer.is-error {
+  filter: sepia(0.18) saturate(1.26) hue-rotate(318deg) brightness(1.08);
+}
+
+.context-plaque.is-error .context-plaque__ornament-layer.is-neutral {
+  opacity: 0;
+}
+
+.context-plaque.is-error .context-plaque__ornament-layer.is-error {
+  opacity: 0.9;
+}
+
+.context-plaque__content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: var(--context-plaque-content-inset-start)
+    var(--context-plaque-content-inset-inline)
+    var(--context-plaque-content-inset-end);
+  text-align: center;
+  place-items: center;
+}
+
+.context-plaque__copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  place-items: center;
+  will-change: transform, opacity;
+}
+
+.context-plaque__surface {
+  position: absolute;
+  z-index: 0;
+  inset: calc(-1 * var(--context-plaque-background-overlap-start)) 0
+    calc(-1 * var(--context-plaque-background-overlap-end));
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.context-plaque__surface-layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.context-plaque__surface-layer.is-neutral {
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgb(7 12 13 / 0.96) 0 42%,
+      rgb(7 12 13 / 0.78) 68%,
+      transparent 100%
+    ),
+    url("/project-assets/userscript-deck/visual/ui/interface/surfaces/panel-texture.webp")
+    center / 100% 100% no-repeat;
+  filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.42));
+  opacity: 0.86;
+}
+
+.context-plaque__surface-layer.is-error {
+  background: radial-gradient(
+    ellipse at center,
+    rgb(62 8 12 / 0.82) 0 38%,
+    rgb(38 5 9 / 0.7) 68%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity var(--app-motion-duration-medium)
+    var(--app-motion-ease-surface);
+  will-change: opacity;
+}
+
+.context-plaque.is-error .context-plaque__surface-layer.is-error {
+  opacity: 1;
+}
+
+.context-plaque
+  :where(
+    .context-plaque__title,
+    .context-plaque__description,
+    .context-plaque__rule,
+    .context-plaque__stats,
+    .context-plaque__shortcuts
+  ) {
+  position: relative;
+  z-index: 2;
+}
+
+.context-plaque__title {
+  max-width: 100%;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #f2e5c3;
+  font: 800 var(--context-plaque-title-size) / 1.08 var(--app-ui-font-display);
+  letter-spacing: 0;
+  text-shadow: 0 3px 8px #000;
+  transition: color var(--app-motion-duration-medium)
+    var(--app-motion-ease-surface);
+  white-space: normal;
+}
+
+.context-plaque__rule {
+  width: 132px;
+  height: 1px;
+  margin: 11px 0 8px;
+  color: rgb(221 184 93 / 0.62);
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  transition: color var(--app-motion-duration-medium)
+    var(--app-motion-ease-surface);
+}
+
+.context-plaque__description {
+  display: -webkit-box;
+  max-width: min(100%, var(--context-plaque-description-width));
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  color: rgb(239 232 211 / 0.9);
+  font:
+    500 var(--context-plaque-description-size) / 1.45 var(--app-ui-font-body);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.context-plaque.is-error .context-plaque__description {
+  display: block;
+  max-height: calc(1.45em * 8);
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.context-plaque__stats,
+.context-plaque__shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  justify-content: center;
+  max-width: min(100%, var(--context-plaque-description-width));
+  min-height: var(--context-plaque-support-height);
+  margin-top: var(--context-plaque-support-gap);
+}
+
+.context-plaque__stat {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: color-mix(in srgb, #d9b76a 76%, #fff);
+  font: 700 13px / 1.2 var(--app-ui-font-display);
+  text-shadow: 0 2px 4px #000;
+  transition: color var(--app-motion-duration-medium)
+    var(--app-motion-ease-surface);
+}
+
+.context-plaque__shortcuts > span,
+.context-plaque__audio {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  padding: 0;
+  color: rgb(236 227 203 / 0.86);
+  font: 700 13px / 1.2 var(--app-ui-font-display);
+  background: none;
+  border: 0;
+}
+
+.context-plaque__shortcuts kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  color: #dfbf75;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 800;
+  line-height: inherit;
+  text-align: center;
+}
+
+.context-plaque__audio {
+  cursor: var(--app-ui-cursor-pointer);
+  pointer-events: auto;
+  transition:
+    color var(--app-motion-duration-fast) var(--app-motion-ease-surface),
+    filter var(--app-motion-duration-fast) var(--app-motion-ease-surface);
+}
+
+.context-plaque__audio:hover {
+  color: #f1dda6;
+  filter: brightness(1.16);
+}
+
+.context-plaque__audio img {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: sepia(0.34) saturate(1.08) drop-shadow(0 0 7px rgb(229 187 86 / 0.34));
+}
+
+.context-plaque__audio.is-muted {
+  color: #a0afa8;
+  filter: grayscale(0.72);
+}
+
+.context-plaque.is-error .context-plaque__title {
+  color: #ffe0d5;
+  text-shadow: 0 3px 8px #000;
+}
+
+.context-plaque.is-error .context-plaque__rule {
+  color: rgb(225 87 87 / 0.84);
+}
+
+.context-plaque.is-error .context-plaque__stat {
+  color: #f1a29d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .context-plaque__surface-layer.is-error,
+  .context-plaque__ornament-layer,
+  .context-plaque__title,
+  .context-plaque__rule,
+  .context-plaque__stat {
+    transition-duration: var(--app-motion-duration-reduced);
+  }
+
+  .context-plaque__audio {
+    transition-duration: var(--app-motion-duration-reduced);
+    transition-delay: 0s;
+  }
+}

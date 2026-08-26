@@ -1,0 +1,289 @@
+{
+  "schemaVersion": 1,
+  "lastAuditedAt": "2026-08-26",
+  "upstreams": [
+    {
+      "id": "adguard-tswebextension",
+      "source": "https://github.com/AdguardTeam/tsurlfilter",
+      "integration": "direct-dependency",
+      "pin": "5.0.0",
+      "updateChannel": "npm:@adguard/tswebextension",
+      "license": "GPL-3.0-only",
+      "localTargets": [
+        "package.json",
+        "src/content-blocking",
+        "src/hosts/extension/adguard-runtime.ts"
+      ]
+    },
+    {
+      "id": "adguard-dnr-rulesets",
+      "source": "https://github.com/AdguardTeam/DnrRulesets",
+      "integration": "direct-dependency",
+      "pin": "5.0.1",
+      "updateChannel": "npm:@adguard/dnr-rulesets",
+      "license": "GPL-3.0-only",
+      "localTargets": [
+        "package.json",
+        "src/content-blocking/domain/filter-catalog.json",
+        "scripts/package-extension.mjs"
+      ]
+    },
+    {
+      "id": "darkreader",
+      "source": "https://github.com/darkreader/darkreader",
+      "integration": "vendored-source",
+      "pin": "a94819bde521f13f0ed5fb15024fc8f9425c23b1",
+      "updateChannel": "git:main",
+      "license": "MIT",
+      "localTargets": [
+        "vendor/darkreader",
+        "src/hosts/extension/page-theme-service.ts",
+        "src/hosts/extension/theme-runtime.ts"
+      ]
+    },
+    {
+      "id": "video-speed-controller",
+      "source": "https://github.com/igrigorik/videospeed",
+      "integration": "behavior-reference",
+      "pin": "6861be8c90d2b2181a6ae57249ce1e747773888d",
+      "updateChannel": "git:master",
+      "license": "MIT",
+      "localTargets": [
+        "src/media-speed/domain/rate-change-policy.ts",
+        "src/hosts/extension/media-speed-proxy.ts",
+        "src/hosts/extension/media-speed-content.ts",
+        "src/hosts/extension/media-speed-service.ts"
+      ]
+    },
+    {
+      "id": "speeder",
+      "source": "https://github.com/SoPat712/Speeder",
+      "integration": "behavior-reference",
+      "pin": "de6598dfdef5d7c6064769ceb4b40760fbefdee9",
+      "updateChannel": "git:main",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "src/media-speed/domain/rate-change-policy.ts",
+        "src/hosts/extension/media-speed-proxy.ts"
+      ]
+    },
+    {
+      "id": "hayame",
+      "source": "https://github.com/atani/hayame",
+      "integration": "behavior-reference",
+      "pin": "e6c83c50ec79f1c9adbd2fe0f2f39a927254b80a",
+      "updateChannel": "git:master",
+      "license": "MIT",
+      "localTargets": ["src/hosts/extension/media-speed-proxy.ts"]
+    },
+    {
+      "id": "cat-catch",
+      "source": "https://github.com/xifangczy/cat-catch",
+      "integration": "embedded-runtime",
+      "pin": "ef630f8ff88ca9a3ebbfaa1ea01e1512b9e6778a",
+      "updateChannel": "git:master",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "vendor/cat-catch",
+        "scripts/cat-catch-vendor.mjs",
+        "src/media-resources",
+        "src/hosts/extension/media-resources-service.ts",
+        "src/hosts/extension/media-resources.ts",
+        "src/features/userscript-deck/CatCatchPopup.tsx"
+      ]
+    },
+    {
+      "id": "violentmonkey",
+      "source": "https://github.com/violentmonkey/violentmonkey",
+      "integration": "behavior-reference",
+      "pin": "2.41.0",
+      "updateChannel": "github-releases",
+      "license": "MIT",
+      "localTargets": [
+        "src/userscript",
+        "src/hosts/extension/registered-userscripts.ts",
+        "src/hosts/extension/userscript-capability-service.ts"
+      ]
+    },
+    {
+      "id": "tampermonkey",
+      "source": "https://github.com/Tampermonkey/tampermonkey",
+      "integration": "behavior-reference",
+      "pin": "cdfc253c07267104de29d8cebb88fcd621ae5167",
+      "updateChannel": "git:master",
+      "license": "GPL-3.0 historical source",
+      "localTargets": [
+        "src/userscript",
+        "src/hosts/extension/registered-userscripts.ts"
+      ]
+    },
+    {
+      "id": "scriptcat",
+      "source": "https://github.com/scriptscat/scriptcat",
+      "integration": "behavior-reference",
+      "pin": "62759840",
+      "updateChannel": "git:main",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "src/userscript",
+        "src/hosts/extension/registered-userscripts.ts",
+        "src/hosts/extension/userscript-capability-service.ts"
+      ]
+    },
+    {
+      "id": "tabulabili",
+      "source": "https://github.com/tjsky/TabulaBili",
+      "integration": "capability-reimplementation",
+      "pin": "e580595627e60210ba1dc39c743c16e54383de35",
+      "updateChannel": "git:main",
+      "license": "MIT",
+      "localTargets": [
+        "src/bilibili-capabilities",
+        "src/hosts/extension/bilibili-recommendation-proxy.ts"
+      ]
+    },
+    {
+      "id": "pakku",
+      "source": "https://github.com/xmcp/pakku.js",
+      "integration": "embedded-runtime",
+      "pin": "2cb6f52aba70d6b685aaff9a1c03aabec7f299b2",
+      "updateChannel": "git:master",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "vendor/bilibili/pakku",
+        "src/hosts/extension/bilibili-capability-service.ts"
+      ]
+    },
+    {
+      "id": "bilibili-sponsorblock",
+      "source": "https://github.com/hanydd/BilibiliSponsorBlock",
+      "integration": "embedded-runtime",
+      "pin": "07ddf7c46ba805eec9eefd8213ebb4fb682c1786",
+      "updateChannel": "git:master",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "vendor/bilibili/sponsor",
+        "src/hosts/extension/bilibili-capability-service.ts"
+      ]
+    },
+    {
+      "id": "sponsorblock",
+      "source": "https://github.com/ajayyy/SponsorBlock",
+      "integration": "embedded-runtime",
+      "pin": "0a51a4981045b66007f88ab5e8909777c725ba43",
+      "updateChannel": "github-releases",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "vendor/youtube/sponsor",
+        "src/hosts/extension/bilibili-capability-service.ts"
+      ]
+    },
+    {
+      "id": "bilikit",
+      "source": "https://github.com/shiinayane/BiliKit",
+      "integration": "preinstalled-userscript",
+      "pin": "45f38e325fe9aaadeb9f6a7aadab1f54d5c8876c",
+      "updateChannel": "userscript-update-url",
+      "license": "MIT",
+      "localTargets": [
+        "vendor/bilibili/userscripts/bilikit-core.user.js",
+        "vendor/bilibili/userscripts/bilikit-feed.user.js"
+      ],
+      "contentHashes": {
+        "vendor/bilibili/userscripts/bilikit-core.user.js": "c0105344d2306cedf09f13cca0ee8494eb40ff0f103cc2ab921776ae6e566e07",
+        "vendor/bilibili/userscripts/bilikit-feed.user.js": "9acab4d4366138323362ac0b57acdc2e70bcca3ed9431a1b7bf5302546d4effc"
+      }
+    },
+    {
+      "id": "bilibili-favorites-fix",
+      "source": "https://github.com/crnkv/bilibili-favorites-fix-cerenkov-mod",
+      "integration": "preinstalled-userscript",
+      "pin": "1.4.5",
+      "updateChannel": "userscript-update-url",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "vendor/bilibili/userscripts/bilibili-favorites-fix.user.js"
+      ],
+      "contentHashes": {
+        "vendor/bilibili/userscripts/bilibili-favorites-fix.user.js": "3182c5a08f29980b373e25e79c4332a71b7cc6ac839885b0ec37a8ad5ca98c87"
+      }
+    },
+    {
+      "id": "copying-lifted",
+      "source": "https://github.com/canguser/hooker-js",
+      "integration": "adapted-preinstalled-userscript",
+      "pin": "0.3-card-master-1",
+      "updateChannel": "project-owned",
+      "license": "Apache-2.0",
+      "localTargets": [
+        "vendor/userscripts/copying-lifted.user.js",
+        "vendor/userscripts/LICENSE-copying-lifted"
+      ],
+      "contentHashes": {
+        "vendor/userscripts/copying-lifted.user.js": "5eb69308ed5a5e627e5a23002313ac1a0ff4baf3895e5823ed082c54250aaa0f"
+      }
+    },
+    {
+      "id": "remapad",
+      "source": "https://github.com/Shin-Aska/remapad",
+      "integration": "behavior-reference",
+      "pin": "fe8da0fd9abc9041012f96fd0e74d461f365d008",
+      "updateChannel": "git:main",
+      "license": "GPL-3.0-only",
+      "localTargets": [
+        "src/hosts/extension/gamepad-snapshot-runtime.ts",
+        "src/hosts/extension/gamepad-control-content.ts"
+      ]
+    },
+    {
+      "id": "spatial-nav-css",
+      "source": "https://github.com/SauceTaster/spatial-nav-css",
+      "integration": "direct-vendored-dependency",
+      "pin": "e15d2f3f943a43e1a27db27816160dad6837fb85",
+      "updateChannel": "git:master",
+      "license": "MIT",
+      "localTargets": [
+        "vendor/spatial-nav-css",
+        "src/hosts/extension/gamepad-control-content.ts"
+      ]
+    },
+    {
+      "id": "gaming-controller-tester",
+      "source": "https://github.com/pmanikas/gaming-controller-tester",
+      "integration": "vendored-visual",
+      "pin": "686b3b67705c01813e95b53394cba0947bcd4f9b",
+      "updateChannel": "git:master",
+      "license": "MIT",
+      "localTargets": [
+        "src/features/gamepad-control/GamepadInspection.tsx",
+        "src/hosts/extension/gamepad-control-content.ts"
+      ]
+    },
+    {
+      "id": "pinyin-ime",
+      "source": "https://github.com/catcherinsky/pinyin-ime",
+      "integration": "vendored-data",
+      "pin": "1.0.2",
+      "updateChannel": "github-releases",
+      "license": "MIT",
+      "localTargets": [
+        "vendor/pinyin-ime/google-pinyin-dictionary.json",
+        "src/hosts/extension/gamepad-control-content.ts"
+      ]
+    },
+    {
+      "id": "lumno",
+      "source": "https://github.com/kubai087/lumno-extension",
+      "integration": "controlled-new-tab-adaptation",
+      "pin": "3f02ab958ffd6eb61f0d217448d2712577bfa3ef",
+      "updateChannel": "github-releases",
+      "license": "GPL-3.0",
+      "localTargets": [
+        "vendor/lumno",
+        "src/new-tab",
+        "src/features/new-tab",
+        "src/hosts/extension/new-tab-service.ts"
+      ]
+    }
+  ]
+}

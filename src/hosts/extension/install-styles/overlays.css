@@ -1,0 +1,161 @@
+.install-completion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  width: min(100%, 36rem);
+  color: var(--app-ui-ink);
+}
+
+.install-completion strong {
+  color: var(--app-ui-ink);
+  font: 800 22px / 1.2 var(--app-ui-font-display);
+  text-shadow: 0 2px 5px #000;
+}
+
+.install-completion p {
+  margin: 8px 0 0;
+  color: var(--app-ui-muted);
+  font: 400 14px / 1.55 var(--app-ui-font-body);
+}
+
+.install-completion svg {
+  color: var(--app-ui-success);
+}
+
+.install-inspection__section,
+.install-inspection__grid,
+.install-source {
+  margin-top: 18px;
+}
+
+.install-inspection__section:first-child {
+  margin-top: 0;
+}
+
+.install-inspection__section > header,
+.install-source summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--app-ui-accent);
+}
+
+.install-inspection__section-title,
+.install-source__title {
+  color: var(--app-ui-ink);
+  font: 800 16px / 1.25 var(--app-ui-font-display);
+}
+
+.install-inspection__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.install-inspection__empty {
+  margin: 12px 0 0;
+  color: var(--app-ui-muted);
+  font: 400 14px / 1.55 var(--app-ui-font-body);
+}
+
+.install-diagnostics {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.install-diagnostics li {
+  padding: 10px 12px;
+  color: var(--app-ui-warning);
+  background: color-mix(in srgb, var(--app-ui-warning) 10%, transparent);
+  border-left: 2px solid var(--app-ui-warning);
+}
+
+.install-diagnostics li.is-error {
+  color: var(--app-ui-error);
+  background: color-mix(in srgb, var(--app-ui-error) 10%, transparent);
+  border-color: var(--app-ui-error);
+}
+
+.install-diagnostic__title {
+  font: 700 14px / 1.3 var(--app-ui-font-body);
+}
+
+.install-diagnostics p {
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--app-ui-muted);
+  font: 400 13px / 1.55 var(--app-ui-font-mono);
+}
+
+.install-token-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.install-token-list code {
+  max-width: 100%;
+  padding: 6px 8px;
+  overflow: hidden;
+  color: var(--app-ui-ink);
+  font: 600 13px / 1.35 var(--app-ui-font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--app-ui-control);
+  border: 1px solid var(--app-ui-border);
+}
+
+.install-token-list p {
+  margin: 0;
+  color: var(--app-ui-muted);
+  font: 400 14px / 1.55 var(--app-ui-font-body);
+}
+
+.install-source {
+  border-block: 1px solid var(--app-ui-rule);
+}
+
+.install-source summary {
+  padding: 14px 0;
+  cursor: var(--app-ui-cursor-pointer);
+  list-style: none;
+}
+
+.install-source summary::-webkit-details-marker {
+  display: none;
+}
+
+.install-source summary > span {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.install-source__size {
+  color: var(--app-ui-subtle);
+  font: 600 13px / 1.3 var(--app-ui-font-mono);
+}
+
+.install-source pre {
+  max-height: 280px;
+  margin: 0 0 16px;
+  padding: 14px;
+  overflow: auto;
+  color: var(--app-ui-ink);
+  font: 13px / 1.65 var(--app-ui-font-mono);
+  white-space: pre;
+  background: var(--app-ui-surface-strong);
+  border: 1px solid var(--app-ui-border);
+}
+
+@media (width <= 560px) {
+  .install-inspection__grid {
+    grid-template-columns: 1fr;
+  }
+}

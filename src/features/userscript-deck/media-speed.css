@@ -1,0 +1,33 @@
+.manager-media-speed-intro {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--app-ui-ink);
+  background: var(--app-ui-surface);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-media-speed-intro strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--app-ui-accent);
+}
+
+.manager-media-speed-intro p {
+  margin: 0;
+  color: var(--app-ui-muted);
+  line-height: 1.55;
+}
+
+.manager-media-speed-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.manager-media-speed-wheel-editor textarea {
+  min-height: 178px;
+  resize: vertical;
+  tab-size: 2;
+}

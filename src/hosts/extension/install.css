@@ -1,0 +1,9 @@
+@import "../../motion/transitions.css";
+@import "../../components/ui/context-plaque.css";
+@import "../../components/ui/ui.css";
+@import "../../features/manager-interaction/card-material.css";
+@import "./install-styles/foundation.css";
+@import "./install-styles/card.css";
+@import "./install-styles/decision.css";
+@import "./install-styles/overlays.css";
+@import "./install-styles/motion.css";

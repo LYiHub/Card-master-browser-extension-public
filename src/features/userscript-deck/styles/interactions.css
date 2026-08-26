@@ -1,0 +1,962 @@
+#manager-aim-arrow path {
+  fill: #efc75e;
+  filter: drop-shadow(0 0 5px rgb(239 199 94 / 0.72));
+}
+
+.manager-aim-line.is-page-targeting #manager-aim-arrow path {
+  fill: #efd58f;
+  stroke: #241b0f;
+  stroke-width: 1.15;
+  paint-order: stroke fill;
+  filter: drop-shadow(0 1px 1px rgb(15 10 5 / 0.92))
+    drop-shadow(0 0 5px rgb(199 160 75 / 0.68));
+}
+
+.context-plaque {
+  position: absolute;
+  z-index: 22;
+  top: 42%;
+  left: 50%;
+  display: grid;
+  width: min(520px, calc(100vw - 48px));
+  min-height: 174px;
+  box-sizing: border-box;
+  padding: 0;
+  color: #eadfbe;
+  background: none;
+  text-align: center;
+  overflow: visible;
+  transform: translate(-50%, -50%);
+  transition:
+    top 620ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    transform 620ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    opacity 400ms ease;
+  place-items: center;
+  pointer-events: none;
+}
+
+.context-plaque::before {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: min(860px, 96vw);
+  height: 340px;
+  content: "";
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(5 10 12 / 0.88) 0 14%,
+    rgb(5 10 12 / 0.62) 36%,
+    rgb(5 10 12 / 0.26) 56%,
+    transparent 72%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.context-plaque.is-reordering,
+.context-plaque.is-dragging,
+.context-plaque.is-targeting,
+.context-plaque.is-element-targeting,
+.context-plaque.is-resolving,
+.context-plaque.is-spread.is-hover-preview {
+  top: var(--manager-context-plaque-docked-top);
+  transform: translate(-50%, 0);
+}
+
+.context-plaque.is-import-presentation {
+  z-index: 520;
+  top: var(--manager-context-plaque-docked-top);
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.context-plaque.is-reordering::before,
+.context-plaque.is-dragging::before,
+.context-plaque.is-targeting::before,
+.context-plaque.is-element-targeting::before,
+.context-plaque.is-resolving::before,
+.context-plaque.is-spread.is-hover-preview::before,
+.context-plaque.is-import-presentation::before {
+  top: 60%;
+  height: 260px;
+}
+
+.context-plaque.is-detail {
+  visibility: hidden;
+}
+
+.context-plaque.is-closed {
+  visibility: hidden;
+  opacity: 0;
+}
+
+:where(.userscript-deck).mode-element-targeting .context-plaque,
+:where(.userscript-deck).has-page-element-target .context-plaque {
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    top 620ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    transform 620ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    opacity 180ms ease,
+    visibility 0s linear 180ms;
+}
+
+.manager-action-layer {
+  --manager-action-center-y: calc(50% - clamp(24px, 4vh, 44px));
+  position: absolute;
+  z-index: 24;
+  inset: 0;
+  opacity: 1;
+  pointer-events: none;
+  transform-origin: 50% var(--manager-action-center-y);
+  will-change: transform, opacity;
+}
+
+.manager-action-field {
+  position: absolute;
+  z-index: 1;
+  top: var(--manager-action-center-y);
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.manager-action-notice {
+  --manager-notice-width: min(640px, calc(100vw - 40px));
+  position: absolute;
+  z-index: 3;
+  top: var(--manager-action-center-y);
+  left: 50%;
+  display: grid;
+  width: var(--manager-notice-width);
+  aspect-ratio: 2 / 1;
+  color: #f2e6c5;
+  filter: drop-shadow(0 18px 26px rgb(0 0 0 / 0.46));
+  transform: translate(-50%, -50%);
+  place-items: center;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.manager-action-notice > img {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 200%;
+  object-fit: fill;
+  filter: brightness(0.82) saturate(0.88);
+  transform: translate(-50%, -50%) rotate(90deg);
+  pointer-events: none;
+}
+
+.manager-action-notice__copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  width: 68%;
+  max-height: 58%;
+  overflow: hidden;
+  text-align: center;
+  place-items: center;
+}
+
+.manager-action-notice__copy strong {
+  color: #f3dfae;
+  font-size: clamp(17px, 1.45vw, 22px);
+  line-height: 1.25;
+  text-shadow: 0 2px 5px #000;
+}
+
+.manager-action-notice__copy span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #cbd1ca;
+  font-size: clamp(13px, 0.95vw, 15px);
+  line-height: 1.5;
+  text-shadow: 0 1px 4px #000;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.manager-action-notice.is-error > img {
+  filter: sepia(0.66) saturate(1.42) hue-rotate(318deg) brightness(0.76);
+}
+
+.manager-action-notice.is-error .manager-action-notice__copy strong {
+  color: #ffc0ae;
+}
+
+.manager-action-notice.is-inactive {
+  --manager-notice-min-width: min(400px, calc(100vw - 48px));
+  --manager-notice-padding: clamp(14px, 1.8vw, 20px) clamp(28px, 3.4vw, 42px)
+    clamp(8px, 1.1vw, 12px);
+  --manager-notice-surface:
+    linear-gradient(135deg, rgb(17 24 25 / 0.97), rgb(6 10 11 / 0.96)),
+    rgb(8 12 13 / 0.96);
+  filter: grayscale(0.18) drop-shadow(0 18px 26px rgb(0 0 0 / 0.5));
+}
+
+.manager-action-notice.is-inactive .manager-action-notice__status-icon {
+  width: clamp(22px, 2vw, 28px);
+  height: clamp(22px, 2vw, 28px);
+  color: #91a7a8;
+  filter: drop-shadow(0 0 8px rgb(128 159 160 / 0.24));
+  stroke-width: 1.8;
+}
+
+.manager-action-notice.is-inactive .manager-action-notice__copy strong {
+  color: #d9e2e0;
+}
+
+.manager-action-notice.is-inactive .manager-action-notice__copy span {
+  color: #aebcbd;
+}
+
+.manager-action-notice__copy-button {
+  pointer-events: auto;
+}
+
+.manager-action-field::before,
+.manager-action-field::after {
+  position: absolute;
+  left: 50%;
+  content: "";
+  transition: opacity 320ms ease;
+}
+
+.manager-action-field::before {
+  bottom: calc(1px - var(--action-baseline-offset));
+  width: var(--action-span);
+  height: var(--action-arc-height);
+  border: 1px dashed rgb(214 181 105 / 0.2);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  translate: -50% 0;
+  mask-image: linear-gradient(90deg, transparent, #000 12% 88%, transparent);
+}
+
+.manager-action-field::after {
+  bottom: calc(-1 * var(--action-baseline-offset));
+  width: calc(var(--action-span) - 48px);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(232 195 101 / 0.12),
+    rgb(245 210 119 / 0.34),
+    rgb(232 195 101 / 0.12),
+    transparent
+  );
+  box-shadow: 0 0 18px rgb(229 188 87 / 0.16);
+  translate: -50% 0;
+}
+
+.manager-action {
+  --action-color: #f0c66e;
+  position: absolute;
+  top: 0;
+  left: var(--action-left);
+  width: var(--action-width);
+  height: min(660px, 68vh);
+  padding: 0;
+  appearance: none;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: var(--app-ui-cursor-pointer);
+  opacity: 1;
+  translate: 0 -50%;
+  transition:
+    width 360ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    left 420ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    --action-color 320ms cubic-bezier(0.2, 0.76, 0.2, 1);
+  pointer-events: none;
+  isolation: isolate;
+}
+
+:where(.userscript-deck):is(.mode-reordering, .mode-dragging) .manager-action {
+  transition-duration: 0s;
+}
+
+.manager-action--toggle {
+  --action-color: #7bdaa0;
+}
+
+.manager-action--command {
+  --action-color: #f0c66e;
+}
+
+.manager-action--assistant {
+  --action-color: #79d6b0;
+}
+
+.manager-action--library {
+  --action-color: #8eb7dc;
+}
+
+.manager-action--block {
+  --action-color: #f0c66e;
+}
+
+:where(.userscript-deck).has-page-element-target
+  .manager-card__action-frame.manager-action--block {
+  --action-color: #ff765d;
+}
+
+.manager-action--manage {
+  --action-color: #f0c35c;
+}
+
+.manager-action--remove {
+  --action-color: #ff8068;
+}
+
+.manager-action--cancel {
+  --action-color: #bdd1d2;
+}
+
+.manager-action::before,
+.manager-action::after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.manager-action::before {
+  top: 12%;
+  bottom: 5%;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(
+    transparent,
+    color-mix(in srgb, var(--action-color) 8%, transparent) 12%,
+    color-mix(in srgb, var(--action-color) 42%, transparent) 52%,
+    color-mix(in srgb, var(--action-color) 12%, transparent) 88%,
+    transparent
+  );
+  filter: drop-shadow(0 0 5px rgb(232 192 93 / 0.28));
+  opacity: 0.58;
+  transition:
+    opacity 180ms ease,
+    filter 220ms ease;
+}
+
+.manager-action::after {
+  inset: 10% 0 3%;
+  background: radial-gradient(
+    ellipse 74% 34% at 50% calc(50% + var(--action-y)),
+    color-mix(in srgb, var(--action-color) 14%, transparent),
+    color-mix(in srgb, var(--action-color) 4%, transparent) 42%,
+    transparent 74%
+  );
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.manager-action:first-child::before {
+  opacity: 0.22;
+}
+
+.manager-action.is-hovered::before {
+  filter: drop-shadow(0 0 9px rgb(242 205 111 / 0.68));
+  opacity: 1;
+}
+
+.manager-action.is-hovered::after {
+  opacity: 1;
+}
+
+.manager-action__badge {
+  --manager-action-attachment-x: 0px;
+  --manager-action-attachment-y: 0px;
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: var(--action-badge-width);
+  aspect-ratio: 536 / 360;
+  padding: 0;
+  opacity: 1;
+  scale: 1;
+  text-align: center;
+  translate: calc(-50% + var(--manager-action-attachment-x))
+    calc(-50% + var(--action-y) + var(--manager-action-attachment-y));
+  place-items: center;
+  isolation: isolate;
+  pointer-events: none;
+  transition:
+    opacity var(--manager-action-attachment-duration, 0.42s)
+    cubic-bezier(0.16, 0.84, 0.22, 1),
+    scale var(--manager-action-attachment-duration, 0.42s)
+    cubic-bezier(0.18, 0.82, 0.2, 1),
+    filter var(--manager-action-attachment-duration, 0.42s) ease;
+  will-change: opacity, scale, translate, filter;
+}
+
+.manager-element-targeting-hint {
+  --action-color: #f0c66e;
+  position: fixed;
+  z-index: 350;
+  top: 0;
+  left: 0;
+  display: block;
+  width: var(--manager-element-targeting-hint-width);
+  aspect-ratio: 536 / 360;
+  opacity: 0;
+  filter: brightness(0.88) drop-shadow(0 12px 24px rgb(0 0 0 / 0.42));
+  translate: -50% 12px;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    filter 320ms ease,
+    translate 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 380ms;
+  isolation: isolate;
+  will-change: top, left, opacity, translate;
+}
+
+.manager-element-targeting-hint.is-visible {
+  opacity: 1;
+  filter: brightness(1)
+    drop-shadow(
+      0 14px 28px color-mix(in srgb, var(--action-color) 22%, rgb(0 0 0 / 0.52))
+    );
+  translate: -50% 0;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.manager-element-targeting-hint__plate {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.manager-element-targeting-hint__plate .manager-action__activation-aura {
+  opacity: 0.76;
+}
+
+.manager-element-targeting-hint__plate
+  .manager-action__activation-aura::before {
+  animation: manager-action-ripple-strong 1.42s linear infinite;
+}
+
+.manager-element-targeting-hint__plate .manager-action__activation-aura::after {
+  animation: manager-action-ripple-soft 1.42s linear 0.28s infinite;
+}
+
+.manager-element-targeting-hint__copy {
+  position: absolute;
+  z-index: 3;
+  inset: 24% 11%;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--action-color) 70%, #fff 30%);
+  font:
+    700 var(--manager-element-targeting-hint-font-size) / 1.35
+    var(--app-ui-font-body);
+  text-align: center;
+  text-shadow:
+    0 2px 4px #000,
+    0 0 9px color-mix(in srgb, var(--action-color) 24%, transparent);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.manager-element-targeting-hint__copy > span {
+  display: block;
+  min-width: 0;
+}
+
+.manager-action__frame {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  opacity: 0.34;
+  filter: brightness(0.56) saturate(0.72) contrast(1.08)
+    drop-shadow(
+      0 0 12px color-mix(in srgb, var(--action-color) 48%, transparent)
+    );
+  transition:
+    opacity 180ms ease,
+    filter 180ms ease;
+  pointer-events: none;
+}
+
+.manager-action-plate::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--action-color) 58%, #f3dfae 42%),
+    var(--action-color) 34%,
+    color-mix(in srgb, var(--action-color) 82%, #6b4331 18%) 78%,
+    color-mix(in srgb, var(--action-color) 62%, #f3dfae 38%)
+  );
+  filter: drop-shadow(
+    0 0 13px color-mix(in srgb, var(--action-color) 58%, transparent)
+  );
+  opacity: 0.96;
+  -webkit-mask:
+    url("/project-assets/userscript-deck/visual/cards/action-frame.webp") center
+    / 100% 100% no-repeat;
+  mask:
+    url("/project-assets/userscript-deck/visual/cards/action-frame.webp") center
+    / 100% 100% no-repeat;
+  pointer-events: none;
+}
+
+.manager-action-plate::after {
+  position: absolute;
+  z-index: 0;
+  inset: 4.8% 4.6% 5.2%;
+  content: "";
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    color-mix(in srgb, var(--action-color) 10%, rgb(4 8 10 / 0.94)),
+    rgb(3 7 9 / 0.92) 54%,
+    rgb(2 5 7 / 0.88) 78%,
+    rgb(2 5 7 / 0.82) 100%
+  );
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 20px color-mix(in srgb, var(--action-color) 9%, transparent),
+    0 8px 22px rgb(0 0 0 / 0.3);
+  pointer-events: none;
+}
+
+.manager-action:where(.is-hovered) .manager-action__badge::after {
+  box-shadow:
+    inset 0 0 24px 5px color-mix(in srgb, var(--action-color) 56%, transparent),
+    inset 0 0 72px 24px color-mix(in srgb, var(--action-color) 26%, transparent),
+    0 0 34px color-mix(in srgb, var(--action-color) 62%, transparent),
+    0 8px 26px rgb(0 0 0 / 0.36);
+}
+
+.manager-action__copy {
+  position: absolute;
+  z-index: 3;
+  inset: 14% 11% 14%;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: none;
+  text-align: center;
+  translate: 0 0;
+  transition:
+    opacity 160ms ease,
+    translate 240ms cubic-bezier(0.18, 0.82, 0.2, 1),
+    filter 180ms ease;
+  user-select: none;
+}
+
+.manager-action__copy strong {
+  display: -webkit-box;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--action-color) 78%, #fff);
+  margin: 0;
+  font: 700 var(--action-label-size) / 1.15 var(--app-ui-font-display);
+  text-shadow: 0 2px 4px #000;
+  transition: color 180ms ease;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.manager-action__description {
+  display: -webkit-box;
+  width: 100%;
+  min-width: 0;
+  margin-top: 4px;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--action-color) 52%, #ddd 48%);
+  font: 600 var(--action-description-size) / 1.25 var(--app-ui-font-body);
+  transition: color 180ms ease;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.manager-action.is-hovered .manager-action__badge {
+  scale: 1;
+  filter: brightness(1.16)
+    drop-shadow(
+      0 0 18px color-mix(in srgb, var(--action-color) 64%, transparent)
+    );
+}
+
+.manager-action.is-hovered .manager-action__badge::after {
+  animation-duration: 1.15s;
+}
+
+.manager-action__badge.is-attachment-source {
+  z-index: 8;
+  filter: brightness(1.14)
+    drop-shadow(
+      0 0 22px color-mix(in srgb, var(--action-color) 68%, transparent)
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manager-element-targeting-hint {
+    transition: opacity 120ms ease;
+  }
+
+  .manager-element-targeting-hint__plate
+    .manager-action__activation-aura::before,
+  .manager-element-targeting-hint__plate
+    .manager-action__activation-aura::after {
+    animation: none;
+  }
+}
+
+.manager-corner-actions {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+}
+
+.manager-corner-action {
+  --action-y: 0px;
+  --manager-corner-radius: var(--manager-corner-action-radius);
+  --action-badge-width: var(--manager-corner-radius);
+  --action-label-size: clamp(14px, 1.28vw, 20px);
+  --action-description-size: clamp(12px, 0.82vw, 15px);
+  position: absolute;
+  width: var(--action-badge-width);
+  height: var(--manager-corner-radius);
+  padding: 0;
+  appearance: none;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: var(--app-ui-cursor-pointer);
+  opacity: 1;
+  overflow: hidden;
+  pointer-events: none;
+  animation: manager-corner-action-enter 260ms cubic-bezier(0.18, 0.82, 0.2, 1)
+    both;
+}
+
+:where(.userscript-deck):is(.mode-reordering, .mode-dragging, .mode-resolving)
+  .manager-corner-action {
+  animation: none;
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-right"] {
+  --manager-corner-origin: 100% 100%;
+  inset: auto 0 0 auto;
+  border-top-left-radius: 100%;
+  transform-origin: 100% 100%;
+}
+
+.manager-corner-action[data-manager-action-corner="top-right"] {
+  --manager-corner-origin: 100% 0;
+  inset: 0 0 auto auto;
+  border-bottom-left-radius: 100%;
+  transform-origin: 100% 0;
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-left"] {
+  --manager-corner-origin: 0 100%;
+  inset: auto auto 0 0;
+  border-top-right-radius: 100%;
+  transform-origin: 0 100%;
+}
+
+.manager-corner-action[data-manager-action-corner="top-left"] {
+  --manager-corner-origin: 0 0;
+  inset: 0 auto auto 0;
+  border-bottom-right-radius: 100%;
+  transform-origin: 0 0;
+}
+
+.manager-corner-action--cancel {
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0.985);
+  transition:
+    visibility 0s linear 300ms,
+    opacity 240ms ease,
+    transform 260ms ease;
+  pointer-events: none;
+  animation: none;
+}
+
+.manager-corner-action--cancel.is-visible {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0s;
+  pointer-events: none;
+}
+
+.manager-corner-action .manager-action__copy {
+  inset: auto;
+  width: 58%;
+  height: 42%;
+  transition:
+    filter 180ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    text-shadow 180ms ease;
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-right"]
+  .manager-action__copy {
+  right: 8%;
+  bottom: 14%;
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-left"]
+  .manager-action__copy {
+  bottom: 14%;
+  left: 8%;
+}
+
+.manager-corner-action[data-manager-action-corner="top-left"]
+  .manager-action__copy {
+  top: 14%;
+  left: 8%;
+}
+
+.manager-corner-action[data-manager-action-corner="top-right"]
+  .manager-action__copy {
+  top: 14%;
+  right: 8%;
+}
+
+.manager-corner-action .manager-action__badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: inherit;
+  transform-origin: var(--manager-corner-origin);
+  background: radial-gradient(
+    circle var(--manager-corner-radius) at var(--manager-corner-origin),
+    transparent 72%,
+    color-mix(in srgb, var(--action-color) 3%, transparent) 80%,
+    color-mix(in srgb, var(--action-color) 14%, transparent) 96%,
+    color-mix(in srgb, var(--action-color) 8%, transparent) 100%
+  );
+  border: 0;
+  filter: drop-shadow(
+    0 0 7px color-mix(in srgb, var(--action-color) 22%, transparent)
+  );
+  scale: 1;
+  translate: 0 0;
+  transition:
+    border-color 180ms ease,
+    filter 200ms cubic-bezier(0.2, 0.76, 0.2, 1),
+    scale 200ms cubic-bezier(0.18, 0.82, 0.2, 1),
+    translate 200ms cubic-bezier(0.18, 0.82, 0.2, 1);
+}
+
+.manager-corner-action .manager-action__badge::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  content: "";
+  background: radial-gradient(
+    circle var(--manager-corner-radius) at var(--manager-corner-origin),
+    transparent 58%,
+    color-mix(in srgb, var(--action-color) 5%, transparent) 72%,
+    color-mix(in srgb, var(--action-color) 34%, transparent) 94%,
+    color-mix(in srgb, var(--action-color) 18%, transparent) 100%
+  );
+  border-radius: inherit;
+  opacity: 0;
+  filter: brightness(1);
+  scale: 0.96;
+  transition:
+    opacity 180ms cubic-bezier(0.16, 0.84, 0.22, 1),
+    filter 200ms ease,
+    scale 200ms cubic-bezier(0.18, 0.82, 0.2, 1);
+  pointer-events: none;
+}
+
+.manager-corner-action .manager-action__badge::after {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  box-sizing: border-box;
+  content: "";
+  border-radius: inherit;
+  opacity: 0;
+  filter: drop-shadow(
+    0 0 6px color-mix(in srgb, var(--action-color) 38%, transparent)
+  );
+  scale: 0.985;
+  transition:
+    opacity 180ms cubic-bezier(0.16, 0.84, 0.22, 1),
+    filter 200ms ease,
+    scale 200ms cubic-bezier(0.18, 0.82, 0.2, 1);
+  pointer-events: none;
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-right"]
+  .manager-action__badge {
+  border-top: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+  border-left: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-right"]
+  .manager-action__badge::after {
+  border-top: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+  border-left: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-left"]
+  .manager-action__badge {
+  border-top: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+  border-right: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+}
+
+.manager-corner-action[data-manager-action-corner="bottom-left"]
+  .manager-action__badge::after {
+  border-top: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+  border-right: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+}
+
+.manager-corner-action[data-manager-action-corner="top-left"]
+  .manager-action__badge {
+  border-right: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+  border-bottom: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+}
+
+.manager-corner-action[data-manager-action-corner="top-left"]
+  .manager-action__badge::after {
+  border-right: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+  border-bottom: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+}
+
+.manager-corner-action[data-manager-action-corner="top-right"]
+  .manager-action__badge {
+  border-bottom: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+  border-left: 2px dashed
+    color-mix(in srgb, var(--action-color) 62%, transparent);
+}
+
+.manager-corner-action[data-manager-action-corner="top-right"]
+  .manager-action__badge::after {
+  border-bottom: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+  border-left: 2px solid color-mix(in srgb, var(--action-color) 86%, #fff 14%);
+}
+
+.manager-corner-action--cancel.is-visible .manager-action__badge {
+  scale: 1;
+  translate: 0 0;
+}
+
+.manager-corner-action.is-hovered .manager-action__badge {
+  filter: drop-shadow(
+    0 0 13px color-mix(in srgb, var(--action-color) 58%, transparent)
+  );
+  scale: 1;
+  translate: 0 0;
+}
+
+.manager-corner-action.is-hovered .manager-action__badge::after {
+  opacity: 1;
+  filter: drop-shadow(
+    0 0 13px color-mix(in srgb, var(--action-color) 62%, transparent)
+  );
+  scale: 1;
+}
+
+.manager-corner-action.is-hovered .manager-action__badge::before {
+  opacity: 1;
+  filter: brightness(1.2);
+  scale: 1;
+  animation: manager-corner-ready-pulse 0.88s ease-in-out infinite alternate;
+}
+
+.manager-corner-action.is-hovered .manager-action__copy {
+  filter: brightness(1.24)
+    drop-shadow(
+      0 0 9px color-mix(in srgb, var(--action-color) 72%, transparent)
+    );
+  text-shadow:
+    0 2px 5px #000,
+    0 0 15px color-mix(in srgb, var(--action-color) 54%, transparent);
+}
+
+.manager-action-layer.is-preview .manager-action-field::before,
+.manager-action-layer.is-preview .manager-action-field::after {
+  opacity: 0;
+}
+
+.manager-action-layer.is-preview .manager-action::before {
+  opacity: 0;
+}
+
+.manager-action-layer.is-preview .manager-action::after {
+  opacity: 0;
+}
+
+.manager-action-flight {
+  position: fixed;
+  z-index: 349;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.manager-action-flight__trail {
+  position: fixed;
+  z-index: 0;
+  top: var(--attachment-trail-y, 0);
+  left: var(--attachment-trail-x, 0);
+  width: var(--attachment-trail-length, 48px);
+  height: 18px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--action-color) 18%, transparent) 38%,
+    color-mix(in srgb, var(--action-color) 72%, transparent)
+  );
+  border-radius: 999px;
+  opacity: var(--attachment-trail-opacity, 0);
+  filter: blur(5px);
+  transform: translate(-100%, -50%) rotate(var(--attachment-trail-angle, 0rad));
+  transform-origin: 100% 50%;
+  pointer-events: none;
+}

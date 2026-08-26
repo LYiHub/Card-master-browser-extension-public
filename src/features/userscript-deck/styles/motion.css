@@ -1,0 +1,152 @@
+@keyframes manager-rune-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes manager-aim-flow {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+@keyframes manager-aim-pulse {
+  50% {
+    scale: 1.55;
+    opacity: 0.62;
+  }
+}
+
+@keyframes manager-corner-action-enter {
+  from {
+    opacity: 0;
+    filter: brightness(0.72);
+    scale: 0.985;
+  }
+
+  to {
+    opacity: 1;
+    filter: brightness(1);
+    scale: 1;
+  }
+}
+
+@keyframes manager-corner-ready-pulse {
+  from {
+    opacity: 0.78;
+    filter: brightness(1.04);
+    scale: 0.985;
+  }
+
+  to {
+    opacity: 1;
+    filter: brightness(1.28);
+    scale: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .manager-detail-stage {
+    grid-template-columns: 132px minmax(300px, 1fr);
+    gap: 28px;
+    padding: 28px;
+  }
+  .manager-detail-card-slot {
+    width: 132px;
+    height: auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .manager-host-page__body {
+    width: 84vw;
+    margin-left: 8vw;
+  }
+  .manager-host-page h1 {
+    font-size: 38px;
+  }
+  .manager-host-page__columns {
+    width: 80vw;
+    gap: 14px;
+  }
+  .manager-detail-stage {
+    display: block;
+    padding: 18px;
+    overflow: auto;
+  }
+  .manager-detail-card-slot {
+    width: 106px;
+    height: auto;
+    margin: 4px auto -20px;
+    transform: rotate(-2deg);
+  }
+  .manager-field {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .manager-field input[type="checkbox"] {
+    justify-self: start;
+  }
+}
+
+.userscript-deck.is-casting .manager-stage-atmosphere {
+  opacity: 0;
+  transition-duration: 420ms;
+}
+
+.userscript-deck.is-casting .manager-host-page {
+  filter: saturate(0.9) brightness(0.86);
+  transform: scale(0.996);
+  transition-duration: 480ms;
+}
+
+.userscript-deck.is-casting .manager-card.is-casting {
+  filter: drop-shadow(
+    0 0 24px color-mix(in srgb, var(--action-color) 72%, transparent)
+  );
+}
+
+.userscript-deck.mode-dragging,
+.userscript-deck.mode-element-targeting,
+.userscript-deck.mode-resolving,
+.userscript-deck.mode-returning,
+.userscript-deck.mode-detail,
+.userscript-deck.mode-forging,
+:where(.userscript-deck).mode-dragging .manager-card.is-dragging,
+:where(.userscript-deck).mode-dragging .manager-action,
+:where(.userscript-deck).mode-dragging .manager-corner-action,
+:where(.userscript-deck).mode-resolving .manager-card,
+:where(.userscript-deck).mode-detail .manager-detail-stage,
+:where(.userscript-deck).mode-forging .manager-card {
+  cursor: var(--app-ui-cursor-pointer);
+}
+
+:where(.userscript-deck).mode-closed .manager-card__forge-mark,
+:where(.userscript-deck).mode-closed .manager-card * {
+  animation-play-state: paused;
+}
+
+@keyframes manager-page-target-resolve {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+  64% {
+    opacity: 1;
+    scale: 1.035;
+  }
+  100% {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .userscript-deck.userscript-deck.userscript-deck.userscript-deck *,
+  .userscript-deck.userscript-deck.userscript-deck.userscript-deck *::before,
+  .userscript-deck.userscript-deck.userscript-deck.userscript-deck *::after {
+    animation-duration: 120ms;
+    animation-iteration-count: 1;
+    transition-duration: var(--app-motion-duration-reduced);
+  }
+}

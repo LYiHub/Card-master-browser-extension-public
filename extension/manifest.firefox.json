@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "permissions": [
+    "alarms",
+    "bookmarks",
+    "clipboardWrite",
+    "cookies",
+    "declarativeNetRequestWithHostAccess",
+    "downloads",
+    "history",
+    "notifications",
+    "search",
+    "scripting",
+    "storage",
+    "tabs",
+    "topSites",
+    "unlimitedStorage",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "optional_permissions": ["userScripts"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "action": {
+    "default_title": "打开卡牌大师智能体",
+    "default_icon": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png"
+  },
+  "sidebar_action": {
+    "default_title": "卡牌大师智能体",
+    "default_panel": "assistant.html",
+    "default_icon": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png",
+    "open_at_install": false
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "card-master@linyi.video",
+      "strict_min_version": "153.0"
+    }
+  },
+  "incognito": "spanning"
+}
