@@ -15,7 +15,7 @@
 
   <p>
     <a href="https://github.com/LYiHub/Card-master-browser-extension-public/releases/latest">
-      <img src="https://img.shields.io/badge/version-0.1.2-7c3aed?style=flat-square" alt="版本 0.1.2" />
+      <img src="https://img.shields.io/badge/version-0.2.0-7c3aed?style=flat-square" alt="版本 0.2.0" />
     </a>
     <a href="./LICENSE">
       <img src="https://img.shields.io/badge/license-GPL--3.0--only-22c55e?style=flat-square" alt="GPL-3.0-only" />
