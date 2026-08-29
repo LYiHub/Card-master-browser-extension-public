@@ -65,7 +65,9 @@ function serviceHarness(
       sessionRules.push(...(update.addRules ?? []));
     },
   );
-  const sendMessage = vi.fn(async (): Promise<unknown> => undefined);
+  const sendMessage = vi.fn(
+    async (_tabId: number, _message: unknown): Promise<unknown> => undefined,
+  );
   const sendRuntimeMessage = vi.fn(async () => undefined);
   const api = {
     runtime: {
@@ -194,11 +196,45 @@ describe('B 站能力服务', () => {
         mode: 'explore',
       }),
     );
-    expect(harness.sendRuntimeMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'bilibili-capabilities-changed',
-      }),
+    await vi.waitFor(() =>
+      expect(harness.sendRuntimeMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'bilibili-capabilities-changed',
+        }),
+      ),
     );
+  });
+
+  it('推荐刷新消息未响应时仍立即提交模式切换', async () => {
+    const harness = serviceHarness();
+    await harness.service.read({
+      tabId: 9,
+      url: 'https://www.bilibili.com/',
+    });
+    harness.sendMessage.mockImplementation(async (_tabId, message) => {
+      if (
+        message &&
+        typeof message === 'object' &&
+        'type' in message &&
+        message.type === 'bilibili-recommendation-refresh'
+      ) {
+        return new Promise(() => undefined);
+      }
+      return undefined;
+    });
+
+    const result = await harness.service.execute(
+      'recommendation-control',
+      'mode:explore',
+      { tabId: 9, url: 'https://www.bilibili.com/' },
+    );
+
+    expect(
+      result.state.capabilities['recommendation-control'].settings.mode,
+    ).toBe('explore');
+    expect(harness.rules()[0]?.action.requestHeaders).toEqual([
+      expect.objectContaining({ operation: 'set' }),
+    ]);
   });
 
   it('Safari 不部署请求头规则且不会阻断其他后台能力', async () => {

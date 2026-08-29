@@ -127,6 +127,12 @@ export function actionsFor(card: DeckCard): ManagerAction[] {
         description: '打开包含全部系统卡牌和已安装脚本的管理工作区',
       },
       {
+        id: 'import-local-script',
+        kind: 'library',
+        label: '导入本地脚本',
+        description: '选择自己制作的 .user.js 或脚本 ZIP，直接加入牌库',
+      },
+      {
         id: 'site-search',
         kind: 'site-search',
         label: '查找本站脚本',

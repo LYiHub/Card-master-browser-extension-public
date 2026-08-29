@@ -11,6 +11,7 @@ import {
 export type UserscriptDetailMode =
   | 'manage'
   | 'global-settings'
+  | 'global-library-import'
   | 'content-blocking-settings'
   | 'page-theme-site'
   | 'page-theme-settings'

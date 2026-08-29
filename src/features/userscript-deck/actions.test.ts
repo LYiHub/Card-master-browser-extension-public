@@ -87,6 +87,11 @@ describe('actionsFor', () => {
       }),
       expect.objectContaining({ id: 'library', kind: 'library' }),
       expect.objectContaining({
+        id: 'import-local-script',
+        kind: 'library',
+        label: '导入本地脚本',
+      }),
+      expect.objectContaining({
         id: 'site-search',
         kind: 'site-search',
         label: '查找本站脚本',

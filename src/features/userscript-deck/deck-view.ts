@@ -10,7 +10,10 @@ import {
 import type { GamepadControlCard } from '../../gamepad-control/domain/types';
 import { extensionTarget } from '../../hosts/extension/platform';
 import type { InputModality } from '../../input/intents';
-import { isExtensionStorageSpaceFailure } from '../../lib/extension-errors';
+import {
+  isExtensionPageLifecycleInterrupted,
+  isExtensionStorageSpaceFailure,
+} from '../../lib/extension-errors';
 import type { MediaResourcesSnapshot } from '../../media-resources/domain/types';
 import type { MediaSpeedSnapshot } from '../../media-speed/domain/types';
 import type { PageThemeSnapshot } from '../../page-theme/domain/types';
@@ -69,6 +72,13 @@ export function userscriptDeckActionNotice(
   context: UserscriptDeckNoticeContext = {},
 ) {
   if (context.libraryError) {
+    if (isExtensionPageLifecycleInterrupted(context.libraryError)) {
+      return {
+        title: '扩展已更新，请刷新页面',
+        description: '当前网页仍在使用旧的扩展连接，牌库数据没有丢失。',
+        tone: 'inactive' as const,
+      };
+    }
     return {
       title: '脚本仓库错误',
       description: context.libraryError,
@@ -466,6 +476,15 @@ export function userscriptDeckContextPrompt({
     };
   }
   if (libraryError) {
+    if (isExtensionPageLifecycleInterrupted(libraryError)) {
+      return {
+        key: 'extension-page-lifecycle-interrupted',
+        title: '扩展已更新，请刷新当前页面',
+        description: '当前网页仍在使用更新前的扩展连接，刷新后会自动重新连接。',
+        stats: ['当前牌库数据没有丢失'],
+        tone: 'neutral',
+      };
+    }
     if (isExtensionStorageSpaceFailure(libraryError)) {
       return {
         key: 'extension-storage-space-error',

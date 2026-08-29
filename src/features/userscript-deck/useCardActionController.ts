@@ -545,6 +545,14 @@ export function useCardActionController({
     void (async () => {
       if (item.kind === 'steward') {
         audio.play('panelOpen', { positionX: window.innerWidth / 2 });
+        if (action.id === 'import-local-script') {
+          dispatchManager({
+            type: 'openDetail',
+            cardId: item.id,
+            detail: 'global-library-import',
+          });
+          return;
+        }
         if (action.kind === 'library') {
           await openGlobalLibrary();
           return;
