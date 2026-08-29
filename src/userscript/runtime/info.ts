@@ -8,8 +8,8 @@ export function userscriptInfo(
 ) {
   return {
     scriptHandler: '卡牌大师',
-    version: '0.1.1',
-    handlerVersion: '0.1.1',
+    version: '0.1.2',
+    handlerVersion: '0.1.2',
     injectInto: script.metadata.grants.includes('none') ? 'page' : 'content',
     downloadMode: 'browser',
     isIncognito: false,

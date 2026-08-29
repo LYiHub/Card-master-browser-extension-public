@@ -225,6 +225,26 @@ describe('Userscript deck card focus copy', () => {
     });
   });
 
+  it('asks for a refresh when an extension update disconnects the page', () => {
+    expect(
+      userscriptDeckContextPrompt({
+        libraryError:
+          'Extension request "library-list" failed: Could not establish connection. Receiving end does not exist.',
+        interactionError: null,
+        mode: 'spread',
+        selected: null,
+        focusedItem: null,
+        executionCapability: { status: 'available' },
+        inputModality: 'keyboard',
+      }),
+    ).toMatchObject({
+      key: 'extension-page-lifecycle-interrupted',
+      title: '扩展已更新，请刷新当前页面',
+      stats: ['当前牌库数据没有丢失'],
+      tone: 'neutral',
+    });
+  });
+
   it('describes pointer hover as inspecting rather than selecting a card', () => {
     expect(
       userscriptDeckContextPrompt({

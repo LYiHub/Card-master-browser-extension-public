@@ -1,7 +1,7 @@
 {
   "name": "卡牌大师",
   "short_name": "卡牌大师",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "以游戏化卡牌统一管理用户脚本与网页能力：AI 创建脚本、原生内容过滤、页面光影、媒体控制、视频增强与游戏手柄交互。",
   "default_locale": "zh_CN",
   "host_permissions": ["<all_urls>"],
