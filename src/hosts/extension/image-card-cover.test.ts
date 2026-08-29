@@ -172,4 +172,87 @@ describe('卡牌封面生成', () => {
     ).rejects.toThrow('不安全的图片地址');
     expect(request).toHaveBeenCalledOnce();
   });
+
+  it('uses dashscope adapter when protocol is dashscope', async () => {
+    let capturedUrl: string | undefined;
+    let requestBody: Record<string, unknown> | null = null;
+    let callIndex = 0;
+    const request = vi.fn(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        callIndex++;
+        if (callIndex === 1) {
+          capturedUrl = String(input);
+          requestBody = JSON.parse(String(init?.body)) as Record<
+            string,
+            unknown
+          >;
+          return new Response(
+            JSON.stringify({
+              output: {
+                choices: [
+                  {
+                    finish_reason: 'stop',
+                    message: {
+                      role: 'assistant',
+                      content: [
+                        { image: 'https://oss.example/cover.png?Expires=456' },
+                      ],
+                    },
+                  },
+                ],
+              },
+              usage: { width: 720, height: 960, image_count: 1 },
+              request_id: 'cover-123',
+            }),
+            { status: 200 },
+          );
+        }
+        // Image download — return 500 to avoid createImageBitmap/OffscreenCanvas
+        // which are unavailable in the Node.js test environment
+        return new Response('download failed', { status: 500 });
+      },
+    );
+    const generator = new ImageCardCoverGenerator(request as typeof fetch);
+
+    await expect(
+      generator.generate(
+        {
+          modelService: {
+            baseUrl: 'https://chat.example/v1',
+            model: 'deepseek-v4-flash',
+            protocol: 'chat-completions',
+            reasoningEffort: 'high',
+            apiKey: '',
+          },
+          imageService: {
+            credentialSource: 'independent',
+            protocol: 'dashscope',
+            baseUrl: 'https://dashscope.aliyuncs.com',
+            model: 'z-image-turbo',
+            apiKey: 'ds-key',
+          },
+          speechService: { apiKey: '' },
+        },
+        'A librarian forging a browser spell into an illustrated card',
+      ),
+    ).rejects.toThrow('下载卡牌封面失败');
+    expect(capturedUrl).toBe(
+      'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
+    );
+    expect(requestBody).toMatchObject({
+      model: 'z-image-turbo',
+      input: {
+        messages: [
+          {
+            role: 'user',
+            content: [{ text: expect.stringContaining('A librarian') }],
+          },
+        ],
+      },
+      parameters: {
+        size: '720*960',
+        prompt_extend: false,
+      },
+    });
+  });
 });

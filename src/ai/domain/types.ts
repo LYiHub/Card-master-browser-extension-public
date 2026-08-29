@@ -43,7 +43,7 @@ export type ModelServiceConfigInput = Omit<ModelServiceConfig, 'apiKey'> & {
 };
 
 export type ImageServiceCredentialSource = 'model-service' | 'independent';
-export type ImageServiceProtocol = 'openai-images';
+export type ImageServiceProtocol = 'openai-images' | 'dashscope';
 
 export type ImageServiceConfig = {
   credentialSource: ImageServiceCredentialSource;

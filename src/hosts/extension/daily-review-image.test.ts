@@ -109,4 +109,89 @@ describe('DailyReviewImageGenerator', () => {
       buildDailyReviewImageRequest('A complete English wallpaper prompt.'),
     ).toThrow('每日回顾提示词必须使用简体中文');
   });
+
+  it('uses dashscope adapter when protocol is dashscope', async () => {
+    const dashscopeConfig: AiServicesConfig = {
+      modelService: {
+        baseUrl: 'https://api.example.com/v1',
+        model: 'deepseek-v4-flash',
+        protocol: 'responses',
+        reasoningEffort: 'high',
+        apiKey: 'model-key',
+      },
+      imageService: {
+        credentialSource: 'independent',
+        protocol: 'dashscope',
+        baseUrl: 'https://dashscope.aliyuncs.com',
+        model: 'z-image-turbo',
+        apiKey: 'dashscope-key',
+      },
+      speechService: { apiKey: '' },
+    };
+    let capturedUrl: string | undefined;
+    let requestBody: Record<string, unknown> | null = null;
+    let callIndex = 0;
+    const request = vi.fn(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        callIndex++;
+        if (callIndex === 1) {
+          capturedUrl = String(input);
+          requestBody = JSON.parse(String(init?.body)) as Record<
+            string,
+            unknown
+          >;
+          return new Response(
+            JSON.stringify({
+              output: {
+                choices: [
+                  {
+                    finish_reason: 'stop',
+                    message: {
+                      role: 'assistant',
+                      content: [
+                        { image: 'https://oss.example/img.png?Expires=123' },
+                      ],
+                    },
+                  },
+                ],
+              },
+              usage: { width: 3840, height: 2160, image_count: 1 },
+              request_id: 'test-123',
+            }),
+            { status: 200 },
+          );
+        }
+        // Image download — return minimal JPEG bytes (SOI + EOI)
+        return new Response(
+          new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0xff, 0xd9]),
+          { status: 200 },
+        );
+      },
+    );
+    const generator = new DailyReviewImageGenerator(request as typeof fetch);
+
+    const result = await generator.generate(
+      dashscopeConfig,
+      '一张完整连贯的生活回顾场景。',
+    );
+    expect(capturedUrl).toBe(
+      'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
+    );
+    expect(requestBody).toEqual({
+      model: 'z-image-turbo',
+      input: {
+        messages: [
+          {
+            role: 'user',
+            content: [{ text: '一张完整连贯的生活回顾场景。' }],
+          },
+        ],
+      },
+      parameters: {
+        size: '3840*2160',
+        prompt_extend: false,
+      },
+    });
+    expect(result.model).toBe('z-image-turbo');
+  });
 });

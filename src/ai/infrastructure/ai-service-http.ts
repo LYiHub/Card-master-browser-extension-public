@@ -6,7 +6,7 @@ export type AiServiceFetch = (
 ) => Promise<Response>;
 
 export type AiServiceRequestContext = {
-  protocol?: 'responses' | 'chat-completions' | 'openai-images';
+  protocol?: 'responses' | 'chat-completions' | 'openai-images' | 'dashscope';
 };
 
 export type AiServiceRequestDiagnostic = {

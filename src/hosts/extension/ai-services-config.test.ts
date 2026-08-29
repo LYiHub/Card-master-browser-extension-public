@@ -13,6 +13,7 @@ import {
   clearSpeechServiceCredential,
   DEFAULT_AI_SERVICES_CONFIG,
   readAiServicesConfig,
+  resolveImageServiceRuntimeConfig,
   saveImageServiceConfig,
   saveModelServiceConfig,
   saveSpeechServiceConfig,
@@ -308,5 +309,68 @@ describe('extension AI services config', () => {
       reasoningEffort: 'high',
     });
     expect(Object.keys(values)).toEqual([AI_SERVICES_STORAGE_KEY]);
+  });
+
+  it('accepts dashscope protocol and does not force /v1 root path', () => {
+    expect(
+      normalizeImageServiceInput({
+        credentialSource: 'independent',
+        protocol: 'dashscope',
+        baseUrl: 'https://dashscope.aliyuncs.com',
+        model: 'z-image-turbo',
+      }),
+    ).toEqual({
+      credentialSource: 'independent',
+      protocol: 'dashscope',
+      baseUrl: 'https://dashscope.aliyuncs.com',
+      model: 'z-image-turbo',
+    });
+  });
+
+  it('saves and reads dashscope image service config', async () => {
+    const { storage } = memoryStorage();
+    await saveImageServiceConfig(storage, {
+      credentialSource: 'independent',
+      protocol: 'dashscope',
+      baseUrl: 'https://dashscope.aliyuncs.com',
+      model: 'z-image-turbo',
+      apiKey: 'ds-key',
+    });
+    const config = await readAiServicesConfig(storage);
+    expect(config?.imageService).toEqual({
+      credentialSource: 'independent',
+      protocol: 'dashscope',
+      baseUrl: 'https://dashscope.aliyuncs.com',
+      model: 'z-image-turbo',
+      apiKey: 'ds-key',
+    });
+  });
+
+  it('resolveImageServiceRuntimeConfig returns protocol', () => {
+    const result = resolveImageServiceRuntimeConfig(DEFAULT_AI_SERVICES_CONFIG);
+    expect(result).toHaveProperty('protocol', 'openai-images');
+  });
+
+  it('resolveImageServiceRuntimeConfig returns dashscope protocol when configured', () => {
+    const dashscopeConfig = structuredClone(DEFAULT_AI_SERVICES_CONFIG);
+    dashscopeConfig.imageService.credentialSource = 'independent';
+    dashscopeConfig.imageService.protocol = 'dashscope';
+    dashscopeConfig.imageService.baseUrl = 'https://dashscope.aliyuncs.com';
+    dashscopeConfig.imageService.model = 'z-image-turbo';
+    const result = resolveImageServiceRuntimeConfig(dashscopeConfig);
+    expect(result.protocol).toBe('dashscope');
+    expect(result.baseUrl).toBe('https://dashscope.aliyuncs.com');
+  });
+
+  it('aiServicesView exposes image service protocol', async () => {
+    const { storage } = memoryStorage();
+    await saveImageServiceConfig(storage, {
+      credentialSource: 'independent',
+      protocol: 'dashscope',
+      baseUrl: 'https://dashscope.aliyuncs.com',
+      model: 'z-image-turbo',
+    });
+    const view = aiServicesView(await readAiServicesConfig(storage));
+    expect(view.imageService.protocol).toBe('dashscope');
   });
 });
