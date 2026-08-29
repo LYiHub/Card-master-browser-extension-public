@@ -87,7 +87,7 @@ export function assistantReadinessIssues({
     ) {
       issues.push({
         id: 'image-api-key',
-        title: 'OpenAI 兼容图像服务 API 密钥尚未配置',
+        title: '图像服务 API 密钥尚未配置',
         detail: '无法生成或更新脚本卡牌封面。',
       });
     }

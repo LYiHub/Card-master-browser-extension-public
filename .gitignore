@@ -31,3 +31,4 @@ refs/
 /scripts/safari-alpha-vfx.mjs
 /safari/Card Master/Card Master/Assets.xcassets/AppIcon.appiconset/*.png
 /safari/Card Master/Card Master/Resources/Icon.png
+.pnpm-store/

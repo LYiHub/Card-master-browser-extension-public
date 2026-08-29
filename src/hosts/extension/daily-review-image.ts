@@ -1,8 +1,5 @@
 import { isSecureServiceUrl } from '../../ai/domain/ai-services-schema';
-import {
-  AI_IMAGE_GENERATION_MODEL,
-  AI_IMAGE_GENERATION_PATH,
-} from '../../ai/domain/image-generation';
+import { AI_IMAGE_GENERATION_MODEL } from '../../ai/domain/image-generation';
 import type { AiServicesConfig } from '../../ai/domain/types';
 import {
   type AiServiceFetch,
@@ -10,6 +7,7 @@ import {
   readAiServiceText,
   requestAiService,
 } from '../../ai/infrastructure/ai-service-http';
+import { getImageGenerationAdapter } from '../../ai/infrastructure/image-generation-protocol-registry';
 import { dailyReviewPromptUsesChinese } from '../../new-tab/application/daily-review-wallpaper';
 import type { DailyReviewWallpaperResolution } from '../../new-tab/application/preferences';
 import { resolveImageServiceRuntimeConfig } from './ai-services-config';
@@ -196,13 +194,21 @@ export class DailyReviewImageGenerator {
       );
     }
 
+    const adapter = getImageGenerationAdapter(imageConfig.protocol);
     const response = await requestAiService(
       this.request,
       { apiKey },
-      `${baseUrl}${AI_IMAGE_GENERATION_PATH}`,
-      buildDailyReviewImageRequest(prompt, model, size),
+      adapter.buildUrl(baseUrl),
+      adapter.buildRequestBody({
+        prompt,
+        model,
+        size,
+        count: 1,
+        quality: 'high',
+        outputFormat: 'webp',
+      }),
       signal,
-      { protocol: 'openai-images' },
+      { protocol: imageConfig.protocol },
     );
     const text = await readAiServiceText(response, signal);
     if (!response.ok) {
@@ -215,25 +221,24 @@ export class DailyReviewImageGenerator {
     } catch {
       throw new Error('每日回顾图像服务返回了无效 JSON。');
     }
-    if (!record(payload) || !Array.isArray(payload.data)) {
+    const parsed = adapter.parseResponse(payload);
+    if (!parsed) {
       throw new Error('每日回顾图像服务没有返回图片。');
     }
-    const image = payload.data.find(record);
-    if (!image) throw new Error('每日回顾图像服务没有返回图片。');
 
     let dataUrl: string;
     let mimeType = DAILY_REVIEW_MIME_TYPE;
     let byteLength: number;
-    if (typeof image.b64_json === 'string' && image.b64_json) {
-      const normalized = normalizedBase64Image(image.b64_json);
+    if (parsed.b64) {
+      const normalized = normalizedBase64Image(parsed.b64);
       dataUrl = normalized.dataUrl;
       mimeType = normalized.mimeType;
       byteLength = normalized.byteLength;
-    } else if (typeof image.url === 'string' && image.url) {
-      if (!isSecureServiceUrl(image.url)) {
+    } else if (parsed.url) {
+      if (!isSecureServiceUrl(parsed.url)) {
         throw new Error('每日回顾图像服务返回了不安全的图片地址。');
       }
-      const imageResponse = await this.request(image.url, { signal });
+      const imageResponse = await this.request(parsed.url, { signal });
       if (!imageResponse.ok) {
         throw new Error(`下载每日回顾失败：HTTP ${imageResponse.status}。`);
       }
@@ -257,8 +262,8 @@ export class DailyReviewImageGenerator {
       dataUrl,
       mimeType,
       byteLength,
-      width: dimensions.width,
-      height: dimensions.height,
+      width: parsed.width ?? dimensions.width,
+      height: parsed.height ?? dimensions.height,
       model,
     };
   }

@@ -49,11 +49,16 @@ export function resolveImageServiceRuntimeConfig(config: AiServicesConfig) {
   const { imageService, modelService } = config;
   return imageService.credentialSource === 'model-service'
     ? {
-        baseUrl: modelService.baseUrl,
+        protocol: imageService.protocol,
+        baseUrl:
+          imageService.protocol === 'openai-images'
+            ? modelService.baseUrl
+            : imageService.baseUrl,
         model: imageService.model,
         apiKey: modelService.apiKey,
       }
     : {
+        protocol: imageService.protocol,
         baseUrl: imageService.baseUrl,
         model: imageService.model,
         apiKey: imageService.apiKey,
@@ -162,13 +167,17 @@ export async function saveImageServiceConfig(
   }
   const normalized = normalizeImageServiceInput(input);
   if (!normalized) {
-    throw new Error('请填写有效的 OpenAI 兼容图像服务配置。');
+    throw new Error('请填写有效的图像服务配置。');
   }
   const current = resolveAiServicesRuntimeConfig(
     await readAiServicesConfig(storage),
   );
+  const previousApiKey =
+    normalized.protocol === current.imageService.protocol
+      ? current.imageService.apiKey
+      : '';
   const apiKey = normalizeHttpHeaderCredential(
-    normalized.apiKey || current.imageService.apiKey,
+    normalized.apiKey || previousApiKey,
     '图像服务 API 密钥',
   );
   return writeAiServicesConfig(storage, {

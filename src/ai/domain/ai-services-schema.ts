@@ -2,6 +2,7 @@ import type {
   AiServicesConfig,
   ImageServiceConfig,
   ImageServiceConfigInput,
+  ImageServiceProtocol,
   ModelServiceConfig,
   SpeechServiceConfig,
   SpeechServiceConfigInput,
@@ -28,6 +29,10 @@ const AI_SERVICES_KEYS = new Set([
   'modelService',
   'imageService',
   'speechService',
+]);
+const IMAGE_SERVICE_PROTOCOLS = new Set<ImageServiceProtocol>([
+  'openai-images',
+  'dashscope',
 ]);
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -125,7 +130,7 @@ export function normalizeImageServiceInput(
   if (
     (value.credentialSource !== 'model-service' &&
       value.credentialSource !== 'independent') ||
-    value.protocol !== 'openai-images' ||
+    !IMAGE_SERVICE_PROTOCOLS.has(value.protocol as ImageServiceProtocol) ||
     typeof value.baseUrl !== 'string' ||
     value.baseUrl.length > 2_048 ||
     !isSecureServiceUrl(value.baseUrl) ||
@@ -139,10 +144,14 @@ export function normalizeImageServiceInput(
   ) {
     return null;
   }
+  const protocol = value.protocol as ImageServiceProtocol;
   return {
     credentialSource: value.credentialSource,
-    protocol: value.protocol,
-    baseUrl: normalizeAiServiceBaseUrl(value.baseUrl, '/v1'),
+    protocol,
+    baseUrl: normalizeAiServiceBaseUrl(
+      value.baseUrl,
+      protocol === 'openai-images' ? '/v1' : '',
+    ),
     model: value.model.trim(),
     ...(typeof value.apiKey === 'string'
       ? { apiKey: value.apiKey.trim() }

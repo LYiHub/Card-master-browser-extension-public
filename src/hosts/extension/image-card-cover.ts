@@ -1,8 +1,5 @@
 import { isSecureServiceUrl } from '../../ai/domain/ai-services-schema';
-import {
-  AI_IMAGE_GENERATION_MODEL,
-  AI_IMAGE_GENERATION_PATH,
-} from '../../ai/domain/image-generation';
+import { AI_IMAGE_GENERATION_MODEL } from '../../ai/domain/image-generation';
 import type { AiServicesConfig } from '../../ai/domain/types';
 import {
   type AiServiceFetch,
@@ -10,6 +7,7 @@ import {
   readAiServiceText,
   requestAiService,
 } from '../../ai/infrastructure/ai-service-http';
+import { getImageGenerationAdapter } from '../../ai/infrastructure/image-generation-protocol-registry';
 import { CARD_ART_DIRECTION_PROMPT } from '../../userscript/application/card-art-direction';
 import {
   type GeneratedUserscriptCover,
@@ -115,21 +113,26 @@ export class ImageCardCoverGenerator {
     if (!apiKey) {
       throw new Error(
         usesModelServiceCredential
-          ? 'OpenAI 兼容图像生成正在沿用模型服务，请先配置模型服务 API 密钥，或改用独立图像服务。'
-          : 'OpenAI 兼容图像服务尚未配置，请填写独立图像服务的 API 密钥。',
+          ? '图像生成正在沿用模型服务，请先配置模型服务 API 密钥，或改用独立图像服务。'
+          : '图像服务尚未配置，请填写独立图像服务的 API 密钥。',
       );
     }
 
+    const adapter = getImageGenerationAdapter(imageConfig.protocol);
     const response = await requestAiService(
       this.request,
       { apiKey },
-      `${baseUrl}${AI_IMAGE_GENERATION_PATH}`,
-      buildCardCoverRequest(
-        buildCardCoverPrompt(visualConcept, promptOptions),
+      adapter.buildUrl(baseUrl),
+      adapter.buildRequestBody({
+        prompt: buildCardCoverPrompt(visualConcept, promptOptions),
         model,
-      ),
+        size: SOURCE_SIZE,
+        count: 1,
+        quality: 'low',
+        outputFormat: 'webp',
+      }),
       signal,
-      { protocol: 'openai-images' },
+      { protocol: imageConfig.protocol },
     );
     const text = await readAiServiceText(response, signal);
     if (!response.ok) {
@@ -142,20 +145,19 @@ export class ImageCardCoverGenerator {
     } catch {
       throw new Error('图像服务返回了无效 JSON。');
     }
-    if (!record(payload) || !Array.isArray(payload.data)) {
+    const parsed = adapter.parseResponse(payload);
+    if (!parsed) {
       throw new Error('图像服务没有返回图片。');
     }
-    const image = payload.data.find(record);
-    if (!image) throw new Error('图像服务没有返回图片。');
 
     let source: Blob;
-    if (typeof image.b64_json === 'string' && image.b64_json) {
-      source = blobFromBase64(image.b64_json);
-    } else if (typeof image.url === 'string' && image.url) {
-      if (!isSecureServiceUrl(image.url)) {
+    if (parsed.b64) {
+      source = blobFromBase64(parsed.b64);
+    } else if (parsed.url) {
+      if (!isSecureServiceUrl(parsed.url)) {
         throw new Error('图像服务返回了不安全的图片地址。');
       }
-      const imageResponse = await this.request(image.url, {
+      const imageResponse = await this.request(parsed.url, {
         signal,
       });
       if (!imageResponse.ok) {
