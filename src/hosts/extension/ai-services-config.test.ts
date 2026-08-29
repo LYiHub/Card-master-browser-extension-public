@@ -362,6 +362,38 @@ describe('extension AI services config', () => {
     expect(result.baseUrl).toBe('https://dashscope.aliyuncs.com');
   });
 
+  it('reuses a model credential without reusing its endpoint for dashscope', () => {
+    const dashscopeConfig = structuredClone(DEFAULT_AI_SERVICES_CONFIG);
+    dashscopeConfig.modelService.baseUrl = 'https://chat.example/v1';
+    dashscopeConfig.modelService.apiKey = 'shared-key';
+    dashscopeConfig.imageService.protocol = 'dashscope';
+    dashscopeConfig.imageService.baseUrl = 'https://dashscope.aliyuncs.com';
+    const result = resolveImageServiceRuntimeConfig(dashscopeConfig);
+    expect(result).toMatchObject({
+      protocol: 'dashscope',
+      baseUrl: 'https://dashscope.aliyuncs.com',
+      apiKey: 'shared-key',
+    });
+  });
+
+  it('does not carry an independent API key across image protocols', async () => {
+    const { storage } = memoryStorage();
+    await saveImageServiceConfig(storage, {
+      credentialSource: 'independent',
+      protocol: 'openai-images',
+      baseUrl: 'https://images.example/v1',
+      model: 'gpt-image-2',
+      apiKey: 'openai-key',
+    });
+    await saveImageServiceConfig(storage, {
+      credentialSource: 'independent',
+      protocol: 'dashscope',
+      baseUrl: 'https://dashscope.aliyuncs.com',
+      model: 'z-image-turbo',
+    });
+    expect((await readAiServicesConfig(storage))?.imageService.apiKey).toBe('');
+  });
+
   it('aiServicesView exposes image service protocol', async () => {
     const { storage } = memoryStorage();
     await saveImageServiceConfig(storage, {

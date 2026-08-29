@@ -9,6 +9,7 @@ describe('openaiImagesAdapter', () => {
     expect(openaiImagesAdapter.defaultBaseUrl).toBe(
       'https://api.openai.com/v1',
     );
+    expect(openaiImagesAdapter.defaultModel).toBe('gpt-image-2');
   });
 
   it('buildUrl appends /images/generations to baseUrl', () => {

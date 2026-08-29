@@ -45,6 +45,7 @@ export function ImageServiceSettings({
   }
 
   const independent = credentialSource === 'independent';
+  const separateBaseUrl = independent || protocol === 'dashscope';
   const currentAdapter = IMAGE_GENERATION_PROTOCOL_ADAPTERS.find(
     (adapter) => adapter.protocol === protocol,
   );
@@ -97,14 +98,11 @@ export function ImageServiceSettings({
                 }
                 if (
                   !model.trim() ||
-                  model === AI_IMAGE_GENERATION_MODEL ||
-                  model === 'z-image-turbo'
+                  IMAGE_GENERATION_PROTOCOL_ADAPTERS.some(
+                    (adapter) => adapter.defaultModel === model,
+                  )
                 ) {
-                  setModel(
-                    next === 'openai-images'
-                      ? AI_IMAGE_GENERATION_MODEL
-                      : 'z-image-turbo',
-                  );
+                  setModel(nextAdapter.defaultModel);
                 }
               }
               setProtocol(next);
@@ -139,7 +137,7 @@ export function ImageServiceSettings({
           <option value="independent">独立图像服务</option>
         </select>
       </label>
-      {independent && (
+      {separateBaseUrl && (
         <>
           <label className="cm-assistant-service-field">
             <span className="cm-assistant-service-field__label">API 地址</span>
@@ -152,16 +150,21 @@ export function ImageServiceSettings({
               onChange={(event) => update(() => setBaseUrl(event.target.value))}
             />
           </label>
-          <CredentialField
-            label="API 密钥"
-            value={apiKey}
-            hasCredential={Boolean(config?.imageService.hasCredential)}
-            busy={busy}
-            placeholder="输入图像服务 API 密钥"
-            clearSavedLabel="清除已保存图像服务密钥"
-            onChange={setApiKey}
-            onClear={clearCredential}
-          />
+          {independent && (
+            <CredentialField
+              label="API 密钥"
+              value={apiKey}
+              hasCredential={Boolean(
+                config?.imageService.hasCredential &&
+                  config.imageService.protocol === protocol,
+              )}
+              busy={busy}
+              placeholder="输入图像服务 API 密钥"
+              clearSavedLabel="清除已保存图像服务密钥"
+              onChange={setApiKey}
+              onClear={clearCredential}
+            />
+          )}
         </>
       )}
       <label className="cm-assistant-service-field">
@@ -170,7 +173,7 @@ export function ImageServiceSettings({
           className="cm-assistant-form-control"
           value={model}
           placeholder={
-            currentAdapter?.defaultBaseUrl ? model : AI_IMAGE_GENERATION_MODEL
+            currentAdapter?.defaultModel ?? AI_IMAGE_GENERATION_MODEL
           }
           disabled={busy}
           spellCheck={false}
@@ -180,7 +183,9 @@ export function ImageServiceSettings({
       <p className="cm-assistant-settings-copy">
         {independent
           ? `请求使用${currentAdapter?.label ?? protocol}的生成参数和响应格式。`
-          : '沿用模型服务的 API 地址和密钥，只单独指定生图模型。'}
+          : protocol === 'dashscope'
+            ? '沿用模型服务的 API 密钥，单独使用上方百炼图像 API 地址。'
+            : '沿用模型服务的 API 地址和密钥，只单独指定生图模型。'}
       </p>
       <div className="cm-assistant-service-settings__actions">
         <UiLoader
@@ -192,7 +197,9 @@ export function ImageServiceSettings({
         <button
           type="button"
           className="cm-assistant-primary-button"
-          disabled={busy || !model.trim() || (independent && !baseUrl.trim())}
+          disabled={
+            busy || !model.trim() || (separateBaseUrl && !baseUrl.trim())
+          }
           onClick={() => {
             setBusy(true);
             setStatus(null);

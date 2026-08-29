@@ -262,8 +262,8 @@ export class DailyReviewImageGenerator {
       dataUrl,
       mimeType,
       byteLength,
-      width: dimensions.width,
-      height: dimensions.height,
+      width: parsed.width ?? dimensions.width,
+      height: parsed.height ?? dimensions.height,
       model,
     };
   }

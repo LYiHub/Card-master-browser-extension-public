@@ -9,6 +9,7 @@ describe('dashscopeImagesAdapter', () => {
     expect(dashscopeImagesAdapter.defaultBaseUrl).toBe(
       'https://dashscope.aliyuncs.com',
     );
+    expect(dashscopeImagesAdapter.defaultModel).toBe('qwen-image-3.0');
   });
 
   it('buildUrl appends the multimodal-generation path', () => {
@@ -72,7 +73,30 @@ describe('dashscopeImagesAdapter', () => {
     });
     expect(result).toEqual({
       url: 'https://oss.example/img.png?Expires=123',
+      width: 1024,
+      height: 768,
     });
+  });
+
+  it('scales existing 4K wallpaper sizes into the supported range', () => {
+    const body = dashscopeImagesAdapter.buildRequestBody({
+      prompt: '一片森林',
+      model: 'z-image-turbo',
+      size: '3840x2160',
+    });
+    expect(body).toMatchObject({
+      parameters: { size: '2048*1152' },
+    });
+  });
+
+  it('rejects aspect ratios that cannot keep both sides in range', () => {
+    expect(() =>
+      dashscopeImagesAdapter.buildRequestBody({
+        prompt: '一片森林',
+        model: 'z-image-turbo',
+        size: '4096x512',
+      }),
+    ).toThrow('超出支持范围');
   });
 
   it('parseResponse skips non-image content entries', () => {
@@ -91,6 +115,23 @@ describe('dashscopeImagesAdapter', () => {
       },
     });
     expect(result).toEqual({ url: 'https://img.test/a.png' });
+  });
+
+  it('reads qwen-image 3.0 output dimensions', () => {
+    expect(
+      dashscopeImagesAdapter.parseResponse({
+        output: {
+          choices: [
+            { message: { content: [{ image: 'https://img.test/qwen.png' }] } },
+          ],
+        },
+        usage: { output_width: 1536, output_height: 864 },
+      }),
+    ).toEqual({
+      url: 'https://img.test/qwen.png',
+      width: 1536,
+      height: 864,
+    });
   });
 
   it('parseResponse returns null for error response format', () => {

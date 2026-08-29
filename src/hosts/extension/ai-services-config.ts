@@ -50,7 +50,10 @@ export function resolveImageServiceRuntimeConfig(config: AiServicesConfig) {
   return imageService.credentialSource === 'model-service'
     ? {
         protocol: imageService.protocol,
-        baseUrl: modelService.baseUrl,
+        baseUrl:
+          imageService.protocol === 'openai-images'
+            ? modelService.baseUrl
+            : imageService.baseUrl,
         model: imageService.model,
         apiKey: modelService.apiKey,
       }
@@ -169,8 +172,12 @@ export async function saveImageServiceConfig(
   const current = resolveAiServicesRuntimeConfig(
     await readAiServicesConfig(storage),
   );
+  const previousApiKey =
+    normalized.protocol === current.imageService.protocol
+      ? current.imageService.apiKey
+      : '';
   const apiKey = normalizeHttpHeaderCredential(
-    normalized.apiKey || current.imageService.apiKey,
+    normalized.apiKey || previousApiKey,
     '图像服务 API 密钥',
   );
   return writeAiServicesConfig(storage, {

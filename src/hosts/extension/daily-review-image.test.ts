@@ -155,7 +155,7 @@ describe('DailyReviewImageGenerator', () => {
                   },
                 ],
               },
-              usage: { width: 3840, height: 2160, image_count: 1 },
+              usage: { width: 2048, height: 1152, image_count: 1 },
               request_id: 'test-123',
             }),
             { status: 200 },
@@ -188,10 +188,14 @@ describe('DailyReviewImageGenerator', () => {
         ],
       },
       parameters: {
-        size: '3840*2160',
+        size: '2048*1152',
         prompt_extend: false,
       },
     });
-    expect(result.model).toBe('z-image-turbo');
+    expect(result).toMatchObject({
+      model: 'z-image-turbo',
+      width: 2048,
+      height: 1152,
+    });
   });
 });

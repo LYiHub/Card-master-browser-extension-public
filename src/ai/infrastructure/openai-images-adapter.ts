@@ -1,6 +1,8 @@
+import { AI_IMAGE_GENERATION_MODEL } from '../domain/image-generation';
 import type {
   ImageGenerationProtocolAdapter,
   ImageGenerationRequestInput,
+  ImageGenerationResult,
 } from '../domain/image-generation-protocol';
 
 export const openaiImagesAdapter: ImageGenerationProtocolAdapter = {
@@ -9,6 +11,7 @@ export const openaiImagesAdapter: ImageGenerationProtocolAdapter = {
   description:
     '使用 OpenAI 图片生成接口格式（/images/generations），返回 b64 或 URL。',
   defaultBaseUrl: 'https://api.openai.com/v1',
+  defaultModel: AI_IMAGE_GENERATION_MODEL,
 
   buildUrl(baseUrl: string): string {
     return `${baseUrl}/images/generations`;
@@ -28,7 +31,7 @@ export const openaiImagesAdapter: ImageGenerationProtocolAdapter = {
     return body;
   },
 
-  parseResponse(payload: unknown): { url?: string; b64?: string } | null {
+  parseResponse(payload: unknown): ImageGenerationResult | null {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
       return null;
     }
