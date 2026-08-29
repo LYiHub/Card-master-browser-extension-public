@@ -23,6 +23,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "secrets:check": "node scripts/check-secrets.mjs",
     "extension:package": "node scripts/package-extensions.mjs",
     "extension:zip": "node scripts/package-chromium-zip.mjs",
     "release:package": "node scripts/package-release.mjs",

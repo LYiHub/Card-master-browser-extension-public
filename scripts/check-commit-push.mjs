@@ -52,6 +52,7 @@ if (platform === 'safari' || platform === 'all') {
 run(process.execPath, ['scripts/generate-card-media-accents.mjs']);
 run('pnpm', ['lint:fix']);
 run('pnpm', ['check']);
+run('pnpm', ['secrets:check']);
 run(process.execPath, [
   'scripts/package-extensions.mjs',
   `--platform=${platform}`,
