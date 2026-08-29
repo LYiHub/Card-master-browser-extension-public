@@ -103,8 +103,14 @@ export function DetailStage({
       <UiDialogInteractionBoundary enabled={!closing}>
         {detailMode === 'manage' && isInstalledUserscript(selected) ? (
           <ManageBoard item={selected} {...manageBoardProps} />
-        ) : detailMode === 'global-settings' ? (
-          <SettingsBoard {...settingsBoardProps} />
+        ) : detailMode === 'global-settings' ||
+          detailMode === 'global-library-import' ? (
+          <SettingsBoard
+            {...settingsBoardProps}
+            initialSection={
+              detailMode === 'global-library-import' ? 'library' : 'interface'
+            }
+          />
         ) : detailMode === 'content-blocking-settings' &&
           contentBlockingBoardProps ? (
           <ContentBlockingSettingsBoard {...contentBlockingBoardProps} />

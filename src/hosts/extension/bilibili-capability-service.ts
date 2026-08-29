@@ -607,7 +607,7 @@ export class BilibiliCapabilityService {
         throw error;
       }
       this.statePromise = Promise.resolve(current);
-      await this.broadcast(current, changedCapability, context.tabId);
+      this.publish(current, changedCapability, context.tabId);
       return {
         state: current,
         snapshots: this.snapshots(current, context),
@@ -689,9 +689,9 @@ export class BilibiliCapabilityService {
       this.mixedCounters.clear();
       this.mixedQueues.clear();
       this.pakkuBypassVideos.clear();
-      await this.broadcast(next, 'recommendation-control', -1);
-      await this.broadcast(next, 'danmaku-compression', -1);
-      await this.broadcast(next, 'segment-skipping', -1);
+      this.publish(next, 'recommendation-control', -1);
+      this.publish(next, 'danmaku-compression', -1);
+      this.publish(next, 'segment-skipping', -1);
     });
     this.mutationQueue = operation.then(
       () => undefined,
@@ -730,6 +730,23 @@ export class BilibiliCapabilityService {
       ];
     }
     return [];
+  }
+
+  private publish(
+    state: BilibiliCapabilitiesState,
+    changedCapability: BilibiliCapabilityId,
+    sourceTabId: number,
+  ) {
+    void this.broadcast(state, changedCapability, sourceTabId).catch(
+      (error) => {
+        extensionDiagnostics.warn(
+          'bilibili-capabilities',
+          'broadcast-failed',
+          error,
+          { changedCapability, sourceTabId },
+        );
+      },
+    );
   }
 
   private async broadcast(

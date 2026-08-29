@@ -444,6 +444,39 @@ describe('WebExtensionContentBlockingRuleGate', () => {
     });
   });
 
+  it('preserves an atomic replacement when persisted ownership is stale', async () => {
+    const test = harness({}, new Map(), {
+      value: {
+        version: 1,
+        revision: 0,
+        dynamicRuleIds: [],
+        sessionRuleIds: [],
+        cssInjections: [],
+      },
+    });
+    const rule = {
+      id: 5,
+      priority: 1,
+      action: {
+        type: 'block' as chrome.declarativeNetRequest.RuleActionType,
+      },
+      condition: { urlFilter: '*' },
+    };
+    await test.gate.initializeOwnership();
+
+    await test.gate.runManagedConfiguration(() =>
+      test.gate.updateSessionRules({
+        removeRuleIds: [rule.id],
+        addRules: [rule],
+      }),
+    );
+
+    expect(test.updateSessionRules).toHaveBeenCalledWith({
+      removeRuleIds: [5],
+      addRules: [rule],
+    });
+  });
+
   it('does not claim reserved rules added during a managed configuration', async () => {
     const test = harness();
     await test.gate.runManagedConfiguration(async () => {

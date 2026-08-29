@@ -446,20 +446,22 @@ export class WebExtensionContentBlockingRuleGate
     canOwnRule?: (rule: chrome.declarativeNetRequest.Rule) => boolean,
   ): chrome.declarativeNetRequest.UpdateRuleOptions {
     if (this.managedConfigurationDepth === 0) return update;
+    const addRules = canOwnRule
+      ? update.addRules?.filter(canOwnRule)
+      : update.addRules;
+    const replacementRuleIds = new Set(addRules?.map((rule) => rule.id));
     return {
       ...update,
       ...(update.removeRuleIds
         ? {
-            removeRuleIds: update.removeRuleIds.filter((id) =>
-              ownedRuleIds.has(id),
+            removeRuleIds: update.removeRuleIds.filter(
+              (id) => ownedRuleIds.has(id) || replacementRuleIds.has(id),
             ),
           }
         : {}),
       ...(update.addRules
         ? {
-            addRules: canOwnRule
-              ? update.addRules.filter(canOwnRule)
-              : update.addRules,
+            addRules,
           }
         : {}),
     };

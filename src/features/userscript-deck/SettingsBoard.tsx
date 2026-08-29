@@ -194,6 +194,7 @@ function downloadArchive(blob: Blob, filename: string) {
 }
 
 export function SettingsBoard({
+  initialSection = 'interface',
   repository,
   userscriptSettings,
   dataManagement,
@@ -205,6 +206,7 @@ export function SettingsBoard({
   onImportCancel,
   onClose,
 }: {
+  initialSection?: SettingsSection;
   repository: ScriptRepository;
   userscriptSettings: UserscriptSettingsController;
   dataManagement: DataManagementController;
@@ -223,7 +225,7 @@ export function SettingsBoard({
   onImportCancel?: (requestId: string) => void;
   onClose: () => void;
 }) {
-  const [section, setSection] = useState<SettingsSection>('interface');
+  const [section, setSection] = useState<SettingsSection>(initialSection);
   const [reloadAfterScriptChange, setReloadAfterScriptChange] = useState(false);
   const [updateIntervalDays, setUpdateIntervalDays] = useState(1);
   const [updateEnabledOnly, setUpdateEnabledOnly] = useState(true);
