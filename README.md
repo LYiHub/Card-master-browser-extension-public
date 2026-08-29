@@ -8,7 +8,7 @@
 
   <h1>卡牌大师</h1>
 
-  <p><a href="https://space.bilibili.com/4401694"><strong>林亦LYi 出品</strong></a></p>
+  <p><a href="https://www.bilibili.com/video/BV12PtF6mEr4/"><strong>观看林亦LYi 官方介绍视频</strong></a></p>
 
   <p><strong>以游戏化卡牌统一管理用户脚本与网页能力。</strong></p>
   <p>AI 脚本生成 · 内容过滤 · 深色主题 · 媒体控制 · 视频增强 · 游戏手柄</p>
