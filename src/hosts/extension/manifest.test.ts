@@ -13,7 +13,7 @@ describe('跨浏览器扩展清单', () => {
   it('保持统一的产品身份与能力描述', () => {
     expect(commonManifest.name).toBe('卡牌大师');
     expect(commonManifest.short_name).toBe('卡牌大师');
-    expect(commonManifest.version).toBe('0.1.0');
+    expect(commonManifest.version).toBe('0.1.1');
     expect(commonManifest.description).toBe(
       '以游戏化卡牌统一管理用户脚本与网页能力：AI 创建脚本、原生内容过滤、页面光影、媒体控制、视频增强与游戏手柄交互。',
     );
