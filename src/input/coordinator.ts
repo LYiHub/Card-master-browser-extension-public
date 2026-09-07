@@ -22,6 +22,19 @@ export const INPUT_SCOPE_PRIORITY = {
   testCapture: 2_000,
 } as const;
 
+const NON_TEXT_INPUT_TYPES = new Set([
+  'button',
+  'checkbox',
+  'color',
+  'file',
+  'hidden',
+  'image',
+  'radio',
+  'range',
+  'reset',
+  'submit',
+]);
+
 export type InputScope = {
   id: string;
   priority: number;
@@ -46,6 +59,20 @@ function consumeKeyboardEvent(event: KeyboardEvent) {
   event.preventDefault();
   event.stopPropagation();
   event.stopImmediatePropagation();
+}
+
+function focusedEditableElement(root: Document | ShadowRoot) {
+  const active = root.activeElement;
+  if (
+    active instanceof HTMLTextAreaElement ||
+    active instanceof HTMLSelectElement
+  ) {
+    return true;
+  }
+  if (active instanceof HTMLInputElement) {
+    return !NON_TEXT_INPUT_TYPES.has(active.type);
+  }
+  return active instanceof HTMLElement && active.isContentEditable;
 }
 
 export class EscapeLayerStack {
@@ -254,6 +281,10 @@ export class InputCoordinator {
     if (this.processedKeyboardEvents.has(event)) return;
     this.processedKeyboardEvents.add(event);
     this.setModality('keyboard');
+    // A closed Shadow DOM retargets its keyboard events to the host before
+    // they reach the page window.  Check every registered root's active
+    // element so IME confirmation, Enter, and editing keys stay in fields.
+    if ([...this.observedRoots.keys()].some(focusedEditableElement)) return;
     if (this.escapeLayers.handle(event)) return;
     const intent = keyboardIntent(event);
     if (!intent) return;
