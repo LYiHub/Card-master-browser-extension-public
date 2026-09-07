@@ -43,7 +43,7 @@ function eventElement(event: KeyboardEvent) {
     .find((entry): entry is Element => entry instanceof Element);
 }
 
-function editableElement(element: Element | undefined) {
+export function editableElement(element: Element | null | undefined) {
   return Boolean(
     element?.closest(
       'input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]), textarea, select, [contenteditable]:not([contenteditable="false"])',

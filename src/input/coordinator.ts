@@ -7,6 +7,7 @@ import {
 } from '../hosts/extension/gamepad-bridge';
 import { GamepadIntentAdapter } from './gamepad-intent-adapter';
 import {
+  editableElement,
   type InputModality,
   type IntentEnvelope,
   keyboardIntent,
@@ -255,6 +256,16 @@ export class InputCoordinator {
     this.processedKeyboardEvents.add(event);
     this.setModality('keyboard');
     if (this.escapeLayers.handle(event)) return;
+    // Closed roots hide the editable event target from window listeners.
+    // Keep editing native without bypassing Escape layers or the back intent.
+    if (
+      event.key !== 'Escape' &&
+      [...this.observedRoots.keys()].some((root) =>
+        editableElement(root.activeElement),
+      )
+    ) {
+      return;
+    }
     const intent = keyboardIntent(event);
     if (!intent) return;
     const handled = this.dispatch({

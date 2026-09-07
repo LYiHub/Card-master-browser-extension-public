@@ -1,12 +1,235 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import {
   gamepadScopeUsesSemanticIntents,
   INPUT_SCOPE_PRIORITY,
+  InputCoordinator,
   type InputScope,
   routeInputIntent,
   selectInputScope,
 } from './coordinator';
 import type { IntentEnvelope } from './intents';
+
+function keyboardHarness(rootType: 'document' | 'shadow' = 'shadow') {
+  class FakeElement {
+    dataset: Record<string, string> = {};
+    isContentEditable = false;
+    constructor(private readonly editable = false) {}
+    closest(selector: string) {
+      return (this.editable || this.isContentEditable) &&
+        selector.includes('textarea')
+        ? this
+        : null;
+    }
+  }
+  class FakeTextArea extends FakeElement {
+    constructor() {
+      super(true);
+    }
+  }
+  class FakeInput extends FakeElement {
+    constructor(public type = 'text') {
+      super(true);
+    }
+  }
+  class FakeSelect extends FakeElement {
+    constructor() {
+      super(true);
+    }
+  }
+  class FakeDocument extends EventTarget {
+    activeElement: FakeElement | null = null;
+    documentElement = new FakeElement();
+    defaultView = Object.assign(new EventTarget(), {
+      cancelAnimationFrame: vi.fn(),
+    });
+  }
+  class FakeShadowRoot extends EventTarget {
+    activeElement: FakeElement | null = null;
+    host = new FakeElement();
+    constructor(public ownerDocument: FakeDocument) {
+      super();
+    }
+  }
+  vi.stubGlobal('Element', FakeElement);
+  vi.stubGlobal('HTMLElement', FakeElement);
+  vi.stubGlobal('HTMLTextAreaElement', FakeTextArea);
+  vi.stubGlobal('HTMLInputElement', FakeInput);
+  vi.stubGlobal('HTMLSelectElement', FakeSelect);
+  vi.stubGlobal('Document', FakeDocument);
+  vi.stubGlobal('ShadowRoot', FakeShadowRoot);
+
+  const document = new FakeDocument();
+  const root = rootType === 'shadow' ? new FakeShadowRoot(document) : document;
+  const coordinator = new InputCoordinator(document as unknown as Document);
+  const handle = vi.fn(() => true);
+  coordinator.register(root as unknown as Document | ShadowRoot, {
+    id: 'keyboard-test',
+    priority: INPUT_SCOPE_PRIORITY.dialog,
+    handle,
+  });
+  onTestFinished(() => {
+    coordinator.dispose();
+    vi.unstubAllGlobals();
+  });
+
+  return {
+    coordinator,
+    handle,
+    elements: {
+      textarea: new FakeTextArea(),
+      input: new FakeInput(),
+      range: new FakeInput('range'),
+      select: new FakeSelect(),
+      contenteditable: Object.assign(new FakeElement(), {
+        isContentEditable: true,
+      }),
+      card: new FakeElement(),
+    },
+    focus(element: FakeElement | null) {
+      root.activeElement = element;
+      document.activeElement =
+        root instanceof FakeShadowRoot ? root.host : element;
+    },
+    press(key: string, overrides: Partial<KeyboardEvent> = {}) {
+      const event = new Event('keydown', { cancelable: true });
+      for (const [name, value] of Object.entries({
+        key,
+        code: key,
+        isTrusted: true,
+        isComposing: false,
+        repeat: false,
+        ...overrides,
+      })) {
+        Object.defineProperty(event, name, { value });
+      }
+      // Model the same event reaching window, document, then a closed root.
+      let path = [
+        root instanceof FakeShadowRoot ? root.host : root.activeElement,
+        document,
+      ];
+      event.composedPath = () => path as unknown as EventTarget[];
+      document.defaultView.dispatchEvent(event);
+      document.dispatchEvent(event);
+      if (root instanceof FakeShadowRoot) {
+        path = [root.activeElement, document];
+        root.dispatchEvent(event);
+      }
+      return event;
+    },
+  };
+}
+
+describe('input coordinator keyboard events', () => {
+  it('leaves editing keys in focused controls behind a closed shadow host', () => {
+    const test = keyboardHarness();
+    for (const name of [
+      'textarea',
+      'input',
+      'range',
+      'select',
+      'contenteditable',
+    ] as const) {
+      test.focus(test.elements[name]);
+      for (const key of [
+        'Enter',
+        ' ',
+        'ArrowDown',
+        'ArrowLeft',
+        'PageUp',
+        'm',
+      ]) {
+        expect(test.press(key).defaultPrevented, `${name}: ${key}`).toBe(false);
+      }
+    }
+    expect(test.handle).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    'document',
+    'shadow',
+  ] as const)('closes only the top Escape layer while editing in a %s root', (rootType) => {
+    const test = keyboardHarness(rootType);
+    test.focus(test.elements.textarea);
+    const closeDeck = vi.fn();
+    const closeDialog = vi.fn();
+    let dialogActive = true;
+    test.coordinator.registerEscapeLayer({
+      id: 'deck',
+      priority: INPUT_SCOPE_PRIORITY.deck,
+      onEscape: closeDeck,
+    });
+    test.coordinator.registerEscapeLayer({
+      id: 'dialog',
+      priority: INPUT_SCOPE_PRIORITY.dialog,
+      active: () => dialogActive,
+      onEscape: () => {
+        dialogActive = false;
+        closeDialog();
+      },
+    });
+
+    expect(test.press('Escape').defaultPrevented).toBe(true);
+    expect(closeDialog).toHaveBeenCalledOnce();
+    expect(closeDeck).not.toHaveBeenCalled();
+    expect(test.press('Escape').defaultPrevented).toBe(true);
+    expect(closeDialog).toHaveBeenCalledOnce();
+    expect(closeDeck).toHaveBeenCalledOnce();
+    expect(test.handle).not.toHaveBeenCalled();
+  });
+
+  it('ignores composing, repeated, and untrusted Escape events', () => {
+    const test = keyboardHarness();
+    test.focus(test.elements.textarea);
+    const close = vi.fn();
+    test.coordinator.registerEscapeLayer({
+      id: 'dialog',
+      priority: INPUT_SCOPE_PRIORITY.dialog,
+      onEscape: close,
+    });
+    for (const options of [
+      { isComposing: true },
+      { repeat: true },
+      { isTrusted: false },
+    ]) {
+      expect(test.press('Escape', options).defaultPrevented).toBe(false);
+    }
+    expect(test.press('Enter', { isComposing: true }).defaultPrevented).toBe(
+      false,
+    );
+    expect(close).not.toHaveBeenCalled();
+    expect(test.handle).not.toHaveBeenCalled();
+  });
+
+  it('retains the back intent when an editable scope has no Escape layer', () => {
+    const test = keyboardHarness();
+    test.focus(test.elements.input);
+    expect(test.press('Escape').defaultPrevented).toBe(true);
+    expect(test.handle).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ intent: { type: 'back' } }),
+    );
+  });
+
+  it('routes navigation once after focus leaves the editable control', () => {
+    const test = keyboardHarness();
+    test.focus(test.elements.textarea);
+    expect(test.press('ArrowDown').defaultPrevented).toBe(false);
+    test.focus(test.elements.card);
+    expect(test.press('ArrowDown').defaultPrevented).toBe(true);
+    expect(test.handle).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        intent: { type: 'navigate', direction: 'down', control: 'keyboard' },
+      }),
+    );
+    test.handle.mockClear();
+    expect(test.press('Enter', { isTrusted: false }).defaultPrevented).toBe(
+      false,
+    );
+    expect(test.press('Enter').defaultPrevented).toBe(true);
+    expect(test.handle).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ intent: { type: 'confirm' } }),
+    );
+  });
+});
 
 function gamepadIntent(
   type: 'browserTabPrevious' | 'browserTabNext' | 'confirm',
