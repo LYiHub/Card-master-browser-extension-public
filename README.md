@@ -15,7 +15,7 @@
 
   <p>
     <a href="https://github.com/LYiHub/Card-master-browser-extension-public/releases/latest">
-      <img src="https://img.shields.io/badge/version-0.2.0-7c3aed?style=flat-square" alt="版本 0.2.0" />
+      <img src="https://img.shields.io/badge/version-0.2.1-7c3aed?style=flat-square" alt="版本 0.2.1" />
     </a>
     <a href="./LICENSE">
       <img src="https://img.shields.io/badge/license-GPL--3.0--only-22c55e?style=flat-square" alt="GPL-3.0-only" />
@@ -75,7 +75,7 @@
 | --- | --- | --- |
 | Chromium（Chrome、Edge、Brave、Arc 等） | `card-master-v*-chromium.zip` | 解压 → 加载未打包扩展 |
 | Firefox | `card-master-v*-firefox.zip` | 解压 → 临时载入附加组件 |
-| macOS Safari | `card-master-v*-safari-macos.zip` | 打开 `Card Master.app` → 在 Safari 里授权 |
+| macOS Safari | 暂不提供下载 | 等待苹果公证完成，进展见 [Issue #2](https://github.com/LYiHub/Card-master-browser-extension-public/issues/2) |
 
 ### Chromium
 
@@ -109,6 +109,9 @@
 再选目录里的 `manifest.json`。弹出用户脚本权限时请允许。
 
 ### Safari
+
+> 当前版本暂不提供 Safari 下载，请勿使用旧版未公证预览包或关闭系统安全检查。
+> 以下权限说明供源码构建使用，正式分发恢复后同样适用。
 
 打开 `Card Master.app` 之后，还要在 Safari 里勾完权限。只开 App、不授权网站，
 网页上不会出现牌阵。
