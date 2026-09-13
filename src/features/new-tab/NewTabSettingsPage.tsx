@@ -160,6 +160,36 @@ function Field({
   );
 }
 
+export function NewTabModeNotice({
+  overridesBrowserNewTab,
+}: {
+  overridesBrowserNewTab: boolean;
+}) {
+  return (
+    <Field
+      label="浏览器新标签页"
+      description={
+        overridesBrowserNewTab
+          ? '当前使用卡牌大师新标签页。要恢复浏览器原生页面，请安装“保留浏览器新标签页版”。'
+          : '当前版本不接管浏览器新标签页。下方外观等设置仅用于手动打开的卡牌大师页面。'
+      }
+    >
+      <div className="cm-new-tab-settings-mode">
+        <a
+          href="https://github.com/LYiHub/Card-master-browser-extension-public/releases/latest"
+          rel="noreferrer"
+          target="_blank"
+        >
+          查看安装包与切换说明
+        </a>
+        <span>
+          切换版本需将对应包完整解压并覆盖原安装目录，再重新加载扩展。保留原目录，不要卸载扩展或清除数据。
+        </span>
+      </div>
+    </Field>
+  );
+}
+
 function Toggle({
   checked,
   disabled = false,
@@ -239,6 +269,7 @@ export function NewTabSettingsPage({
   assetUrl,
   backUrl,
   capabilities,
+  overridesBrowserNewTab,
   dailyReviewController,
   dailyReviewSupported,
   localWallpaperRepository,
@@ -247,6 +278,7 @@ export function NewTabSettingsPage({
   assetUrl(path: string): string;
   backUrl: string;
   capabilities: NewTabCapabilities;
+  overridesBrowserNewTab: boolean;
   dailyReviewController: DailyReviewWallpaperSettingsController;
   dailyReviewSupported: boolean;
   localWallpaperRepository: NewTabLocalWallpaperRepository;
@@ -511,7 +543,7 @@ export function NewTabSettingsPage({
         destinationUrl,
         destinationUrl
           ? '新标签页将打开指定网页。'
-          : '新标签页将使用内置页面。',
+          : '新标签页将使用卡牌大师页面。',
       );
       setDestinationDraft(destinationUrl);
     } catch (error) {
@@ -587,11 +619,11 @@ export function NewTabSettingsPage({
     >
       <header className="cm-new-tab-settings-header">
         <button
-          aria-label="返回新标签页"
+          aria-label="打开卡牌大师页面"
           onClick={() => {
             location.href = backUrl;
           }}
-          title="返回新标签页"
+          title="打开卡牌大师页面"
           type="button"
         >
           <ArrowLeft aria-hidden="true" size={18} />
@@ -623,13 +655,19 @@ export function NewTabSettingsPage({
 
         <div className="cm-new-tab-settings-content">
           <SettingsContentSection id="general" label="常规">
+            <NewTabModeNotice overridesBrowserNewTab={overridesBrowserNewTab} />
             <Field
-              description="留空时使用内置新标签页；填写后，新建标签页会直接打开该网址。"
+              description={
+                overridesBrowserNewTab
+                  ? '留空时使用卡牌大师新标签页；填写后，新建标签页会直接打开该网址。此处不用于恢复浏览器原生页面。'
+                  : '本版本不接管新标签页。已保存的网址会保留，切回标准版后继续使用。'
+              }
               label="新标签页内容"
             >
               <div className="cm-new-tab-settings-destination">
                 <input
                   aria-label="指定新标签页网址"
+                  disabled={!overridesBrowserNewTab}
                   onChange={(event) =>
                     setDestinationDraft(event.currentTarget.value)
                   }
@@ -643,26 +681,31 @@ export function NewTabSettingsPage({
                   type="url"
                   value={destinationDraft}
                 />
-                <button onClick={() => void saveDestination()} type="button">
+                <button
+                  disabled={!overridesBrowserNewTab}
+                  onClick={() => void saveDestination()}
+                  type="button"
+                >
                   <Save aria-hidden="true" size={15} />
                   保存
                 </button>
                 <button
                   disabled={
-                    !preferences.destinationUrl && !destinationDraft.trim()
+                    !overridesBrowserNewTab ||
+                    (!preferences.destinationUrl && !destinationDraft.trim())
                   }
                   onClick={() => {
                     setDestinationDraft('');
                     void patch(
                       'destinationUrl',
                       '',
-                      '新标签页将使用内置页面。',
+                      '新标签页将使用卡牌大师页面。',
                     );
                   }}
                   type="button"
                 >
                   <RotateCcw aria-hidden="true" size={15} />
-                  使用内置页面
+                  使用卡牌大师页面
                 </button>
               </div>
             </Field>

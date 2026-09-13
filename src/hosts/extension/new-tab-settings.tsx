@@ -11,6 +11,7 @@ import { NewTabPreferencesRepository } from '../../new-tab/application/preferenc
 import { requireExtensionApi } from './api';
 import { ExtensionDailyReviewWallpaperSettingsController } from './daily-review-wallpaper-settings';
 import { reportExtensionFailure } from './diagnostics';
+import { extensionOverridesNewTab } from './extension-runtime-api';
 import { extensionTarget } from './platform';
 
 try {
@@ -25,6 +26,7 @@ try {
         assetUrl={(path) => api.runtime.getURL(path)}
         backUrl={api.runtime.getURL('new-tab.html')}
         capabilities={newTabSettingsCapabilities(extensionTarget())}
+        overridesBrowserNewTab={extensionOverridesNewTab()}
         dailyReviewController={
           new ExtensionDailyReviewWallpaperSettingsController(api)
         }

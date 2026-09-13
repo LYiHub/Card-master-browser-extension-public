@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
+import { packageBrowserNewTabVariant } from './browser-new-tab-package.mjs';
 import { writeCardMediaAccentCatalog } from './card-media-accents.mjs';
 import { ensureExtensionOutputRoot } from './extension-output.mjs';
 import {
@@ -31,7 +32,7 @@ if (positional.length > 0) {
   process.exit(1);
 }
 
-function packageTarget(target) {
+async function packageTarget(target) {
   const result = spawnSync(
     process.execPath,
     ['scripts/package-extension.mjs'],
@@ -46,13 +47,19 @@ function packageTarget(target) {
   );
   if (result.error) throw result.error;
   if (result.status !== 0) process.exit(result.status ?? 1);
+  if (target !== 'safari') {
+    const variant = await packageBrowserNewTabVariant(resolve(output, target));
+    console.log(`保留浏览器新标签页版已生成：${variant}`);
+  }
 }
 
 await ensureExtensionOutputRoot(output);
 await writeCardMediaAccentCatalog();
 
 if (platform === 'all') {
-  for (const target of ['chromium', 'firefox', 'safari']) packageTarget(target);
+  for (const target of ['chromium', 'firefox', 'safari']) {
+    await packageTarget(target);
+  }
 } else {
-  packageTarget(platform);
+  await packageTarget(platform);
 }

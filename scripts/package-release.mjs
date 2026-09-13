@@ -183,6 +183,12 @@ try {
     resolve(releaseBuildOutput, 'firefox'),
     firefoxArchive,
   );
+  for (const platform of ['chromium', 'firefox']) {
+    await archiveExtension(
+      resolve(releaseBuildOutput, `${platform}-browser-new-tab`),
+      resolve(stagedOutput, `${releasePrefix}-${platform}-browser-new-tab.zip`),
+    );
+  }
 
   await rm(SAFARI_PACKAGED_RESOURCES, { force: true, recursive: true });
   await cp(resolve(releaseBuildOutput, 'safari'), SAFARI_PACKAGED_RESOURCES, {

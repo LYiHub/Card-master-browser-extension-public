@@ -15,7 +15,7 @@
 
   <p>
     <a href="https://github.com/LYiHub/Card-master-browser-extension-public/releases/latest">
-      <img src="https://img.shields.io/badge/version-0.2.1-7c3aed?style=flat-square" alt="版本 0.2.1" />
+      <img src="https://img.shields.io/badge/version-0.2.2-7c3aed?style=flat-square" alt="版本 0.2.2" />
     </a>
     <a href="./LICENSE">
       <img src="https://img.shields.io/badge/license-GPL--3.0--only-22c55e?style=flat-square" alt="GPL-3.0-only" />
@@ -74,8 +74,18 @@
 | 平台 | 产物 | 加载方式 |
 | --- | --- | --- |
 | Chromium（Chrome、Edge、Brave、Arc 等） | `card-master-v*-chromium.zip` | 解压 → 加载未打包扩展 |
+| Chromium（保留浏览器新标签页） | `card-master-v*-chromium-browser-new-tab.zip` | 解压 → 加载未打包扩展 |
 | Firefox | `card-master-v*-firefox.zip` | 解压 → 临时载入附加组件 |
+| Firefox（保留浏览器新标签页） | `card-master-v*-firefox-browser-new-tab.zip` | 解压 → 临时载入附加组件 |
 | macOS Safari | 暂不提供下载 | 等待苹果公证完成，进展见 [Issue #2](https://github.com/LYiHub/Card-master-browser-extension-public/issues/2) |
+
+### 保留浏览器原生新标签页
+
+请选择文件名带 `browser-new-tab` 的包。它与同平台标准版仅在 `manifest.json` 的新标签页接管声明上不同，不接管浏览器新标签页，普通网页的卡牌、脚本与 AI 功能照常使用。浏览器原生页面受浏览器权限限制，不显示网页牌阵；如果还有其他新标签页扩展接管，需要在浏览器中另行调整。
+
+已安装卡牌大师时，将对应包完整解压并覆盖到**原安装目录**（其中直接包含 `manifest.json`），在扩展管理页重新加载，再新建标签页。不要卸载扩展、清除存储或改到新目录重新安装，以免丢失原扩展身份对应的数据。切回标准版也使用同样的方法，原有牌库、API 配置和自定义网址设置会保留。
+
+设置中的“使用卡牌大师页面”只用于清空标准版的自定义网址；恢复浏览器原生页需要切换上述安装包。保留浏览器新标签页版仍可从扩展设置的“打开卡牌大师页面”入口手动打开卡牌大师页面。
 
 ### Chromium
 
@@ -154,7 +164,7 @@ pnpm check
 pnpm extension:package --platform=all
 ```
 
-产物在 `extension-dist/`。
+产物在 `extension-dist/`。Chromium 和 Firefox 构建同时生成对应的 `*-browser-new-tab/` 目录，用于保留浏览器新标签页；与同平台标准版共用全部运行时文件。
 
 ## 参与贡献
 

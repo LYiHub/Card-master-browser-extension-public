@@ -237,6 +237,23 @@ body,
   color: var(--cm-nt-text);
 }
 
+.cm-new-tab-settings-mode {
+  display: grid;
+  gap: 8px;
+  max-width: 540px;
+  line-height: 1.6;
+}
+
+.cm-new-tab-settings-mode span {
+  color: var(--cm-nt-muted);
+  font-size: 12px;
+}
+
+.cm-new-tab-settings-mode a {
+  color: var(--cm-nt-accent);
+  text-underline-offset: 3px;
+}
+
 .cm-new-tab-settings-destination {
   display: grid;
   grid-template-columns: minmax(240px, 1fr) auto auto;

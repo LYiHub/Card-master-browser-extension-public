@@ -1,14 +1,40 @@
 import { readFileSync } from 'node:fs';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import {
   dailyReviewAvailable,
   dailyReviewReadinessIssue,
+  NewTabModeNotice,
   newTabSettingsCapabilities,
   newTabWallpaperToneForTheme,
   resolveEffectiveWallpaperSource,
   visibleNewTabSettingsSections,
 } from './NewTabSettingsPage';
+
+describe('new tab ownership copy', () => {
+  it('explains the standard package and provides an actual release link', () => {
+    const html = renderToStaticMarkup(
+      createElement(NewTabModeNotice, { overridesBrowserNewTab: true }),
+    );
+    expect(html).toContain('当前使用卡牌大师新标签页');
+    expect(html).toContain('保留浏览器新标签页版');
+    expect(html).toContain(
+      'https://github.com/LYiHub/Card-master-browser-extension-public/releases/latest',
+    );
+    expect(html).toContain('不要卸载扩展或清除数据');
+  });
+
+  it('makes it clear that the browser-managed package does not own new tabs', () => {
+    const html = renderToStaticMarkup(
+      createElement(NewTabModeNotice, { overridesBrowserNewTab: false }),
+    );
+    expect(html).toContain('当前版本不接管浏览器新标签页');
+    expect(html).toContain('手动打开的卡牌大师页面');
+    expect(html).not.toContain('当前使用卡牌大师新标签页');
+  });
+});
 
 describe('new tab wallpaper mode readiness', () => {
   const source = readFileSync(

@@ -8,6 +8,12 @@ export function extensionGlobalApi() {
   return globals.browser ?? globals.chrome;
 }
 
+export function extensionOverridesNewTab() {
+  return Boolean(
+    extensionGlobalApi()?.runtime.getManifest().chrome_url_overrides?.newtab,
+  );
+}
+
 export function requireExtensionRuntimeApi(): ExtensionRuntimeApi {
   const runtime = extensionGlobalApi()?.runtime;
   if (!runtime?.id || typeof runtime.connect !== 'function') {

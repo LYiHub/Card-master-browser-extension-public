@@ -56,6 +56,7 @@ import {
   DailyReviewWallpaperStateRepository,
 } from './daily-review-wallpaper-storage';
 import { reportExtensionFailure } from './diagnostics';
+import { extensionOverridesNewTab } from './extension-runtime-api';
 import {
   isExtensionPageGlobalLibraryDeliveryMessage,
   markGlobalLibraryInjection,
@@ -2305,7 +2306,7 @@ async function openConfiguredNewTab(api: ExtensionApi) {
   installEmbeddedNewTabBranding(frame, cardMasterLogoUrl(api));
   installPhotoFrameIdleMode(frame, api, preferencesRepository);
   const preferences = await preferencesRepository.read();
-  if (preferences.destinationUrl) {
+  if (extensionOverridesNewTab() && preferences.destinationUrl) {
     location.replace(preferences.destinationUrl);
     return;
   }
