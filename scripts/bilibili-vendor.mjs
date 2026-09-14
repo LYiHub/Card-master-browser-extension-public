@@ -28,6 +28,10 @@ const SPONSOR_DELAYED_PAGE_READY_FALLBACK =
   'setTimeout(()=>{n||("complete"===document.readyState?o("fallback: readyState already complete after 30000ms"):window.addEventListener("load",()=>{setTimeout(()=>o("fallback: window.load + 2s delay"),2e3)},{once:!0}))},3e4)';
 const SPONSOR_RELOAD_SAFE_PAGE_READY_FALLBACK =
   '"complete"===document.readyState?queueMicrotask(()=>o("fallback: readyState already complete")):window.addEventListener("load",()=>{setTimeout(()=>o("fallback: window.load + 2s delay"),2e3)},{once:!0})';
+const SPONSOR_INFO_MENU_MOUNT =
+  'document.querySelector("#danmukuBox").prepend(e)';
+const SPONSOR_SAFE_INFO_MENU_MOUNT =
+  '(document.querySelector("#danmukuBox")||document.querySelector(".bpx-player-container")||document.body||document.documentElement).prepend(e)';
 const YOUTUBE_CATEGORY_PILL_TITLE_WAIT =
   'let e=yield(0,u.waitFor)(()=>(0,c.getYouTubeTitleNode)());';
 const YOUTUBE_OPTIONAL_CATEGORY_PILL_TITLE_WAIT =
@@ -154,6 +158,12 @@ export function patchSponsorContentRuntime(source) {
     SPONSOR_SHADOW_STYLE_INJECTION,
     SPONSOR_GUARDED_SHADOW_STYLE_INJECTION,
     'SponsorBlock shadow-root stylesheet injection',
+  );
+  patched = replaceRequired(
+    patched,
+    SPONSOR_INFO_MENU_MOUNT,
+    SPONSOR_SAFE_INFO_MENU_MOUNT,
+    'SponsorBlock info popup mount fallback',
   );
   return replaceRequired(
     patched,

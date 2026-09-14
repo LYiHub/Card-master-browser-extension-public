@@ -6,7 +6,7 @@
 
 .playerButton {
   position: relative;
-  display: inline-grid !important;
+  display: inline-grid;
   place-items: center;
   box-sizing: border-box;
   width: var(--cm-sponsor-control-size);

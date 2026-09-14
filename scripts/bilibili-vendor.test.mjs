@@ -60,6 +60,28 @@ describe('Bilibili vendor integration', () => {
     expect(patched).not.toContain(
       'fallback: readyState already complete after 30000ms',
     );
+    expect(patched).toContain(
+      '(document.querySelector("#danmukuBox")||document.querySelector(".bpx-player-container")||document.body||document.documentElement).prepend(e)',
+    );
+    expect(patched).not.toContain(
+      'document.querySelector("#danmukuBox").prepend(e)',
+    );
+  });
+
+  it('preserves SponsorBlock button visibility and constrains embedded popups', async () => {
+    const integrationCss = await readFile(
+      resolve('vendor/bilibili/sponsor/integration.css'),
+      'utf8',
+    );
+    const contentCss = await readFile(
+      resolve('vendor/bilibili/sponsor/content.css'),
+      'utf8',
+    );
+
+    expect(integrationCss).toContain('display: inline-grid;');
+    expect(integrationCss).not.toContain('display: inline-grid !important');
+    expect(contentCss).toContain('#sponsorBlockPopupContainer iframe');
+    expect(contentCss).toContain('width: 100%;');
   });
 
   it('scopes YouTube content and cleans every attached listener', async () => {
