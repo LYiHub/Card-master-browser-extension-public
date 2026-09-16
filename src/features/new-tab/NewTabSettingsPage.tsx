@@ -300,6 +300,7 @@ export function NewTabSettingsPage({
     NewTabLocalWallpaper[]
   >([]);
   const [notice, setNotice] = useState('');
+  const [webdavSync, setWebdavSync] = useState(false);
   const [destinationDraft, setDestinationDraft] = useState('');
   const [dailyReviewStyleDraft, setDailyReviewStyleDraft] = useState(
     DAILY_REVIEW_WALLPAPER_DEFAULT_STYLE,
@@ -319,6 +320,7 @@ export function NewTabSettingsPage({
   });
 
   useEffect(() => {
+    void preferencesRepository.webdavOwnsPreferences().then(setWebdavSync);
     void preferencesRepository
       .read()
       .then((next) => {
@@ -731,7 +733,14 @@ export function NewTabSettingsPage({
                 onChange={(checked) => void patch('showClock', checked)}
               />
             </Field>
-            {capabilities.storageSync ? (
+            {webdavSync ? (
+              <Field
+                label="跨设备同步"
+                description="新标签页配置由 WebDAV 统一同步，可在牌库设置的数据管理中查看状态。"
+              >
+                <span>WebDAV 已连接</span>
+              </Field>
+            ) : capabilities.storageSync ? (
               <Field
                 description="同步布局、搜索和普通偏好；本地壁纸、自定义图标与书签顶部外观不参与同步。"
                 label="浏览器内置同步"

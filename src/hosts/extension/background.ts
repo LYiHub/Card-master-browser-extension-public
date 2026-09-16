@@ -28,6 +28,7 @@ import {
 } from '../../new-tab/application/preferences';
 import { SyncProjection } from '../../sync/projection';
 import { SyncService } from '../../sync/service';
+import { wallpaperSyncSettings } from '../../sync/wallpapers';
 import {
   mergePendingPreinstalledUserscripts,
   normalizePreinstalledUserscriptState,
@@ -131,6 +132,12 @@ import {
 } from './sponsor-runtime-storage';
 import { ExtensionStringStorage } from './storage';
 import { configureExtensionStorageAccess } from './storage-access';
+import { installSyncScheduling, SYNC_ALARM } from './sync-scheduling';
+import { syncSettings } from './sync-settings';
+import {
+  takeVendorStorageOwnership,
+  vendorSyncSettings,
+} from './sync-vendor-settings';
 import {
   UserscriptActivationCoordinator,
   type UserscriptActivationResult,
@@ -159,7 +166,6 @@ const offscreenAudio = new OffscreenAudioCoordinator(api);
 const CONTENT_BLOCKING_REFRESH_ALARM = 'content-blocking.refresh-subscriptions';
 const USERSCRIPT_UPDATE_ALARM = 'userscript.update-check';
 const DAILY_REVIEW_WALLPAPER_ALARM = 'new-tab.daily-review-wallpaper';
-const SYNC_ALARM = 'card-master.sync';
 const AUDIO_SETTINGS_STORAGE_KEY = 'card-master.audio-settings.v1';
 type StorageRecoveryStatus = 'checking' | 'ready' | 'pending';
 let storageRecoveryStatus: StorageRecoveryStatus = 'checking';
@@ -402,13 +408,39 @@ const userscriptLibrary = new UserscriptLibraryCoordinator({
   scheduleActivationReload,
   reportFailure: reportBackgroundError,
 });
-const syncProjection = new SyncProjection(
-  api,
-  repository,
-  new NewTabPreferencesRepository(api.storage.local, api.storage.sync),
-  (previous, next) => userscriptLibrary.commit(previous, next),
+const syncPreferences = new NewTabPreferencesRepository(
+  api.storage.local,
+  api.storage.sync,
 );
-const syncService = new SyncService(api, syncProjection);
+const syncProjection = new SyncProjection(
+  repository,
+  (previous, next) => userscriptLibrary.commit(previous, next),
+  [
+    wallpaperSyncSettings(indexedDB),
+    ...syncSettings({
+      api,
+      repository,
+      newTab: syncPreferences,
+      theme: pageThemeService,
+      speed: mediaSpeedService,
+      resources: mediaResourcesService,
+      gamepad: gamepadControlService,
+      bilibili: bilibiliCapabilityService,
+      blocking: contentBlockingService,
+      readAudio: readAudioSettings,
+      writeAudio: writeAudioSettings,
+      readScripts: readUserscriptSettings,
+      writeScripts: writeUserscriptSettings,
+    }),
+    ...vendorSyncSettings(api, syncPreferences, sponsorRuntimeStorage),
+  ],
+  async (enabled) => {
+    if (enabled) await takeVendorStorageOwnership(api);
+    await syncPreferences.setWebdavOwnership(enabled);
+  },
+);
+const syncService = new SyncService(api.storage.local, syncProjection);
+installSyncScheduling(api, syncService, initialize);
 const assistantService = new ExtensionAssistantService(
   api,
   repository,
@@ -904,6 +936,19 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
       reportFailure: reportBackgroundError,
     });
     if (aiResponse !== AI_MESSAGE_UNHANDLED) return aiResponse;
+    if (message.type === 'sync-command') {
+      if (sender.id !== api.runtime.id)
+        throw new Error('同步请求缺少有效的扩展身份。');
+      return syncService.request(message.command);
+    }
+    if (
+      message.type === 'data-management-run' &&
+      message.action === 'reset-all'
+    ) {
+      const disconnected = await syncService.request({ type: 'disconnect' });
+      if (disconnected.connected)
+        throw new Error('同步连接尚未断开，请重试后再重置本机数据。');
+    }
     const userscriptResponse = await userscriptLibrary.route(message, sender);
     if (userscriptResponse !== USERSCRIPT_LIBRARY_MESSAGE_UNHANDLED) {
       return userscriptResponse;
@@ -987,8 +1032,8 @@ async function initializeBackground() {
     periodInMinutes: 60,
   });
   await api.alarms.create(SYNC_ALARM, {
-    delayInMinutes: 2,
-    periodInMinutes: 30,
+    delayInMinutes: 1,
+    periodInMinutes: 5,
   });
   await runBackgroundInitializationPhase('刷新工具栏卡牌数量', async () => {
     await deckActionBadge.initialize();

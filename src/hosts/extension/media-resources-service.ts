@@ -351,6 +351,24 @@ export class ExtensionMediaResourcesService {
     return this.snapshot(tabId, url, settings);
   }
 
+  async saveSettings(
+    mutation: (current: MediaResourcesSettings) => MediaResourcesSettings,
+  ) {
+    const current = await this.readSettings();
+    const settings = mutation(structuredClone(current));
+    if (!isMediaResourcesSettings(settings)) {
+      throw new Error('顺手牵羊设置格式无效。');
+    }
+    const next = { ...settings, revision: current.revision + 1 };
+    this.bridge()?.setEnabled(next.enabled);
+    await this.api.storage.local.set({
+      [MEDIA_RESOURCES_SETTINGS_STORAGE_KEY]: next,
+    });
+    this.settingsPromise = Promise.resolve(next);
+    for (const tabId of this.tabs.keys()) this.publish(tabId);
+    return next;
+  }
+
   async setCaptureEnabled(
     tabId: number,
     url: string,

@@ -92,7 +92,7 @@ export class WebDavSync {
         if (part.done) break;
         length += part.value.length;
         if (length > SYNC_MAX_DOCUMENT_BYTES)
-          throw new Error('远端同步文件超过 16 MB，已停止读取。');
+          throw new Error('远端同步文件超过 257 MB，已停止读取。');
         chunks.push(part.value);
       }
     } finally {
@@ -109,6 +109,7 @@ export class WebDavSync {
   }
 
   async write(document: SyncDocument, etag: string | null) {
+    validateDocument(document);
     const response = await this.request(
       'workspace.json',
       'PUT',
@@ -135,6 +136,18 @@ export class WebDavSync {
       if (!stored.ok || (await stored.text()) !== '{}')
         throw new Error('同步服务未能正确保存测试内容。');
       const tag = this.etag(stored);
+      let createRejected = false;
+      try {
+        await this.request(path, 'PUT', '{}', {
+          name: 'If-None-Match',
+          value: '*',
+        });
+      } catch (error) {
+        if (!(error instanceof SyncRemoteChanged)) throw error;
+        createRejected = true;
+      }
+      if (!createRejected)
+        throw new Error('该 WebDAV 服务不支持防覆盖创建，无法开启双向同步。');
       let rejected = false;
       try {
         await this.request(path, 'PUT', '{}', {

@@ -213,7 +213,7 @@ export class ExtensionPageThemeService {
     void Promise.allSettled(deliveries);
   }
 
-  private mutate(
+  mutate(
     mutation: (settings: PageThemeSettings) => PageThemeSettings,
   ): Promise<PageThemeSettings> {
     const operation = this.mutationQueue.then(async () => {

@@ -290,11 +290,18 @@
     const storage = chromeApi && chromeApi.storage ? chromeApi.storage : null;
     const syncArea = storage && storage.sync ? storage.sync : null;
     const localArea = storage && storage.local ? storage.local : syncArea;
-    const activeAreaName = syncArea ? 'sync' : (localArea ? 'local' : '');
-    const modeReady = Promise.resolve(activeAreaName);
+    let activeAreaName = syncArea ? 'sync' : (localArea ? 'local' : '');
+    const ownerKey = 'card-master.sync.new-tab-owner';
+    const modeReady = localArea ? localArea.get(ownerKey).then((values) => {
+      if (typeof values[ownerKey] === 'boolean') activeAreaName = 'local';
+      return activeAreaName;
+    }) : Promise.resolve(activeAreaName);
+    if (storage && storage.onChanged) storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === 'local' && changes[ownerKey]) activeAreaName = 'local';
+    });
 
     function getActiveArea() {
-      return syncArea || localArea;
+      return activeAreaName === 'local' ? localArea : syncArea;
     }
 
     function invoke(method, args) {

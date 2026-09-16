@@ -60,7 +60,7 @@ export class ExtensionGamepadControlService {
       .catch(() => undefined);
   }
 
-  private mutate(
+  mutate(
     mutation: (settings: GamepadControlSettings) => GamepadControlSettings,
   ) {
     const operation = this.mutationQueue.then(async () => {

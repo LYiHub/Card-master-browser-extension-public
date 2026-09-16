@@ -40,7 +40,6 @@ import { extensionTarget } from '../../hosts/extension/platform';
 import type {
   SyncCommand,
   SyncController,
-  SyncScope,
   SyncSnapshot,
 } from '../../sync/model';
 import {
@@ -199,22 +198,11 @@ function downloadArchive(blob: Blob, filename: string) {
   queueMicrotask(() => URL.revokeObjectURL(url));
 }
 
-const SYNC_SCOPE_LABELS: Record<SyncScope, string> = {
-  scripts: '用户脚本与卡牌设置',
-  preferences: '牌阵入口偏好',
-  newTab: '新标签页偏好',
-};
-
 function SyncSettings({ controller }: { controller: SyncController }) {
   const [snapshot, setSnapshot] = useState<SyncSnapshot | null>(null);
   const [url, setUrl] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [scopes, setScopes] = useState<SyncScope[]>([
-    'scripts',
-    'preferences',
-    'newTab',
-  ]);
   const [choices, setChoices] = useState<Record<string, 'local' | 'remote'>>(
     {},
   );
@@ -227,18 +215,9 @@ function SyncSettings({ controller }: { controller: SyncController }) {
     try {
       const next = await controller.request(command);
       setSnapshot(next);
-      if (next.preview) {
-        setChoices((current) =>
-          Object.fromEntries(
-            next.preview?.changes
-              .filter((change) => change.kind === 'conflict')
-              .map((change) => [change.key, current[change.key]])
-              .filter((entry): entry is [string, 'local' | 'remote'] =>
-                Boolean(entry[1]),
-              ) ?? [],
-          ),
-        );
-      }
+      setChoices({});
+      if (next.status === 'error') setError(next.message);
+      if (next.connected) setPassword('');
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : String(failure));
     } finally {
@@ -247,13 +226,28 @@ function SyncSettings({ controller }: { controller: SyncController }) {
   };
 
   useEffect(() => {
+    let active = true;
     setBusy(true);
-    void controller
-      .request({ type: 'read' })
-      .then(setSnapshot, (failure) =>
-        setError(failure instanceof Error ? failure.message : String(failure)),
-      )
-      .finally(() => setBusy(false));
+    const refresh = () =>
+      controller.request({ type: 'read' }).then(
+        (value) => {
+          if (active) setSnapshot(value);
+        },
+        (failure) => {
+          if (active)
+            setError(
+              failure instanceof Error ? failure.message : String(failure),
+            );
+        },
+      );
+    void refresh().finally(() => {
+      if (active) setBusy(false);
+    });
+    const timer = window.setInterval(refresh, 3000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
   }, [controller]);
 
   const connected = snapshot?.connected === true;
@@ -261,15 +255,15 @@ function SyncSettings({ controller }: { controller: SyncController }) {
     snapshot?.preview?.changes.filter((change) => change.kind === 'conflict') ??
     [];
   return (
-    <section className="manager-data-section">
+    <section className="manager-data-section manager-sync" aria-busy={busy}>
       <header className="manager-data-section__heading">
         <strong>跨设备同步</strong>
         <p>
-          本机修改会立即保存，联网后自动同步到你的 WebDAV 空间。同步不包含 API
-          密钥、脚本 GM 数据和临时运行状态。
+          一次连接，自动同步全部脚本、卡牌与插件配置。密钥、密码、浏览器授权、脚本
+          GM 数据和临时运行状态保留在本机。
         </p>
       </header>
-      {!connected ? (
+      {!connected && !snapshot?.preview ? (
         <>
           <label className="manager-sync-field">
             WebDAV 地址
@@ -296,37 +290,17 @@ function SyncSettings({ controller }: { controller: SyncController }) {
               autoComplete="current-password"
             />
           </label>
-          <div className="manager-sync-scopes">
-            {Object.entries(SYNC_SCOPE_LABELS).map(([scope, label]) => (
-              <label key={scope}>
-                <input
-                  type="checkbox"
-                  checked={scopes.includes(scope as SyncScope)}
-                  onChange={(event) =>
-                    setScopes((current) =>
-                      event.target.checked
-                        ? [...new Set([...current, scope as SyncScope])]
-                        : current.filter((item) => item !== scope),
-                    )
-                  }
-                />
-                {label}
-              </label>
-            ))}
-          </div>
           <UiButton
             variant="primary"
-            disabled={
-              busy || !url || !username || !password || scopes.length === 0
-            }
+            disabled={busy || !url || !username || !password}
             onClick={() =>
               void request({
                 type: 'preview',
-                connection: { url, username, password, scopes },
+                connection: { url, username, password },
               })
             }
           >
-            {busy ? '正在连接…' : '连接并同步'}
+            {busy ? '正在连接…' : '连接并预览'}
           </UiButton>
         </>
       ) : (
@@ -342,13 +316,50 @@ function SyncSettings({ controller }: { controller: SyncController }) {
               </p>
             ) : null}
           </UiNotice>
-          {conflicts.length > 0 ? (
-            <div className="manager-sync-conflicts">
-              <strong>需要确认的修改</strong>
+          {snapshot?.preview ? (
+            <div className="manager-sync-conflicts" key={snapshot.preview.id}>
+              <strong>
+                {snapshot.preview.restore ? '恢复预览' : '合并预览'}
+              </strong>
+              <p>
+                {snapshot.preview.changes.length} 项差异，{conflicts.length}{' '}
+                项需要选择。确认前不会替换本机或远端数据。
+              </p>
+              {snapshot.preview.changes
+                .filter((change) => change.kind !== 'conflict')
+                .map((change) => (
+                  <p key={change.key}>
+                    {change.name} ·{' '}
+                    {change.kind === 'add'
+                      ? '新增'
+                      : change.kind === 'delete'
+                        ? '删除'
+                        : '更新'}
+                  </p>
+                ))}
               {conflicts.map((change) => (
-                <label key={change.key}>
-                  {change.name}
+                <div key={change.key} className="manager-sync-conflict">
+                  <strong>{change.name}</strong>
+                  <div className="manager-sync-comparison">
+                    <section aria-label="本机内容">
+                      <strong>本机内容</strong>
+                      <pre>
+                        {change.local
+                          ? JSON.stringify(change.local.value, null, 2)
+                          : '已删除'}
+                      </pre>
+                    </section>
+                    <section aria-label="远端内容">
+                      <strong>远端内容</strong>
+                      <pre>
+                        {change.remote
+                          ? JSON.stringify(change.remote.value, null, 2)
+                          : '已删除'}
+                      </pre>
+                    </section>
+                  </div>
                   <select
+                    aria-label={`${change.name}保留版本`}
                     value={choices[change.key] ?? ''}
                     onChange={(event) =>
                       setChoices((current) => ({
@@ -361,7 +372,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                     <option value="local">保留本机</option>
                     <option value="remote">保留远端</option>
                   </select>
-                </label>
+                </div>
               ))}
               <UiButton
                 variant="primary"
@@ -376,7 +387,13 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                   })
                 }
               >
-                确认合并
+                {snapshot.preview.restore ? '确认恢复' : '确认并开启同步'}
+              </UiButton>
+              <UiButton
+                disabled={busy}
+                onClick={() => void request({ type: 'cancel' })}
+              >
+                取消
               </UiButton>
             </div>
           ) : null}
@@ -401,7 +418,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
           ) : null}
           <div className="manager-sync-actions">
             <UiButton
-              disabled={busy}
+              disabled={busy || !connected || Boolean(snapshot?.preview)}
               onClick={() => void request({ type: 'run' })}
             >
               {busy ? '正在同步…' : '立即同步'}

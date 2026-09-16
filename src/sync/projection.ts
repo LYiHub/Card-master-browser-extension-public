@@ -1,219 +1,207 @@
 import {
-  DECK_ENTRY_SETTINGS_STORAGE_KEY,
-  normalizeDeckEntrySettings,
-} from '../features/userscript-deck/deck-entry';
-import type { ExtensionBackgroundApi } from '../hosts/extension/api';
-import { updateExtensionDeckEntrySettings } from '../hosts/extension/deck-entry-background';
-import {
-  type NewTabPreferencesRepository,
-  normalizeNewTabPreferences,
-  synchronizedPreferences,
-} from '../new-tab/application/preferences';
-import {
   hydrateScript,
   isStoredScript,
-  type StoredScript,
   storedScript,
   type TransactionalScriptRepository,
 } from '../userscript/application/script-repository';
 import { userscriptIdentity } from '../userscript/domain/metadata';
 import type { InstalledUserscript } from '../userscript/domain/types';
 import {
-  canonical,
+  entryEqual,
+  equal,
   type Json,
+  jsonValue,
+  record,
   type SyncEntries,
-  type SyncScope,
-  scopeFor,
+  type SyncEntry,
+  validateEntries,
 } from './model';
 
-type SyncScript = Omit<StoredScript, 'id'>;
-type ScriptChangeCommit = (
-  previous: Awaited<ReturnType<TransactionalScriptRepository['list']>>,
-  next: Awaited<ReturnType<TransactionalScriptRepository['list']>>,
-) => Promise<unknown>;
+export type SyncPortableAdapter = {
+  key: string;
+  name: string;
+  read(): Promise<Json>;
+  validate(value: Json): void;
+  apply(value: Json, expected: Json): Promise<boolean>;
+};
 
-function jsonValue(value: unknown) {
-  return JSON.parse(JSON.stringify(value)) as Json;
+export class SyncLocalChanged extends Error {}
+
+export function assertUnchanged(current: unknown, expected: unknown) {
+  if (!equal(current, expected))
+    throw new SyncLocalChanged('本机配置刚发生变化。');
 }
 
-function scriptKey(script: StoredScript) {
-  return `script:${encodeURIComponent(userscriptIdentity(hydrateScript(script).metadata))}`;
+export function syncScriptKey(script: InstalledUserscript) {
+  return `script:${encodeURIComponent(userscriptIdentity(script.metadata))}`;
 }
 
-function scriptValue(script: StoredScript): SyncScript {
-  const { id: _id, source, manager, presentation } = script;
+function scriptEntry(script: InstalledUserscript): SyncEntry {
+  const { id: _id, source, ...portable } = storedScript(script);
   return {
-    source,
-    manager,
-    ...(presentation &&
-    (presentation.media.kind === 'image'
-      ? !presentation.media.image.startsWith('data:')
-      : !presentation.media.video.startsWith('data:') &&
-        !presentation.media.poster?.startsWith('data:'))
-      ? { presentation }
-      : {}),
+    name: script.metadata.name.slice(0, 512),
+    value: jsonValue({
+      ...portable,
+      source: { ...source, installedAt: 0, updatedAt: 0 },
+    }),
   };
 }
 
-function scriptFromValue(value: unknown, id: string): StoredScript | null {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
-  const candidate = { ...(value as Record<string, unknown>), id };
-  return isStoredScript(candidate) ? candidate : null;
-}
-
-function entriesForScripts(scripts: readonly StoredScript[]) {
-  return Object.fromEntries(
-    scripts.map((script) => [
-      scriptKey(script),
-      {
-        name: `脚本：${script.source.code.slice(0, 80)}`,
-        value: jsonValue(scriptValue(script)),
-      },
-    ]),
-  ) as SyncEntries;
+function decodeScript(
+  entry: SyncEntry,
+  key: string,
+  id = 'sync-validation',
+): InstalledUserscript {
+  if (!record(entry.value)) throw new Error('同步脚本格式无效。');
+  const script = { ...entry.value, id };
+  if (!isStoredScript(script)) throw new Error('同步脚本配置不完整。');
+  const hydrated = hydrateScript(script);
+  if (syncScriptKey(hydrated) !== key)
+    throw new Error('同步脚本的身份与源码不一致。');
+  return hydrated;
 }
 
 export class SyncProjection {
   constructor(
-    private readonly api: ExtensionBackgroundApi,
     private readonly repository: TransactionalScriptRepository,
-    private readonly newTab: NewTabPreferencesRepository,
-    private readonly commitScripts: ScriptChangeCommit,
+    private readonly commitScripts: (
+      previous: InstalledUserscript[],
+      next: InstalledUserscript[],
+    ) => Promise<unknown>,
+    private readonly portable: readonly SyncPortableAdapter[],
+    private readonly ownership: (enabled: boolean) => Promise<void>,
   ) {}
 
-  async readEntries(
-    scopes: readonly SyncScope[] = ['scripts', 'preferences', 'newTab'],
-  ): Promise<SyncEntries> {
-    const [scripts, storedDeck, newTab] = await Promise.all([
-      this.repository.list(),
-      this.api.storage.local.get(DECK_ENTRY_SETTINGS_STORAGE_KEY),
-      this.newTab.read(),
-    ]);
-    const deck = normalizeDeckEntrySettings(
-      storedDeck[DECK_ENTRY_SETTINGS_STORAGE_KEY],
-    );
-    const entries = {
-      ...entriesForScripts(scripts.map(storedScript)),
-      'deck:settings': { name: '牌阵入口设置', value: jsonValue(deck) },
-      'newTab:preferences': {
-        name: '新标签页偏好',
-        value: jsonValue(synchronizedPreferences(newTab)),
-      },
-    };
-    return Object.fromEntries(
-      Object.entries(entries).filter(([key]) => scopes.includes(scopeFor(key))),
-    ) as SyncEntries;
+  setOwnership(enabled: boolean) {
+    return this.ownership(enabled);
   }
 
-  async applyEntries(
-    next: SyncEntries,
-    before: SyncEntries,
-    scopes: readonly SyncScope[] = ['scripts', 'preferences', 'newTab'],
-  ) {
+  async readEntries(): Promise<SyncEntries> {
+    const [scripts, values] = await Promise.all([
+      this.repository.list(),
+      Promise.all(this.portable.map((adapter) => adapter.read())),
+    ]);
+    const entries: SyncEntries = Object.fromEntries(
+      scripts.map((script) => [syncScriptKey(script), scriptEntry(script)]),
+    );
+    entries['settings:script-order'] = {
+      name: '脚本排序',
+      value: scripts.map(syncScriptKey),
+    };
+    for (const [index, adapter] of this.portable.entries()) {
+      entries[`settings:${adapter.key}`] = {
+        name: adapter.name,
+        value: values[index],
+      };
+    }
+    this.validate(entries);
+    return entries;
+  }
+
+  validate(entries: SyncEntries) {
+    validateEntries(entries);
+    for (const [key, entry] of Object.entries(entries)) {
+      if (key.startsWith('script:')) {
+        if (entry) decodeScript(entry, key);
+      } else if (key === 'settings:script-order') {
+        if (
+          !entry ||
+          !Array.isArray(entry.value) ||
+          !entry.value.every(
+            (id) => typeof id === 'string' && id.startsWith('script:'),
+          ) ||
+          new Set(entry.value).size !== entry.value.length
+        ) {
+          throw new Error('同步的脚本排序无效。');
+        }
+      } else {
+        const adapter = this.portable.find(
+          (item) => key === `settings:${item.key}`,
+        );
+        if (!adapter || !entry)
+          throw new Error('同步包含无法识别的配置，请更新所有设备后重试。');
+        adapter.validate(entry.value);
+      }
+    }
+  }
+
+  async applyEntries(next: SyncEntries, before: SyncEntries) {
+    this.validate(next);
     const skipped = new Set<string>();
-    const changedScripts = await this.repository.transact((current) => {
-      const nextScripts = new Map<string, StoredScript>();
-      const currentMap = new Map(
-        current.map((script) => [scriptKey(storedScript(script)), script]),
+    const transaction = await this.repository.transact((current) => {
+      const scripts = new Map(
+        current.map((script) => [syncScriptKey(script), script]),
       );
-      for (const [key, beforeEntry] of Object.entries(before)) {
-        if (
-          !scopes.includes(scopeFor(key)) ||
-          scopeFor(key) !== 'scripts' ||
-          canonical(awaitEntry(currentMap, key)) === canonical(beforeEntry)
-        )
+      for (const [key, desired] of Object.entries(next)) {
+        if (!key.startsWith('script:')) continue;
+        const existing = scripts.get(key);
+        const live = existing ? scriptEntry(existing) : null;
+        if (entryEqual(live, desired)) continue;
+        if (!entryEqual(live, before[key])) {
+          skipped.add(key);
           continue;
-        skipped.add(key);
-      }
-      for (const [key, entry] of Object.entries(next)) {
-        if (
-          !scopes.includes(scopeFor(key)) ||
-          scopeFor(key) !== 'scripts' ||
-          skipped.has(key)
-        )
+        }
+        if (!desired) {
+          scripts.delete(key);
           continue;
-        const current = currentMap.get(key);
-        if (!entry) continue;
-        const script = scriptFromValue(
-          entry.value,
-          current?.id ?? `installed-userscript-${crypto.randomUUID()}`,
+        }
+        const script = decodeScript(
+          desired,
+          key,
+          existing?.id ?? `installed-userscript-${crypto.randomUUID()}`,
         );
-        if (script) nextScripts.set(key, script);
+        script.source.installedAt = existing?.source.installedAt ?? Date.now();
+        script.source.updatedAt = Date.now();
+        scripts.set(key, script);
       }
-      const result = current.filter((script) => {
-        const key = scriptKey(storedScript(script));
+      const order = next['settings:script-order']?.value;
+      let ordered = [...scripts.values()];
+      if (Array.isArray(order)) {
+        const originalOrder = current.map(syncScriptKey);
         if (
-          !scopes.includes(scopeFor(key)) ||
-          scopeFor(key) !== 'scripts' ||
-          skipped.has(key)
-        )
-          return true;
-        return nextScripts.has(key);
-      });
-      for (const [key, script] of nextScripts) {
-        const index = result.findIndex(
-          (candidate) => scriptKey(storedScript(candidate)) === key,
-        );
-        const hydrated = hydrateScript(script);
-        if (index < 0) result.push(hydrated);
-        else result[index] = hydrated;
+          equal(originalOrder, before['settings:script-order']?.value) ||
+          equal(originalOrder, order)
+        ) {
+          const rank = new Map(order.map((key, index) => [key, index]));
+          ordered = ordered.sort(
+            (a, b) =>
+              (rank.get(syncScriptKey(a)) ?? order.length) -
+              (rank.get(syncScriptKey(b)) ?? order.length),
+          );
+        } else skipped.add('settings:script-order');
       }
+      const changed = !equal(
+        current.map(storedScript),
+        ordered.map(storedScript),
+      );
       return {
-        scripts: result,
-        result: {
-          changed:
-            canonical(result.map(storedScript)) !==
-            canonical(current.map(storedScript)),
-          previous: [...current],
-        },
+        scripts: changed ? ordered : current,
+        result: { previous: [...current], changed },
       };
     });
-    if (changedScripts.result.changed)
+    if (transaction.result.changed)
       await this.commitScripts(
-        changedScripts.result.previous,
-        changedScripts.scripts,
+        transaction.result.previous,
+        transaction.scripts,
       );
-
-    const deckEntry = next['deck:settings'];
-    if (
-      scopes.includes('preferences') &&
-      deckEntry &&
-      !skipped.has('deck:settings')
-    ) {
-      const current = normalizeDeckEntrySettings(
-        (await this.api.storage.local.get(DECK_ENTRY_SETTINGS_STORAGE_KEY))[
-          DECK_ENTRY_SETTINGS_STORAGE_KEY
-        ],
-      );
-      if (canonical(current) === canonical(before['deck:settings'])) {
-        await updateExtensionDeckEntrySettings(this.api, () =>
-          normalizeDeckEntrySettings(deckEntry.value),
-        );
-      } else skipped.add('deck:settings');
-    }
-    const newTabEntry = next['newTab:preferences'];
-    if (
-      scopes.includes('newTab') &&
-      newTabEntry &&
-      !skipped.has('newTab:preferences')
-    ) {
-      const current = await this.newTab.read();
-      if (
-        canonical(synchronizedPreferences(current)) ===
-        canonical(before['newTab:preferences'])
-      ) {
-        await this.newTab.adoptSynchronized(
-          normalizeNewTabPreferences(newTabEntry.value),
-        );
-      } else skipped.add('newTab:preferences');
+    for (const adapter of this.portable) {
+      const key = `settings:${adapter.key}`;
+      const desired = next[key];
+      if (!desired) continue;
+      const current = await adapter.read();
+      if (equal(current, desired.value)) continue;
+      const expected = before[key]?.value;
+      if (expected === undefined || !equal(current, expected)) {
+        skipped.add(key);
+        continue;
+      }
+      try {
+        if (!(await adapter.apply(desired.value, expected))) skipped.add(key);
+      } catch (error) {
+        if (!(error instanceof SyncLocalChanged)) throw error;
+        skipped.add(key);
+      }
     }
     return { skipped };
   }
-}
-
-function awaitEntry(map: Map<string, InstalledUserscript>, key: string) {
-  const script = map.get(key);
-  return script
-    ? { name: key, value: jsonValue(scriptValue(storedScript(script))) }
-    : null;
 }

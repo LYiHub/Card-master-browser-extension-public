@@ -40,16 +40,21 @@ function cardMasterCatCatchStorageResult(result) {
     );
 }
 
-function cardMasterCatCatchStorageArea(area) {
+function cardMasterCatCatchStorageArea(defaultArea, isSync = false) {
+    const selectArea = async () => {
+        if (!isSync) return defaultArea;
+        const owner = await cardMasterNativeChrome.storage.local.get('card-master.sync.new-tab-owner');
+        return typeof owner['card-master.sync.new-tab-owner'] === 'boolean'
+            ? cardMasterNativeChrome.storage.local : defaultArea;
+    };
+    const complete = (operation, callback) => {
+        if (callback) operation.then(callback);
+        return operation;
+    };
     return {
         get(keys, callback) {
             const query = cardMasterCatCatchStorageQuery(keys);
-            if (callback) {
-                return area.get(query, (result) =>
-                    callback(cardMasterCatCatchStorageResult(result))
-                );
-            }
-            return area.get(query).then(cardMasterCatCatchStorageResult);
+            return complete(selectArea().then(area => area.get(query)).then(cardMasterCatCatchStorageResult), callback);
         },
         set(values, callback) {
             const next = Object.fromEntries(
@@ -58,10 +63,11 @@ function cardMasterCatCatchStorageArea(area) {
                     value
                 ])
             );
-            return callback ? area.set(next, callback) : area.set(next);
+            return complete(selectArea().then(area => area.set(next)), callback);
         },
         clear(callback) {
-            const operation = area.get(null).then((result) => {
+            const operation = selectArea().then(async (area) => {
+                const result = await area.get(null);
                 const keys = Object.keys(result).filter((key) =>
                     key.startsWith(cardMasterCatCatchStoragePrefix)
                 );
@@ -79,13 +85,17 @@ function cardMasterCatCatchStorageArea(area) {
 const cardMasterCatCatchStorageListeners = new WeakMap();
 const cardMasterCatCatchStorage = {
     local: cardMasterCatCatchStorageArea(cardMasterNativeChrome.storage.local),
-    sync: cardMasterCatCatchStorageArea(cardMasterNativeChrome.storage.sync),
+    sync: cardMasterCatCatchStorageArea(cardMasterNativeChrome.storage.sync, true),
     session: cardMasterNativeChrome.storage.session
         ? cardMasterCatCatchStorageArea(cardMasterNativeChrome.storage.session)
         : undefined,
     onChanged: {
         addListener(listener) {
-            const wrapped = (changes, areaName) => {
+            const wrapped = async (changes, areaName) => {
+                if (areaName === 'sync') {
+                    const owner = await cardMasterNativeChrome.storage.local.get('card-master.sync.new-tab-owner');
+                    if (typeof owner['card-master.sync.new-tab-owner'] === 'boolean') return;
+                }
                 const scoped = cardMasterCatCatchStorageResult(changes);
                 if (Object.keys(scoped).length > 0) {
                     listener(scoped, areaName);

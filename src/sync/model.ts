@@ -1,8 +1,8 @@
-export const SYNC_STORAGE_KEY = 'card-master.sync.v1';
+export const SYNC_STORAGE_KEY = 'card-master.sync.v2';
 export const SYNC_OWNER_KEY = 'card-master.sync.new-tab-owner';
-export const SYNC_CHANNEL = 'card-master:sync';
-export const SYNC_MAX_SNAPSHOT_BYTES = 4 * 1024 * 1024;
-export const SYNC_MAX_DOCUMENT_BYTES = 16 * 1024 * 1024;
+export const SYNC_MAX_SNAPSHOT_BYTES = 64 * 1024 * 1024;
+export const SYNC_MAX_DOCUMENT_BYTES = 257 * 1024 * 1024;
+export const SYNC_HISTORY_LIMIT = 3;
 
 export type Json =
   | null
@@ -13,17 +13,15 @@ export type Json =
   | { [key: string]: Json };
 export type SyncEntry = { name: string; value: Json };
 export type SyncEntries = Record<string, SyncEntry | null>;
-export type SyncScope = 'scripts' | 'preferences' | 'newTab';
 export type SyncConnection = {
   url: string;
   username: string;
   password: string;
-  scopes: SyncScope[];
 };
 export type SyncVersion = { id: string; at: number; entries: SyncEntries };
 export type SyncDocument = SyncVersion & {
   format: 'card-master-sync';
-  version: 1;
+  version: 2;
   spaceId: string;
   history: SyncVersion[];
 };
@@ -50,26 +48,34 @@ export type SyncSnapshot = {
   preview: { id: string; changes: SyncChange[]; restore: boolean } | null;
   history: { id: string; at: number }[];
 };
+export type SyncPreview = {
+  id: string;
+  connection: SyncConnection;
+  remote: SyncDocument | null;
+  etag: string | null;
+  local: SyncEntries;
+  base: SyncEntries;
+  restore: SyncEntries | null;
+};
+export type SyncCommit = {
+  document: SyncDocument;
+  local: SyncEntries;
+  etag: string | null;
+};
 export type SyncStorageState = {
-  version: 1;
+  version: 2;
   connection: SyncConnection | null;
   spaceId: string | null;
   base: SyncEntries;
   history: SyncVersion[];
-  pending: {
-    id: string;
-    remote: SyncDocument | null;
-    etag: string | null;
-    local: SyncEntries;
-    merged: SyncEntries;
-    changes: SyncChange[];
-  } | null;
+  preview: SyncPreview | null;
+  commit: SyncCommit | null;
   lastSyncedAt: number | null;
   status: SyncSnapshot['status'];
   message: string;
 };
 export type SyncCommand =
-  | { type: 'read' | 'run' | 'disconnect' }
+  | { type: 'read' | 'run' | 'disconnect' | 'cancel' }
   | { type: 'preview'; connection: SyncConnection }
   | { type: 'confirm'; previewId: string; choices: SyncChoices }
   | { type: 'restore'; versionId: string };
@@ -96,13 +102,22 @@ export function canonical(value: unknown): string {
 export function equal(left: unknown, right: unknown) {
   return canonical(left) === canonical(right);
 }
-
-export function scopeFor(key: string): SyncScope {
-  return key.startsWith('script:')
-    ? 'scripts'
-    : key.startsWith('newTab:')
-      ? 'newTab'
-      : 'preferences';
+export function entryEqual(
+  left: SyncEntry | null | undefined,
+  right: SyncEntry | null | undefined,
+) {
+  return equal(left?.value ?? null, right?.value ?? null);
+}
+export function entriesEqual(left: SyncEntries, right: SyncEntries) {
+  return [...new Set([...Object.keys(left), ...Object.keys(right)])].every(
+    (key) => entryEqual(left[key], right[key]),
+  );
+}
+export function jsonValue(value: unknown): Json {
+  return JSON.parse(JSON.stringify(value)) as Json;
+}
+export function withoutRevision<T extends { revision: number }>(value: T): T {
+  return { ...value, revision: 0 };
 }
 
 function json(value: unknown, depth = 0): value is Json {
@@ -127,22 +142,37 @@ export function validateEntries(value: unknown): asserts value is SyncEntries {
     Object.keys(value).length > 10_000 ||
     !Object.entries(value).every(
       ([key, entry]) =>
-        /^(script|theme|speed|deck|newTab):.{1,1024}$/u.test(key) &&
+        /^(script|settings):.{1,4096}$/u.test(key) &&
         (entry === null ||
           (record(entry) &&
             Object.keys(entry).length === 2 &&
             typeof entry.name === 'string' &&
             entry.name.length <= 512 &&
-            json(entry.value))),
+            json(entry.value) &&
+            entry.value !== null)),
     )
-  )
+  ) {
     throw new Error('同步内容格式无效，本机数据未被替换。');
+  }
   if (
     new TextEncoder().encode(JSON.stringify(value)).length >
     SYNC_MAX_SNAPSHOT_BYTES
   ) {
-    throw new Error('同步内容超过 4 MB，请缩小同步范围。');
+    throw new Error('同步内容超过 64 MB，已保留本机数据并暂停同步。');
   }
+}
+
+export function validateVersion(item: unknown): asserts item is SyncVersion {
+  if (
+    !record(item) ||
+    typeof item.id !== 'string' ||
+    !/^[\w-]{1,80}$/.test(item.id) ||
+    typeof item.at !== 'number' ||
+    !Number.isFinite(item.at) ||
+    item.at < 0
+  )
+    throw new Error('同步版本记录无效。');
+  validateEntries(item.entries);
 }
 
 export function validateDocument(
@@ -151,47 +181,35 @@ export function validateDocument(
   if (
     !record(value) ||
     value.format !== 'card-master-sync' ||
-    value.version !== 1 ||
+    value.version !== 2 ||
     typeof value.spaceId !== 'string' ||
     !/^[\w-]{1,80}$/.test(value.spaceId) ||
     !Array.isArray(value.history) ||
-    value.history.length > 3
+    value.history.length > SYNC_HISTORY_LIMIT
   ) {
-    throw new Error('远端同步格式不受支持，请确认各设备使用相同的新版本。');
+    throw new Error(
+      '远端同步格式不受支持，请将所有设备更新到相同版本后使用新的同步目录。',
+    );
   }
-  for (const item of [value, ...value.history]) {
-    if (
-      !record(item) ||
-      typeof item.id !== 'string' ||
-      !/^[\w-]{1,80}$/.test(item.id) ||
-      typeof item.at !== 'number' ||
-      !Number.isFinite(item.at)
-    ) {
-      throw new Error('同步版本记录无效。');
-    }
-    validateEntries(item.entries);
-  }
+  const history = value.history;
+  validateVersion(value);
+  for (const version of history) validateVersion(version);
 }
 
 export function validateConnection(value: unknown): SyncConnection {
   if (
     !record(value) ||
     typeof value.url !== 'string' ||
+    value.url.length > 4096 ||
     typeof value.username !== 'string' ||
-    typeof value.password !== 'string' ||
-    !value.password ||
-    value.password.length > 4096 ||
+    !value.username.trim() ||
     value.username.length > 512 ||
     value.username.includes(':') ||
-    !Array.isArray(value.scopes) ||
-    value.scopes.length === 0 ||
-    !value.scopes.every((scope) =>
-      ['scripts', 'preferences', 'newTab'].includes(scope),
-    )
+    typeof value.password !== 'string' ||
+    !value.password ||
+    value.password.length > 4096
   ) {
-    throw new Error(
-      '请填写有效的 WebDAV 地址、账号和应用密码，并选择同步内容。',
-    );
+    throw new Error('请填写 WebDAV 目录地址、账号和应用密码。');
   }
   let url: URL;
   try {
@@ -215,6 +233,28 @@ export function validateConnection(value: unknown): SyncConnection {
     url: url.href,
     username: value.username.trim(),
     password: value.password,
-    scopes: [...new Set(value.scopes)] as SyncScope[],
   };
+}
+
+export function isSyncCommand(value: unknown): value is SyncCommand {
+  if (!record(value)) return false;
+  if (['read', 'run', 'disconnect', 'cancel'].includes(String(value.type)))
+    return true;
+  if (value.type === 'preview') {
+    try {
+      validateConnection(value.connection);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  if (value.type === 'restore') return typeof value.versionId === 'string';
+  return (
+    value.type === 'confirm' &&
+    typeof value.previewId === 'string' &&
+    record(value.choices) &&
+    Object.values(value.choices).every(
+      (choice) => choice === 'local' || choice === 'remote',
+    )
+  );
 }

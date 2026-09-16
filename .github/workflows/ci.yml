@@ -23,7 +23,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
-      - run: pnpm extension:package --platform=chromium
+      - run: pnpm extension:package --platform=browsers
 
   secrets:
     if: ${{ github.event.repository.private == false }}

@@ -5,7 +5,7 @@ import {
 } from './extension-platforms.mjs';
 
 describe('extension platform arguments', () => {
-  it('defaults to Chromium and preserves the commit message', () => {
+  it('defaults to Chromium and Firefox and preserves the commit message', () => {
     expect(parseExtensionPlatform(['remove card labels'])).toEqual({
       platform: DEFAULT_EXTENSION_PLATFORM,
       positional: ['remove card labels'],

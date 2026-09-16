@@ -1,4 +1,5 @@
 import type { ExtensionStorageArea } from '../../hosts/extension/api';
+import { SYNC_OWNER_KEY } from '../../sync/model';
 import {
   NEW_TAB_SEARCH_SOURCES,
   type NewTabSearchBlacklistEntry,
@@ -10,6 +11,7 @@ import {
   type DailyReviewWallpaperRetentionDays,
   normalizeDailyReviewStyleOverride,
 } from './daily-review-wallpaper';
+import { LUMNO_PORTABLE_KEYS } from './portable-keys';
 
 export const NEW_TAB_PREFERENCES_STORAGE_KEY =
   'card-master.new-tab.preferences.v1';
@@ -783,7 +785,7 @@ export class NewTabPreferencesRepository {
   }
 
   async synchronize(preferences: NewTabPreferences) {
-    const storage = this.syncStorage ?? this.localStorage;
+    const storage = await this.runtimeStorage();
     const update = {
       ...lumnoThemeStorageUpdate(preferences.themeMode),
       [LUMNO_LANGUAGE_STORAGE_KEY]: 'zh_CN',
@@ -851,7 +853,11 @@ export class NewTabPreferencesRepository {
       localResult[NEW_TAB_PREFERENCES_STORAGE_KEY],
     );
     let preferences = local;
-    if (local.syncEnabled && this.syncStorage) {
+    if (
+      local.syncEnabled &&
+      this.syncStorage &&
+      !(await this.webdavOwnsPreferences())
+    ) {
       const syncResult = await this.syncStorage.get(NEW_TAB_SYNC_STORAGE_KEY);
       const rawSynchronized = syncResult[NEW_TAB_SYNC_STORAGE_KEY];
       if (rawSynchronized) {
@@ -868,7 +874,7 @@ export class NewTabPreferencesRepository {
     await this.localStorage.set({
       [NEW_TAB_PREFERENCES_STORAGE_KEY]: preferences,
     });
-    if (!this.syncStorage) return;
+    if (!this.syncStorage || (await this.webdavOwnsPreferences())) return;
     if (preferences.syncEnabled) {
       await this.syncStorage.set({
         [NEW_TAB_SYNC_STORAGE_KEY]: synchronizedPreferences(preferences),
@@ -885,7 +891,7 @@ export class NewTabPreferencesRepository {
   adoptRuntimeWallpaperState(): Promise<NewTabPreferences> {
     return this.enqueue(async () => {
       const current = await this.readStoredPreferences();
-      const wallpaperStorage = this.syncStorage ?? this.localStorage;
+      const wallpaperStorage = await this.runtimeStorage();
       const [wallpaper, localWallpaper] = await Promise.all([
         wallpaperStorage.get(LUMNO_WALLPAPER_STORAGE_KEY),
         this.localStorage.get(LUMNO_LOCAL_WALLPAPER_STORAGE_KEY),
@@ -975,17 +981,33 @@ export class NewTabPreferencesRepository {
     });
   }
 
-  adoptSynchronized(preferences: NewTabPreferences) {
+  async webdavOwnsPreferences() {
+    return (
+      (await this.localStorage.get(SYNC_OWNER_KEY))[SYNC_OWNER_KEY] === true
+    );
+  }
+
+  async runtimeStorage() {
+    const stored = await this.localStorage.get(SYNC_OWNER_KEY);
+    return typeof stored[SYNC_OWNER_KEY] === 'boolean'
+      ? this.localStorage
+      : (this.syncStorage ?? this.localStorage);
+  }
+
+  setWebdavOwnership(enabled: boolean) {
     return this.enqueue(async () => {
       const current = await this.readStoredPreferences();
-      const next = mergeSynchronizedPreferences(current, preferences);
-      if (JSON.stringify(current) === JSON.stringify(next)) return current;
-      const adopted = { ...next, revision: current.revision + 1 };
+      const source = await this.runtimeStorage();
+      if (enabled && source !== this.localStorage) {
+        const values = await source.get(LUMNO_PORTABLE_KEYS);
+        const local = await this.localStorage.get(LUMNO_PORTABLE_KEYS);
+        await this.localStorage.set({ ...values, ...local });
+      }
       await this.localStorage.set({
-        [NEW_TAB_PREFERENCES_STORAGE_KEY]: adopted,
+        [NEW_TAB_PREFERENCES_STORAGE_KEY]: { ...current, syncEnabled: false },
+        [SYNC_OWNER_KEY]: enabled,
       });
-      await this.synchronize(adopted);
-      return adopted;
+      await this.synchronize(current);
     });
   }
 }

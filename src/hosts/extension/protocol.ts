@@ -56,7 +56,7 @@ import {
   type PageThemeSettings,
   type PageThemeSnapshot,
 } from '../../page-theme/domain/types';
-import type { SyncCommand } from '../../sync/model';
+import { isSyncCommand, type SyncCommand } from '../../sync/model';
 import { MAX_USERSCRIPT_COVER_PROMPT_LENGTH } from '../../userscript/application/card-cover';
 import type { UserscriptRequestDetails } from '../../userscript/application/request-service';
 import {
@@ -772,7 +772,7 @@ export function extensionRequest(value: unknown): value is ExtensionRequest {
     case 'ai-speech-service-credential-clear':
       return true;
     case 'sync-command':
-      return record(value.command) && typeof value.command.type === 'string';
+      return isSyncCommand(value.command);
     case 'ai-speech-service-test':
       return (
         value.config === undefined ||

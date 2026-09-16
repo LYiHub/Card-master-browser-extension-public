@@ -19,6 +19,10 @@ import {
   startingContentBlockingSnapshot,
 } from '../domain/types';
 import {
+  parsePortableContentBlocking,
+  portableContentBlocking,
+} from './portable';
+import {
   type ContentBlockingRepository,
   parseContentBlockingState,
 } from './repository';
@@ -751,6 +755,41 @@ export class ContentBlockingService {
       state: structuredClone(state),
     };
     return JSON.stringify(exported, null, 2);
+  }
+
+  async readPortableConfiguration() {
+    return portableContentBlocking(await this.readyState());
+  }
+
+  applyPortableConfiguration(
+    update: (current: ReturnType<typeof portableContentBlocking>) => unknown,
+  ) {
+    return this.enqueue(async () => {
+      const current = this.requireReadyState();
+      const next = parsePortableContentBlocking(
+        update(portableContentBlocking(current)),
+      );
+      for (const subscription of next.subscriptions) {
+        const existing = current.subscriptions.find(
+          (item) => item.url === subscription.url,
+        );
+        if (existing) {
+          subscription.content = existing.content;
+          subscription.ruleCount = existing.ruleCount;
+          subscription.rejectedRuleCount = existing.rejectedRuleCount;
+        } else if (subscription.enabled) {
+          const download =
+            await this.subscriptionFetcher.download(subscription);
+          if (download.status !== 'updated')
+            throw new Error('新过滤订阅未返回内容。');
+          Object.assign(subscription, download.source);
+        }
+      }
+      next.allowlist = normalizeAllowlist(next.allowlist);
+      await this.apply(next, null);
+      this.notifyUserRulesChanged();
+      this.onConfigurationApplied();
+    });
   }
 
   async importConfiguration(source: string) {

@@ -663,6 +663,36 @@ export class BilibiliCapabilityService {
     );
   }
 
+  async adoptState(
+    mutation: (state: BilibiliCapabilitiesState) => BilibiliCapabilitiesState,
+  ) {
+    const operation = this.mutationQueue.then(async () => {
+      const current = await this.readState();
+      const next = this.constrainForPlatform(
+        normalizeBilibiliCapabilitiesState(mutation(structuredClone(current))),
+      );
+      next.revision = current.revision + 1;
+      try {
+        await this.applyIntegrations(next);
+        await this.api.storage.local.set({
+          [BILIBILI_CAPABILITY_STORAGE_KEY]: next,
+        });
+      } catch (error) {
+        await this.applyIntegrations(current);
+        throw error;
+      }
+      this.statePromise = Promise.resolve(next);
+      this.publish(next, 'recommendation-control', -1);
+      this.publish(next, 'danmaku-compression', -1);
+      this.publish(next, 'segment-skipping', -1);
+    });
+    this.mutationQueue = operation.then(
+      () => undefined,
+      () => undefined,
+    );
+    return operation;
+  }
+
   reset() {
     const operation = this.mutationQueue.then(async () => {
       const previous = structuredClone(await this.readState());

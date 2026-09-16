@@ -1,4 +1,4 @@
-export const DEFAULT_EXTENSION_PLATFORM = 'chromium';
+export const DEFAULT_EXTENSION_PLATFORM = 'browsers';
 
 export const EXTENSION_PLATFORMS = Object.freeze([
   'chromium',

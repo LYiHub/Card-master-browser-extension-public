@@ -173,9 +173,7 @@ export class ExtensionMediaSpeedService {
     });
   }
 
-  private mutate(
-    mutation: (settings: MediaSpeedSettings) => MediaSpeedSettings,
-  ) {
+  mutate(mutation: (settings: MediaSpeedSettings) => MediaSpeedSettings) {
     const operation = this.mutationQueue.then(async () => {
       const current = await this.readSettings();
       const settings = normalizeMediaSpeedSettings({

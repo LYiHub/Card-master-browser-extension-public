@@ -1,5 +1,5 @@
 import {
-  equal,
+  entryEqual as equal,
   type SyncChange,
   type SyncChoices,
   type SyncEntries,

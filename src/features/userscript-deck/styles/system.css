@@ -104,6 +104,79 @@
   gap: 8px;
 }
 
+.manager-sync-field,
+.manager-sync-history,
+.manager-sync-conflicts,
+.manager-sync-conflict {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.manager-sync-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.manager-sync input,
+.manager-sync select {
+  width: 100%;
+  padding: 10px 12px;
+  color: var(--app-ui-ink);
+  background: var(--app-ui-surface, #fff8ea);
+  border: 1px solid var(--app-ui-rule);
+  border-radius: 8px;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.manager-sync input:focus,
+.manager-sync select:focus {
+  border-color: var(--app-ui-ink);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-ui-ink) 15%, transparent);
+}
+
+.manager-sync-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.manager-sync pre {
+  max-height: 180px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.manager-sync-conflicts,
+.manager-sync-history,
+.manager-sync .is-error {
+  animation: manager-sync-enter 180ms ease both;
+}
+
+@keyframes manager-sync-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manager-sync-conflicts,
+  .manager-sync-history,
+  .manager-sync .is-error {
+    animation-duration: 80ms;
+  }
+}
+
 .manager-data-confirmation {
   display: grid;
   gap: 16px;

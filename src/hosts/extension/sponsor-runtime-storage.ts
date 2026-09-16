@@ -1,3 +1,4 @@
+import { SYNC_OWNER_KEY } from '../../sync/model';
 import type { ExtensionBackgroundApi, ExtensionStorageArea } from './api';
 import {
   isSponsorStorageRequest,
@@ -71,7 +72,16 @@ export class SponsorRuntimeStorageService {
 
   constructor(private readonly api: ExtensionBackgroundApi) {}
 
-  private area(areaName: SponsorStorageAreaName): ExtensionStorageArea {
+  private async area(
+    areaName: SponsorStorageAreaName,
+  ): Promise<ExtensionStorageArea> {
+    if (
+      areaName === 'sync' &&
+      typeof (await this.api.storage.local.get(SYNC_OWNER_KEY))[
+        SYNC_OWNER_KEY
+      ] === 'boolean'
+    )
+      return this.api.storage.local;
     return this.api.storage[areaName];
   }
 
@@ -80,7 +90,7 @@ export class SponsorRuntimeStorageService {
     areaName: SponsorStorageAreaName,
   ) {
     const key = sponsorStorageNamespaceKey(runtimeId, areaName);
-    const stored = (await this.area(areaName).get(key))[key];
+    const stored = (await (await this.area(areaName)).get(key))[key];
     return record(stored) ? stored : {};
   }
 
@@ -93,7 +103,7 @@ export class SponsorRuntimeStorageService {
     const next = mutation(structuredClone(current));
     const changes = changedValues(current, next);
     if (Object.keys(changes).length === 0) return;
-    await this.area(areaName).set({
+    await (await this.area(areaName)).set({
       [sponsorStorageNamespaceKey(runtimeId, areaName)]: next,
     });
     await this.api.runtime

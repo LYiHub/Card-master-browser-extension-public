@@ -15,7 +15,7 @@
 
   <p>
     <a href="https://github.com/LYiHub/Card-master-browser-extension-public/releases/latest">
-      <img src="https://img.shields.io/badge/version-0.2.5-7c3aed?style=flat-square" alt="版本 0.2.5" />
+      <img src="https://img.shields.io/badge/version-0.2.6-7c3aed?style=flat-square" alt="版本 0.2.6" />
     </a>
     <a href="./LICENSE">
       <img src="https://img.shields.io/badge/license-GPL--3.0--only-22c55e?style=flat-square" alt="GPL-3.0-only" />
@@ -60,6 +60,7 @@
 - 🐑 **顺手牵羊** — 发现并取得页面媒体 · *Chromium / Firefox*，新装默认停用
 - 🎬 **视频增强** — 流量探险家、合成大弹幕、绯红空降，以及 B 站 / YouTube SponsorBlock
 - 🎮 **科乐美秘技** — 鼠标、键盘、手柄一套操作；含屏幕键盘、拼音和语音
+- ☁️ **WebDAV 同步** — 在「设置 → 数据管理 → 跨设备同步」连接自己的服务，统一同步脚本、卡牌与插件配置，支持合并预览、冲突选择和历史恢复。
 
 同一套核心代码打 Chromium、Firefox、Safari 三份包。
 
