@@ -37,6 +37,12 @@ import type {
   DataManagementController,
 } from '../../data-management/domain/types';
 import { extensionTarget } from '../../hosts/extension/platform';
+import type {
+  SyncCommand,
+  SyncController,
+  SyncScope,
+  SyncSnapshot,
+} from '../../sync/model';
 import {
   exportUserscriptLibrary,
   formatLibraryImportReport,
@@ -193,11 +199,214 @@ function downloadArchive(blob: Blob, filename: string) {
   queueMicrotask(() => URL.revokeObjectURL(url));
 }
 
+const SYNC_SCOPE_LABELS: Record<SyncScope, string> = {
+  scripts: '用户脚本与卡牌设置',
+  preferences: '牌阵入口偏好',
+  newTab: '新标签页偏好',
+};
+
+function SyncSettings({ controller }: { controller: SyncController }) {
+  const [snapshot, setSnapshot] = useState<SyncSnapshot | null>(null);
+  const [url, setUrl] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [scopes, setScopes] = useState<SyncScope[]>([
+    'scripts',
+    'preferences',
+    'newTab',
+  ]);
+  const [choices, setChoices] = useState<Record<string, 'local' | 'remote'>>(
+    {},
+  );
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  const request = async (command: SyncCommand) => {
+    setBusy(true);
+    setError('');
+    try {
+      const next = await controller.request(command);
+      setSnapshot(next);
+      if (next.preview) {
+        setChoices((current) =>
+          Object.fromEntries(
+            next.preview?.changes
+              .filter((change) => change.kind === 'conflict')
+              .map((change) => [change.key, current[change.key]])
+              .filter((entry): entry is [string, 'local' | 'remote'] =>
+                Boolean(entry[1]),
+              ) ?? [],
+          ),
+        );
+      }
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : String(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    setBusy(true);
+    void controller
+      .request({ type: 'read' })
+      .then(setSnapshot, (failure) =>
+        setError(failure instanceof Error ? failure.message : String(failure)),
+      )
+      .finally(() => setBusy(false));
+  }, [controller]);
+
+  const connected = snapshot?.connected === true;
+  const conflicts =
+    snapshot?.preview?.changes.filter((change) => change.kind === 'conflict') ??
+    [];
+  return (
+    <section className="manager-data-section">
+      <header className="manager-data-section__heading">
+        <strong>跨设备同步</strong>
+        <p>
+          本机修改会立即保存，联网后自动同步到你的 WebDAV 空间。同步不包含 API
+          密钥、脚本 GM 数据和临时运行状态。
+        </p>
+      </header>
+      {!connected ? (
+        <>
+          <label className="manager-sync-field">
+            WebDAV 地址
+            <input
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+              placeholder="https://example.com/dav/"
+            />
+          </label>
+          <label className="manager-sync-field">
+            账号
+            <input
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              autoComplete="username"
+            />
+          </label>
+          <label className="manager-sync-field">
+            应用密码
+            <input
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              type="password"
+              autoComplete="current-password"
+            />
+          </label>
+          <div className="manager-sync-scopes">
+            {Object.entries(SYNC_SCOPE_LABELS).map(([scope, label]) => (
+              <label key={scope}>
+                <input
+                  type="checkbox"
+                  checked={scopes.includes(scope as SyncScope)}
+                  onChange={(event) =>
+                    setScopes((current) =>
+                      event.target.checked
+                        ? [...new Set([...current, scope as SyncScope])]
+                        : current.filter((item) => item !== scope),
+                    )
+                  }
+                />
+                {label}
+              </label>
+            ))}
+          </div>
+          <UiButton
+            variant="primary"
+            disabled={
+              busy || !url || !username || !password || scopes.length === 0
+            }
+            onClick={() =>
+              void request({
+                type: 'preview',
+                connection: { url, username, password, scopes },
+              })
+            }
+          >
+            {busy ? '正在连接…' : '连接并同步'}
+          </UiButton>
+        </>
+      ) : (
+        <>
+          <UiNotice title={snapshot?.message || '已连接'}>
+            <p>{snapshot?.connection?.url}</p>
+            {snapshot?.lastSyncedAt ? (
+              <p>
+                上次同步：
+                {new Date(snapshot.lastSyncedAt).toLocaleString('zh-CN', {
+                  hour12: false,
+                })}
+              </p>
+            ) : null}
+          </UiNotice>
+          {conflicts.length > 0 ? (
+            <div className="manager-sync-conflicts">
+              <strong>需要确认的修改</strong>
+              {conflicts.map((change) => (
+                <label key={change.key}>
+                  {change.name}
+                  <select
+                    value={choices[change.key] ?? ''}
+                    onChange={(event) =>
+                      setChoices((current) => ({
+                        ...current,
+                        [change.key]: event.target.value as 'local' | 'remote',
+                      }))
+                    }
+                  >
+                    <option value="">请选择</option>
+                    <option value="local">保留本机</option>
+                    <option value="remote">保留远端</option>
+                  </select>
+                </label>
+              ))}
+              <UiButton
+                variant="primary"
+                disabled={
+                  busy || conflicts.some((change) => !choices[change.key])
+                }
+                onClick={() =>
+                  void request({
+                    type: 'confirm',
+                    previewId: snapshot?.preview?.id ?? '',
+                    choices,
+                  })
+                }
+              >
+                确认合并
+              </UiButton>
+            </div>
+          ) : null}
+          <div className="manager-sync-actions">
+            <UiButton
+              disabled={busy}
+              onClick={() => void request({ type: 'run' })}
+            >
+              {busy ? '正在同步…' : '立即同步'}
+            </UiButton>
+            <UiButton
+              disabled={busy}
+              onClick={() => void request({ type: 'disconnect' })}
+            >
+              断开同步
+            </UiButton>
+          </div>
+        </>
+      )}
+      {error ? <p className="is-error">{error}</p> : null}
+    </section>
+  );
+}
+
 export function SettingsBoard({
   initialSection = 'interface',
   repository,
   userscriptSettings,
   dataManagement,
+  sync,
   deckEntry,
   deckEntrySettings,
   onDeckEntrySettingsChange,
@@ -210,6 +419,7 @@ export function SettingsBoard({
   repository: ScriptRepository;
   userscriptSettings: UserscriptSettingsController;
   dataManagement: DataManagementController;
+  sync?: SyncController;
   deckEntry: DeckEntryController;
   deckEntrySettings: DeckEntrySettings;
   onDeckEntrySettingsChange: (
@@ -655,6 +865,7 @@ export function SettingsBoard({
           </section>
         ) : (
           <section className="manager-settings-panel manager-data-management">
+            {sync ? <SyncSettings controller={sync} /> : null}
             <section className="manager-data-section">
               <header className="manager-data-section__heading">
                 <strong>备份与恢复</strong>

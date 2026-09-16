@@ -694,7 +694,7 @@ export function normalizeNewTabPreferences(value: unknown): NewTabPreferences {
   };
 }
 
-function synchronizedPreferences(preferences: NewTabPreferences) {
+export function synchronizedPreferences(preferences: NewTabPreferences) {
   return {
     ...preferences,
     shortcuts: preferences.shortcuts.map((shortcut) => ({
@@ -714,7 +714,7 @@ function synchronizedPreferences(preferences: NewTabPreferences) {
   };
 }
 
-function mergeSynchronizedPreferences(
+export function mergeSynchronizedPreferences(
   local: NewTabPreferences,
   synchronized: NewTabPreferences,
 ) {
@@ -972,6 +972,20 @@ export class NewTabPreferencesRepository {
       await this.persist(next);
       await this.synchronize(next);
       return next;
+    });
+  }
+
+  adoptSynchronized(preferences: NewTabPreferences) {
+    return this.enqueue(async () => {
+      const current = await this.readStoredPreferences();
+      const next = mergeSynchronizedPreferences(current, preferences);
+      if (JSON.stringify(current) === JSON.stringify(next)) return current;
+      const adopted = { ...next, revision: current.revision + 1 };
+      await this.localStorage.set({
+        [NEW_TAB_PREFERENCES_STORAGE_KEY]: adopted,
+      });
+      await this.synchronize(adopted);
+      return adopted;
     });
   }
 }

@@ -235,6 +235,16 @@ export function mutateExtensionDeckEntrySettings(
   });
 }
 
+export function updateExtensionDeckEntrySettings(
+  api: DeckEntryBackgroundApi,
+  update: (settings: DeckEntrySettings) => DeckEntrySettings,
+) {
+  return serializeSettingsMutation(api, async () => {
+    const current = await readStoredSettings(api);
+    return persistSettings(api, update(current));
+  });
+}
+
 export function installExtensionDeckEntrySettingsHandler(
   api: DeckEntryBackgroundApi,
   options: DeckEntryBackgroundOptions = {},

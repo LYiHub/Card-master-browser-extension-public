@@ -37,6 +37,7 @@ import { extensionTarget } from './platform';
 import { EXTENSION_CHANNEL } from './protocol';
 import { ExtensionScriptRepository } from './repository';
 import { ExtensionUserscriptRuntime } from './runtime';
+import { ExtensionSyncController } from './sync-controller';
 import { ExtensionUserscriptCoverController } from './userscript-cover';
 import { ExtensionUserscriptSettingsController } from './userscript-settings';
 
@@ -74,6 +75,7 @@ function createExtensionServices(
     updater: new UserscriptUpdateService(extensionUserscriptFetch(api)),
     userscriptSettings: new ExtensionUserscriptSettingsController(api),
     dataManagement: new ExtensionDataManagementController(api),
+    sync: new ExtensionSyncController(api),
     sourceExporter: new BrowserUserscriptSourceExporter(),
     coverController: new ExtensionUserscriptCoverController(api),
     readExecutionCapability: () =>

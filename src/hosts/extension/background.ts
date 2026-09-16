@@ -23,8 +23,11 @@ import {
 import { isExtensionStorageSpaceFailure } from '../../lib/extension-errors';
 import {
   NEW_TAB_PREFERENCES_STORAGE_KEY,
+  NewTabPreferencesRepository,
   normalizeNewTabPreferences,
 } from '../../new-tab/application/preferences';
+import { SyncProjection } from '../../sync/projection';
+import { SyncService } from '../../sync/service';
 import {
   mergePendingPreinstalledUserscripts,
   normalizePreinstalledUserscriptState,
@@ -156,6 +159,7 @@ const offscreenAudio = new OffscreenAudioCoordinator(api);
 const CONTENT_BLOCKING_REFRESH_ALARM = 'content-blocking.refresh-subscriptions';
 const USERSCRIPT_UPDATE_ALARM = 'userscript.update-check';
 const DAILY_REVIEW_WALLPAPER_ALARM = 'new-tab.daily-review-wallpaper';
+const SYNC_ALARM = 'card-master.sync';
 const AUDIO_SETTINGS_STORAGE_KEY = 'card-master.audio-settings.v1';
 type StorageRecoveryStatus = 'checking' | 'ready' | 'pending';
 let storageRecoveryStatus: StorageRecoveryStatus = 'checking';
@@ -398,6 +402,13 @@ const userscriptLibrary = new UserscriptLibraryCoordinator({
   scheduleActivationReload,
   reportFailure: reportBackgroundError,
 });
+const syncProjection = new SyncProjection(
+  api,
+  repository,
+  new NewTabPreferencesRepository(api.storage.local, api.storage.sync),
+  (previous, next) => userscriptLibrary.commit(previous, next),
+);
+const syncService = new SyncService(api, syncProjection);
 const assistantService = new ExtensionAssistantService(
   api,
   repository,
@@ -975,6 +986,10 @@ async function initializeBackground() {
     delayInMinutes: 1,
     periodInMinutes: 60,
   });
+  await api.alarms.create(SYNC_ALARM, {
+    delayInMinutes: 2,
+    periodInMinutes: 30,
+  });
   await runBackgroundInitializationPhase('刷新工具栏卡牌数量', async () => {
     await deckActionBadge.initialize();
     await deckActionBadge.refreshAll(resolveDeckActionBadge);
@@ -1000,6 +1015,7 @@ installBackgroundLifecycle({
     contentBlocking: CONTENT_BLOCKING_REFRESH_ALARM,
     userscriptUpdates: USERSCRIPT_UPDATE_ALARM,
     dailyReview: DAILY_REVIEW_WALLPAPER_ALARM,
+    sync: SYNC_ALARM,
   },
   initialize,
   storageAvailable: () => !storageRecoveryUnavailable(),
@@ -1011,6 +1027,7 @@ installBackgroundLifecycle({
   },
   runUserscriptUpdates: runAutomaticUserscriptUpdates,
   runDailyReview: (trigger) => dailyReviewWallpaper.run(trigger),
+  runSync: () => syncService.request({ type: 'run' }).then(() => undefined),
   refreshExistingPages: () => refreshExtensionPageHosts(api),
   reportFailure: reportBackgroundError,
 });

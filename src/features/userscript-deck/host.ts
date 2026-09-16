@@ -6,6 +6,7 @@ import type { GamepadControlController } from '../../gamepad-control/domain/sett
 import type { MediaResourcesController } from '../../media-resources/domain/types';
 import type { MediaSpeedController } from '../../media-speed/domain/types';
 import type { PageThemeController } from '../../page-theme/domain/types';
+import type { SyncController } from '../../sync/model';
 import type { UserscriptCoverController } from '../../userscript/application/card-cover';
 import type { UserscriptRuntime } from '../../userscript/application/runtime';
 import type { ScriptRepository } from '../../userscript/application/script-repository';
@@ -31,6 +32,7 @@ export type UserscriptDeckHost = {
   updater: UserscriptUpdater;
   userscriptSettings: UserscriptSettingsController;
   dataManagement: DataManagementController;
+  sync: SyncController;
   sourceExporter: UserscriptSourceExporter;
   coverController: UserscriptCoverController;
   deckEntry: DeckEntryController;

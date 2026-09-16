@@ -6,12 +6,14 @@ type BackgroundLifecycleOptions = {
     contentBlocking: string;
     userscriptUpdates: string;
     dailyReview: string;
+    sync: string;
   };
   initialize: () => Promise<void>;
   storageAvailable: () => boolean;
   refreshContentBlocking: () => Promise<void>;
   runUserscriptUpdates: () => Promise<void>;
   runDailyReview: (trigger: 'scheduled' | 'startup') => Promise<unknown>;
+  runSync: () => Promise<unknown>;
   refreshExistingPages: () => Promise<unknown>;
   reportFailure: (context: string, error: unknown) => void;
 };
@@ -24,6 +26,7 @@ export function installBackgroundLifecycle({
   refreshContentBlocking,
   runUserscriptUpdates,
   runDailyReview,
+  runSync,
   refreshExistingPages,
   reportFailure,
 }: BackgroundLifecycleOptions) {
@@ -37,12 +40,15 @@ export function installBackgroundLifecycle({
         await runUserscriptUpdates();
       } else if (alarm.name === alarms.dailyReview) {
         await runDailyReview('scheduled');
+      } else if (alarm.name === alarms.sync) {
+        await runSync();
       }
     };
     if (
       alarm.name === alarms.contentBlocking ||
       alarm.name === alarms.userscriptUpdates ||
-      alarm.name === alarms.dailyReview
+      alarm.name === alarms.dailyReview ||
+      alarm.name === alarms.sync
     ) {
       void run().catch((error) =>
         reportFailure(`后台定时任务 ${alarm.name} 失败`, error),

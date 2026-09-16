@@ -1335,6 +1335,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
             repository: host.repository,
             userscriptSettings: host.userscriptSettings,
             dataManagement: host.dataManagement,
+            sync: host.sync,
             deckEntry: host.deckEntry,
             deckEntrySettings: resolvedDeckEntrySettings,
             onDeckEntrySettingsChange: updateDeckEntrySettings,
