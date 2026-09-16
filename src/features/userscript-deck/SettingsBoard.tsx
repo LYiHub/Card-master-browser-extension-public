@@ -380,6 +380,25 @@ function SyncSettings({ controller }: { controller: SyncController }) {
               </UiButton>
             </div>
           ) : null}
+          {snapshot?.history.length ? (
+            <div className="manager-sync-history">
+              <strong>同步历史</strong>
+              {snapshot.history.map((version) => (
+                <UiButton
+                  key={version.id}
+                  disabled={busy}
+                  onClick={() =>
+                    void request({ type: 'restore', versionId: version.id })
+                  }
+                >
+                  恢复{' '}
+                  {new Date(version.at).toLocaleString('zh-CN', {
+                    hour12: false,
+                  })}
+                </UiButton>
+              ))}
+            </div>
+          ) : null}
           <div className="manager-sync-actions">
             <UiButton
               disabled={busy}
