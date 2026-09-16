@@ -1518,6 +1518,10 @@ await cp(
 );
 await mkdir(resolve(output, 'licenses'), { recursive: true });
 await cp(
+  resolve(root, 'vendor/xml-parser/LICENSE'),
+  resolve(output, 'licenses/XML-Parser-LICENSE.txt'),
+);
+await cp(
   resolve(root, 'vendor/darkreader/LICENSE'),
   resolve(output, 'licenses/DarkReader-LICENSE.txt'),
 );

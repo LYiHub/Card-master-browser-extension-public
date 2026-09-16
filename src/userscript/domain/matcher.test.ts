@@ -136,6 +136,33 @@ describe('Userscript URL matching', () => {
     ).toBe(true);
   });
 
+  it('guides port-specific scripts to include and restricts execution to the requested port', () => {
+    const pattern = 'http://192.168.1.10:8080/*';
+    expect(validateMatchPattern(pattern)).toContain(
+      `将该行改为 @include，例如：// @include ${pattern}`,
+    );
+    const withPort = {
+      ...metadata,
+      matches: [],
+      includes: [pattern],
+      excludeMatches: [],
+    };
+    expect(
+      matchUserscript(withPort, manager, {
+        url: 'http://192.168.1.10:8080/app',
+        frameId: 0,
+        topFrame: true,
+      }).eligible,
+    ).toBe(true);
+    expect(
+      matchUserscript(withPort, manager, {
+        url: 'http://192.168.1.10:8081/app',
+        frameId: 0,
+        topFrame: true,
+      }).eligible,
+    ).toBe(false);
+  });
+
   it('ignores query and hash for @match', () => {
     expect(
       matchUserscript(metadata, manager, {

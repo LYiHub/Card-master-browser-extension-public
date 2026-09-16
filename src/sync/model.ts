@@ -1,8 +1,9 @@
-export const SYNC_STORAGE_KEY = 'card-master.sync.v2';
+export const SYNC_STORAGE_KEY = 'card-master.sync.v3';
 export const SYNC_OWNER_KEY = 'card-master.sync.new-tab-owner';
 export const SYNC_MAX_SNAPSHOT_BYTES = 64 * 1024 * 1024;
 export const SYNC_MAX_DOCUMENT_BYTES = 257 * 1024 * 1024;
 export const SYNC_HISTORY_LIMIT = 3;
+export const SYNC_MAX_VERSIONS = 4096;
 
 export type Json =
   | null
@@ -19,11 +20,26 @@ export type SyncConnection = {
   password: string;
 };
 export type SyncVersion = { id: string; at: number; entries: SyncEntries };
-export type SyncDocument = SyncVersion & {
+export type SyncRecord = {
   format: 'card-master-sync';
-  version: 2;
-  spaceId: string;
-  history: SyncVersion[];
+  version: 3;
+  id: string;
+  deviceId: string;
+  nonce: string;
+  at: number;
+  parents: string[];
+  changes: SyncEntries;
+};
+export type SyncAlternative = {
+  id: string;
+  label: string;
+  entry: SyncEntry | null;
+};
+export type SyncRemoteState = {
+  heads: string[];
+  entries: SyncEntries;
+  conflicts: Record<string, SyncAlternative[]>;
+  count: number;
 };
 export type SyncChange = {
   key: string;
@@ -31,8 +47,9 @@ export type SyncChange = {
   kind: 'add' | 'update' | 'delete' | 'conflict';
   local: SyncEntry | null;
   remote: SyncEntry | null;
+  alternatives?: SyncAlternative[];
 };
-export type SyncChoices = Record<string, 'local' | 'remote'>;
+export type SyncChoices = Record<string, string>;
 export type SyncSnapshot = {
   connected: boolean;
   connection: Omit<SyncConnection, 'password'> | null;
@@ -47,25 +64,29 @@ export type SyncSnapshot = {
   lastSyncedAt: number | null;
   preview: { id: string; changes: SyncChange[]; restore: boolean } | null;
   history: { id: string; at: number }[];
+  directory: string | null;
+  diagnostics: string[];
+  remoteVersionCount: number;
 };
 export type SyncPreview = {
   id: string;
   connection: SyncConnection;
-  remote: SyncDocument | null;
-  etag: string | null;
+  remote: SyncRemoteState;
   local: SyncEntries;
   base: SyncEntries;
   restore: SyncEntries | null;
 };
 export type SyncCommit = {
-  document: SyncDocument;
+  record: SyncRecord | null;
+  entries: SyncEntries;
+  heads: string[];
   local: SyncEntries;
-  etag: string | null;
 };
 export type SyncStorageState = {
-  version: 2;
+  version: 3;
+  deviceId: string;
   connection: SyncConnection | null;
-  spaceId: string | null;
+  heads: string[];
   base: SyncEntries;
   history: SyncVersion[];
   preview: SyncPreview | null;
@@ -73,6 +94,8 @@ export type SyncStorageState = {
   lastSyncedAt: number | null;
   status: SyncSnapshot['status'];
   message: string;
+  diagnostics: string[];
+  remoteVersionCount: number;
 };
 export type SyncCommand =
   | { type: 'read' | 'run' | 'disconnect' | 'cancel' }
@@ -175,25 +198,36 @@ export function validateVersion(item: unknown): asserts item is SyncVersion {
   validateEntries(item.entries);
 }
 
-export function validateDocument(
-  value: unknown,
-): asserts value is SyncDocument {
+export function validateRecord(value: unknown): asserts value is SyncRecord {
   if (
     !record(value) ||
     value.format !== 'card-master-sync' ||
-    value.version !== 2 ||
-    typeof value.spaceId !== 'string' ||
-    !/^[\w-]{1,80}$/.test(value.spaceId) ||
-    !Array.isArray(value.history) ||
-    value.history.length > SYNC_HISTORY_LIMIT
+    value.version !== 3 ||
+    Object.keys(value).sort().join(',') !==
+      'at,changes,deviceId,format,id,nonce,parents,version' ||
+    !isRevisionId(value.id) ||
+    typeof value.deviceId !== 'string' ||
+    !/^[\w-]{1,80}$/.test(value.deviceId) ||
+    typeof value.nonce !== 'string' ||
+    !/^[\w-]{1,80}$/.test(value.nonce) ||
+    typeof value.at !== 'number' ||
+    !Number.isFinite(value.at) ||
+    value.at < 0 ||
+    !Array.isArray(value.parents) ||
+    value.parents.length > SYNC_MAX_VERSIONS ||
+    !value.parents.every(isRevisionId) ||
+    new Set(value.parents).size !== value.parents.length ||
+    value.parents.includes(value.id)
   ) {
     throw new Error(
       '远端同步格式不受支持，请将所有设备更新到相同版本后使用新的同步目录。',
     );
   }
-  const history = value.history;
-  validateVersion(value);
-  for (const version of history) validateVersion(version);
+  validateEntries(value.changes);
+}
+
+export function isRevisionId(value: unknown): value is string {
+  return typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 }
 
 export function validateConnection(value: unknown): SyncConnection {
@@ -254,7 +288,8 @@ export function isSyncCommand(value: unknown): value is SyncCommand {
     typeof value.previewId === 'string' &&
     record(value.choices) &&
     Object.values(value.choices).every(
-      (choice) => choice === 'local' || choice === 'remote',
+      (choice) =>
+        choice === 'local' || choice === 'remote' || isRevisionId(choice),
     )
   );
 }

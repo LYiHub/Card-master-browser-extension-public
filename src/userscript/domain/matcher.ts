@@ -73,7 +73,7 @@ export function validateMatchPattern(pattern: string) {
     ? bracketedHostEnd < 0 || bracketedHostEnd !== host.length - 1
     : host.includes(':');
   if (declaresPort) {
-    return '用户脚本 @match 规则不能声明端口。';
+    return `用户脚本 @match 规则不能声明端口。需要限定端口时，请将该行改为 @include，例如：// @include ${normalized}`;
   }
   return null;
 }

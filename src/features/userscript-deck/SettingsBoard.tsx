@@ -203,9 +203,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
   const [url, setUrl] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [choices, setChoices] = useState<Record<string, 'local' | 'remote'>>(
-    {},
-  );
+  const [choices, setChoices] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -306,7 +304,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
       ) : (
         <>
           <UiNotice title={snapshot?.message || '已连接'}>
-            <p>{snapshot?.connection?.url}</p>
+            <p>实际同步目录：{snapshot?.directory}</p>
             {snapshot?.lastSyncedAt ? (
               <p>
                 上次同步：
@@ -349,14 +347,29 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                           : '已删除'}
                       </pre>
                     </section>
-                    <section aria-label="远端内容">
-                      <strong>远端内容</strong>
-                      <pre>
-                        {change.remote
-                          ? JSON.stringify(change.remote.value, null, 2)
-                          : '已删除'}
-                      </pre>
-                    </section>
+                    {!change.alternatives && (
+                      <section aria-label="远端内容">
+                        <strong>远端内容</strong>
+                        <pre>
+                          {change.remote
+                            ? JSON.stringify(change.remote.value, null, 2)
+                            : '已删除'}
+                        </pre>
+                      </section>
+                    )}
+                    {change.alternatives?.map((alternative) => (
+                      <section
+                        key={alternative.id}
+                        aria-label={alternative.label}
+                      >
+                        <strong>{alternative.label}</strong>
+                        <pre>
+                          {alternative.entry
+                            ? JSON.stringify(alternative.entry.value, null, 2)
+                            : '已删除'}
+                        </pre>
+                      </section>
+                    ))}
                   </div>
                   <select
                     aria-label={`${change.name}保留版本`}
@@ -364,13 +377,21 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                     onChange={(event) =>
                       setChoices((current) => ({
                         ...current,
-                        [change.key]: event.target.value as 'local' | 'remote',
+                        [change.key]: event.target.value,
                       }))
                     }
                   >
                     <option value="">请选择</option>
                     <option value="local">保留本机</option>
-                    <option value="remote">保留远端</option>
+                    {change.alternatives ? (
+                      change.alternatives.map((alternative) => (
+                        <option key={alternative.id} value={alternative.id}>
+                          {alternative.label}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="remote">保留远端</option>
+                    )}
                   </select>
                 </div>
               ))}
@@ -433,6 +454,13 @@ function SyncSettings({ controller }: { controller: SyncController }) {
         </>
       )}
       {error ? <p className="is-error">{error}</p> : null}
+      {Boolean(snapshot?.diagnostics.length) && (
+        <div className="manager-sync-history">
+          <strong>连接诊断</strong>
+          <pre>{snapshot?.diagnostics.join('\n')}</pre>
+          <DiagnosticCopyButton text={snapshot?.diagnostics.join('\n') ?? ''} />
+        </div>
+      )}
     </section>
   );
 }

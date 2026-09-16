@@ -177,6 +177,8 @@ The application directly depends on the following packages:
   https://github.com/remarkjs/react-markdown
 - `rehype-raw` and `rehype-sanitize`, MIT, https://github.com/rehypejs
 - `remark-breaks` and `remark-gfm`, MIT, https://github.com/remarkjs
+- `saxes` 6.0.0, ISC, https://github.com/lddubeau/saxes ，用于 WebDAV XML 目录解析。
+- `xmlchars` 2.2.0, MIT, https://github.com/lddubeau/xmlchars 。以上两项许可全文保留在 `vendor/xml-parser/LICENSE`，随安装包提供。
 - `spatial-nav-css`, MIT, https://github.com/SauceTaster/spatial-nav-css
 - `tldts` 7.4.9, MIT, https://github.com/remusao/tldts
 
