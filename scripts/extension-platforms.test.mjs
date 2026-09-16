@@ -21,6 +21,15 @@ describe('extension platform arguments', () => {
     });
   });
 
+  it('accepts the complete Chromium and Firefox release set', () => {
+    expect(
+      parseExtensionPlatform(['release browsers', '--platform=browsers']),
+    ).toEqual({
+      platform: 'browsers',
+      positional: ['release browsers'],
+    });
+  });
+
   it('rejects duplicate, unknown, and unsupported options', () => {
     expect(() =>
       parseExtensionPlatform([

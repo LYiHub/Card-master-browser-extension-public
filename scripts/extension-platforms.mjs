@@ -5,10 +5,11 @@ export const EXTENSION_PLATFORMS = Object.freeze([
   'firefox',
   'safari',
   'all',
+  'browsers',
 ]);
 
 export const EXTENSION_PLATFORM_USAGE =
-  '--platform=chromium|firefox|safari|all';
+  '--platform=chromium|firefox|safari|browsers|all';
 
 export function parseExtensionPlatform(args) {
   let platform = DEFAULT_EXTENSION_PLATFORM;

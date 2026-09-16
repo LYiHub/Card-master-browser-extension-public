@@ -60,6 +60,10 @@ if (platform === 'all') {
   for (const target of ['chromium', 'firefox', 'safari']) {
     await packageTarget(target);
   }
+} else if (platform === 'browsers') {
+  for (const target of ['chromium', 'firefox']) {
+    await packageTarget(target);
+  }
 } else {
   await packageTarget(platform);
 }

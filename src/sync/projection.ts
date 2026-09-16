@@ -111,7 +111,6 @@ export class SyncProjection {
     scopes: readonly SyncScope[] = ['scripts', 'preferences', 'newTab'],
   ) {
     const skipped = new Set<string>();
-    const currentScripts = await this.repository.list();
     const changedScripts = await this.repository.transact((current) => {
       const nextScripts = new Map<string, StoredScript>();
       const currentMap = new Map(
@@ -165,12 +164,13 @@ export class SyncProjection {
           changed:
             canonical(result.map(storedScript)) !==
             canonical(current.map(storedScript)),
+          previous: [...current],
         },
       };
     });
     if (changedScripts.result.changed)
       await this.commitScripts(
-        changedScripts.result ? currentScripts : currentScripts,
+        changedScripts.result.previous,
         changedScripts.scripts,
       );
 
