@@ -422,6 +422,7 @@ describe('extension protocol guards', () => {
           reloadAfterScriptChange: false,
           updateIntervalDays: 1,
           updateEnabledOnly: true,
+          assistantPanelMode: 'sidePanel',
         },
       }),
     ).toBe(true);

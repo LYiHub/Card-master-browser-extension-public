@@ -26,6 +26,7 @@ describe('userscript settings', () => {
       updateIntervalDays: 0,
       updateEnabledOnly: false,
       lastUpdateCheckAt: 42,
+      assistantPanelMode: 'sidePanel',
     });
   });
 
@@ -35,11 +36,13 @@ describe('userscript settings', () => {
         reloadAfterScriptChange: false,
         updateIntervalDays: 2.6,
         updateEnabledOnly: true,
+        assistantPanelMode: 'sidePanel',
       }),
     ).toEqual({
       reloadAfterScriptChange: false,
       updateIntervalDays: 3,
       updateEnabledOnly: true,
+      assistantPanelMode: 'sidePanel',
     });
     expect(
       normalizeUserscriptSettingsInput({

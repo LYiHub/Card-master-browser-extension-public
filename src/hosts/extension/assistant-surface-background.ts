@@ -3,6 +3,10 @@ import type {
   AssistantSurfaceNavigationMessage,
   AssistantWorkbenchTab,
 } from '../../ai/domain/types';
+import {
+  DEFAULT_USERSCRIPT_SETTINGS,
+  USERSCRIPT_SETTINGS_STORAGE_KEY,
+} from '../../userscript/application/settings';
 import type { ExtensionBackgroundApi, ExtensionPort } from './api';
 import {
   assistantSurfaceLifecyclePortTabId,
@@ -51,7 +55,47 @@ async function openPopupSurface(api: ExtensionBackgroundApi, path: string) {
   await api.tabs.create({ url });
 }
 
-function createAssistantSurface(api: ExtensionBackgroundApi): AssistantSurface {
+export type AssistantPanelMode = 'sidePanel' | 'popup';
+
+export const defaultAssistantPanelMode = (): AssistantPanelMode => 'sidePanel';
+
+export function normalizeAssistantPanelMode(
+  value: unknown,
+): AssistantPanelMode {
+  if (value === 'popup') return 'popup';
+  return 'sidePanel';
+}
+
+/**
+ * Read the assistant panel mode from the userscript settings store.
+ *
+ * Requires that ensureDefaultAssistantPanelMode() has already been called
+ * at startup — if the storage key has never been written, this throws.
+ */
+export async function readAssistantPanelMode(
+  api: ExtensionBackgroundApi,
+): Promise<AssistantPanelMode> {
+  const stored = (await api.storage.local.get(USERSCRIPT_SETTINGS_STORAGE_KEY))[
+    USERSCRIPT_SETTINGS_STORAGE_KEY
+  ] as { assistantPanelMode?: string } | undefined;
+  if (stored?.assistantPanelMode === undefined) {
+    throw new Error(
+      `AssistantPanelMode not found in storage. ` +
+        `ensureDefaultAssistantPanelMode() must be called at startup first.`,
+    );
+  }
+  return normalizeAssistantPanelMode(stored?.assistantPanelMode);
+}
+
+function createAssistantSurface(
+  api: ExtensionBackgroundApi,
+  preference: AssistantPanelMode,
+): AssistantSurface {
+  if (preference === 'popup') {
+    return {
+      open: (_tabId, path) => openPopupSurface(api, path),
+    };
+  }
   const sidePanel = api.sidePanel;
   if (sidePanel?.open && sidePanel.setOptions) {
     return {
@@ -80,17 +124,40 @@ function createAssistantSurface(api: ExtensionBackgroundApi): AssistantSurface {
   };
 }
 
+/**
+ * Ensure the userscript settings storage has a default assistantPanelMode.
+ *
+ * Must be called at extension startup (Service Worker init / install / startup)
+ * before any factory or UI is created. After this returns, storage is guaranteed
+ * to contain a valid assistantPanelMode value.
+ */
+export async function ensureDefaultAssistantPanelMode(
+  api: ExtensionBackgroundApi,
+): Promise<void> {
+  const stored = (await api.storage.local.get(USERSCRIPT_SETTINGS_STORAGE_KEY))[
+    USERSCRIPT_SETTINGS_STORAGE_KEY
+  ] as { assistantPanelMode?: string } | undefined;
+  if (stored?.assistantPanelMode !== undefined) return; // already initialised
+  await api.storage.local.set({
+    [USERSCRIPT_SETTINGS_STORAGE_KEY]: {
+      ...DEFAULT_USERSCRIPT_SETTINGS,
+      assistantPanelMode: 'sidePanel',
+    },
+  });
+}
+
 export class AssistantSurfaceCoordinator {
   private readonly activePanels = new Map<number, ExtensionPort>();
   private readonly openingTabs = new Set<number>();
   private readonly requestedTabs = new Map<number, AssistantWorkbenchTab>();
-  private readonly surface: AssistantSurface;
+  private surface: AssistantSurface;
 
   constructor(
     private readonly api: ExtensionBackgroundApi,
+    private readonly mode: AssistantPanelMode,
     private readonly reportFailure: SurfaceFailureReporter = () => undefined,
   ) {
-    this.surface = createAssistantSurface(api);
+    this.surface = createAssistantSurface(this.api, this.mode);
   }
 
   install() {
@@ -118,7 +185,27 @@ export class AssistantSurfaceCoordinator {
     this.configureExistingTabsInBackground();
   }
 
-  async open(tabId: number, tab?: AssistantWorkbenchTab) {
+  /**
+   * Open the assistant surface for the given tab.
+   *
+   * @param tabId  - Target tab id
+   * @param tab    - Optional workbench tab to navigate to
+   * @param panelMode - Optional panel mode override. When provided, the surface
+   *                    is created with the given preference instead of the default.
+   *                    Caller should read storage while still in user gesture.
+   */
+  async open(
+    tabId: number,
+    tab?: AssistantWorkbenchTab,
+    panelMode?: AssistantPanelMode,
+  ) {
+    // If caller provides panelMode, create a surface on the fly (override).
+    // This is non-default: the normal path uses the constructor surface.
+    const surface =
+      panelMode !== undefined
+        ? createAssistantSurface(this.api, panelMode)
+        : this.surface;
+
     const activePanel = this.activePanels.get(tabId);
     if (tab) this.requestedTabs.set(tabId, tab);
     if (activePanel && tab) {
@@ -128,16 +215,21 @@ export class AssistantSurfaceCoordinator {
       };
       activePanel.postMessage(message);
     }
-    const configuration = this.configure(tabId).catch((error) => {
-      this.reportFailure('tab-configuration-failed', error, { tabId });
-    });
+    const configuration = this.configureWithSurface(surface, tabId).catch(
+      (error) => {
+        this.reportFailure('tab-configuration-failed', error, { tabId });
+      },
+    );
     if (activePanel || this.openingTabs.has(tabId)) {
       await configuration;
       return;
     }
     this.openingTabs.add(tabId);
     try {
-      await this.surface.open(tabId, assistantSurfacePath(tabId));
+      // surface.open() must be the first awaited operation after any
+      // user-gesture-dependent step. Do not introduce an await between
+      // the gesture context and this call.
+      await surface.open(tabId, assistantSurfacePath(tabId));
     } catch (error) {
       if (
         !(error instanceof FirefoxSidebarUserActionRequiredError) &&
@@ -151,6 +243,30 @@ export class AssistantSurfaceCoordinator {
       this.openingTabs.delete(tabId);
     }
     await configuration;
+  }
+
+  /**
+   * Rebuild the factory surface when the panel mode preference changes.
+   *
+   * @param preference - The new panel mode ('sidePanel' or 'popup')
+   */
+  setSurfacePreference(preference: AssistantPanelMode): void {
+    // 1. Disconnect all old content-script connections
+    for (const [_tabId, port] of this.activePanels) {
+      try {
+        port.disconnect();
+      } catch {
+        // ignore
+      }
+    }
+
+    // 2. Clear state tracking
+    this.activePanels.clear();
+    this.openingTabs.clear();
+    this.requestedTabs.clear();
+
+    // 3. Replace the factory
+    this.surface = createAssistantSurface(this.api, preference);
   }
 
   async context(tabId: number): Promise<AssistantSurfaceContext> {
@@ -173,11 +289,18 @@ export class AssistantSurfaceCoordinator {
     };
   }
 
-  private configure(tabId: number) {
+  private configureWithSurface(surface: AssistantSurface, tabId: number) {
     return (
-      this.surface.configure?.(tabId, assistantSurfacePath(tabId)) ??
+      surface.configure?.(tabId, assistantSurfacePath(tabId)) ??
       Promise.resolve()
     );
+  }
+
+  private configure(tabId: number) {
+    return readAssistantPanelMode(this.api).then((panelMode) => {
+      const surface = createAssistantSurface(this.api, panelMode);
+      return this.configureWithSurface(surface, tabId);
+    });
   }
 
   private configureInBackground(tabId: number) {

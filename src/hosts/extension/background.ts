@@ -46,6 +46,7 @@ import {
   USERSCRIPT_PREINSTALL_STATE_STORAGE_KEY,
   USERSCRIPT_VALUE_STORAGE_PREFIX,
 } from '../../userscript/application/storage-keys';
+
 import {
   applyUserscriptUpdate,
   UserscriptUpdateService,
@@ -64,7 +65,12 @@ import {
 import { resolveAssistantPageAttachment } from './assistant-page-observer';
 import { parseAssistantPortName } from './assistant-protocol';
 import { ExtensionAssistantService } from './assistant-service';
-import { AssistantSurfaceCoordinator } from './assistant-surface-background';
+import {
+  AssistantSurfaceCoordinator,
+  ensureDefaultAssistantPanelMode,
+  normalizeAssistantPanelMode,
+  readAssistantPanelMode,
+} from './assistant-surface-background';
 import { mergeAutomaticUserscriptUpdates } from './automatic-update-commit';
 import { BackgroundEventBroadcaster } from './background-event-broadcaster';
 import { installBackgroundLifecycle } from './background-lifecycle';
@@ -357,12 +363,33 @@ const runtimeBridge = synchronizer
   ? new ExtensionRuntimeBridge(api, synchronizer, undefined, aiServices)
   : null;
 const installInterceptor = new UserscriptInstallInterceptor(api);
-const assistantSurface = new AssistantSurfaceCoordinator(
-  api,
-  (event, error, details) =>
-    extensionDiagnostics.warn('assistant-surface', event, error, details),
-);
-assistantSurface.install();
+
+// Run initialization before anything else — storage must be seeded before
+// any factory or UI reads from it.
+let assistantSurface: AssistantSurfaceCoordinator | null = null;
+(async () => {
+  await ensureDefaultAssistantPanelMode(api);
+  const assistantPanelMode = await readAssistantPanelMode(api);
+  assistantSurface = new AssistantSurfaceCoordinator(
+    api,
+    assistantPanelMode,
+    (event, error, details) =>
+      extensionDiagnostics.warn('assistant-surface', event, error, details),
+  );
+  assistantSurface.install();
+})();
+
+api.storage.onChanged.addListener((changes) => {
+  const key = USERSCRIPT_SETTINGS_STORAGE_KEY;
+  if (!(key in changes)) return;
+  const newSettings = changes[key].newValue as
+    | { assistantPanelMode?: string }
+    | undefined;
+  if (!newSettings) return;
+  const mode = normalizeAssistantPanelMode(newSettings.assistantPanelMode);
+  assistantSurface?.setSurfacePreference(mode);
+});
+
 installDeckToolbarEntry(api, {
   ...(api.sidebarAction
     ? {
@@ -370,7 +397,7 @@ installDeckToolbarEntry(api, {
           if (typeof tab.id !== 'number') {
             throw new Error('Firefox 工具栏操作缺少当前标签页身份。');
           }
-          await assistantSurface.open(tab.id);
+          await assistantSurface?.open(tab.id);
         },
       }
     : {}),
@@ -567,6 +594,10 @@ async function readUserscriptSettings() {
   const stored = (await api.storage.local.get(USERSCRIPT_SETTINGS_STORAGE_KEY))[
     USERSCRIPT_SETTINGS_STORAGE_KEY
   ];
+  if (stored === undefined) {
+    // First run: no settings persisted yet — write default and return it
+    return persistUserscriptSettings({ ...DEFAULT_USERSCRIPT_SETTINGS });
+  }
   return normalizeUserscriptSettings(stored);
 }
 
@@ -904,9 +935,27 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return true;
     }
     void assistantSurface
-      .open(tabId, message.tab)
+      ?.open(tabId)
       .then(() => sendResponse({ ok: true }))
       .catch((error) => sendResponse(userscriptBackgroundErrorResponse(error)));
+    return true;
+  }
+  // External userscript bridge: allow userscripts to read assistantPanelMode setting
+  // Userscript calls: chrome.runtime.sendMessage({ type: 'assistant-panel-mode-get' })
+  // Response: { assistantPanelMode: 'sidePanel' | 'popup' }
+  if (message.type === 'assistant-panel-mode-get') {
+    void api.storage.local
+      .get(USERSCRIPT_SETTINGS_STORAGE_KEY)
+      .then((stored) => {
+        const settings = normalizeUserscriptSettings(
+          stored[USERSCRIPT_SETTINGS_STORAGE_KEY],
+        );
+        sendResponse({
+          assistantPanelMode: normalizeAssistantPanelMode(
+            settings.assistantPanelMode,
+          ),
+        });
+      });
     return true;
   }
   void (async () => {
@@ -927,9 +976,12 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (pageCapabilityResponse !== PAGE_CAPABILITY_MESSAGE_UNHANDLED) {
       return pageCapabilityResponse;
     }
+    if (!assistantSurface)
+      throw new Error('AssistantSurfaceCoordinator not initialized');
+    const coordinator = assistantSurface;
     const aiResponse = await routeAiBackgroundMessage(message, {
       services: aiServices,
-      assistantSurface,
+      assistantSurface: coordinator,
       dailyReview: dailyReviewWallpaper,
       offscreenAudio,
       speechAuthorization,

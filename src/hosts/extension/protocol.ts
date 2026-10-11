@@ -306,6 +306,10 @@ export type ExtensionRequest =
     }
   | {
       channel: typeof EXTENSION_CHANNEL;
+      type: 'assistant-panel-mode-get';
+    }
+  | {
+      channel: typeof EXTENSION_CHANNEL;
       type: 'userscript-settings-write';
       settings: UserscriptSettingsInput;
     }
@@ -820,6 +824,7 @@ export function extensionRequest(value: unknown): value is ExtensionRequest {
     case 'library-list':
     case 'global-library-open':
     case 'userscript-settings-read':
+    case 'assistant-panel-mode-get':
     case 'site-script-search-open':
       return true;
     case 'userscript-settings-write':

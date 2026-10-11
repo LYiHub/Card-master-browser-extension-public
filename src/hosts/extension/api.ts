@@ -138,7 +138,7 @@ export type ExtensionBackgroundApi = ExtensionApi & {
     | 'update'
   > &
     Partial<Pick<typeof chrome.tabs, 'goBack' | 'goForward'>>;
-  sidePanel?: Pick<typeof chrome.sidePanel, 'open' | 'setOptions'>;
+  sidePanel?: Pick<typeof chrome.sidePanel, 'open' | 'setOptions' | 'close'>;
   sidebarAction?: FirefoxSidebarAction;
   windows?: {
     create(

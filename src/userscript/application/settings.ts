@@ -5,11 +5,15 @@ export type UserscriptSettings = {
   updateIntervalDays: number;
   updateEnabledOnly: boolean;
   lastUpdateCheckAt: number;
+  assistantPanelMode: 'sidePanel' | 'popup';
 };
 
 export type UserscriptSettingsInput = Pick<
   UserscriptSettings,
-  'reloadAfterScriptChange' | 'updateIntervalDays' | 'updateEnabledOnly'
+  | 'reloadAfterScriptChange'
+  | 'updateIntervalDays'
+  | 'updateEnabledOnly'
+  | 'assistantPanelMode'
 >;
 
 export interface UserscriptSettingsController {
@@ -22,6 +26,7 @@ export const DEFAULT_USERSCRIPT_SETTINGS: UserscriptSettings = {
   updateIntervalDays: 1,
   updateEnabledOnly: true,
   lastUpdateCheckAt: 0,
+  assistantPanelMode: 'sidePanel',
 };
 
 function updateIntervalDays(value: unknown) {
@@ -54,6 +59,8 @@ export function normalizeUserscriptSettings(
       settings.lastUpdateCheckAt >= 0
         ? settings.lastUpdateCheckAt
         : 0,
+    assistantPanelMode:
+      settings.assistantPanelMode === 'popup' ? 'popup' : 'sidePanel',
   };
 }
 
@@ -66,7 +73,9 @@ export function normalizeUserscriptSettingsInput(
     typeof settings.reloadAfterScriptChange !== 'boolean' ||
     typeof settings.updateIntervalDays !== 'number' ||
     !Number.isFinite(settings.updateIntervalDays) ||
-    typeof settings.updateEnabledOnly !== 'boolean'
+    typeof settings.updateEnabledOnly !== 'boolean' ||
+    (settings.assistantPanelMode !== 'sidePanel' &&
+      settings.assistantPanelMode !== 'popup')
   ) {
     return null;
   }
@@ -74,5 +83,6 @@ export function normalizeUserscriptSettingsInput(
     reloadAfterScriptChange: settings.reloadAfterScriptChange,
     updateIntervalDays: updateIntervalDays(settings.updateIntervalDays),
     updateEnabledOnly: settings.updateEnabledOnly,
+    assistantPanelMode: settings.assistantPanelMode,
   };
 }

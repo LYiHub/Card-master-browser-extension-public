@@ -330,6 +330,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
           reloadAfterScriptChange: value.reloadAfterScriptChange,
           updateIntervalDays: value.updateIntervalDays,
           updateEnabledOnly: value.updateEnabledOnly,
+          assistantPanelMode: value.assistantPanelMode,
         };
       },
       (value) => {
