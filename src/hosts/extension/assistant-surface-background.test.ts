@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ExtensionBackgroundApi } from './api';
 import {
   AssistantSurfaceCoordinator,
+  calculateSidebarBounds,
   normalizeAssistantPanelMode,
 } from './assistant-surface-background';
 import { assistantSurfaceLifecyclePortName } from './assistant-surface-path';
@@ -261,9 +262,6 @@ describe('AssistantSurfaceCoordinator', () => {
     expect(create).toHaveBeenCalledWith({
       url: 'safari-web-extension://id/assistant.html?tabId=7',
       type: 'popup',
-      state: 'normal',
-      width: 480,
-      height: 900,
       focused: true,
     });
   });
@@ -352,9 +350,6 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
-        state: 'normal',
-        width: 480,
-        height: 900,
         focused: true,
       });
       expect(test.open).not.toHaveBeenCalled();
@@ -423,9 +418,6 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
-        state: 'normal',
-        width: 480,
-        height: 900,
         focused: true,
       });
       expect(test.open).not.toHaveBeenCalled();
@@ -462,9 +454,6 @@ describe('AssistantSurfaceCoordinator', () => {
         expect(create).toHaveBeenCalledWith({
           url: 'chrome-extension://id/assistant.html?tabId=7',
           type: 'popup',
-          state: 'normal',
-          width: 480,
-          height: 900,
           focused: true,
         }),
       );
@@ -503,15 +492,12 @@ describe('AssistantSurfaceCoordinator', () => {
         expect(create).toHaveBeenCalledWith({
           url: 'chrome-extension://id/assistant.html?tabId=7',
           type: 'popup',
-          state: 'normal',
-          width: 480,
-          height: 900,
           focused: true,
         }),
       );
     });
 
-    it('calculates right-docked sidebar bounds based on current browser window', async () => {
+    it('creates popup naturally without upfront bounds fighting and calculates right-docked sidebar bounds', async () => {
       const test = api();
       const create = vi.fn(async () => undefined);
       const update = vi.fn(async () => undefined);
@@ -521,6 +507,7 @@ describe('AssistantSurfaceCoordinator', () => {
         top: 25,
         width: 2370,
         height: 1664,
+        state: 'normal',
       }));
       test.value.windows = {
         create,
@@ -534,15 +521,134 @@ describe('AssistantSurfaceCoordinator', () => {
 
       await coordinator.open(7);
 
-      // Expected right edge: 100 + 2370 - 480 = 1990
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
+        focused: true,
+      });
+
+      const bounds = await calculateSidebarBounds(test.value, 480, 7);
+      expect(bounds.left).toBe(1990); // 100 + 2370 - 480 = 1990 (internal-right)
+      expect(bounds.dockingPlacement).toBe('internal-right');
+    });
+
+    it('calculates external right docking when desktop space is available to the right of the browser', async () => {
+      const test = api();
+      test.value.windows = {
+        getCurrent: vi.fn(async () => ({
+          id: 101,
+          left: 200,
+          top: 100,
+          width: 1200,
+          height: 800,
+          state: 'normal',
+        })),
+      } as unknown as ExtensionBackgroundApi['windows'];
+
+      // Screen width 2560: 200 + 1200 = 1400. Space on right = 2560 - 1400 = 1160 >= 480.
+      const bounds = await calculateSidebarBounds(test.value, 480, undefined, {
+        availWidth: 2560,
+        availHeight: 1440,
+        availLeft: 0,
+        availTop: 0,
+      });
+      expect(bounds.dockingPlacement).toBe('external-right');
+      expect(bounds.left).toBe(1400); // 200 + 1200 (external docking adjacent to host window)
+      expect(bounds.top).toBe(100);
+      expect(bounds.width).toBe(480);
+      expect(bounds.height).toBe(800);
+    });
+
+    it('calculates internal right docking when desktop space on the right is insufficient', async () => {
+      const test = api();
+      test.value.windows = {
+        getCurrent: vi.fn(async () => ({
+          id: 101,
+          left: 800,
+          top: 100,
+          width: 1000,
+          height: 800,
+          state: 'normal',
+        })),
+      } as unknown as ExtensionBackgroundApi['windows'];
+
+      // Screen width 1920: 800 + 1000 = 1800. Space on right = 1920 - 1800 = 120 < 480.
+      const bounds = await calculateSidebarBounds(test.value, 480, undefined, {
+        availWidth: 1920,
+        availHeight: 1080,
+      });
+      expect(bounds.dockingPlacement).toBe('internal-right');
+      expect(bounds.left).toBe(1320); // 1800 - 480 = 1320
+      expect(bounds.top).toBe(100);
+      expect(bounds.width).toBe(480);
+      expect(bounds.height).toBe(800);
+    });
+
+    it('calculates internal right docking when host window is maximized', async () => {
+      const test = api();
+      test.value.windows = {
+        getCurrent: vi.fn(async () => ({
+          id: 101,
+          left: 0,
+          top: 0,
+          width: 1920,
+          height: 1080,
+          state: 'maximized',
+        })),
+      } as unknown as ExtensionBackgroundApi['windows'];
+
+      const bounds = await calculateSidebarBounds(test.value, 480, undefined, {
+        availWidth: 1920,
+        availHeight: 1080,
+      });
+      expect(bounds.dockingPlacement).toBe('internal-fullscreen');
+      expect(bounds.left).toBe(1440); // 1920 - 480 = 1440
+      expect(bounds.width).toBe(480);
+      expect(bounds.height).toBe(1080);
+    });
+
+    it('updates popup layout smoothly when screen metrics are synchronized', async () => {
+      const test = api();
+      const create = vi.fn(async () => ({ id: 999 }));
+      const update = vi.fn(async () => ({ id: 999 }));
+      const getCurrent = vi.fn(async () => ({
+        id: 101,
+        left: 200,
+        top: 50,
+        width: 1200,
+        height: 900,
         state: 'normal',
-        left: 1990,
-        top: 25,
+      }));
+      test.value.windows = {
+        create,
+        update,
+        getCurrent,
+      } as unknown as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value, 'popup');
+
+      await coordinator.open(7);
+      expect(create).toHaveBeenCalledWith({
+        url: 'chrome-extension://id/assistant.html?tabId=7',
+        type: 'popup',
+        focused: true,
+      });
+
+      await coordinator.syncPopupLayout(7, {
+        availWidth: 2560,
+        availHeight: 1440,
+        availLeft: 0,
+        availTop: 0,
+      });
+
+      expect(update).toHaveBeenCalledWith(999, {
+        state: 'normal',
+        left: 1400, // 200 + 1200 (external-right)
+        top: 50,
         width: 480,
-        height: 1664,
+        height: 900,
         focused: true,
       });
     });
@@ -584,9 +690,6 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
-        state: 'normal',
-        width: 480,
-        height: 900,
         focused: true,
       });
     });
@@ -619,17 +722,13 @@ describe('AssistantSurfaceCoordinator', () => {
 
       await coordinator.open(7);
 
-      // Expected right edge: 200 + 1920 - 480 = 1640
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
-        state: 'normal',
-        left: 1640,
-        top: 50,
-        width: 480,
-        height: 1080,
         focused: true,
       });
+      const bounds = await calculateSidebarBounds(test.value, 480, 7);
+      expect(bounds.left).toBe(1640); // 200 + 1920 - 480 = 1640
       expect(test.value.tabs.get).toHaveBeenCalledWith(7);
       expect(getWindow).toHaveBeenCalledWith(88);
     });

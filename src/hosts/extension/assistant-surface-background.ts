@@ -45,11 +45,27 @@ class FirefoxSidebarUserActionRequiredError extends Error {
   }
 }
 
+export type DockingPlacement =
+  | 'external-right'
+  | 'internal-right'
+  | 'internal-fullscreen'
+  | 'fallback';
+
+export type ScreenMetrics = {
+  availLeft?: number;
+  availTop?: number;
+  availWidth?: number;
+  availHeight?: number;
+  width?: number;
+  height?: number;
+};
+
 export type SidebarWindowBounds = {
   left?: number;
   top?: number;
   width: number;
   height: number;
+  dockingPlacement?: DockingPlacement;
 };
 
 export const DEFAULT_SIDEBAR_WIDTH = 480;
@@ -111,6 +127,7 @@ export async function calculateSidebarBounds(
   api: ExtensionBackgroundApi,
   targetWidth = DEFAULT_SIDEBAR_WIDTH,
   tabId?: number,
+  screenMetrics?: ScreenMetrics,
 ): Promise<SidebarWindowBounds> {
   let hostWin: chrome.windows.Window | undefined;
   let detectionSource = 'default';
@@ -177,27 +194,68 @@ export async function calculateSidebarBounds(
     const winWidth = hostWin.width;
     const winHeight = hostWin.height;
 
-    // Position docked on the right edge of the host browser window, matching its height
-    const targetLeft = Math.max(0, winLeft + winWidth - targetWidth);
-    const targetTop = Math.max(0, winTop);
-    const targetHeight = Math.max(600, winHeight);
+    const screenLeft = screenMetrics?.availLeft ?? 0;
+    const screenTop = screenMetrics?.availTop ?? 0;
+    const defaultScreenWidth =
+      winLeft + winWidth > 1920 ? winLeft + winWidth : 1920;
+    const screenWidth =
+      screenMetrics?.availWidth ?? screenMetrics?.width ?? defaultScreenWidth;
+    const screenHeight =
+      screenMetrics?.availHeight ?? screenMetrics?.height ?? 1080;
+    const screenRight = screenLeft + screenWidth;
+    const screenBottom = screenTop + screenHeight;
+
+    const isHostMaximized =
+      hostWin.state === 'maximized' || hostWin.state === 'fullscreen';
+    const hostRight = winLeft + winWidth;
+    const spaceOnRight = screenRight - hostRight;
+
+    let targetLeft: number;
+    let dockingPlacement: DockingPlacement;
+
+    // (a) 如果不是全屏/最大化，且右侧桌面空间充足（>= targetWidth），在浏览器外部的右侧展示
+    if (!isHostMaximized && spaceOnRight >= targetWidth) {
+      targetLeft = hostRight;
+      dockingPlacement = 'external-right';
+    } else {
+      // (b) 如果是全屏或者右侧空间不足，在浏览器内部的右侧展示
+      targetLeft = hostRight - targetWidth;
+      targetLeft = Math.max(
+        screenLeft,
+        Math.min(targetLeft, screenRight - targetWidth),
+      );
+      dockingPlacement = isHostMaximized
+        ? 'internal-fullscreen'
+        : 'internal-right';
+    }
+
+    let targetTop = Math.max(screenTop, winTop);
+    const targetHeight = Math.min(screenHeight, Math.max(600, winHeight));
+    if (targetTop + targetHeight > screenBottom) {
+      targetTop = Math.max(screenTop, screenBottom - targetHeight);
+    }
 
     const bounds: SidebarWindowBounds = {
       left: Math.round(targetLeft),
       top: Math.round(targetTop),
       width: targetWidth,
       height: Math.round(targetHeight),
+      dockingPlacement,
     };
-    logPopupDiagnostic(
-      '[CardMaster:Popup:Background] [CP-2:TargetBounds]',
-      bounds,
-    );
+    logPopupDiagnostic('[CardMaster:Popup:Background] [CP-2:TargetBounds]', {
+      ...bounds,
+      spaceOnRight,
+      screenWidth,
+      screenHeight,
+      isHostMaximized,
+    });
     return bounds;
   }
 
   const defaultBounds: SidebarWindowBounds = {
     width: targetWidth,
     height: 900,
+    dockingPlacement: 'fallback',
   };
   logPopupDiagnostic(
     '[CardMaster:Popup:Background] [CP-2:TargetBoundsFallback]',
@@ -207,6 +265,8 @@ export async function calculateSidebarBounds(
 }
 
 let activePopupWindowId: number | null = null;
+let lastAdjustedWindowId: number | null = null;
+let lastAdjustedBounds: SidebarWindowBounds | null = null;
 let popupCloseListenerInstalled = false;
 
 function ensurePopupCloseListener(api: ExtensionBackgroundApi) {
@@ -215,8 +275,70 @@ function ensurePopupCloseListener(api: ExtensionBackgroundApi) {
   api.windows.onRemoved.addListener((windowId) => {
     if (windowId === activePopupWindowId) {
       activePopupWindowId = null;
+      lastAdjustedWindowId = null;
+      lastAdjustedBounds = null;
     }
   });
+}
+
+export async function enforcePopupSidebarLayout(
+  api: ExtensionBackgroundApi,
+  tabId?: number,
+  screenMetrics?: ScreenMetrics,
+): Promise<SidebarWindowBounds | null> {
+  if (activePopupWindowId === null || !api.windows?.update) return null;
+  const targetWinId = activePopupWindowId;
+
+  const bounds = await calculateSidebarBounds(
+    api,
+    DEFAULT_SIDEBAR_WIDTH,
+    tabId,
+    screenMetrics,
+  );
+
+  if (
+    lastAdjustedWindowId === targetWinId &&
+    lastAdjustedBounds &&
+    lastAdjustedBounds.left === bounds.left &&
+    lastAdjustedBounds.top === bounds.top &&
+    lastAdjustedBounds.width === bounds.width &&
+    lastAdjustedBounds.height === bounds.height
+  ) {
+    return bounds;
+  }
+
+  try {
+    const updateResult = await api.windows.update(targetWinId, {
+      state: 'normal',
+      width: bounds.width,
+      height: bounds.height,
+      ...(typeof bounds.left === 'number' ? { left: bounds.left } : {}),
+      ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
+      focused: true,
+    });
+    lastAdjustedWindowId = targetWinId;
+    lastAdjustedBounds = bounds;
+    logPopupDiagnostic(
+      '[CardMaster:Popup:Background] [CP-4:SingleLayoutAdjustmentSuccess]',
+      {
+        id: updateResult?.id,
+        type: updateResult?.type,
+        state: updateResult?.state,
+        left: updateResult?.left,
+        top: updateResult?.top,
+        width: updateResult?.width,
+        height: updateResult?.height,
+        dockingPlacement: bounds.dockingPlacement,
+      },
+    );
+    return bounds;
+  } catch (updateErr) {
+    warnPopupDiagnostic(
+      '[CardMaster:Popup:Background] [CP-4:SingleLayoutAdjustmentError]',
+      updateErr,
+    );
+    return null;
+  }
 }
 
 async function openPopupSurface(
@@ -255,137 +377,43 @@ async function openPopupSurface(
 
   if (api.windows?.create) {
     try {
-      const bounds = await calculateSidebarBounds(
-        api,
-        DEFAULT_SIDEBAR_WIDTH,
-        tabId,
-      );
-
+      // 1. 允许浏览器自然创建弹出窗口，不抢跑设置尺寸/位置，避免与 Arc/AppKit 默认展开动画冲突产生反复闪烁
       const createData: chrome.windows.CreateData = {
         url,
         type: 'popup',
-        state: 'normal',
-        width: bounds.width,
-        height: bounds.height,
-        ...(typeof bounds.left === 'number' ? { left: bounds.left } : {}),
-        ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
         focused: true,
       };
       logPopupDiagnostic(
-        '[CardMaster:Popup:Background] [CP-3:CallingWindowsCreate]',
+        '[CardMaster:Popup:Background] [CP-3:CallingWindowsCreateNatural]',
         createData,
       );
 
       const win = await api.windows.create(createData);
       activePopupWindowId = win?.id ?? null;
-      logPopupDiagnostic('[CardMaster:Popup:Background] [CP-3:WindowCreated]', {
-        id: win?.id,
-        type: win?.type,
-        state: win?.state,
-        left: win?.left,
-        top: win?.top,
-        width: win?.width,
-        height: win?.height,
-        focused: win?.focused,
-      });
+      lastAdjustedWindowId = null;
+      lastAdjustedBounds = null;
+      logPopupDiagnostic(
+        '[CardMaster:Popup:Background] [CP-3:WindowCreatedNaturally]',
+        {
+          id: win?.id,
+          type: win?.type,
+          state: win?.state,
+          left: win?.left,
+          top: win?.top,
+          width: win?.width,
+          height: win?.height,
+          focused: win?.focused,
+        },
+      );
 
-      // Arc and macOS window managers often default to window state or ignore create bounds.
-      // Explicitly enforce target sidebar bounds via api.windows.update with state: 'normal':
+      // 2. 安排单次平滑布局调整：待浏览器窗口展开动画稳定后（~350ms），单次调整至计算出的侧栏目标尺寸与位置
+      //    （若客户端页面更早加载并上报了屏幕规格，则会先行完成调整，此定时器作为保底）
       if (win?.id && api.windows.update) {
-        try {
-          const updateResult = await api.windows.update(win.id, {
-            state: 'normal',
-            width: bounds.width,
-            height: bounds.height,
-            ...(typeof bounds.left === 'number' ? { left: bounds.left } : {}),
-            ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
-            focused: true,
-          });
-          logPopupDiagnostic(
-            '[CardMaster:Popup:Background] [CP-4:WindowsUpdateSuccess]',
-            {
-              id: updateResult?.id,
-              type: updateResult?.type,
-              state: updateResult?.state,
-              left: updateResult?.left,
-              top: updateResult?.top,
-              width: updateResult?.width,
-              height: updateResult?.height,
-            },
-          );
-        } catch (updateErr) {
-          warnPopupDiagnostic(
-            '[CardMaster:Popup:Background] [CP-4:WindowsUpdateError]',
-            updateErr,
-          );
-        }
-
-        // Delayed check and post-animation re-enforce:
         setTimeout(async () => {
-          if (win.id && api.windows?.get) {
-            try {
-              const delayed = await api.windows.get(win.id);
-              logPopupDiagnostic(
-                '[CardMaster:Popup:Background] [CP-5:DelayedCheck@350ms]',
-                {
-                  id: delayed?.id,
-                  type: delayed?.type,
-                  state: delayed?.state,
-                  left: delayed?.left,
-                  top: delayed?.top,
-                  width: delayed?.width,
-                  height: delayed?.height,
-                },
-              );
-
-              // If Arc or macOS window manager expanded the window (e.g. Little Arc default 1185x832),
-              // re-enforce target bounds after Arc's AppKit opening transition finishes:
-              if (
-                typeof delayed?.width === 'number' &&
-                delayed.width > bounds.width + 40 &&
-                api.windows?.update
-              ) {
-                logPopupDiagnostic(
-                  '[CardMaster:Popup:Background] [CP-5:PostAnimationReEnforceAttempt]',
-                  {
-                    detectedWidth: delayed.width,
-                    targetWidth: bounds.width,
-                    targetHeight: bounds.height,
-                    targetLeft: bounds.left,
-                    targetTop: bounds.top,
-                  },
-                );
-                const reEnforced = await api.windows.update(win.id, {
-                  state: 'normal',
-                  width: bounds.width,
-                  height: bounds.height,
-                  ...(typeof bounds.left === 'number'
-                    ? { left: bounds.left }
-                    : {}),
-                  ...(typeof bounds.top === 'number'
-                    ? { top: bounds.top }
-                    : {}),
-                });
-                logPopupDiagnostic(
-                  '[CardMaster:Popup:Background] [CP-5:PostAnimationReEnforceSuccess]',
-                  {
-                    id: reEnforced?.id,
-                    state: reEnforced?.state,
-                    left: reEnforced?.left,
-                    top: reEnforced?.top,
-                    width: reEnforced?.width,
-                    height: reEnforced?.height,
-                  },
-                );
-              }
-            } catch (delayedErr) {
-              warnPopupDiagnostic(
-                '[CardMaster:Popup:Background] [CP-5:DelayedCheckError]',
-                delayedErr,
-              );
-            }
+          if (activePopupWindowId === win.id) {
+            await enforcePopupSidebarLayout(api, tabId);
           }
-        }, 400);
+        }, 350);
       }
       return;
     } catch (error) {
@@ -541,6 +569,10 @@ export class AssistantSurfaceCoordinator {
     }
   }
 
+  async syncPopupLayout(tabId?: number, screenMetrics?: ScreenMetrics) {
+    return enforcePopupSidebarLayout(this.api, tabId, screenMetrics);
+  }
+
   install() {
     this.api.runtime.onConnect.addListener((port) => {
       const tabId = assistantSurfaceLifecyclePortTabId(port.name);
@@ -548,6 +580,21 @@ export class AssistantSurfaceCoordinator {
       this.activePanels.set(tabId, {
         port,
         mode: this.preference,
+      });
+      port.onMessage.addListener((message: unknown) => {
+        if (
+          message &&
+          typeof message === 'object' &&
+          (message as { type?: string }).type ===
+            'assistant-surface-screen-metrics'
+        ) {
+          const metrics = (message as { screen?: ScreenMetrics }).screen;
+          logPopupDiagnostic(
+            `[CardMaster:Assistant] Received screen metrics from tab ${tabId}:`,
+            metrics,
+          );
+          void enforcePopupSidebarLayout(this.api, tabId, metrics);
+        }
       });
       port.onDisconnect.addListener(() => {
         if (this.activePanels.get(tabId)?.port === port) {

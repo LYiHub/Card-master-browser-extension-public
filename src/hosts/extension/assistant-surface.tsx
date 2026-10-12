@@ -140,95 +140,7 @@ function warnClientDiagnostic(tag: string, errorOrPayload?: unknown) {
   }
 }
 
-function checkAndEnforceSize(api: ExtensionApi, reason = 'mount') {
-  if (
-    typeof window === 'undefined' ||
-    isFullPage() ||
-    !api.windows?.getCurrent
-  ) {
-    return;
-  }
-  void api.windows
-    .getCurrent()
-    .then(async (currentWin: chrome.windows.Window) => {
-      logClientDiagnostic(
-        `[CardMaster:Popup:Client] [CP-7:CurrentWindowInfo:${reason}]`,
-        {
-          id: currentWin?.id,
-          type: currentWin?.type,
-          state: currentWin?.state,
-          left: currentWin?.left,
-          top: currentWin?.top,
-          width: currentWin?.width,
-          height: currentWin?.height,
-          focused: currentWin?.focused,
-        },
-      );
-
-      const isOversized =
-        (typeof currentWin.width === 'number' && currentWin.width > 520) ||
-        currentWin.state === 'maximized' ||
-        currentWin.state === 'fullscreen' ||
-        window.outerWidth > 520;
-
-      if (isOversized && currentWin.id && api.windows?.update) {
-        const targetWidth = 480;
-        const screenWidth = window.screen.availWidth || 1920;
-        const screenHeight = window.screen.availHeight || 1080;
-        const targetLeft = Math.max(0, screenWidth - targetWidth);
-        const targetHeight =
-          currentWin.height && currentWin.height < screenHeight
-            ? currentWin.height
-            : screenHeight;
-
-        logClientDiagnostic(
-          '[CardMaster:Popup:Client] [CP-8:EnforceResizeAttempt]',
-          {
-            id: currentWin.id,
-            reason,
-            targetWidth,
-            targetHeight,
-            targetLeft,
-          },
-        );
-
-        try {
-          const updated = await api.windows.update(currentWin.id, {
-            state: 'normal',
-            width: targetWidth,
-            height: targetHeight,
-            left: targetLeft,
-            top: currentWin.top ?? 0,
-          });
-          logClientDiagnostic(
-            '[CardMaster:Popup:Client] [CP-8:EnforceResizeSuccess]',
-            {
-              id: updated.id,
-              type: updated.type,
-              state: updated.state,
-              left: updated.left,
-              top: updated.top,
-              width: updated.width,
-              height: updated.height,
-            },
-          );
-        } catch (err) {
-          warnClientDiagnostic(
-            '[CardMaster:Popup:Client] [CP-8:EnforceResizeError]',
-            err,
-          );
-        }
-      }
-    })
-    .catch((err) => {
-      warnClientDiagnostic(
-        '[CardMaster:Popup:Client] [CP-7:CurrentWindowQueryError]',
-        err,
-      );
-    });
-}
-
-function enforceSidebarWindowBounds(api: ExtensionApi) {
+function recordSurfaceMountMetrics() {
   if (typeof window === 'undefined' || isFullPage()) return;
 
   logClientDiagnostic('[CardMaster:Popup:Client] [CP-6:SurfaceMount]', {
@@ -245,7 +157,6 @@ function enforceSidebarWindowBounds(api: ExtensionApi) {
     devicePixelRatio: window.devicePixelRatio,
   });
 
-  let resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   window.addEventListener('resize', () => {
     logClientDiagnostic('[CardMaster:Popup:Client] [CP-9:WindowResizeEvent]', {
       innerWidth: window.innerWidth,
@@ -254,16 +165,7 @@ function enforceSidebarWindowBounds(api: ExtensionApi) {
       outerHeight: window.outerHeight,
       timestamp: new Date().toISOString(),
     });
-    if (window.outerWidth > 520) {
-      if (resizeDebounceTimer) clearTimeout(resizeDebounceTimer);
-      resizeDebounceTimer = setTimeout(() => {
-        checkAndEnforceSize(api, 'resize-debounce');
-      }, 150);
-    }
   });
-
-  checkAndEnforceSize(api, 'initial');
-  setTimeout(() => checkAndEnforceSize(api, 'delayed-400ms'), 400);
 }
 
 async function resolveTabId(api: ExtensionApi) {
@@ -485,7 +387,7 @@ window.addEventListener('pagehide', disposeAssistantSurface, { once: true });
 
 async function bootstrap() {
   const api = requireExtensionApi();
-  enforceSidebarWindowBounds(api);
+  recordSurfaceMountMetrics();
   const tabId = await resolveTabId(api);
   if (disposed) return;
   surfaceLifecyclePort = isFullPage()
@@ -494,6 +396,28 @@ async function bootstrap() {
         name: assistantSurfaceLifecyclePortName(tabId),
       });
   if (surfaceLifecyclePort) {
+    try {
+      const screenExt = window.screen as unknown as {
+        availLeft?: number;
+        availTop?: number;
+      };
+      surfaceLifecyclePort.postMessage({
+        type: 'assistant-surface-screen-metrics',
+        screen: {
+          availLeft: screenExt.availLeft ?? 0,
+          availTop: screenExt.availTop ?? 0,
+          availWidth: window.screen.availWidth,
+          availHeight: window.screen.availHeight,
+          width: window.screen.width,
+          height: window.screen.height,
+        },
+      });
+    } catch (metricErr) {
+      warnClientDiagnostic(
+        '[CardMaster:Popup:Client] Failed to send screen metrics:',
+        metricErr,
+      );
+    }
     const handleDisconnect = () => {
       try {
         void api.runtime.lastError;
