@@ -171,6 +171,22 @@ describe('Bilibili vendor integration', () => {
     expect(patched).toContain('chrome.runtime.getURL("help/index.html")');
   });
 
+  it('guards YouTube background script injection and silences restricted URL warnings', async () => {
+    const source = await readFile(
+      resolve('vendor/youtube/sponsor/js/background.js'),
+      'utf8',
+    );
+    const patched = patchSponsorBackgroundRuntime(source);
+
+    expect(patched).not.toContain('chrome.runtime.getURL("/help/index.html")');
+    expect(patched).toContain(
+      'for(const t of yield i.chromeP.tabs.query({url:e.matches}))try{e.css&&e.css.length>0&&(yield i.chromeP.scripting.insertCSS({target:{tabId:t.id},files:e.css||[]})),yield i.chromeP.scripting.executeScript({target:{tabId:t.id},files:e.js||[],world:e.world||"ISOLATED"})}catch(e){}',
+    );
+    expect(patched).toContain(
+      't.logWarn=function(e){if(/(?:cannot access|extensions gallery|cannot be scripted|chrome:\\/\\/|arc:\\/\\/|edge:\\/\\/|about:|devtools:\\/\\/|view-source:|chrome-extension:\\/\\/)/i.test(String((null==e?void 0:e.message)||e)))return;',
+    );
+  });
+
   it('rebases both relative and root-relative SponsorBlock assets', () => {
     const rewritten = rewriteSponsorRuntimePaths(
       'chrome.runtime.getURL("icons/a.svg");chrome.runtime.getURL("/icons/b.svg")',

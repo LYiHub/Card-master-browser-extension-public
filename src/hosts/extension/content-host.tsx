@@ -20,6 +20,7 @@ import type { UserscriptExecutionCapability } from '../../userscript/runtime/cap
 import { type ExtensionApi, sendExtensionRequest } from './api';
 import { openAssistantSurface } from './assistant-surface-client';
 import { ExtensionBilibiliCapabilityController } from './bilibili-capabilities';
+import { isArcBrowser } from './browser-detection';
 import { CleanupScope } from './CleanupScope';
 import { createExtensionPageAudioDirector } from './content-audio';
 import { ExtensionContentBlockingController } from './content-blocking';
@@ -199,6 +200,15 @@ function ExtensionDeckRoot({
       }),
     [],
   );
+  useEffect(() => {
+    if (isArcBrowser()) {
+      void sendExtensionRequest(api, {
+        channel: EXTENSION_CHANNEL,
+        type: 'browser-environment-detected',
+        brand: 'arc',
+      });
+    }
+  }, [api]);
   const host = useMemo<UserscriptDeckHost>(
     () => ({
       ...services,

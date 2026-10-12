@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_AI_SERVICES_CONFIG } from './ai-services-config';
 import { EXTENSION_CHANNEL, extensionRequest } from './protocol';
-import { applyPortableAiConfig, portableAiConfig } from './sync-settings';
+import {
+  applyPortableAiConfig,
+  portableAiConfig,
+  syncSettings,
+} from './sync-settings';
 
 describe('portable configuration trust boundaries', () => {
   const credentials = {
@@ -69,5 +73,37 @@ describe('portable configuration trust boundaries', () => {
       request({ type: 'confirm', previewId: 'a', choices: { a: 'overwrite' } }),
     ).toBe(false);
     expect(request({ type: 'run' })).toBe(true);
+  });
+
+  it('validates and applies legacy script-preferences cloud records without assistantPanelMode', async () => {
+    const legacyCloudRecord = {
+      reloadAfterScriptChange: true,
+      updateIntervalDays: 7,
+      updateEnabledOnly: false,
+    };
+    let written: unknown = null;
+    const adapters = syncSettings({
+      readScripts: async () => ({
+        reloadAfterScriptChange: false,
+        updateIntervalDays: 1,
+        updateEnabledOnly: true,
+        lastUpdateCheckAt: 0,
+        assistantPanelMode: 'popup',
+      }),
+      writeScripts: async (input: unknown) => {
+        written = input;
+      },
+    } as unknown as Parameters<typeof syncSettings>[0]);
+    const adapter = adapters.find((a) => a.key === 'script-preferences');
+    expect(adapter).toBeDefined();
+
+    expect(() => adapter?.validate(legacyCloudRecord)).not.toThrow();
+
+    await adapter?.apply(legacyCloudRecord, {
+      reloadAfterScriptChange: false,
+      updateIntervalDays: 1,
+      updateEnabledOnly: true,
+    });
+    expect(written).toEqual(legacyCloudRecord);
   });
 });

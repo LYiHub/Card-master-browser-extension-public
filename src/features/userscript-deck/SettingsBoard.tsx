@@ -18,7 +18,7 @@ import {
   Trash2,
   UserRoundCog,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DiagnosticCopyButton,
   UiActionRow,
@@ -36,6 +36,7 @@ import type {
   DataManagementAction,
   DataManagementController,
 } from '../../data-management/domain/types';
+import { detectBrowserEnvironment } from '../../hosts/extension/browser-detection';
 import { extensionTarget } from '../../hosts/extension/platform';
 import type {
   SyncCommand,
@@ -499,11 +500,15 @@ export function SettingsBoard({
   onImportCancel?: (requestId: string) => void;
   onClose: () => void;
 }) {
+  const browserInfo = useMemo(() => detectBrowserEnvironment(), []);
   const [section, setSection] = useState<SettingsSection>(initialSection);
   const [reloadAfterScriptChange, setReloadAfterScriptChange] = useState(false);
   const [updateIntervalDays, setUpdateIntervalDays] = useState(1);
   const [updateEnabledOnly, setUpdateEnabledOnly] = useState(true);
   const [lastUpdateCheckAt, setLastUpdateCheckAt] = useState(0);
+  const [assistantPanelMode, setAssistantPanelMode] = useState<
+    'sidePanel' | 'popup'
+  >(() => browserInfo.recommendedPanelMode);
   const [deckShortcut, setDeckShortcut] = useState(DEFAULT_DECK_SHORTCUT);
   const [busy, setBusy] = useState<BusyState>('load');
   const [status, setStatus] = useState('');
@@ -524,6 +529,25 @@ export function SettingsBoard({
         setUpdateIntervalDays(settings.updateIntervalDays);
         setUpdateEnabledOnly(settings.updateEnabledOnly);
         setLastUpdateCheckAt(settings.lastUpdateCheckAt);
+        if (
+          browserInfo.recommendedPanelMode === 'popup' &&
+          settings.assistantPanelMode !== 'popup'
+        ) {
+          setAssistantPanelMode('popup');
+          void userscriptSettings
+            .write({
+              ...settings,
+              assistantPanelMode: 'popup',
+            })
+            .catch((err) => {
+              console.warn(
+                '[CardMaster:Settings] Failed to auto-persist recommended popup mode:',
+                err,
+              );
+            });
+        } else {
+          setAssistantPanelMode(settings.assistantPanelMode);
+        }
         setBusy(null);
       },
       (failure) => {
@@ -539,7 +563,7 @@ export function SettingsBoard({
     return () => {
       active = false;
     };
-  }, [userscriptSettings]);
+  }, [userscriptSettings, browserInfo]);
 
   useEffect(() => {
     let active = true;
@@ -570,11 +594,13 @@ export function SettingsBoard({
         reloadAfterScriptChange,
         updateIntervalDays,
         updateEnabledOnly,
+        assistantPanelMode,
       });
       setReloadAfterScriptChange(settings.reloadAfterScriptChange);
       setUpdateIntervalDays(settings.updateIntervalDays);
       setUpdateEnabledOnly(settings.updateEnabledOnly);
       setLastUpdateCheckAt(settings.lastUpdateCheckAt);
+      setAssistantPanelMode(settings.assistantPanelMode);
       setStatus(
         settings.updateIntervalDays === 0
           ? '自动检查脚本更新已关闭。'
@@ -707,6 +733,18 @@ export function SettingsBoard({
         setUpdateIntervalDays(settings.updateIntervalDays);
         setUpdateEnabledOnly(settings.updateEnabledOnly);
         setLastUpdateCheckAt(settings.lastUpdateCheckAt);
+        if (
+          browserInfo.recommendedPanelMode === 'popup' &&
+          settings.assistantPanelMode !== 'popup'
+        ) {
+          setAssistantPanelMode('popup');
+          void userscriptSettings.write({
+            ...settings,
+            assistantPanelMode: 'popup',
+          });
+        } else {
+          setAssistantPanelMode(settings.assistantPanelMode);
+        }
       }
       setStatus(result.message);
       setError(result.status === 'partial');
@@ -918,6 +956,64 @@ export function SettingsBoard({
               description="关闭后也会检查当前处于停用状态、且允许检查更新的脚本。"
               checked={updateEnabledOnly}
               onChange={setUpdateEnabledOnly}
+            />
+            <div className="manager-browser-notice">
+              <div className="manager-browser-notice-header">
+                <span className="manager-browser-badge">环境识别</span>
+                <span className="manager-browser-name">
+                  {browserInfo.displayName}
+                </span>
+                <span
+                  className={`manager-browser-mode-tag ${assistantPanelMode === 'popup' ? 'is-popup' : 'is-sidepanel'}`}
+                >
+                  {assistantPanelMode === 'popup'
+                    ? '独立弹出窗口'
+                    : '原生侧边栏'}
+                </span>
+              </div>
+              <p className="manager-browser-notice-description">
+                {browserInfo.statusNotice}
+              </p>
+            </div>
+            <UiToggle
+              label="弹出窗口替代侧边栏"
+              description={
+                browserInfo.brand === 'arc'
+                  ? '已为你自动开启。Arc 浏览器未提供原生侧边栏容器，以独立窗口模式呈现。'
+                  : '开启后，脚本工坊将以独立窗口形式呈现。适用于 Arc 等未启用原生侧边栏的浏览器。'
+              }
+              checked={assistantPanelMode === 'popup'}
+              onChange={(checked) => {
+                const nextMode = checked ? 'popup' : 'sidePanel';
+                console.log(
+                  '[CardMaster:Settings] assistantPanelMode toggle changed to:',
+                  nextMode,
+                );
+                setAssistantPanelMode(nextMode);
+                if (
+                  typeof userscriptSettings?.read === 'function' &&
+                  typeof userscriptSettings?.write === 'function'
+                ) {
+                  void (async () => {
+                    try {
+                      const current = await userscriptSettings.read();
+                      await userscriptSettings.write({
+                        ...current,
+                        assistantPanelMode: nextMode,
+                      });
+                      console.log(
+                        '[CardMaster:Settings] assistantPanelMode auto-persisted immediately:',
+                        nextMode,
+                      );
+                    } catch (err) {
+                      console.warn(
+                        '[CardMaster:Settings] Auto-persist failed, will save on manual submit:',
+                        err,
+                      );
+                    }
+                  })();
+                }
+              }}
             />
             <UiNotice title="检查状态">
               <p>

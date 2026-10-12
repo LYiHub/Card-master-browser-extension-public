@@ -92,6 +92,38 @@ function isFullPage() {
   return new URLSearchParams(location.search).get('fullPage') === '1';
 }
 
+function enforceSidebarWindowBounds(api: ExtensionApi) {
+  if (typeof window === 'undefined' || isFullPage()) return;
+  if (
+    window.outerWidth > 640 &&
+    api.windows?.getCurrent &&
+    api.windows?.update
+  ) {
+    void api.windows
+      .getCurrent()
+      .then((currentWin: chrome.windows.Window) => {
+        if (
+          currentWin.type === 'popup' &&
+          currentWin.id &&
+          api.windows?.update
+        ) {
+          const targetWidth = 480;
+          const screenWidth = window.screen.availWidth || 1920;
+          const screenHeight = window.screen.availHeight || 1080;
+          const targetLeft = Math.max(0, screenWidth - targetWidth);
+          const targetHeight = currentWin.height || screenHeight;
+          void api.windows.update(currentWin.id, {
+            width: targetWidth,
+            height: targetHeight,
+            left: targetLeft,
+            top: currentWin.top ?? 0,
+          });
+        }
+      })
+      .catch(() => undefined);
+  }
+}
+
 async function resolveTabId(api: ExtensionApi) {
   const supplied = queryTabId();
   if (supplied !== null) return supplied;
@@ -311,6 +343,7 @@ window.addEventListener('pagehide', disposeAssistantSurface, { once: true });
 
 async function bootstrap() {
   const api = requireExtensionApi();
+  enforceSidebarWindowBounds(api);
   const tabId = await resolveTabId(api);
   if (disposed) return;
   surfaceLifecyclePort = isFullPage()

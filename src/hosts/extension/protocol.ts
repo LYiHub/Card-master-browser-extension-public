@@ -242,6 +242,12 @@ export type ExtensionRequest =
       channel: typeof EXTENSION_CHANNEL;
       type: 'ai-assistant-surface-open';
       tab?: AssistantWorkbenchTab;
+      detectedBrowser?: string;
+    }
+  | {
+      channel: typeof EXTENSION_CHANNEL;
+      type: 'browser-environment-detected';
+      brand: string;
     }
   | {
       channel: typeof EXTENSION_CHANNEL;
@@ -786,7 +792,13 @@ export function extensionRequest(value: unknown): value is ExtensionRequest {
     case 'ai-speech-service-save':
       return normalizeSpeechServiceInput(value.config) !== null;
     case 'ai-assistant-surface-open':
-      return value.tab === undefined || isAssistantWorkbenchTab(value.tab);
+      return (
+        (value.tab === undefined || isAssistantWorkbenchTab(value.tab)) &&
+        (value.detectedBrowser === undefined ||
+          typeof value.detectedBrowser === 'string')
+      );
+    case 'browser-environment-detected':
+      return typeof value.brand === 'string';
     case 'ai-assistant-surface-context-read':
       return (
         typeof value.tabId === 'number' &&

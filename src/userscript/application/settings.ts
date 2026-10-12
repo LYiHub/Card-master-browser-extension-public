@@ -5,12 +5,15 @@ export type UserscriptSettings = {
   updateIntervalDays: number;
   updateEnabledOnly: boolean;
   lastUpdateCheckAt: number;
+  assistantPanelMode: 'sidePanel' | 'popup';
 };
 
 export type UserscriptSettingsInput = Pick<
   UserscriptSettings,
   'reloadAfterScriptChange' | 'updateIntervalDays' | 'updateEnabledOnly'
->;
+> & {
+  assistantPanelMode?: UserscriptSettings['assistantPanelMode'];
+};
 
 export interface UserscriptSettingsController {
   read(): Promise<UserscriptSettings>;
@@ -22,6 +25,7 @@ export const DEFAULT_USERSCRIPT_SETTINGS: UserscriptSettings = {
   updateIntervalDays: 1,
   updateEnabledOnly: true,
   lastUpdateCheckAt: 0,
+  assistantPanelMode: 'sidePanel',
 };
 
 function updateIntervalDays(value: unknown) {
@@ -54,12 +58,19 @@ export function normalizeUserscriptSettings(
       settings.lastUpdateCheckAt >= 0
         ? settings.lastUpdateCheckAt
         : 0,
+    assistantPanelMode:
+      settings.assistantPanelMode === 'popup' ? 'popup' : 'sidePanel',
   };
 }
 
-export function normalizeUserscriptSettingsInput(
+export type ScriptPreferencesSyncInput = Pick<
+  UserscriptSettings,
+  'reloadAfterScriptChange' | 'updateIntervalDays' | 'updateEnabledOnly'
+>;
+
+export function normalizeScriptPreferencesSyncInput(
   value: unknown,
-): UserscriptSettingsInput | null {
+): ScriptPreferencesSyncInput | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const settings = value as Record<string, unknown>;
   if (
@@ -74,5 +85,26 @@ export function normalizeUserscriptSettingsInput(
     reloadAfterScriptChange: settings.reloadAfterScriptChange,
     updateIntervalDays: updateIntervalDays(settings.updateIntervalDays),
     updateEnabledOnly: settings.updateEnabledOnly,
+  };
+}
+
+export function normalizeUserscriptSettingsInput(
+  value: unknown,
+): UserscriptSettingsInput | null {
+  const syncPreferences = normalizeScriptPreferencesSyncInput(value);
+  if (!syncPreferences) return null;
+  const settings = value as Record<string, unknown>;
+  if (
+    settings.assistantPanelMode !== undefined &&
+    settings.assistantPanelMode !== 'sidePanel' &&
+    settings.assistantPanelMode !== 'popup'
+  ) {
+    return null;
+  }
+  return {
+    ...syncPreferences,
+    ...(settings.assistantPanelMode !== undefined
+      ? { assistantPanelMode: settings.assistantPanelMode }
+      : {}),
   };
 }

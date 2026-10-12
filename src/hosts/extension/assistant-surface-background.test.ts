@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { ExtensionBackgroundApi } from './api';
-import { AssistantSurfaceCoordinator } from './assistant-surface-background';
+import {
+  AssistantSurfaceCoordinator,
+  normalizeAssistantPanelMode,
+} from './assistant-surface-background';
 import { assistantSurfaceLifecyclePortName } from './assistant-surface-path';
 
 function event<Arguments extends unknown[]>() {
@@ -43,7 +46,15 @@ function api() {
       setOptions,
     },
   } as unknown as ExtensionBackgroundApi;
-  return { onConnect, onCreated, open, setOptions, value };
+  return {
+    onConnect,
+    onCreated,
+    onInstalled,
+    onStartup,
+    open,
+    setOptions,
+    value,
+  };
 }
 
 function port(name: string) {
@@ -151,6 +162,45 @@ describe('AssistantSurfaceCoordinator', () => {
     });
   });
 
+  it('does not report failure when tab configuration fails due to restricted browser page', async () => {
+    const test = api();
+    const report = vi.fn();
+    test.setOptions.mockRejectedValueOnce(
+      new Error('Cannot access a chrome:// URL'),
+    );
+    const coordinator = new AssistantSurfaceCoordinator(test.value, report);
+    coordinator.install();
+
+    test.onCreated.emit({ id: 9 } as chrome.tabs.Tab);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    expect(report).not.toHaveBeenCalled();
+  });
+
+  it('skips configuring tabs on restricted browser schemes during existing tab configuration', async () => {
+    const test = api();
+    const report = vi.fn();
+    (
+      test.value.tabs.query as unknown as ReturnType<typeof vi.fn>
+    ).mockResolvedValueOnce([
+      { id: 1, url: 'chrome://extensions' },
+      { id: 2, url: 'arc://flags' },
+      { id: 3, url: 'https://example.com' },
+    ]);
+    const coordinator = new AssistantSurfaceCoordinator(test.value, report);
+    coordinator.install();
+
+    test.onStartup.emit();
+    await vi.waitFor(() => expect(test.setOptions).toHaveBeenCalledTimes(1));
+
+    expect(test.setOptions).toHaveBeenCalledWith({
+      tabId: 3,
+      path: 'assistant.html?tabId=3',
+      enabled: true,
+    });
+    expect(report).not.toHaveBeenCalled();
+  });
+
   it('returns the current tab identity without transient entry state', async () => {
     const test = api();
     const coordinator = new AssistantSurfaceCoordinator(test.value);
@@ -212,7 +262,8 @@ describe('AssistantSurfaceCoordinator', () => {
       url: 'safari-web-extension://id/assistant.html?tabId=7',
       type: 'popup',
       width: 480,
-      height: 780,
+      height: 900,
+      focused: true,
     });
   });
 
@@ -275,5 +326,222 @@ describe('AssistantSurfaceCoordinator', () => {
     const coordinator = new AssistantSurfaceCoordinator(test.value);
 
     await expect(coordinator.open(7)).rejects.toThrow('sidebar unavailable');
+  });
+
+  describe('assistant panel mode preference', () => {
+    it('normalizes preference values correctly', () => {
+      expect(normalizeAssistantPanelMode('popup')).toBe('popup');
+      expect(normalizeAssistantPanelMode('sidePanel')).toBe('sidePanel');
+      expect(normalizeAssistantPanelMode(undefined)).toBe('sidePanel');
+      expect(normalizeAssistantPanelMode('other')).toBe('sidePanel');
+    });
+
+    it('switches to popup surface and creates a popup window', async () => {
+      const test = api();
+      const create = vi.fn(async () => undefined);
+      test.value.windows = { create } as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value);
+
+      coordinator.setSurfacePreference('popup');
+      await coordinator.open(7);
+
+      expect(create).toHaveBeenCalledWith({
+        url: 'chrome-extension://id/assistant.html?tabId=7',
+        type: 'popup',
+        width: 480,
+        height: 900,
+        focused: true,
+      });
+      expect(test.open).not.toHaveBeenCalled();
+    });
+
+    it('switches back to sidePanel surface from popup', async () => {
+      const test = api();
+      const create = vi.fn(async () => undefined);
+      test.value.windows = { create } as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value, 'popup');
+
+      coordinator.setSurfacePreference('sidePanel');
+      await coordinator.open(7);
+
+      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+      expect(create).not.toHaveBeenCalled();
+    });
+
+    it('dispatches native sidebar immediately and synchronously on cold start without microtask delay', async () => {
+      const test = api();
+      const coordinator = new AssistantSurfaceCoordinator(test.value);
+      let resolveReady: () => void = () => undefined;
+      const readyPromise = new Promise<void>((resolve) => {
+        resolveReady = resolve;
+      });
+      coordinator.setPreferenceReady(readyPromise);
+
+      const pendingOpen = coordinator.open(7);
+
+      // Must be called immediately in the same tick to preserve user action!
+      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+
+      resolveReady();
+      await pendingOpen;
+    });
+
+    it('catches up and opens popup surface when cold start preference resolves to popup', async () => {
+      const test = api();
+      const create = vi.fn(async () => undefined);
+      test.value.windows = { create } as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value);
+
+      let resolveReady: () => void = () => undefined;
+      const readyPromise = new Promise<void>((resolve) => {
+        resolveReady = resolve;
+      });
+      coordinator.setPreferenceReady(readyPromise);
+
+      const pendingOpen = coordinator.open(7);
+
+      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+      expect(create).not.toHaveBeenCalled();
+
+      coordinator.setSurfacePreference('popup');
+      resolveReady();
+
+      await pendingOpen;
+
+      await vi.waitFor(() =>
+        expect(create).toHaveBeenCalledWith({
+          url: 'chrome-extension://id/assistant.html?tabId=7',
+          type: 'popup',
+          width: 480,
+          height: 900,
+          focused: true,
+        }),
+      );
+    });
+
+    it('catches up and opens popup surface even if premature native sidebar connected lifecycle port during cold start', async () => {
+      const test = api();
+      const create = vi.fn(async () => undefined);
+      test.value.windows = { create } as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value);
+      coordinator.install();
+
+      let resolveReady: () => void = () => undefined;
+      const readyPromise = new Promise<void>((resolve) => {
+        resolveReady = resolve;
+      });
+      coordinator.setPreferenceReady(readyPromise);
+
+      const pendingOpen = coordinator.open(7);
+      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+
+      // Premature side panel opens and connects lifecycle port:
+      test.onConnect.emit(port(assistantSurfaceLifecyclePortName(7)).port);
+
+      coordinator.setSurfacePreference('popup');
+      resolveReady();
+
+      await pendingOpen;
+
+      await vi.waitFor(() =>
+        expect(create).toHaveBeenCalledWith({
+          url: 'chrome-extension://id/assistant.html?tabId=7',
+          type: 'popup',
+          width: 480,
+          height: 900,
+          focused: true,
+        }),
+      );
+    });
+
+    it('calculates right-docked sidebar bounds based on current browser window', async () => {
+      const test = api();
+      const create = vi.fn(async () => undefined);
+      const update = vi.fn(async () => undefined);
+      const getCurrent = vi.fn(async () => ({
+        id: 101,
+        left: 100,
+        top: 25,
+        width: 2370,
+        height: 1664,
+      }));
+      test.value.windows = {
+        create,
+        update,
+        getCurrent,
+      } as unknown as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value, 'popup');
+
+      await coordinator.open(7);
+
+      // Expected right edge: 100 + 2370 - 480 = 1990
+      expect(create).toHaveBeenCalledWith({
+        url: 'chrome-extension://id/assistant.html?tabId=7',
+        type: 'popup',
+        left: 1990,
+        top: 25,
+        width: 480,
+        height: 1664,
+        focused: true,
+      });
+    });
+
+    it('clears preferenceReady so subsequent opens run directly without microtask delay', async () => {
+      const test = api();
+      const coordinator = new AssistantSurfaceCoordinator(test.value);
+      const readyPromise = Promise.resolve();
+      coordinator.setPreferenceReady(readyPromise);
+
+      await readyPromise;
+
+      const openPromise = coordinator.open(7);
+      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+      await openPromise;
+    });
+
+    it('awaits preferenceReady when coordinator is configured for popup mode', async () => {
+      const test = api();
+      const create = vi.fn(async () => undefined);
+      test.value.windows = { create } as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value, 'popup');
+
+      let resolveReady: () => void = () => undefined;
+      const readyPromise = new Promise<void>((resolve) => {
+        resolveReady = resolve;
+      });
+      coordinator.setPreferenceReady(readyPromise);
+
+      const pendingOpen = coordinator.open(7);
+      expect(create).not.toHaveBeenCalled();
+
+      resolveReady();
+      await pendingOpen;
+
+      expect(create).toHaveBeenCalledWith({
+        url: 'chrome-extension://id/assistant.html?tabId=7',
+        type: 'popup',
+        width: 480,
+        height: 900,
+        focused: true,
+      });
+    });
   });
 });

@@ -8,6 +8,7 @@ import {
   isExtensionDiagnosticRelayMessage,
   isExtensionPageLifecycleInterrupted,
   isOrphanedExtensionRuntimeFailure,
+  isRestrictedBrowserPageError,
   notifyExtensionContextInvalidated,
   onExtensionContextInvalidated,
   reportExtensionFailure,
@@ -39,6 +40,22 @@ describe('extension runtime diagnostics', () => {
     'Frame with ID 0 is showing error page',
   ])('把标签页与 Frame 消失识别为页面生命周期中断：%s', (message) => {
     expect(isExtensionPageLifecycleInterrupted(new Error(message))).toBe(true);
+  });
+
+  it.each([
+    'Cannot access a chrome:// URL',
+    'Cannot access an arc:// URL',
+    'Cannot access an edge:// URL',
+    'Cannot access an about: URL',
+    'Cannot access a devtools:// URL',
+    'Cannot access a view-source: URL',
+    'Cannot access a chrome-extension:// URL',
+    'The extensions gallery cannot be scripted.',
+    'This page cannot be scripted by extensions.',
+    'Cannot access contents of the page.',
+  ])('把受限浏览器页面错误识别为正常安全限制中断：%s', (message) => {
+    expect(isExtensionPageLifecycleInterrupted(new Error(message))).toBe(true);
+    expect(isRestrictedBrowserPageError(new Error(message))).toBe(true);
   });
 
   it('只在扩展上下文已经失效时识别第三方运行时的衍生错误', () => {

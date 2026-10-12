@@ -45,7 +45,7 @@ import {
 } from '../../sync/projection';
 import type { TransactionalScriptRepository } from '../../userscript/application/script-repository';
 import {
-  normalizeUserscriptSettingsInput,
+  normalizeScriptPreferencesSyncInput,
   type UserscriptSettingsInput,
 } from '../../userscript/application/settings';
 import {
@@ -333,13 +333,13 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
         };
       },
       (value) => {
-        const parsed = normalizeUserscriptSettingsInput(value);
+        const parsed = normalizeScriptPreferencesSyncInput(value);
         if (!parsed) throw new Error('脚本运行设置无效。');
         return parsed;
       },
       async (value, expected) => {
         assertUnchanged(
-          normalizeUserscriptSettingsInput(await services.readScripts()),
+          normalizeScriptPreferencesSyncInput(await services.readScripts()),
           expected,
         );
         await services.writeScripts(value);

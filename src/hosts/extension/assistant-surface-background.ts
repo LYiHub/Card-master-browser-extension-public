@@ -8,6 +8,14 @@ import {
   assistantSurfaceLifecyclePortTabId,
   assistantSurfacePath,
 } from './assistant-surface-path';
+import { isExtensionPageLifecycleInterrupted } from './diagnostics';
+
+function isRestrictedBrowserTabUrl(url?: string): boolean {
+  if (!url) return false;
+  return /^(?:chrome|arc|edge|about|devtools|view-source|chrome-extension):/i.test(
+    url,
+  );
+}
 
 type SurfaceFailureReporter = (
   event: string,
@@ -37,21 +45,161 @@ class FirefoxSidebarUserActionRequiredError extends Error {
   }
 }
 
+export type SidebarWindowBounds = {
+  left?: number;
+  top?: number;
+  width: number;
+  height: number;
+};
+
+export const DEFAULT_SIDEBAR_WIDTH = 480;
+
+export async function calculateSidebarBounds(
+  api: ExtensionBackgroundApi,
+  targetWidth = DEFAULT_SIDEBAR_WIDTH,
+): Promise<SidebarWindowBounds> {
+  try {
+    const currentWin = await api.windows?.getCurrent?.({ populate: false });
+    if (
+      currentWin &&
+      typeof currentWin.width === 'number' &&
+      typeof currentWin.height === 'number'
+    ) {
+      const winLeft = currentWin.left ?? 0;
+      const winTop = currentWin.top ?? 0;
+      const winWidth = currentWin.width;
+      const winHeight = currentWin.height;
+
+      // Position docked on the right edge of the current browser window, matching its height
+      const targetLeft = Math.max(0, winLeft + winWidth - targetWidth);
+      const targetTop = Math.max(0, winTop);
+      const targetHeight = Math.max(600, winHeight);
+
+      return {
+        left: Math.round(targetLeft),
+        top: Math.round(targetTop),
+        width: targetWidth,
+        height: Math.round(targetHeight),
+      };
+    }
+  } catch (err) {
+    console.warn(
+      '[CardMaster:Assistant] Failed to calculate current window bounds for sidebar:',
+      err,
+    );
+  }
+
+  return {
+    width: targetWidth,
+    height: 900,
+  };
+}
+
+let activePopupWindowId: number | null = null;
+let popupCloseListenerInstalled = false;
+
+function ensurePopupCloseListener(api: ExtensionBackgroundApi) {
+  if (popupCloseListenerInstalled || !api.windows?.onRemoved) return;
+  popupCloseListenerInstalled = true;
+  api.windows.onRemoved.addListener((windowId) => {
+    if (windowId === activePopupWindowId) {
+      activePopupWindowId = null;
+    }
+  });
+}
+
 async function openPopupSurface(api: ExtensionBackgroundApi, path: string) {
   const url = api.runtime.getURL(path);
-  if (api.windows?.create) {
-    await api.windows.create({
-      url,
-      type: 'popup',
-      width: 480,
-      height: 780,
-    });
-    return;
+  ensurePopupCloseListener(api);
+
+  if (activePopupWindowId !== null && api.windows?.get && api.windows?.update) {
+    try {
+      const existing = await api.windows.get(activePopupWindowId);
+      if (existing) {
+        console.log(
+          '[CardMaster:Assistant] Focusing existing popup window:',
+          activePopupWindowId,
+        );
+        await api.windows.update(activePopupWindowId, { focused: true });
+        return;
+      }
+    } catch {
+      activePopupWindowId = null;
+    }
   }
+
+  console.log('[CardMaster:Assistant] openPopupSurface url:', url);
+  if (api.windows?.create) {
+    try {
+      const bounds = await calculateSidebarBounds(api);
+      console.log('[CardMaster:Assistant] Target sidebar bounds:', bounds);
+
+      const win = await api.windows.create({
+        url,
+        type: 'popup',
+        width: bounds.width,
+        height: bounds.height,
+        ...(typeof bounds.left === 'number' ? { left: bounds.left } : {}),
+        ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
+        focused: true,
+      });
+      activePopupWindowId = win?.id ?? null;
+      console.log(
+        '[CardMaster:Assistant] Popup window created successfully:',
+        win,
+      );
+
+      // Arc and macOS window managers often default to window state or ignore create bounds.
+      // Explicitly enforce target sidebar bounds via api.windows.update:
+      if (win?.id && api.windows.update) {
+        try {
+          await api.windows.update(win.id, {
+            width: bounds.width,
+            height: bounds.height,
+            ...(typeof bounds.left === 'number' ? { left: bounds.left } : {}),
+            ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
+            focused: true,
+          });
+          console.log(
+            '[CardMaster:Assistant] Sidebar bounds enforced via update:',
+            win.id,
+          );
+        } catch (updateErr) {
+          console.warn(
+            '[CardMaster:Assistant] windows.update bounds failed:',
+            updateErr,
+          );
+        }
+      }
+      return;
+    } catch (error) {
+      console.error('[CardMaster:Assistant] api.windows.create failed:', error);
+      throw error;
+    }
+  }
+  console.log(
+    '[CardMaster:Assistant] api.windows.create unavailable, using api.tabs.create',
+  );
   await api.tabs.create({ url });
 }
 
-function createAssistantSurface(api: ExtensionBackgroundApi): AssistantSurface {
+export type AssistantPanelMode = 'sidePanel' | 'popup';
+
+export function normalizeAssistantPanelMode(
+  value: unknown,
+): AssistantPanelMode {
+  return value === 'popup' ? 'popup' : 'sidePanel';
+}
+
+function createAssistantSurface(
+  api: ExtensionBackgroundApi,
+  preference: AssistantPanelMode = 'sidePanel',
+): AssistantSurface {
+  if (preference === 'popup') {
+    return {
+      open: (_tabId, path) => openPopupSurface(api, path),
+    };
+  }
   const sidePanel = api.sidePanel;
   if (sidePanel?.open && sidePanel.setOptions) {
     return {
@@ -84,13 +232,88 @@ export class AssistantSurfaceCoordinator {
   private readonly activePanels = new Map<number, ExtensionPort>();
   private readonly openingTabs = new Set<number>();
   private readonly requestedTabs = new Map<number, AssistantWorkbenchTab>();
-  private readonly surface: AssistantSurface;
+  private surface: AssistantSurface;
+  private preference: AssistantPanelMode;
+  private preferenceReady: Promise<unknown> | null = null;
+  private coldStartPendingOpen: {
+    tabId: number;
+    tab?: AssistantWorkbenchTab;
+  } | null = null;
+  private readonly reportFailure: SurfaceFailureReporter;
 
   constructor(
     private readonly api: ExtensionBackgroundApi,
-    private readonly reportFailure: SurfaceFailureReporter = () => undefined,
+    preferenceOrReporter?: AssistantPanelMode | SurfaceFailureReporter,
+    reportFailure?: SurfaceFailureReporter,
   ) {
-    this.surface = createAssistantSurface(api);
+    if (typeof preferenceOrReporter === 'function') {
+      this.preference = 'sidePanel';
+      this.reportFailure = preferenceOrReporter;
+    } else {
+      this.preference = preferenceOrReporter ?? 'sidePanel';
+      this.reportFailure = reportFailure ?? (() => undefined);
+    }
+    this.surface = createAssistantSurface(api, this.preference);
+  }
+
+  setPreferenceReady(ready: Promise<unknown> | null) {
+    this.preferenceReady = ready;
+    if (ready) {
+      ready.finally(() => {
+        if (this.preferenceReady === ready) {
+          this.preferenceReady = null;
+          this.triggerColdStartCatchUp();
+        }
+      });
+    }
+  }
+
+  setSurfacePreference(preference: AssistantPanelMode) {
+    if (this.preference === preference) return;
+    const previous = this.preference;
+    this.preference = preference;
+    this.surface = createAssistantSurface(this.api, preference);
+    console.log(
+      `[CardMaster:Assistant] Coordinator mode changed: ${previous} -> ${preference}`,
+    );
+    if (this.surface.configure) {
+      this.configureExistingTabsInBackground();
+    }
+  }
+
+  getPreference(): AssistantPanelMode {
+    return this.preference;
+  }
+
+  private triggerColdStartCatchUp() {
+    if (!this.coldStartPendingOpen) return;
+    const { tabId, tab } = this.coldStartPendingOpen;
+    if (this.openingTabs.has(tabId)) {
+      console.log(
+        `[CardMaster:Assistant] Deferring cold-start catchup for tab ${tabId} because it is currently opening`,
+      );
+      return;
+    }
+    this.coldStartPendingOpen = null;
+    if (this.preference === 'popup') {
+      console.log(
+        `[CardMaster:Assistant] Cold-start catchup triggered for tab ${tabId} in popup mode`,
+      );
+      const premature = this.activePanels.get(tabId);
+      if (premature) {
+        try {
+          premature.disconnect();
+        } catch {}
+        this.activePanels.delete(tabId);
+      }
+      void this.open(tabId, tab).catch((error) => {
+        console.error(
+          `[CardMaster:Assistant] Cold-start popup failed for tab ${tabId}:`,
+          error,
+        );
+        this.reportFailure('cold-start-popup-failed', error, { tabId });
+      });
+    }
   }
 
   install() {
@@ -105,7 +328,11 @@ export class AssistantSurfaceCoordinator {
         this.requestedTabs.delete(tabId);
       });
     });
-    if (!this.surface.configure) return;
+    const supportsTabConfiguration = Boolean(
+      (this.api.sidePanel?.open && this.api.sidePanel?.setOptions) ||
+        (this.api.sidebarAction?.open && this.api.sidebarAction?.setPanel),
+    );
+    if (!supportsTabConfiguration) return;
     this.api.tabs.onCreated.addListener((tab) => {
       if (typeof tab.id === 'number') this.configureInBackground(tab.id);
     });
@@ -118,10 +345,32 @@ export class AssistantSurfaceCoordinator {
     this.configureExistingTabsInBackground();
   }
 
-  async open(tabId: number, tab?: AssistantWorkbenchTab) {
+  async open(
+    tabId: number,
+    tab?: AssistantWorkbenchTab,
+    detectedBrowser?: string,
+  ) {
+    if (detectedBrowser === 'arc' && this.preference !== 'popup') {
+      console.log(
+        `[CardMaster:Assistant] open() received detectedBrowser: arc. Forcing popup mode for tab ${tabId}.`,
+      );
+      this.setSurfacePreference('popup');
+    }
+    console.log(
+      `[CardMaster:Assistant] open() called for tab ${tabId}, preference: ${this.preference}, preferenceReady: ${Boolean(this.preferenceReady)}`,
+    );
+    if (this.preferenceReady && this.preference === 'popup') {
+      console.log(
+        `[CardMaster:Assistant] Awaiting preferenceReady in popup mode for tab ${tabId}...`,
+      );
+      await this.preferenceReady;
+    }
     const activePanel = this.activePanels.get(tabId);
     if (tab) this.requestedTabs.set(tabId, tab);
     if (activePanel && tab) {
+      console.log(
+        `[CardMaster:Assistant] Active panel exists for tab ${tabId}, sending navigate message`,
+      );
       const message: AssistantSurfaceNavigationMessage = {
         type: 'assistant-surface-navigate',
         tab,
@@ -132,13 +381,29 @@ export class AssistantSurfaceCoordinator {
       this.reportFailure('tab-configuration-failed', error, { tabId });
     });
     if (activePanel || this.openingTabs.has(tabId)) {
+      console.log(
+        `[CardMaster:Assistant] Early return: activePanel=${Boolean(activePanel)}, openingTabs=${this.openingTabs.has(tabId)}`,
+      );
       await configuration;
       return;
     }
+    if (this.preferenceReady) {
+      this.coldStartPendingOpen = { tabId, tab };
+    }
     this.openingTabs.add(tabId);
     try {
+      console.log(
+        `[CardMaster:Assistant] Calling this.surface.open(mode: ${this.preference}) for tab ${tabId}...`,
+      );
       await this.surface.open(tabId, assistantSurfacePath(tabId));
+      console.log(
+        `[CardMaster:Assistant] surface.open successfully completed for tab ${tabId}`,
+      );
     } catch (error) {
+      console.error(
+        `[CardMaster:Assistant] surface.open failed for tab ${tabId}:`,
+        error,
+      );
       if (
         !(error instanceof FirefoxSidebarUserActionRequiredError) &&
         tab &&
@@ -149,6 +414,9 @@ export class AssistantSurfaceCoordinator {
       throw error;
     } finally {
       this.openingTabs.delete(tabId);
+      if (!this.preferenceReady) {
+        this.triggerColdStartCatchUp();
+      }
     }
     await configuration;
   }
@@ -182,30 +450,36 @@ export class AssistantSurfaceCoordinator {
 
   private configureInBackground(tabId: number) {
     void this.configure(tabId).catch((error) => {
-      this.reportFailure('tab-configuration-failed', error, { tabId });
+      if (!isExtensionPageLifecycleInterrupted(error)) {
+        this.reportFailure('tab-configuration-failed', error, { tabId });
+      }
     });
   }
 
   private configureExistingTabsInBackground() {
     void this.configureExistingTabs().catch((error) => {
-      this.reportFailure('existing-tab-configuration-failed', error);
+      if (!isExtensionPageLifecycleInterrupted(error)) {
+        this.reportFailure('existing-tab-configuration-failed', error);
+      }
     });
   }
 
   private async configureExistingTabs() {
     const tabs = await this.api.tabs.query({});
     await Promise.all(
-      tabs.flatMap((tab) =>
-        typeof tab.id === 'number'
-          ? [
-              this.configure(tab.id).catch((error) => {
-                this.reportFailure('tab-configuration-failed', error, {
-                  tabId: tab.id,
-                });
-              }),
-            ]
-          : [],
-      ),
+      tabs.flatMap((tab) => {
+        if (typeof tab.id !== 'number') return [];
+        if (tab.url && isRestrictedBrowserTabUrl(tab.url)) return [];
+        return [
+          this.configure(tab.id).catch((error) => {
+            if (!isExtensionPageLifecycleInterrupted(error)) {
+              this.reportFailure('tab-configuration-failed', error, {
+                tabId: tab.id,
+              });
+            }
+          }),
+        ];
+      }),
     );
   }
 }

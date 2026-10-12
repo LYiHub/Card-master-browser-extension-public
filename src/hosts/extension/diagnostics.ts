@@ -8,6 +8,7 @@ export {
   extensionErrorDetails,
   extensionErrorMessage,
   isExtensionPageLifecycleInterrupted,
+  isRestrictedBrowserPageError,
 } from '../../lib/extension-errors';
 
 export type ExtensionDiagnosticDetails = Readonly<Record<string, unknown>>;

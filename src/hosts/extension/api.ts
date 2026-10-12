@@ -73,6 +73,15 @@ export type ExtensionApi = {
     | 'query'
     | 'sendMessage'
   >;
+  windows?: {
+    getCurrent?: (
+      getInfo?: chrome.windows.QueryOptions,
+    ) => Promise<chrome.windows.Window>;
+    update?: (
+      windowId: number,
+      updateInfo: chrome.windows.UpdateInfo,
+    ) => Promise<chrome.windows.Window>;
+  };
 };
 
 export type ExtensionBackgroundApi = ExtensionApi & {
@@ -148,6 +157,17 @@ export type ExtensionBackgroundApi = ExtensionApi & {
       windowId: number,
       updateInfo: chrome.windows.UpdateInfo,
     ): Promise<chrome.windows.Window>;
+    get?(
+      windowId: number,
+      getInfo?: chrome.windows.QueryOptions,
+    ): Promise<chrome.windows.Window>;
+    getCurrent?(
+      getInfo?: chrome.windows.QueryOptions,
+    ): Promise<chrome.windows.Window>;
+    onRemoved?: Pick<
+      typeof chrome.windows.onRemoved,
+      'addListener' | 'removeListener'
+    >;
   };
   downloads?: {
     cancel(downloadId: number): Promise<void>;

@@ -1,5 +1,7 @@
 const PAGE_LIFECYCLE_INTERRUPTED =
   /(?:back\/forward cache|page keeping the extension port|message channel (?:is )?closed|port (?:is )?closed|receiving end does not exist|could not establish connection|extension context (?:has been )?invalidated|no tab with id|invalid tab id|no frame with id|frame with id .* (?:was removed|is showing error page)|the frame was removed|the tab was closed)/i;
+const RESTRICTED_BROWSER_PAGE_ACCESS =
+  /(?:cannot access .*(?:chrome:\/\/|arc:\/\/|edge:\/\/|about:|devtools:\/\/|view-source:|chrome-extension:\/\/)|cannot access (?:a |an )?(?:chrome|arc|edge|about|devtools|view-source|chrome-extension)|cannot access contents of|extensions? gallery cannot be scripted|cannot be scripted|missing host permission)/i;
 const EXTENSION_STORAGE_SPACE_FAILURE =
   /(?:FILE_ERROR_NO_SPACE|QUOTA_BYTES|QuotaExceededError)/iu;
 
@@ -106,6 +108,14 @@ export function extensionErrorDetails(error: unknown) {
   };
 }
 
+export function isRestrictedBrowserPageError(error: unknown) {
+  return RESTRICTED_BROWSER_PAGE_ACCESS.test(extensionErrorMessage(error));
+}
+
 export function isExtensionPageLifecycleInterrupted(error: unknown) {
-  return PAGE_LIFECYCLE_INTERRUPTED.test(extensionErrorMessage(error));
+  const message = extensionErrorMessage(error);
+  return (
+    PAGE_LIFECYCLE_INTERRUPTED.test(message) ||
+    RESTRICTED_BROWSER_PAGE_ACCESS.test(message)
+  );
 }

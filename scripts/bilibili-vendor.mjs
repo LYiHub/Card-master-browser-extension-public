@@ -65,6 +65,30 @@ const YOUTUBE_OWNED_MOBILE_OBSERVER_CREATION =
 const SPONSOR_AUTOMATIC_HELP_OPEN =
   'chrome.tabs.create({url:chrome.runtime.getURL("/help/index.html")})';
 const SPONSOR_DISABLED_AUTOMATIC_HELP_OPEN = 'void 0';
+const SPONSOR_INJECT_UPDATED_SCRIPTS_EXECUTION =
+  'for(const t of yield i.chromeP.tabs.query({url:e.matches}))e.css&&e.css.length>0&&(yield i.chromeP.scripting.insertCSS({target:{tabId:t.id},files:e.css||[]})),yield i.chromeP.scripting.executeScript({target:{tabId:t.id},files:e.js||[],world:e.world||"ISOLATED"});';
+const SPONSOR_GUARDED_INJECT_UPDATED_SCRIPTS_EXECUTION =
+  'for(const t of yield i.chromeP.tabs.query({url:e.matches}))try{e.css&&e.css.length>0&&(yield i.chromeP.scripting.insertCSS({target:{tabId:t.id},files:e.css||[]})),yield i.chromeP.scripting.executeScript({target:{tabId:t.id},files:e.js||[],world:e.world||"ISOLATED"})}catch(e){}';
+const SPONSOR_LOG_WARN =
+  't.logWarn=function(e){"undefined"!=typeof window?window.SBLogs.warn.push(`[' +
+  '$' +
+  '{(new Date).toISOString()}] ' +
+  '$' +
+  '{e}`):console.warn(`[' +
+  '$' +
+  '{(new Date).toISOString()}] ' +
+  '$' +
+  '{e}`)}';
+const SPONSOR_GUARDED_LOG_WARN =
+  't.logWarn=function(e){if(/(?:cannot access|extensions gallery|cannot be scripted|chrome:\\/\\/|arc:\\/\\/|edge:\\/\\/|about:|devtools:\\/\\/|view-source:|chrome-extension:\\/\\/)/i.test(String((null==e?void 0:e.message)||e)))return;"undefined"!=typeof window?window.SBLogs.warn.push(`[' +
+  '$' +
+  '{(new Date).toISOString()}] ' +
+  '$' +
+  '{e}`):console.warn(`[' +
+  '$' +
+  '{(new Date).toISOString()}] ' +
+  '$' +
+  '{e}`)}';
 const SPONSOR_STORAGE_LOCAL = 'chrome.storage.local';
 const SPONSOR_STORAGE_SYNC = 'chrome.storage.sync';
 const SPONSOR_STORAGE_CHANGED = 'chrome.storage.onChanged';
@@ -268,12 +292,29 @@ export function patchPakkuContentRuntime(source) {
 }
 
 export function patchSponsorBackgroundRuntime(source) {
-  return replaceRequired(
+  let patched = replaceRequired(
     source,
     SPONSOR_AUTOMATIC_HELP_OPEN,
     SPONSOR_DISABLED_AUTOMATIC_HELP_OPEN,
     'SponsorBlock automatic install help page',
   );
+  if (patched.includes(SPONSOR_INJECT_UPDATED_SCRIPTS_EXECUTION)) {
+    patched = replaceRequired(
+      patched,
+      SPONSOR_INJECT_UPDATED_SCRIPTS_EXECUTION,
+      SPONSOR_GUARDED_INJECT_UPDATED_SCRIPTS_EXECUTION,
+      'SponsorBlock safe script injection',
+    );
+  }
+  if (patched.includes(SPONSOR_LOG_WARN)) {
+    patched = replaceRequired(
+      patched,
+      SPONSOR_LOG_WARN,
+      SPONSOR_GUARDED_LOG_WARN,
+      'SponsorBlock restricted URL warning suppression',
+    );
+  }
+  return patched;
 }
 
 export function rewriteSponsorRuntimePaths(

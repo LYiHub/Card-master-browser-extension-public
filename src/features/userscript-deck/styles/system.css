@@ -333,3 +333,66 @@
     grid-template-columns: 1fr;
   }
 }
+
+.manager-browser-notice {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  background: var(--app-ui-surface);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-browser-notice-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-browser-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  background: var(--app-ui-accent-soft);
+  color: var(--app-ui-accent);
+  border: 1px solid var(--app-ui-border);
+}
+
+.manager-browser-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--app-ui-ink);
+}
+
+.manager-browser-mode-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.manager-browser-mode-tag.is-popup {
+  background: color-mix(in srgb, var(--app-ui-warning) 14%, transparent);
+  color: var(--app-ui-warning);
+  border: 1px solid color-mix(in srgb, var(--app-ui-warning) 30%, transparent);
+}
+
+.manager-browser-mode-tag.is-sidepanel {
+  background: color-mix(in srgb, var(--app-ui-success) 14%, transparent);
+  color: var(--app-ui-success);
+  border: 1px solid color-mix(in srgb, var(--app-ui-success) 30%, transparent);
+}
+
+.manager-browser-notice-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--app-ui-muted);
+}

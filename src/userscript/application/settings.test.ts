@@ -20,12 +20,14 @@ describe('userscript settings', () => {
         updateIntervalDays: 0,
         updateEnabledOnly: false,
         lastUpdateCheckAt: 42,
+        assistantPanelMode: 'popup',
       }),
     ).toEqual({
       reloadAfterScriptChange: true,
       updateIntervalDays: 0,
       updateEnabledOnly: false,
       lastUpdateCheckAt: 42,
+      assistantPanelMode: 'popup',
     });
   });
 
@@ -35,17 +37,27 @@ describe('userscript settings', () => {
         reloadAfterScriptChange: false,
         updateIntervalDays: 2.6,
         updateEnabledOnly: true,
+        assistantPanelMode: 'popup',
       }),
     ).toEqual({
       reloadAfterScriptChange: false,
       updateIntervalDays: 3,
       updateEnabledOnly: true,
+      assistantPanelMode: 'popup',
     });
     expect(
       normalizeUserscriptSettingsInput({
         reloadAfterScriptChange: false,
         updateIntervalDays: '1',
         updateEnabledOnly: true,
+      }),
+    ).toBeNull();
+    expect(
+      normalizeUserscriptSettingsInput({
+        reloadAfterScriptChange: false,
+        updateIntervalDays: 1,
+        updateEnabledOnly: true,
+        assistantPanelMode: 'invalid-mode',
       }),
     ).toBeNull();
   });
