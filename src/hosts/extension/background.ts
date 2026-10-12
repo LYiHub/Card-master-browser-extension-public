@@ -66,7 +66,9 @@ import { parseAssistantPortName } from './assistant-protocol';
 import { ExtensionAssistantService } from './assistant-service';
 import {
   AssistantSurfaceCoordinator,
+  logPopupDiagnostic,
   normalizeAssistantPanelMode,
+  warnPopupDiagnostic,
 } from './assistant-surface-background';
 import { mergeAutomaticUserscriptUpdates } from './automatic-update-commit';
 import { BackgroundEventBroadcaster } from './background-event-broadcaster';
@@ -374,21 +376,20 @@ const preferenceReady = api.storage.local
   .then((stored) => {
     if (preferenceVersion !== 0) return;
     const raw = stored[USERSCRIPT_SETTINGS_STORAGE_KEY];
-    console.log(
+    logPopupDiagnostic(
       '[CardMaster:Background] preferenceReady raw settings loaded:',
       raw,
     );
     if (raw && typeof raw === 'object' && 'assistantPanelMode' in raw) {
       const mode = normalizeAssistantPanelMode(raw.assistantPanelMode);
-      console.log(
-        '[CardMaster:Background] Initializing coordinator mode to:',
-        mode,
+      logPopupDiagnostic(
+        `[CardMaster:Background] Initializing coordinator mode to: ${mode}`,
       );
       assistantSurface.setSurfacePreference(mode);
     }
   })
   .catch((error) => {
-    console.error(
+    warnPopupDiagnostic(
       '[CardMaster:Background] preference-init-failed error:',
       error,
     );
@@ -956,18 +957,17 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'ai-assistant-surface-open') {
     const tabId = sender.tab?.id;
-    console.log(
-      '[CardMaster:Background] Received ai-assistant-surface-open message for tabId:',
-      tabId,
-      'sender.tab:',
-      sender.tab?.url,
-      'message.tab:',
-      message.tab,
-      'detectedBrowser:',
-      message.detectedBrowser,
+    logPopupDiagnostic(
+      '[CardMaster:Background] Received ai-assistant-surface-open message:',
+      {
+        tabId,
+        senderTabUrl: sender.tab?.url,
+        messageTab: message.tab,
+        detectedBrowser: message.detectedBrowser,
+      },
     );
     if (typeof tabId !== 'number') {
-      console.warn(
+      warnPopupDiagnostic(
         '[CardMaster:Background] ai-assistant-surface-open rejected: missing tab id',
       );
       sendResponse(
@@ -981,7 +981,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
       message.detectedBrowser === 'arc' &&
       assistantSurface.getPreference() !== 'popup'
     ) {
-      console.log(
+      logPopupDiagnostic(
         '[CardMaster:Background] Auto-detected Arc browser from open request! Switching to popup mode.',
       );
       assistantSurface.setSurfacePreference('popup');
@@ -990,16 +990,14 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     void assistantSurface
       .open(tabId, message.tab, message.detectedBrowser)
       .then(() => {
-        console.log(
-          '[CardMaster:Background] assistantSurface.open completed for tabId:',
-          tabId,
+        logPopupDiagnostic(
+          `[CardMaster:Background] assistantSurface.open completed for tabId: ${tabId}`,
         );
         sendResponse({ ok: true });
       })
       .catch((error) => {
-        console.error(
-          '[CardMaster:Background] assistantSurface.open failed for tabId:',
-          tabId,
+        warnPopupDiagnostic(
+          `[CardMaster:Background] assistantSurface.open failed for tabId: ${tabId}`,
           error,
         );
         sendResponse(userscriptBackgroundErrorResponse(error));
@@ -1011,7 +1009,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
       message.brand === 'arc' &&
       assistantSurface.getPreference() !== 'popup'
     ) {
-      console.log(
+      logPopupDiagnostic(
         '[CardMaster:Background] Auto-detected Arc browser from client heartbeat. Switching to popup mode.',
       );
       assistantSurface.setSurfacePreference('popup');

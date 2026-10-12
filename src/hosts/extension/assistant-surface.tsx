@@ -92,10 +92,146 @@ function isFullPage() {
   return new URLSearchParams(location.search).get('fullPage') === '1';
 }
 
+function formatClientLogPayload(payload: unknown): string {
+  if (payload === undefined) return '';
+  if (typeof payload === 'string') return payload;
+  if (payload instanceof Error) {
+    return JSON.stringify({
+      name: payload.name,
+      message: payload.message,
+      stack: payload.stack,
+    });
+  }
+  try {
+    return JSON.stringify(payload);
+  } catch {
+    return String(payload);
+  }
+}
+
+function logClientDiagnostic(tag: string, payload?: unknown) {
+  const line =
+    payload === undefined ? tag : `${tag} ${formatClientLogPayload(payload)}`;
+  console.log(line);
+  if (typeof globalThis !== 'undefined') {
+    if (!globalThis.__cardMasterPopupLogs) {
+      globalThis.__cardMasterPopupLogs = [];
+      globalThis.dumpCardMasterLogs = () =>
+        globalThis.__cardMasterPopupLogs?.join('\n') ?? 'No logs recorded.';
+    }
+    globalThis.__cardMasterPopupLogs.push(line);
+  }
+}
+
+function warnClientDiagnostic(tag: string, errorOrPayload?: unknown) {
+  const details =
+    errorOrPayload instanceof Error
+      ? { message: errorOrPayload.message, stack: errorOrPayload.stack }
+      : errorOrPayload;
+  const line = `${tag} ${formatClientLogPayload(details)}`;
+  console.warn(line);
+  if (typeof globalThis !== 'undefined') {
+    if (!globalThis.__cardMasterPopupLogs) {
+      globalThis.__cardMasterPopupLogs = [];
+      globalThis.dumpCardMasterLogs = () =>
+        globalThis.__cardMasterPopupLogs?.join('\n') ?? 'No logs recorded.';
+    }
+    globalThis.__cardMasterPopupLogs.push(`[WARN] ${line}`);
+  }
+}
+
+function checkAndEnforceSize(api: ExtensionApi, reason = 'mount') {
+  if (
+    typeof window === 'undefined' ||
+    isFullPage() ||
+    !api.windows?.getCurrent
+  ) {
+    return;
+  }
+  void api.windows
+    .getCurrent()
+    .then(async (currentWin: chrome.windows.Window) => {
+      logClientDiagnostic(
+        `[CardMaster:Popup:Client] [CP-7:CurrentWindowInfo:${reason}]`,
+        {
+          id: currentWin?.id,
+          type: currentWin?.type,
+          state: currentWin?.state,
+          left: currentWin?.left,
+          top: currentWin?.top,
+          width: currentWin?.width,
+          height: currentWin?.height,
+          focused: currentWin?.focused,
+        },
+      );
+
+      const isOversized =
+        (typeof currentWin.width === 'number' && currentWin.width > 520) ||
+        currentWin.state === 'maximized' ||
+        currentWin.state === 'fullscreen' ||
+        window.outerWidth > 520;
+
+      if (isOversized && currentWin.id && api.windows?.update) {
+        const targetWidth = 480;
+        const screenWidth = window.screen.availWidth || 1920;
+        const screenHeight = window.screen.availHeight || 1080;
+        const targetLeft = Math.max(0, screenWidth - targetWidth);
+        const targetHeight =
+          currentWin.height && currentWin.height < screenHeight
+            ? currentWin.height
+            : screenHeight;
+
+        logClientDiagnostic(
+          '[CardMaster:Popup:Client] [CP-8:EnforceResizeAttempt]',
+          {
+            id: currentWin.id,
+            reason,
+            targetWidth,
+            targetHeight,
+            targetLeft,
+          },
+        );
+
+        try {
+          const updated = await api.windows.update(currentWin.id, {
+            state: 'normal',
+            width: targetWidth,
+            height: targetHeight,
+            left: targetLeft,
+            top: currentWin.top ?? 0,
+          });
+          logClientDiagnostic(
+            '[CardMaster:Popup:Client] [CP-8:EnforceResizeSuccess]',
+            {
+              id: updated.id,
+              type: updated.type,
+              state: updated.state,
+              left: updated.left,
+              top: updated.top,
+              width: updated.width,
+              height: updated.height,
+            },
+          );
+        } catch (err) {
+          warnClientDiagnostic(
+            '[CardMaster:Popup:Client] [CP-8:EnforceResizeError]',
+            err,
+          );
+        }
+      }
+    })
+    .catch((err) => {
+      warnClientDiagnostic(
+        '[CardMaster:Popup:Client] [CP-7:CurrentWindowQueryError]',
+        err,
+      );
+    });
+}
+
 function enforceSidebarWindowBounds(api: ExtensionApi) {
   if (typeof window === 'undefined' || isFullPage()) return;
 
-  console.log('[CardMaster:Popup:Client] [CP-6:SurfaceMount]', {
+  logClientDiagnostic('[CardMaster:Popup:Client] [CP-6:SurfaceMount]', {
     href: location.href,
     search: location.search,
     innerWidth: window.innerWidth,
@@ -109,89 +245,25 @@ function enforceSidebarWindowBounds(api: ExtensionApi) {
     devicePixelRatio: window.devicePixelRatio,
   });
 
+  let resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   window.addEventListener('resize', () => {
-    console.log('[CardMaster:Popup:Client] [CP-9:WindowResizeEvent]', {
+    logClientDiagnostic('[CardMaster:Popup:Client] [CP-9:WindowResizeEvent]', {
       innerWidth: window.innerWidth,
       innerHeight: window.innerHeight,
       outerWidth: window.outerWidth,
       outerHeight: window.outerHeight,
       timestamp: new Date().toISOString(),
     });
+    if (window.outerWidth > 520) {
+      if (resizeDebounceTimer) clearTimeout(resizeDebounceTimer);
+      resizeDebounceTimer = setTimeout(() => {
+        checkAndEnforceSize(api, 'resize-debounce');
+      }, 150);
+    }
   });
 
-  if (api.windows?.getCurrent) {
-    void api.windows
-      .getCurrent()
-      .then(async (currentWin: chrome.windows.Window) => {
-        console.log('[CardMaster:Popup:Client] [CP-7:CurrentWindowInfo]', {
-          id: currentWin?.id,
-          type: currentWin?.type,
-          state: currentWin?.state,
-          left: currentWin?.left,
-          top: currentWin?.top,
-          width: currentWin?.width,
-          height: currentWin?.height,
-          focused: currentWin?.focused,
-        });
-
-        const isOversized =
-          (typeof currentWin.width === 'number' && currentWin.width > 520) ||
-          currentWin.state === 'maximized' ||
-          currentWin.state === 'fullscreen' ||
-          window.outerWidth > 520;
-
-        if (isOversized && currentWin.id && api.windows?.update) {
-          const targetWidth = 480;
-          const screenWidth = window.screen.availWidth || 1920;
-          const screenHeight = window.screen.availHeight || 1080;
-          const targetLeft = Math.max(0, screenWidth - targetWidth);
-          const targetHeight =
-            currentWin.height && currentWin.height < screenHeight
-              ? currentWin.height
-              : screenHeight;
-
-          console.log('[CardMaster:Popup:Client] [CP-8:EnforceResizeAttempt]', {
-            id: currentWin.id,
-            targetWidth,
-            targetHeight,
-            targetLeft,
-          });
-
-          try {
-            const updated = await api.windows.update(currentWin.id, {
-              state: 'normal',
-              width: targetWidth,
-              height: targetHeight,
-              left: targetLeft,
-              top: currentWin.top ?? 0,
-            });
-            console.log(
-              '[CardMaster:Popup:Client] [CP-8:EnforceResizeSuccess]',
-              {
-                id: updated.id,
-                type: updated.type,
-                state: updated.state,
-                left: updated.left,
-                top: updated.top,
-                width: updated.width,
-                height: updated.height,
-              },
-            );
-          } catch (err) {
-            console.warn(
-              '[CardMaster:Popup:Client] [CP-8:EnforceResizeError]',
-              err,
-            );
-          }
-        }
-      })
-      .catch((err) => {
-        console.warn(
-          '[CardMaster:Popup:Client] [CP-7:CurrentWindowQueryError]',
-          err,
-        );
-      });
-  }
+  checkAndEnforceSize(api, 'initial');
+  setTimeout(() => checkAndEnforceSize(api, 'delayed-400ms'), 400);
 }
 
 async function resolveTabId(api: ExtensionApi) {

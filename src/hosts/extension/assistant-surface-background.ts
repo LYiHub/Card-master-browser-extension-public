@@ -54,6 +54,59 @@ export type SidebarWindowBounds = {
 
 export const DEFAULT_SIDEBAR_WIDTH = 480;
 
+declare global {
+  var __cardMasterPopupLogs: string[] | undefined;
+  var dumpCardMasterLogs: (() => string) | undefined;
+}
+
+export function formatLogPayload(payload: unknown): string {
+  if (payload === undefined) return '';
+  if (typeof payload === 'string') return payload;
+  if (payload instanceof Error) {
+    return JSON.stringify({
+      name: payload.name,
+      message: payload.message,
+      stack: payload.stack,
+    });
+  }
+  try {
+    return JSON.stringify(payload);
+  } catch {
+    return String(payload);
+  }
+}
+
+export function logPopupDiagnostic(tag: string, payload?: unknown) {
+  const line =
+    payload === undefined ? tag : `${tag} ${formatLogPayload(payload)}`;
+  console.log(line);
+  if (typeof globalThis !== 'undefined') {
+    if (!globalThis.__cardMasterPopupLogs) {
+      globalThis.__cardMasterPopupLogs = [];
+      globalThis.dumpCardMasterLogs = () =>
+        globalThis.__cardMasterPopupLogs?.join('\n') ?? 'No logs recorded.';
+    }
+    globalThis.__cardMasterPopupLogs.push(line);
+  }
+}
+
+export function warnPopupDiagnostic(tag: string, errorOrPayload?: unknown) {
+  const details =
+    errorOrPayload instanceof Error
+      ? { message: errorOrPayload.message, stack: errorOrPayload.stack }
+      : errorOrPayload;
+  const line = `${tag} ${formatLogPayload(details)}`;
+  console.warn(line);
+  if (typeof globalThis !== 'undefined') {
+    if (!globalThis.__cardMasterPopupLogs) {
+      globalThis.__cardMasterPopupLogs = [];
+      globalThis.dumpCardMasterLogs = () =>
+        globalThis.__cardMasterPopupLogs?.join('\n') ?? 'No logs recorded.';
+    }
+    globalThis.__cardMasterPopupLogs.push(`[WARN] ${line}`);
+  }
+}
+
 export async function calculateSidebarBounds(
   api: ExtensionBackgroundApi,
   targetWidth = DEFAULT_SIDEBAR_WIDTH,
@@ -70,7 +123,7 @@ export async function calculateSidebarBounds(
         detectionSource = `tab-${tabId}-window-${tab.windowId}`;
       }
     } catch (tabErr) {
-      console.warn(
+      warnPopupDiagnostic(
         '[CardMaster:Popup:Background] Tab query for host window failed:',
         tabErr,
       );
@@ -82,7 +135,7 @@ export async function calculateSidebarBounds(
       hostWin = await api.windows.getLastFocused({ populate: false });
       detectionSource = 'getLastFocused';
     } catch (lastFocusedErr) {
-      console.warn(
+      warnPopupDiagnostic(
         '[CardMaster:Popup:Background] getLastFocused for host window failed:',
         lastFocusedErr,
       );
@@ -94,14 +147,14 @@ export async function calculateSidebarBounds(
       hostWin = await api.windows.getCurrent({ populate: false });
       detectionSource = 'getCurrent';
     } catch (currentErr) {
-      console.warn(
+      warnPopupDiagnostic(
         '[CardMaster:Popup:Background] getCurrent for host window failed:',
         currentErr,
       );
     }
   }
 
-  console.log('[CardMaster:Popup:Background] [CP-1:HostDetection]', {
+  logPopupDiagnostic('[CardMaster:Popup:Background] [CP-1:HostDetection]', {
     detectionSource,
     tabId,
     hostWindowId: hostWin?.id,
@@ -135,7 +188,10 @@ export async function calculateSidebarBounds(
       width: targetWidth,
       height: Math.round(targetHeight),
     };
-    console.log('[CardMaster:Popup:Background] [CP-2:TargetBounds]', bounds);
+    logPopupDiagnostic(
+      '[CardMaster:Popup:Background] [CP-2:TargetBounds]',
+      bounds,
+    );
     return bounds;
   }
 
@@ -143,7 +199,7 @@ export async function calculateSidebarBounds(
     width: targetWidth,
     height: 900,
   };
-  console.log(
+  logPopupDiagnostic(
     '[CardMaster:Popup:Background] [CP-2:TargetBoundsFallback]',
     defaultBounds,
   );
@@ -171,7 +227,7 @@ async function openPopupSurface(
   const url = api.runtime.getURL(path);
   ensurePopupCloseListener(api);
 
-  console.log('[CardMaster:Popup:Background] [CP-0:OpenRequest]', {
+  logPopupDiagnostic('[CardMaster:Popup:Background] [CP-0:OpenRequest]', {
     path,
     url,
     tabId,
@@ -182,10 +238,12 @@ async function openPopupSurface(
     try {
       const existing = await api.windows.get(activePopupWindowId);
       if (existing) {
-        console.log(
+        logPopupDiagnostic(
           '[CardMaster:Popup:Background] [CP-0:FocusExisting]',
-          activePopupWindowId,
-          existing,
+          {
+            activePopupWindowId,
+            existing,
+          },
         );
         await api.windows.update(activePopupWindowId, { focused: true });
         return;
@@ -213,14 +271,14 @@ async function openPopupSurface(
         ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
         focused: true,
       };
-      console.log(
+      logPopupDiagnostic(
         '[CardMaster:Popup:Background] [CP-3:CallingWindowsCreate]',
         createData,
       );
 
       const win = await api.windows.create(createData);
       activePopupWindowId = win?.id ?? null;
-      console.log('[CardMaster:Popup:Background] [CP-3:WindowCreated]', {
+      logPopupDiagnostic('[CardMaster:Popup:Background] [CP-3:WindowCreated]', {
         id: win?.id,
         type: win?.type,
         state: win?.state,
@@ -243,7 +301,7 @@ async function openPopupSurface(
             ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
             focused: true,
           });
-          console.log(
+          logPopupDiagnostic(
             '[CardMaster:Popup:Background] [CP-4:WindowsUpdateSuccess]',
             {
               id: updateResult?.id,
@@ -256,18 +314,18 @@ async function openPopupSurface(
             },
           );
         } catch (updateErr) {
-          console.warn(
+          warnPopupDiagnostic(
             '[CardMaster:Popup:Background] [CP-4:WindowsUpdateError]',
             updateErr,
           );
         }
 
-        // Delayed check at 350ms to inspect whether Arc/macOS changed window bounds post-creation:
+        // Delayed check and post-animation re-enforce:
         setTimeout(async () => {
           if (win.id && api.windows?.get) {
             try {
               const delayed = await api.windows.get(win.id);
-              console.log(
+              logPopupDiagnostic(
                 '[CardMaster:Popup:Background] [CP-5:DelayedCheck@350ms]',
                 {
                   id: delayed?.id,
@@ -279,22 +337,66 @@ async function openPopupSurface(
                   height: delayed?.height,
                 },
               );
+
+              // If Arc or macOS window manager expanded the window (e.g. Little Arc default 1185x832),
+              // re-enforce target bounds after Arc's AppKit opening transition finishes:
+              if (
+                typeof delayed?.width === 'number' &&
+                delayed.width > bounds.width + 40 &&
+                api.windows?.update
+              ) {
+                logPopupDiagnostic(
+                  '[CardMaster:Popup:Background] [CP-5:PostAnimationReEnforceAttempt]',
+                  {
+                    detectedWidth: delayed.width,
+                    targetWidth: bounds.width,
+                    targetHeight: bounds.height,
+                    targetLeft: bounds.left,
+                    targetTop: bounds.top,
+                  },
+                );
+                const reEnforced = await api.windows.update(win.id, {
+                  state: 'normal',
+                  width: bounds.width,
+                  height: bounds.height,
+                  ...(typeof bounds.left === 'number'
+                    ? { left: bounds.left }
+                    : {}),
+                  ...(typeof bounds.top === 'number'
+                    ? { top: bounds.top }
+                    : {}),
+                });
+                logPopupDiagnostic(
+                  '[CardMaster:Popup:Background] [CP-5:PostAnimationReEnforceSuccess]',
+                  {
+                    id: reEnforced?.id,
+                    state: reEnforced?.state,
+                    left: reEnforced?.left,
+                    top: reEnforced?.top,
+                    width: reEnforced?.width,
+                    height: reEnforced?.height,
+                  },
+                );
+              }
             } catch (delayedErr) {
-              console.warn(
+              warnPopupDiagnostic(
                 '[CardMaster:Popup:Background] [CP-5:DelayedCheckError]',
                 delayedErr,
               );
             }
           }
-        }, 350);
+        }, 400);
       }
       return;
     } catch (error) {
-      console.error('[CardMaster:Popup:Background] [CP-3:CreateFailed]', error);
+      warnPopupDiagnostic(
+        '[CardMaster:Popup:Background] [CP-3:CreateFailed]',
+        error,
+      );
       throw error;
     }
   }
-  console.log(
+  logPopupDiagnostic(
     '[CardMaster:Popup:Background] api.windows.create unavailable, using api.tabs.create',
   );
   await api.tabs.create({ url });
@@ -395,7 +497,7 @@ export class AssistantSurfaceCoordinator {
     const previous = this.preference;
     this.preference = preference;
     this.surface = createAssistantSurface(this.api, preference);
-    console.log(
+    logPopupDiagnostic(
       `[CardMaster:Assistant] Coordinator mode changed: ${previous} -> ${preference}`,
     );
     if (this.surface.configure) {
@@ -411,14 +513,14 @@ export class AssistantSurfaceCoordinator {
     if (!this.coldStartPendingOpen) return;
     const { tabId, tab } = this.coldStartPendingOpen;
     if (this.openingTabs.has(tabId)) {
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] Deferring cold-start catchup for tab ${tabId} because it is currently opening`,
       );
       return;
     }
     this.coldStartPendingOpen = null;
     if (this.preference === 'popup') {
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] Cold-start catchup triggered for tab ${tabId} in popup mode`,
       );
       // 主动清理因冷启动抢跑误打开的原生侧栏连接，确保补开调用不再被早退守卫拦截
@@ -430,7 +532,7 @@ export class AssistantSurfaceCoordinator {
         this.activePanels.delete(tabId);
       }
       void this.open(tabId, tab).catch((error) => {
-        console.error(
+        warnPopupDiagnostic(
           `[CardMaster:Assistant] Cold-start popup failed for tab ${tabId}:`,
           error,
         );
@@ -477,19 +579,19 @@ export class AssistantSurfaceCoordinator {
     detectedBrowser?: string,
   ) {
     if (detectedBrowser === 'arc' && this.preference !== 'popup') {
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] open() received detectedBrowser: arc. Forcing popup mode for tab ${tabId}.`,
       );
       this.setSurfacePreference('popup');
     }
-    console.log(
+    logPopupDiagnostic(
       `[CardMaster:Assistant] open() called for tab ${tabId}, preference: ${this.preference}, preferenceReady: ${Boolean(this.preferenceReady)}`,
     );
     if (this.preferenceReady) {
       // 必须保护手势的仅限于 Firefox 的 sidebarAction.open()；
       // 在非 Firefox 环境（Chromium / Arc / Edge）或当前已确认为 popup 模式下，直接等待 1ms 的 preferenceReady，从源头避免盲开错。
       if (!this.api.sidebarAction || this.preference === 'popup') {
-        console.log(
+        logPopupDiagnostic(
           `[CardMaster:Assistant] Awaiting preferenceReady for tab ${tabId}...`,
         );
         await this.preferenceReady;
@@ -498,7 +600,7 @@ export class AssistantSurfaceCoordinator {
     const activePanel = this.activePanels.get(tabId);
     if (tab) this.requestedTabs.set(tabId, tab);
     if (activePanel && tab) {
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] Active panel exists for tab ${tabId}, sending navigate message`,
       );
       const message: AssistantSurfaceNavigationMessage = {
@@ -514,7 +616,7 @@ export class AssistantSurfaceCoordinator {
     const isSameModeAlreadyActive =
       activePanel && activePanel.mode === this.preference;
     if (isSameModeAlreadyActive || this.openingTabs.has(tabId)) {
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] Early return: sameModeActive=${Boolean(isSameModeAlreadyActive)}, openingTabs=${this.openingTabs.has(tabId)}`,
       );
       await configuration;
@@ -523,7 +625,7 @@ export class AssistantSurfaceCoordinator {
 
     // 若当前存在活跃面板但模式不同（例如从原生侧栏切到独立窗口），清理旧面板连接并切换打开
     if (activePanel && activePanel.mode !== this.preference) {
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] Active panel mode mismatch (${activePanel.mode} vs ${this.preference}), switching surface for tab ${tabId}`,
       );
       try {
@@ -537,15 +639,15 @@ export class AssistantSurfaceCoordinator {
     }
     this.openingTabs.add(tabId);
     try {
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] Calling this.surface.open(mode: ${this.preference}) for tab ${tabId}...`,
       );
       await this.surface.open(tabId, assistantSurfacePath(tabId));
-      console.log(
+      logPopupDiagnostic(
         `[CardMaster:Assistant] surface.open successfully completed for tab ${tabId}`,
       );
     } catch (error) {
-      console.error(
+      warnPopupDiagnostic(
         `[CardMaster:Assistant] surface.open failed for tab ${tabId}:`,
         error,
       );
