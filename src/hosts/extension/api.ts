@@ -164,6 +164,9 @@ export type ExtensionBackgroundApi = ExtensionApi & {
     getCurrent?(
       getInfo?: chrome.windows.QueryOptions,
     ): Promise<chrome.windows.Window>;
+    getLastFocused?(
+      getInfo?: chrome.windows.QueryOptions,
+    ): Promise<chrome.windows.Window>;
     onRemoved?: Pick<
       typeof chrome.windows.onRemoved,
       'addListener' | 'removeListener'

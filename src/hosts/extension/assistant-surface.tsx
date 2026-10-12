@@ -94,33 +94,103 @@ function isFullPage() {
 
 function enforceSidebarWindowBounds(api: ExtensionApi) {
   if (typeof window === 'undefined' || isFullPage()) return;
-  if (
-    window.outerWidth > 640 &&
-    api.windows?.getCurrent &&
-    api.windows?.update
-  ) {
+
+  console.log('[CardMaster:Popup:Client] [CP-6:SurfaceMount]', {
+    href: location.href,
+    search: location.search,
+    innerWidth: window.innerWidth,
+    innerHeight: window.innerHeight,
+    outerWidth: window.outerWidth,
+    outerHeight: window.outerHeight,
+    screenWidth: window.screen?.width,
+    screenHeight: window.screen?.height,
+    availWidth: window.screen?.availWidth,
+    availHeight: window.screen?.availHeight,
+    devicePixelRatio: window.devicePixelRatio,
+  });
+
+  window.addEventListener('resize', () => {
+    console.log('[CardMaster:Popup:Client] [CP-9:WindowResizeEvent]', {
+      innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
+      outerWidth: window.outerWidth,
+      outerHeight: window.outerHeight,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  if (api.windows?.getCurrent) {
     void api.windows
       .getCurrent()
-      .then((currentWin: chrome.windows.Window) => {
-        if (
-          currentWin.type === 'popup' &&
-          currentWin.id &&
-          api.windows?.update
-        ) {
+      .then(async (currentWin: chrome.windows.Window) => {
+        console.log('[CardMaster:Popup:Client] [CP-7:CurrentWindowInfo]', {
+          id: currentWin?.id,
+          type: currentWin?.type,
+          state: currentWin?.state,
+          left: currentWin?.left,
+          top: currentWin?.top,
+          width: currentWin?.width,
+          height: currentWin?.height,
+          focused: currentWin?.focused,
+        });
+
+        const isOversized =
+          (typeof currentWin.width === 'number' && currentWin.width > 520) ||
+          currentWin.state === 'maximized' ||
+          currentWin.state === 'fullscreen' ||
+          window.outerWidth > 520;
+
+        if (isOversized && currentWin.id && api.windows?.update) {
           const targetWidth = 480;
           const screenWidth = window.screen.availWidth || 1920;
           const screenHeight = window.screen.availHeight || 1080;
           const targetLeft = Math.max(0, screenWidth - targetWidth);
-          const targetHeight = currentWin.height || screenHeight;
-          void api.windows.update(currentWin.id, {
-            width: targetWidth,
-            height: targetHeight,
-            left: targetLeft,
-            top: currentWin.top ?? 0,
+          const targetHeight =
+            currentWin.height && currentWin.height < screenHeight
+              ? currentWin.height
+              : screenHeight;
+
+          console.log('[CardMaster:Popup:Client] [CP-8:EnforceResizeAttempt]', {
+            id: currentWin.id,
+            targetWidth,
+            targetHeight,
+            targetLeft,
           });
+
+          try {
+            const updated = await api.windows.update(currentWin.id, {
+              state: 'normal',
+              width: targetWidth,
+              height: targetHeight,
+              left: targetLeft,
+              top: currentWin.top ?? 0,
+            });
+            console.log(
+              '[CardMaster:Popup:Client] [CP-8:EnforceResizeSuccess]',
+              {
+                id: updated.id,
+                type: updated.type,
+                state: updated.state,
+                left: updated.left,
+                top: updated.top,
+                width: updated.width,
+                height: updated.height,
+              },
+            );
+          } catch (err) {
+            console.warn(
+              '[CardMaster:Popup:Client] [CP-8:EnforceResizeError]',
+              err,
+            );
+          }
         }
       })
-      .catch(() => undefined);
+      .catch((err) => {
+        console.warn(
+          '[CardMaster:Popup:Client] [CP-7:CurrentWindowQueryError]',
+          err,
+        );
+      });
   }
 }
 

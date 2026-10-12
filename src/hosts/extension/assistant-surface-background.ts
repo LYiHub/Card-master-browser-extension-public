@@ -57,42 +57,97 @@ export const DEFAULT_SIDEBAR_WIDTH = 480;
 export async function calculateSidebarBounds(
   api: ExtensionBackgroundApi,
   targetWidth = DEFAULT_SIDEBAR_WIDTH,
+  tabId?: number,
 ): Promise<SidebarWindowBounds> {
-  try {
-    const currentWin = await api.windows?.getCurrent?.({ populate: false });
-    if (
-      currentWin &&
-      typeof currentWin.width === 'number' &&
-      typeof currentWin.height === 'number'
-    ) {
-      const winLeft = currentWin.left ?? 0;
-      const winTop = currentWin.top ?? 0;
-      const winWidth = currentWin.width;
-      const winHeight = currentWin.height;
+  let hostWin: chrome.windows.Window | undefined;
+  let detectionSource = 'default';
 
-      // Position docked on the right edge of the current browser window, matching its height
-      const targetLeft = Math.max(0, winLeft + winWidth - targetWidth);
-      const targetTop = Math.max(0, winTop);
-      const targetHeight = Math.max(600, winHeight);
-
-      return {
-        left: Math.round(targetLeft),
-        top: Math.round(targetTop),
-        width: targetWidth,
-        height: Math.round(targetHeight),
-      };
+  if (typeof tabId === 'number' && api.tabs?.get && api.windows?.get) {
+    try {
+      const tab = await api.tabs.get(tabId);
+      if (typeof tab?.windowId === 'number') {
+        hostWin = await api.windows.get(tab.windowId);
+        detectionSource = `tab-${tabId}-window-${tab.windowId}`;
+      }
+    } catch (tabErr) {
+      console.warn(
+        '[CardMaster:Popup:Background] Tab query for host window failed:',
+        tabErr,
+      );
     }
-  } catch (err) {
-    console.warn(
-      '[CardMaster:Assistant] Failed to calculate current window bounds for sidebar:',
-      err,
-    );
   }
 
-  return {
+  if (!hostWin && api.windows?.getLastFocused) {
+    try {
+      hostWin = await api.windows.getLastFocused({ populate: false });
+      detectionSource = 'getLastFocused';
+    } catch (lastFocusedErr) {
+      console.warn(
+        '[CardMaster:Popup:Background] getLastFocused for host window failed:',
+        lastFocusedErr,
+      );
+    }
+  }
+
+  if (!hostWin && api.windows?.getCurrent) {
+    try {
+      hostWin = await api.windows.getCurrent({ populate: false });
+      detectionSource = 'getCurrent';
+    } catch (currentErr) {
+      console.warn(
+        '[CardMaster:Popup:Background] getCurrent for host window failed:',
+        currentErr,
+      );
+    }
+  }
+
+  console.log('[CardMaster:Popup:Background] [CP-1:HostDetection]', {
+    detectionSource,
+    tabId,
+    hostWindowId: hostWin?.id,
+    type: hostWin?.type,
+    state: hostWin?.state,
+    left: hostWin?.left,
+    top: hostWin?.top,
+    width: hostWin?.width,
+    height: hostWin?.height,
+    focused: hostWin?.focused,
+  });
+
+  if (
+    hostWin &&
+    typeof hostWin.width === 'number' &&
+    typeof hostWin.height === 'number'
+  ) {
+    const winLeft = hostWin.left ?? 0;
+    const winTop = hostWin.top ?? 0;
+    const winWidth = hostWin.width;
+    const winHeight = hostWin.height;
+
+    // Position docked on the right edge of the host browser window, matching its height
+    const targetLeft = Math.max(0, winLeft + winWidth - targetWidth);
+    const targetTop = Math.max(0, winTop);
+    const targetHeight = Math.max(600, winHeight);
+
+    const bounds: SidebarWindowBounds = {
+      left: Math.round(targetLeft),
+      top: Math.round(targetTop),
+      width: targetWidth,
+      height: Math.round(targetHeight),
+    };
+    console.log('[CardMaster:Popup:Background] [CP-2:TargetBounds]', bounds);
+    return bounds;
+  }
+
+  const defaultBounds: SidebarWindowBounds = {
     width: targetWidth,
     height: 900,
   };
+  console.log(
+    '[CardMaster:Popup:Background] [CP-2:TargetBoundsFallback]',
+    defaultBounds,
+  );
+  return defaultBounds;
 }
 
 let activePopupWindowId: number | null = null;
@@ -108,17 +163,29 @@ function ensurePopupCloseListener(api: ExtensionBackgroundApi) {
   });
 }
 
-async function openPopupSurface(api: ExtensionBackgroundApi, path: string) {
+async function openPopupSurface(
+  api: ExtensionBackgroundApi,
+  path: string,
+  tabId?: number,
+) {
   const url = api.runtime.getURL(path);
   ensurePopupCloseListener(api);
+
+  console.log('[CardMaster:Popup:Background] [CP-0:OpenRequest]', {
+    path,
+    url,
+    tabId,
+    activePopupWindowId,
+  });
 
   if (activePopupWindowId !== null && api.windows?.get && api.windows?.update) {
     try {
       const existing = await api.windows.get(activePopupWindowId);
       if (existing) {
         console.log(
-          '[CardMaster:Assistant] Focusing existing popup window:',
+          '[CardMaster:Popup:Background] [CP-0:FocusExisting]',
           activePopupWindowId,
+          existing,
         );
         await api.windows.update(activePopupWindowId, { focused: true });
         return;
@@ -128,32 +195,48 @@ async function openPopupSurface(api: ExtensionBackgroundApi, path: string) {
     }
   }
 
-  console.log('[CardMaster:Assistant] openPopupSurface url:', url);
   if (api.windows?.create) {
     try {
-      const bounds = await calculateSidebarBounds(api);
-      console.log('[CardMaster:Assistant] Target sidebar bounds:', bounds);
+      const bounds = await calculateSidebarBounds(
+        api,
+        DEFAULT_SIDEBAR_WIDTH,
+        tabId,
+      );
 
-      const win = await api.windows.create({
+      const createData: chrome.windows.CreateData = {
         url,
         type: 'popup',
+        state: 'normal',
         width: bounds.width,
         height: bounds.height,
         ...(typeof bounds.left === 'number' ? { left: bounds.left } : {}),
         ...(typeof bounds.top === 'number' ? { top: bounds.top } : {}),
         focused: true,
-      });
-      activePopupWindowId = win?.id ?? null;
+      };
       console.log(
-        '[CardMaster:Assistant] Popup window created successfully:',
-        win,
+        '[CardMaster:Popup:Background] [CP-3:CallingWindowsCreate]',
+        createData,
       );
 
+      const win = await api.windows.create(createData);
+      activePopupWindowId = win?.id ?? null;
+      console.log('[CardMaster:Popup:Background] [CP-3:WindowCreated]', {
+        id: win?.id,
+        type: win?.type,
+        state: win?.state,
+        left: win?.left,
+        top: win?.top,
+        width: win?.width,
+        height: win?.height,
+        focused: win?.focused,
+      });
+
       // Arc and macOS window managers often default to window state or ignore create bounds.
-      // Explicitly enforce target sidebar bounds via api.windows.update:
+      // Explicitly enforce target sidebar bounds via api.windows.update with state: 'normal':
       if (win?.id && api.windows.update) {
         try {
-          await api.windows.update(win.id, {
+          const updateResult = await api.windows.update(win.id, {
+            state: 'normal',
             width: bounds.width,
             height: bounds.height,
             ...(typeof bounds.left === 'number' ? { left: bounds.left } : {}),
@@ -161,24 +244,58 @@ async function openPopupSurface(api: ExtensionBackgroundApi, path: string) {
             focused: true,
           });
           console.log(
-            '[CardMaster:Assistant] Sidebar bounds enforced via update:',
-            win.id,
+            '[CardMaster:Popup:Background] [CP-4:WindowsUpdateSuccess]',
+            {
+              id: updateResult?.id,
+              type: updateResult?.type,
+              state: updateResult?.state,
+              left: updateResult?.left,
+              top: updateResult?.top,
+              width: updateResult?.width,
+              height: updateResult?.height,
+            },
           );
         } catch (updateErr) {
           console.warn(
-            '[CardMaster:Assistant] windows.update bounds failed:',
+            '[CardMaster:Popup:Background] [CP-4:WindowsUpdateError]',
             updateErr,
           );
         }
+
+        // Delayed check at 350ms to inspect whether Arc/macOS changed window bounds post-creation:
+        setTimeout(async () => {
+          if (win.id && api.windows?.get) {
+            try {
+              const delayed = await api.windows.get(win.id);
+              console.log(
+                '[CardMaster:Popup:Background] [CP-5:DelayedCheck@350ms]',
+                {
+                  id: delayed?.id,
+                  type: delayed?.type,
+                  state: delayed?.state,
+                  left: delayed?.left,
+                  top: delayed?.top,
+                  width: delayed?.width,
+                  height: delayed?.height,
+                },
+              );
+            } catch (delayedErr) {
+              console.warn(
+                '[CardMaster:Popup:Background] [CP-5:DelayedCheckError]',
+                delayedErr,
+              );
+            }
+          }
+        }, 350);
       }
       return;
     } catch (error) {
-      console.error('[CardMaster:Assistant] api.windows.create failed:', error);
+      console.error('[CardMaster:Popup:Background] [CP-3:CreateFailed]', error);
       throw error;
     }
   }
   console.log(
-    '[CardMaster:Assistant] api.windows.create unavailable, using api.tabs.create',
+    '[CardMaster:Popup:Background] api.windows.create unavailable, using api.tabs.create',
   );
   await api.tabs.create({ url });
 }
@@ -197,7 +314,7 @@ function createAssistantSurface(
 ): AssistantSurface {
   if (preference === 'popup') {
     return {
-      open: (_tabId, path) => openPopupSurface(api, path),
+      open: (tabId, path) => openPopupSurface(api, path, tabId),
     };
   }
   const sidePanel = api.sidePanel;
@@ -224,7 +341,7 @@ function createAssistantSurface(
     };
   }
   return {
-    open: (_tabId, path) => openPopupSurface(api, path),
+    open: (tabId, path) => openPopupSurface(api, path, tabId),
   };
 }
 

@@ -261,6 +261,7 @@ describe('AssistantSurfaceCoordinator', () => {
     expect(create).toHaveBeenCalledWith({
       url: 'safari-web-extension://id/assistant.html?tabId=7',
       type: 'popup',
+      state: 'normal',
       width: 480,
       height: 900,
       focused: true,
@@ -351,6 +352,7 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
+        state: 'normal',
         width: 480,
         height: 900,
         focused: true,
@@ -421,6 +423,7 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
+        state: 'normal',
         width: 480,
         height: 900,
         focused: true,
@@ -459,6 +462,7 @@ describe('AssistantSurfaceCoordinator', () => {
         expect(create).toHaveBeenCalledWith({
           url: 'chrome-extension://id/assistant.html?tabId=7',
           type: 'popup',
+          state: 'normal',
           width: 480,
           height: 900,
           focused: true,
@@ -499,6 +503,7 @@ describe('AssistantSurfaceCoordinator', () => {
         expect(create).toHaveBeenCalledWith({
           url: 'chrome-extension://id/assistant.html?tabId=7',
           type: 'popup',
+          state: 'normal',
           width: 480,
           height: 900,
           focused: true,
@@ -533,6 +538,7 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
+        state: 'normal',
         left: 1990,
         top: 25,
         width: 480,
@@ -578,10 +584,54 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).toHaveBeenCalledWith({
         url: 'chrome-extension://id/assistant.html?tabId=7',
         type: 'popup',
+        state: 'normal',
         width: 480,
         height: 900,
         focused: true,
       });
+    });
+
+    it('calculates bounds using tab windowId when api.tabs.get and api.windows.get are available', async () => {
+      const test = api();
+      const create = vi.fn(async () => undefined);
+      const getWindow = vi.fn(async (winId: number) => ({
+        id: winId,
+        left: 200,
+        top: 50,
+        width: 1920,
+        height: 1080,
+      }));
+      test.value.tabs.get = vi.fn(
+        async (tabId: number) =>
+          ({
+            id: tabId,
+            windowId: 88,
+          }) as chrome.tabs.Tab,
+      );
+      test.value.windows = {
+        create,
+        get: getWindow,
+      } as unknown as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value, 'popup');
+
+      await coordinator.open(7);
+
+      // Expected right edge: 200 + 1920 - 480 = 1640
+      expect(create).toHaveBeenCalledWith({
+        url: 'chrome-extension://id/assistant.html?tabId=7',
+        type: 'popup',
+        state: 'normal',
+        left: 1640,
+        top: 50,
+        width: 480,
+        height: 1080,
+        focused: true,
+      });
+      expect(test.value.tabs.get).toHaveBeenCalledWith(7);
+      expect(getWindow).toHaveBeenCalledWith(88);
     });
   });
 });
