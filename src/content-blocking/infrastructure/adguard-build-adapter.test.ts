@@ -40,4 +40,18 @@ describe('AdGuard build adapter', () => {
       "'removeParamInjectionService.invalidateTab(tabId);'",
     );
   });
+
+  it('adapts updateEnabledRulesets for all MV3 targets with individual fallback', () => {
+    const source = readFileSync(
+      new URL('../../../scripts/package-extension.mjs', import.meta.url),
+      'utf8',
+    );
+
+    expect(source).toContain(
+      'browser.declarativeNetRequest.getEnabledRulesets()',
+    );
+    expect(source).toContain('pendingEnableRulesetIds');
+    expect(source).toContain('pendingDisableRulesetIds');
+    expect(source).toContain('failedRuleSets.push(id)');
+  });
 });

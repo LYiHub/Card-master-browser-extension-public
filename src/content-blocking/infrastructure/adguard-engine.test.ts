@@ -201,7 +201,7 @@ describe('AdGuard engine diagnostics', () => {
     });
   });
 
-  it('preserves the browser cause of static ruleset activation failures', () => {
+  it('preserves the browser cause of static ruleset activation failures as limitations', () => {
     const failure = new Error('Cannot change list of enabled rule sets', {
       cause: new Error('The static rule limit was exceeded.'),
     });
@@ -214,9 +214,12 @@ describe('AdGuard engine diagnostics', () => {
           limitations: [],
         },
         defaultContentBlockingState(),
-      ).errors,
-    ).toEqual([
-      'Cannot change list of enabled rule sets The static rule limit was exceeded.',
-    ]);
+      ),
+    ).toEqual({
+      errors: [],
+      limitations: [
+        'Cannot change list of enabled rule sets The static rule limit was exceeded.',
+      ],
+    });
   });
 });

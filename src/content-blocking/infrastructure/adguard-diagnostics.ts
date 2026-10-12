@@ -10,6 +10,9 @@ const BLOCKING_TRUSTED_FILTER_ID = -10;
 const EMPTY_FILTER_DIAGNOSTIC =
   /^Cannot scan rules from filter (-?\d+):[\s\S]*Filter content is unavailable$/;
 
+export const RULE_QUOTA_DIAGNOSTIC =
+  /(?:Cannot change list of enabled rule\s*sets|exceeds the rule count limit|rule limit was exceeded|rule count limit)/i;
+
 function diagnosticMessage(value: unknown) {
   return extensionErrorMessage(value);
 }
@@ -29,9 +32,20 @@ export function normalizeAdguardDiagnostics(
     expectedEmptyFilterIds.add(ALLOWLIST_FILTER_ID);
   }
 
+  const rawStaticErrors = diagnostics.staticErrors.map(diagnosticMessage);
+  const staticQuotaLimitations: string[] = [];
+  const staticErrors: string[] = [];
+  for (const message of rawStaticErrors) {
+    if (RULE_QUOTA_DIAGNOSTIC.test(message)) {
+      staticQuotaLimitations.push(message);
+    } else {
+      staticErrors.push(message);
+    }
+  }
+
   return {
     errors: [
-      ...diagnostics.staticErrors.map(diagnosticMessage),
+      ...staticErrors,
       ...(diagnostics.conversionErrors ?? []).map(diagnosticMessage),
       ...diagnostics.dynamicErrors.map(diagnosticMessage).filter((message) => {
         const match = EMPTY_FILTER_DIAGNOSTIC.exec(message);
@@ -40,6 +54,9 @@ export function normalizeAdguardDiagnostics(
         );
       }),
     ],
-    limitations: diagnostics.limitations.map(diagnosticMessage),
+    limitations: [
+      ...staticQuotaLimitations,
+      ...diagnostics.limitations.map(diagnosticMessage),
+    ],
   };
 }

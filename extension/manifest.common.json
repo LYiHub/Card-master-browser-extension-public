@@ -358,7 +358,7 @@
       },
       {
         "id": "ruleset_3",
-        "enabled": true,
+        "enabled": false,
         "path": "filters/declarative/ruleset_3/ruleset_3.json"
       },
       {

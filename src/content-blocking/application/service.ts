@@ -116,10 +116,15 @@ function subscriptionView(
   return structuredClone(view);
 }
 
+const RULE_QUOTA_DIAGNOSTIC =
+  /(?:Cannot change list of enabled rule\s*sets|exceeds the rule count limit|rule limit was exceeded|rule count limit)/i;
+
 function assertApplicable(report: ContentBlockingEngineReport) {
-  const diagnostics = [...report.errors, ...report.limitations];
-  if (diagnostics.length > 0) {
-    throw new Error(`过滤规则无法完整应用：${diagnostics.join(' ')}`);
+  const fatalErrors = report.errors.filter(
+    (error) => !RULE_QUOTA_DIAGNOSTIC.test(error),
+  );
+  if (fatalErrors.length > 0) {
+    throw new Error(`过滤规则无法完整应用：${fatalErrors.join(' ')}`);
   }
 }
 

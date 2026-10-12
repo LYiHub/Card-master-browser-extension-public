@@ -739,4 +739,89 @@ describe('ContentBlockingService', () => {
       errors: ['worker unavailable'],
     });
   });
+
+  it('keeps the service ready when engine reports static quota limitations', async () => {
+    const persisted = storage(defaultContentBlockingState());
+    const blocker = engine();
+    const quotaLimitation =
+      'Cannot change list of enabled rule sets The set of enabled rulesets exceeds the rule count limit.';
+    blocker.start.mockResolvedValue({
+      revision: 1,
+      loadedRuleCount: 100527,
+      errors: [],
+      limitations: [quotaLimitation],
+    });
+    const reportError = vi.fn();
+    const service = new ContentBlockingService(persisted.repository, blocker, {
+      reportError,
+    });
+
+    await service.start();
+
+    expect(reportError).not.toHaveBeenCalled();
+    expect(service.snapshot()).toMatchObject({
+      status: 'ready',
+      loadedRuleCount: 100527,
+      errors: [],
+      limitations: [quotaLimitation],
+    });
+  });
+
+  it('tolerates quota diagnostics reported in errors without aborting startup', async () => {
+    const persisted = storage(defaultContentBlockingState());
+    const blocker = engine();
+    const quotaDiagnostic =
+      'Cannot change list of enabled rule sets The set of enabled rulesets exceeds the rule count limit.';
+    blocker.start.mockResolvedValue({
+      revision: 1,
+      loadedRuleCount: 100527,
+      errors: [quotaDiagnostic],
+      limitations: [],
+    });
+    const reportError = vi.fn();
+    const service = new ContentBlockingService(persisted.repository, blocker, {
+      reportError,
+    });
+
+    await service.start();
+
+    expect(reportError).not.toHaveBeenCalled();
+    expect(service.snapshot()).toMatchObject({
+      status: 'ready',
+      loadedRuleCount: 100527,
+      errors: [quotaDiagnostic],
+      limitations: [],
+    });
+  });
+
+  it('still fails startup and reports error when genuine non-quota errors occur', async () => {
+    const persisted = storage(defaultContentBlockingState());
+    const blocker = engine();
+    blocker.start.mockResolvedValue({
+      revision: 1,
+      loadedRuleCount: 0,
+      errors: ['Filter 42 could not be parsed: unexpected token'],
+      limitations: [],
+    });
+    const reportError = vi.fn();
+    const service = new ContentBlockingService(persisted.repository, blocker, {
+      reportError,
+    });
+
+    await service.start();
+
+    expect(reportError).toHaveBeenCalledWith(
+      'start-failed',
+      expect.objectContaining({
+        message: expect.stringContaining('Filter 42 could not be parsed'),
+      }),
+    );
+    expect(service.snapshot()).toMatchObject({
+      status: 'error',
+      errors: [
+        '过滤规则无法完整应用：Filter 42 could not be parsed: unexpected token',
+        'Filter 42 could not be parsed: unexpected token',
+      ],
+    });
+  });
 });

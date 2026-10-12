@@ -356,6 +356,13 @@ const adguardBrowserApiAdapterPlugin = {
               'globalThis.__cardMasterAdguardBrowserApi.updateStaticRules(',
             count: 2,
           },
+          {
+            source:
+              'try {\n            await browser.declarativeNetRequest.updateEnabledRulesets({\n                enableRulesetIds,\n                disableRulesetIds,\n            });',
+            target:
+              'try {\n            const enabledRulesetIds = new Set(await browser.declarativeNetRequest.getEnabledRulesets());\n            const pendingEnableRulesetIds = enableRulesetIds.filter((id) => !enabledRulesetIds.has(id));\n            const pendingDisableRulesetIds = disableRulesetIds.filter((id) => enabledRulesetIds.has(id));\n            if (pendingEnableRulesetIds.length === 0 && pendingDisableRulesetIds.length === 0) {\n                return res;\n            }\n            try {\n                await browser.declarativeNetRequest.updateEnabledRulesets({\n                    enableRulesetIds: pendingEnableRulesetIds,\n                    disableRulesetIds: pendingDisableRulesetIds,\n                });\n            } catch (batchError) {\n                if (pendingDisableRulesetIds.length > 0) {\n                    try {\n                        await browser.declarativeNetRequest.updateEnabledRulesets({\n                            disableRulesetIds: pendingDisableRulesetIds,\n                        });\n                    } catch {}\n                }\n                const failedRuleSets = [];\n                for (const id of pendingEnableRulesetIds) {\n                    try {\n                        await browser.declarativeNetRequest.updateEnabledRulesets({\n                            enableRulesetIds: [id],\n                        });\n                    } catch (singleErr) {\n                        failedRuleSets.push(id);\n                    }\n                }\n                if (failedRuleSets.length > 0) {\n                    throw batchError;\n                }\n            }',
+            count: 1,
+          },
         ]
       : [];
     let transformed = source;
@@ -381,13 +388,6 @@ const adguardBrowserApiAdapterPlugin = {
             'event.addListener(handleBrowserEvent, filter, extraInfoSpec);',
           target:
             "if (typeof extraInfoSpec === 'undefined') {\n            event.addListener(handleBrowserEvent, filter);\n            return;\n        }\n        event.addListener(handleBrowserEvent, filter, extraInfoSpec);",
-          count: 1,
-        },
-        {
-          source:
-            'try {\n            await browser.declarativeNetRequest.updateEnabledRulesets({\n                enableRulesetIds,\n                disableRulesetIds,\n            });',
-          target:
-            'try {\n            const enabledRulesetIds = new Set(await browser.declarativeNetRequest.getEnabledRulesets());\n            const pendingEnableRulesetIds = enableRulesetIds.filter((id) => !enabledRulesetIds.has(id));\n            const pendingDisableRulesetIds = disableRulesetIds.filter((id) => enabledRulesetIds.has(id));\n            if (pendingEnableRulesetIds.length === 0 && pendingDisableRulesetIds.length === 0) {\n                return res;\n            }\n            await browser.declarativeNetRequest.updateEnabledRulesets({\n                enableRulesetIds: pendingEnableRulesetIds,\n                disableRulesetIds: pendingDisableRulesetIds,\n            });',
           count: 1,
         },
         {

@@ -14,7 +14,7 @@
     "name": "AdGuard 跟踪保护",
     "description": "分析、计数器与跨站跟踪规则",
     "group": "privacy",
-    "defaultEnabled": true,
+    "defaultEnabled": false,
     "ruleCount": 93970
   },
   {
