@@ -228,8 +228,13 @@ function createAssistantSurface(
   };
 }
 
+type ActiveAssistantPanel = {
+  port: ExtensionPort;
+  mode: AssistantPanelMode;
+};
+
 export class AssistantSurfaceCoordinator {
-  private readonly activePanels = new Map<number, ExtensionPort>();
+  private readonly activePanels = new Map<number, ActiveAssistantPanel>();
   private readonly openingTabs = new Set<number>();
   private readonly requestedTabs = new Map<number, AssistantWorkbenchTab>();
   private surface: AssistantSurface;
@@ -299,10 +304,11 @@ export class AssistantSurfaceCoordinator {
       console.log(
         `[CardMaster:Assistant] Cold-start catchup triggered for tab ${tabId} in popup mode`,
       );
+      // 主动清理因冷启动抢跑误打开的原生侧栏连接，确保补开调用不再被早退守卫拦截
       const premature = this.activePanels.get(tabId);
       if (premature) {
         try {
-          premature.disconnect();
+          premature.port.disconnect();
         } catch {}
         this.activePanels.delete(tabId);
       }
@@ -320,9 +326,12 @@ export class AssistantSurfaceCoordinator {
     this.api.runtime.onConnect.addListener((port) => {
       const tabId = assistantSurfaceLifecyclePortTabId(port.name);
       if (tabId === null) return;
-      this.activePanels.set(tabId, port);
+      this.activePanels.set(tabId, {
+        port,
+        mode: this.preference,
+      });
       port.onDisconnect.addListener(() => {
-        if (this.activePanels.get(tabId) === port) {
+        if (this.activePanels.get(tabId)?.port === port) {
           this.activePanels.delete(tabId);
         }
         this.requestedTabs.delete(tabId);
@@ -359,11 +368,15 @@ export class AssistantSurfaceCoordinator {
     console.log(
       `[CardMaster:Assistant] open() called for tab ${tabId}, preference: ${this.preference}, preferenceReady: ${Boolean(this.preferenceReady)}`,
     );
-    if (this.preferenceReady && this.preference === 'popup') {
-      console.log(
-        `[CardMaster:Assistant] Awaiting preferenceReady in popup mode for tab ${tabId}...`,
-      );
-      await this.preferenceReady;
+    if (this.preferenceReady) {
+      // 必须保护手势的仅限于 Firefox 的 sidebarAction.open()；
+      // 在非 Firefox 环境（Chromium / Arc / Edge）或当前已确认为 popup 模式下，直接等待 1ms 的 preferenceReady，从源头避免盲开错。
+      if (!this.api.sidebarAction || this.preference === 'popup') {
+        console.log(
+          `[CardMaster:Assistant] Awaiting preferenceReady for tab ${tabId}...`,
+        );
+        await this.preferenceReady;
+      }
     }
     const activePanel = this.activePanels.get(tabId);
     if (tab) this.requestedTabs.set(tabId, tab);
@@ -375,18 +388,33 @@ export class AssistantSurfaceCoordinator {
         type: 'assistant-surface-navigate',
         tab,
       };
-      activePanel.postMessage(message);
+      activePanel.port.postMessage(message);
     }
     const configuration = this.configure(tabId).catch((error) => {
       this.reportFailure('tab-configuration-failed', error, { tabId });
     });
-    if (activePanel || this.openingTabs.has(tabId)) {
+
+    const isSameModeAlreadyActive =
+      activePanel && activePanel.mode === this.preference;
+    if (isSameModeAlreadyActive || this.openingTabs.has(tabId)) {
       console.log(
-        `[CardMaster:Assistant] Early return: activePanel=${Boolean(activePanel)}, openingTabs=${this.openingTabs.has(tabId)}`,
+        `[CardMaster:Assistant] Early return: sameModeActive=${Boolean(isSameModeAlreadyActive)}, openingTabs=${this.openingTabs.has(tabId)}`,
       );
       await configuration;
       return;
     }
+
+    // 若当前存在活跃面板但模式不同（例如从原生侧栏切到独立窗口），清理旧面板连接并切换打开
+    if (activePanel && activePanel.mode !== this.preference) {
+      console.log(
+        `[CardMaster:Assistant] Active panel mode mismatch (${activePanel.mode} vs ${this.preference}), switching surface for tab ${tabId}`,
+      );
+      try {
+        activePanel.port.disconnect();
+      } catch {}
+      this.activePanels.delete(tabId);
+    }
+
     if (this.preferenceReady) {
       this.coldStartPendingOpen = { tabId, tab };
     }

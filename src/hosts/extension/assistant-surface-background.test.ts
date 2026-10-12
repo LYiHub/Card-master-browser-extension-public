@@ -374,8 +374,10 @@ describe('AssistantSurfaceCoordinator', () => {
       expect(create).not.toHaveBeenCalled();
     });
 
-    it('dispatches native sidebar immediately and synchronously on cold start without microtask delay', async () => {
+    it('dispatches native sidebar immediately and synchronously on cold start in Firefox without microtask delay', async () => {
       const test = api();
+      Reflect.deleteProperty(test.value, 'sidePanel');
+      test.value.sidebarAction = { open: test.open, setPanel: test.setOptions };
       const coordinator = new AssistantSurfaceCoordinator(test.value);
       let resolveReady: () => void = () => undefined;
       const readyPromise = new Promise<void>((resolve) => {
@@ -386,14 +388,50 @@ describe('AssistantSurfaceCoordinator', () => {
       const pendingOpen = coordinator.open(7);
 
       // Must be called immediately in the same tick to preserve user action!
-      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+      expect(test.open).toHaveBeenCalledWith();
 
       resolveReady();
       await pendingOpen;
     });
 
-    it('catches up and opens popup surface when cold start preference resolves to popup', async () => {
+    it('awaits preference in non-Firefox environment to prevent premature native sidebar dispatch', async () => {
       const test = api();
+      const create = vi.fn(async () => undefined);
+      test.value.windows = { create } as ExtensionBackgroundApi['windows'];
+      test.value.runtime.getURL = vi.fn(
+        (path: string) => `chrome-extension://id/${path}`,
+      );
+      const coordinator = new AssistantSurfaceCoordinator(test.value);
+      let resolveReady: () => void = () => undefined;
+      const readyPromise = new Promise<void>((resolve) => {
+        resolveReady = resolve;
+      });
+      coordinator.setPreferenceReady(readyPromise);
+
+      const pendingOpen = coordinator.open(7);
+
+      // In non-Firefox (Chromium/Arc), wait for preference before opening
+      expect(test.open).not.toHaveBeenCalled();
+
+      coordinator.setSurfacePreference('popup');
+      resolveReady();
+
+      await pendingOpen;
+
+      expect(create).toHaveBeenCalledWith({
+        url: 'chrome-extension://id/assistant.html?tabId=7',
+        type: 'popup',
+        width: 480,
+        height: 900,
+        focused: true,
+      });
+      expect(test.open).not.toHaveBeenCalled();
+    });
+
+    it('catches up and opens popup surface when cold start preference resolves to popup in Firefox', async () => {
+      const test = api();
+      Reflect.deleteProperty(test.value, 'sidePanel');
+      test.value.sidebarAction = { open: test.open, setPanel: test.setOptions };
       const create = vi.fn(async () => undefined);
       test.value.windows = { create } as ExtensionBackgroundApi['windows'];
       test.value.runtime.getURL = vi.fn(
@@ -409,7 +447,7 @@ describe('AssistantSurfaceCoordinator', () => {
 
       const pendingOpen = coordinator.open(7);
 
-      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+      expect(test.open).toHaveBeenCalledWith();
       expect(create).not.toHaveBeenCalled();
 
       coordinator.setSurfacePreference('popup');
@@ -430,6 +468,8 @@ describe('AssistantSurfaceCoordinator', () => {
 
     it('catches up and opens popup surface even if premature native sidebar connected lifecycle port during cold start', async () => {
       const test = api();
+      Reflect.deleteProperty(test.value, 'sidePanel');
+      test.value.sidebarAction = { open: test.open, setPanel: test.setOptions };
       const create = vi.fn(async () => undefined);
       test.value.windows = { create } as ExtensionBackgroundApi['windows'];
       test.value.runtime.getURL = vi.fn(
@@ -445,7 +485,7 @@ describe('AssistantSurfaceCoordinator', () => {
       coordinator.setPreferenceReady(readyPromise);
 
       const pendingOpen = coordinator.open(7);
-      expect(test.open).toHaveBeenCalledWith({ tabId: 7 });
+      expect(test.open).toHaveBeenCalledWith();
 
       // Premature side panel opens and connects lifecycle port:
       test.onConnect.emit(port(assistantSurfaceLifecyclePortName(7)).port);
