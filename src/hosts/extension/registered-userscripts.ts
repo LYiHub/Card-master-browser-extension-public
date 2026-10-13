@@ -1499,9 +1499,12 @@ ${userscriptCapabilityBootstrap(script.id)}
   };
   const __addStyle = (css) => {
     const style = document.createElement('style');
-    style.dataset.userscriptOwner = ${JSON.stringify(script.id)};
+    style.setAttribute('data-userscript-owner', ${JSON.stringify(script.id)});
+    if (style.dataset) {
+      style.dataset.userscriptOwner = ${JSON.stringify(script.id)};
+    }
     style.textContent = String(css);
-    document.documentElement.append(style);
+    (document.head || document.documentElement)?.append(style);
     return style;
   };
   const __apiNames = [];

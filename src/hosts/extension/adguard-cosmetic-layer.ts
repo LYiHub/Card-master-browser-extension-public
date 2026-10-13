@@ -32,8 +32,13 @@ function disposeLayer() {
 function createNativeStyle(selectors: readonly string[]) {
   if (selectors.length === 0) return null;
   const style = document.createElement('style');
-  style.dataset.cardMasterAdguardRefresh = 'true';
-  (document.head || document.documentElement).append(style);
+  style.setAttribute('data-card-master-adguard-refresh', 'true');
+  if (style.dataset) {
+    style.dataset.cardMasterAdguardRefresh = 'true';
+  }
+  const target = document.head || document.documentElement;
+  if (!target) return null;
+  target.append(style);
   for (const selector of selectors) {
     try {
       style.sheet?.insertRule(
@@ -54,12 +59,25 @@ export function applyAdguardCosmeticData(data: CosmeticData | null) {
   disposeLayer();
   if (!data?.isAppStarted) return;
 
-  const extendedCss = data.extCssRules?.length
-    ? new ExtendedCss({ cssRules: data.extCssRules })
-    : null;
-  extendedCss?.apply();
+  let extendedCss: ExtendedCss | null = null;
+  try {
+    if (data.extCssRules?.length) {
+      extendedCss = new ExtendedCss({ cssRules: data.extCssRules });
+      extendedCss.apply();
+    }
+  } catch {
+    // Extended CSS failure must not block native cosmetic rules.
+  }
+
+  let nativeStyle: HTMLStyleElement | null = null;
+  try {
+    nativeStyle = createNativeStyle(data.nativeCssSelectors ?? []);
+  } catch {
+    // Native style failure must not throw fatal unhandled errors.
+  }
+
   layerScope()[LAYER_KEY] = {
     extendedCss,
-    nativeStyle: createNativeStyle(data.nativeCssSelectors ?? []),
+    nativeStyle,
   };
 }
