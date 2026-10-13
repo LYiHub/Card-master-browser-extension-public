@@ -220,4 +220,28 @@ describe('ContentBlockingRepository', () => {
 
     await expect(test.repository.read()).rejects.toThrow('invalid schema');
   });
+
+  it('migrates legacy default-enabled filter 3 out of enabledStaticFilterIds', async () => {
+    const test = harness({
+      [CONTENT_BLOCKER_STORAGE_KEY]: {
+        version: 1,
+        rulesEnabled: true,
+        autoUpdateSubscriptions: true,
+        enabledStaticFilterIds: [2, 3, 17, 208, 224],
+        userRules: '',
+        allowlist: [],
+        subscriptions: [],
+      },
+    });
+
+    const state = await test.repository.read();
+    expect(state.enabledStaticFilterIds).toEqual([2, 17, 208, 224]);
+    expect(
+      (
+        test.values[CONTENT_BLOCKER_STORAGE_KEY] as {
+          enabledStaticFilterIds: number[];
+        }
+      ).enabledStaticFilterIds,
+    ).toEqual([2, 17, 208, 224]);
+  });
 });

@@ -296,4 +296,42 @@ describe('extension content blocking adapters', () => {
     unsubscribe();
     write.mockRestore();
   });
+
+  it('does not emit page diagnostics when snapshot is ready with limitations only', async () => {
+    const { api, listeners } = extensionApi();
+    const controller = new ExtensionContentBlockingController(api);
+    const writeError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const writeWarn = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    const snapshot = {
+      ...startingContentBlockingSnapshot(),
+      status: 'ready' as const,
+      errors: [],
+      limitations: [
+        'Cannot change list of enabled rule sets The set of enabled rulesets exceeds the rule count limit.',
+      ],
+    };
+    const unsubscribe = controller.subscribe(vi.fn());
+
+    for (const listener of listeners) {
+      listener(
+        {
+          channel: EXTENSION_CHANNEL,
+          type: 'content-blocking-changed',
+          snapshot,
+        },
+        {},
+        vi.fn(),
+      );
+    }
+
+    expect(writeError).not.toHaveBeenCalled();
+    expect(writeWarn).not.toHaveBeenCalled();
+    unsubscribe();
+    writeError.mockRestore();
+    writeWarn.mockRestore();
+  });
 });

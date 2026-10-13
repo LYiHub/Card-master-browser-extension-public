@@ -53,5 +53,8 @@ describe('AdGuard build adapter', () => {
     expect(source).toContain('pendingEnableRulesetIds');
     expect(source).toContain('pendingDisableRulesetIds');
     expect(source).toContain('failedRuleSets.push(id)');
+    expect(source).toContain(
+      'failedRuleSets.length === pendingEnableRulesetIds.length',
+    );
   });
 });

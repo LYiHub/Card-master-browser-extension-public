@@ -254,11 +254,11 @@ export class ExtensionContentBlockingController
         snapshot,
       };
     }
-    const diagnostics = [...snapshot.errors, ...snapshot.limitations];
-    if (diagnostics.length === 0 && snapshot.status !== 'error') {
+    if (snapshot.status !== 'error' && snapshot.errors.length === 0) {
       this.diagnosticFingerprint = null;
       return snapshot;
     }
+    const diagnostics = [...snapshot.errors];
     const fingerprint = JSON.stringify({
       status: snapshot.status,
       diagnostics,
@@ -277,11 +277,7 @@ export class ExtensionContentBlockingController
     const error = new Error(
       diagnostics.join(' ') || '内容拦截引擎返回了错误状态。',
     );
-    if (snapshot.status === 'error' || snapshot.errors.length > 0) {
-      extensionDiagnostics.error('content-blocking', event, error, details);
-    } else {
-      extensionDiagnostics.warn('content-blocking', event, error, details);
-    }
+    extensionDiagnostics.error('content-blocking', event, error, details);
     return snapshot;
   }
 

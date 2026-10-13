@@ -292,6 +292,24 @@ function persistedState(value: unknown): PersistedState | null {
   };
 }
 
+function migratePersistedState(persisted: PersistedState): {
+  state: PersistedState;
+  migrated: boolean;
+} {
+  if (persisted.enabledStaticFilterIds.includes(3)) {
+    return {
+      state: {
+        ...persisted,
+        enabledStaticFilterIds: persisted.enabledStaticFilterIds.filter(
+          (filterId) => filterId !== 3,
+        ),
+      },
+      migrated: true,
+    };
+  }
+  return { state: persisted, migrated: false };
+}
+
 export function parseContentBlockingState(value: unknown) {
   return runtimeState(value);
 }
@@ -324,7 +342,19 @@ export class ContentBlockingRepository {
     ];
     if (current !== undefined) {
       const persisted = persistedState(current);
-      if (persisted) return this.hydrate(persisted);
+      if (persisted) {
+        const { state: migrated, migrated: didMigrate } =
+          migratePersistedState(persisted);
+        const hydrated = await this.hydrate(migrated);
+        if (didMigrate) {
+          await this.commit(
+            hydrated,
+            migrated.subscriptions,
+            await this.readElementBlockingBatch(),
+          );
+        }
+        return hydrated;
+      }
       throw new Error('Content blocking storage has an invalid schema.');
     }
     return defaultContentBlockingState();
