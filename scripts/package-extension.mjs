@@ -33,9 +33,14 @@ import {
   extensionRuntimeAssets,
   extensionRuntimeAssetsFor,
 } from './extension-runtime-assets.mjs';
-import { APP_LOCALES, mergeCoreLocales } from './localization.mjs';
+import {
+  APP_LOCALES,
+  mergeCoreLocales,
+  scopedLocalizationPlugin,
+} from './localization.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
+const localizationPlugin = await scopedLocalizationPlugin(root);
 const projectMetadata = JSON.parse(
   await readFile(resolve(root, 'package.json'), 'utf8'),
 );
@@ -776,6 +781,7 @@ async function bundle({
       ...define,
     },
     plugins: [
+      localizationPlugin,
       adguardBrowserApiAdapterPlugin,
       adguardLocalScriptRulesPlugin,
       ...(input.endsWith('adguard-runtime.ts')

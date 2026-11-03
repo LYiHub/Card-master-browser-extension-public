@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 export const APP_LOCALES = ['zh_CN', 'zh_TW'];
 
@@ -88,4 +88,75 @@ export async function mergeCoreLocales(root, output) {
       `${JSON.stringify({ ...existing, ...catalogs[locale] })}\n`,
     );
   }
+}
+
+export async function scopedLocalizationPlugin(root) {
+  const catalogs = await readCoreCatalogs(root);
+  const modules = new Map();
+  const prefix = 'virtual:card-master-localization:';
+  return {
+    name: 'card-master-scoped-localization',
+    enforce: 'pre',
+    resolveId(id) {
+      return id.startsWith(prefix) ? `\0${id}` : null;
+    },
+    load(id) {
+      return modules.get(id) ?? null;
+    },
+    transform(code, id) {
+      if (!/\.tsx?$/.test(id) || !code.includes('localization/messages'))
+        return null;
+      const pattern = /import\s*\{\s*t\s*\}\s*from\s*(['"])([^'"]+)\1;?/g;
+      let changed = false;
+      const transformed = code.replace(
+        pattern,
+        (declaration, _quote, source) => {
+          if (
+            resolve(dirname(id), source).replace(/\.ts$/, '') !==
+            resolve(root, 'src/localization/messages')
+          )
+            return declaration;
+          const calls = [...code.matchAll(/\bt\s*\(/g)];
+          const literals = [
+            ...code.matchAll(/\bt\s*\(\s*(['"])(cm_[a-z0-9_]+)\1/g),
+          ];
+          // Dynamic typed keys need the complete catalog; literal calls can be scoped safely.
+          const keys =
+            calls.length === literals.length
+              ? [...new Set(literals.map((match) => match[2]))]
+              : Object.keys(catalogs.zh_CN);
+          const compact = (catalog) =>
+            Object.fromEntries(
+              keys.map((key) => {
+                const record = catalog[key];
+                if (!record)
+                  throw new Error(`Unknown localization key in ${id}: ${key}`);
+                return [
+                  key,
+                  {
+                    message: record.message,
+                    ...(record.placeholders
+                      ? { placeholders: record.placeholders }
+                      : {}),
+                  },
+                ];
+              }),
+            );
+          const moduleId = `${prefix}${encodeURIComponent(id)}`;
+          modules.set(
+            `\0${moduleId}`,
+            [
+              `import { createMessageReader } from ${JSON.stringify(resolve(root, 'src/localization/format.ts'))};`,
+              `import { getLocale } from ${JSON.stringify(resolve(root, 'src/localization/locale.ts'))};`,
+              `const readers = { 'zh-CN': createMessageReader(${JSON.stringify(compact(catalogs.zh_CN))}), 'zh-TW': createMessageReader(${JSON.stringify(compact(catalogs.zh_TW))}) };`,
+              'export function t(key, substitutions) { return readers[getLocale()](key, substitutions); }',
+            ].join('\n'),
+          );
+          changed = true;
+          return `import { t } from ${JSON.stringify(moduleId)};`;
+        },
+      );
+      return changed ? { code: transformed, map: null } : null;
+    },
+  };
 }
