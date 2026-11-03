@@ -108,6 +108,7 @@ import {
   INSTALL_REDIRECT_RULE_ID,
   UserscriptInstallInterceptor,
 } from './installer';
+import { installLanguagePreferenceBridge } from './language-preference-background';
 import { LumnoNewTabCompatibilityService } from './lumno-new-tab-compat';
 import { ExtensionMediaResourcesService } from './media-resources-service';
 import { ExtensionMediaSpeedService } from './media-speed-service';
@@ -163,6 +164,7 @@ import {
 } from './volcengine-speech-session';
 
 const api = requireExtensionBackgroundApi();
+installLanguagePreferenceBridge(api);
 if (extensionTarget() !== 'safari') {
   const messages = localizedVendorMessages(
     { ...catCatchSimplified, catCatch: { message: '顺手牵羊' } },

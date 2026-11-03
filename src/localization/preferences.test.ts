@@ -3,11 +3,16 @@ import type { ExtensionApi } from '../hosts/extension/api';
 import { getLanguageState, setLanguagePreference } from './locale';
 import {
   initializeLanguagePreference,
+  LANGUAGE_PREFERENCE_CHANGED,
+  LANGUAGE_PREFERENCE_CHANNEL,
   LANGUAGE_PREFERENCE_KEY,
   writeLanguagePreference,
 } from './preferences';
 
-afterEach(() => setLanguagePreference('auto'));
+afterEach(() => {
+  vi.unstubAllGlobals();
+  setLanguagePreference('auto');
+});
 
 function storage(
   get = vi.fn().mockResolvedValue({ [LANGUAGE_PREFERENCE_KEY]: 'zh-TW' }),
@@ -68,4 +73,56 @@ it('persists only the local language preference and preserves current choice on 
     'storage failure',
   );
   expect(getLanguageState().preference).toBe('zh-TW');
+});
+
+it('reads, writes and receives changes in a content context where local storage is forbidden', async () => {
+  vi.stubGlobal('location', {
+    href: 'https://www.youtube.com/watch?v=example',
+  });
+  const denied = vi.fn(() => {
+    throw new Error('Access to storage is not allowed from this context.');
+  });
+  const listeners: ((message: unknown) => unknown)[] = [];
+  let saved = 'zh-CN';
+  const sendMessage = vi.fn(
+    async (request: { type: string; preference?: string }) => {
+      if (request.type === 'language-preference-write')
+        saved = request.preference ?? saved;
+      return { preference: saved };
+    },
+  );
+  const api = {
+    runtime: {
+      id: 'extension',
+      getURL: (path: string) => `chrome-extension://extension/${path}`,
+      sendMessage,
+      onMessage: {
+        addListener: (listener: (typeof listeners)[number]) =>
+          listeners.push(listener),
+      },
+    },
+    storage: {
+      local: { get: denied, set: denied },
+      onChanged: { addListener: denied },
+    },
+  } as unknown as ExtensionApi;
+  await initializeLanguagePreference(api);
+  expect(getLanguageState().locale).toBe('zh-CN');
+  await writeLanguagePreference(api, 'zh-TW');
+  expect(saved).toBe('zh-TW');
+  expect(getLanguageState().locale).toBe('zh-TW');
+  listeners[0]({
+    channel: LANGUAGE_PREFERENCE_CHANNEL,
+    type: LANGUAGE_PREFERENCE_CHANGED,
+    preference: 'zh-CN',
+  });
+  expect(getLanguageState().locale).toBe('zh-CN');
+  expect(denied).not.toHaveBeenCalled();
+  expect(sendMessage).toHaveBeenCalledWith(
+    expect.objectContaining({
+      channel: LANGUAGE_PREFERENCE_CHANNEL,
+      type: 'language-preference-write',
+      preference: 'zh-TW',
+    }),
+  );
 });
