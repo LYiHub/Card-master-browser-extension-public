@@ -8,6 +8,8 @@
 
   <h1>卡牌大师</h1>
 
+  <p><strong>简体中文</strong> · <a href="./README.zh-Hant.md">繁體中文</a></p>
+
   <p><a href="https://www.bilibili.com/video/BV12PtF6mEr4/"><strong>观看林亦LYi 官方介绍视频</strong></a></p>
 
   <p><strong>以游戏化卡牌统一管理用户脚本与网页能力。</strong></p>
@@ -20,7 +22,7 @@
     <a href="./LICENSE">
       <img src="https://img.shields.io/badge/license-GPL--3.0--only-22c55e?style=flat-square" alt="GPL-3.0-only" />
     </a>
-    <img src="https://img.shields.io/badge/platform-Chromium%20%7C%20Firefox%20%7C%20Safari-334155?style=flat-square" alt="支持 Chromium、Firefox 和 Safari" />
+    <img src="https://img.shields.io/badge/downloads-Chromium%20%7C%20Firefox-334155?style=flat-square" alt="当前提供 Chromium 和 Firefox 下载" />
   </p>
 
   <p>
@@ -51,6 +53,7 @@
 
 ## 核心能力
 
+- 🌐 **简体／繁體中文** — 界面与 AI 默认回复支持简繁切换，可跟随浏览器界面语言或手动选择
 - 📜 **用户脚本** — 安装、导入、更新、启停、隐藏；新装默认启用
 - ✨ **AI 脚本工坊** — 搜索、创建、解释、修复；兼容 Responses 与 Chat Completions
 - 🖼️ **新标签页** — AI 每日回顾壁纸、电子相框和搜索 · *Chromium / Firefox*
@@ -62,7 +65,13 @@
 - 🎮 **科乐美秘技** — 鼠标、键盘、手柄一套操作；含屏幕键盘、拼音和语音
 - ☁️ **WebDAV 同步** — 在「设置 → 数据管理 → 跨设备同步」连接自己的服务，统一同步脚本、卡牌与插件配置，支持合并预览、冲突选择和历史恢复。
 
-同一套核心代码打 Chromium、Firefox、Safari 三份包。
+同一套核心代码支持 Chromium、Firefox 和 Safari 构建。当前提供 Chromium 和 Firefox 下载；Safari 正式分发所需的签名、公证及安装验证尚未完成。
+
+## 界面语言
+
+在「设置 → 界面语言」选择「跟随浏览器界面」「简体中文」或「繁體中文」。默认跟随浏览器界面，也可以手动切换，刷新后保留选择。
+
+界面与 AI 默认回复使用所选语言，已有脚本内容和历史会话不会自动转换。已打开的内置工具需重新打开或刷新后生效。
 
 ## 安装
 
@@ -78,7 +87,7 @@
 | Chromium（保留浏览器新标签页） | `card-master-chromium-browser-new-tab.zip` | 解压 → 加载未打包扩展 |
 | Firefox | `card-master-firefox.zip` | 解压 → 临时载入附加组件 |
 | Firefox（保留浏览器新标签页） | `card-master-firefox-browser-new-tab.zip` | 解压 → 临时载入附加组件 |
-| macOS Safari | 暂不提供下载 | 等待苹果公证完成，进展见 [Issue #2](https://github.com/LYiHub/Card-master-browser-extension-public/issues/2) |
+| macOS Safari | 暂不提供下载 | 正式分发所需的签名、公证及安装验证尚未完成；背景见 [Issue #2](https://github.com/LYiHub/Card-master-browser-extension-public/issues/2) |
 
 ### 更新已有安装
 
@@ -157,9 +166,7 @@
 <details>
 <summary>Safari 没有新标签页和顺手牵羊</summary>
 
-Safari 网页扩展没有 `history`、`bookmarks`、`topSites`、`downloads` 和完整
-`webRequest`。每日回顾读不到浏览历史，顺手牵羊也没有可运行的上游实现，
-所以这两张卡和相关页面都不会出现。不是漏装。
+Safari 构建目前不包含新标签页和「顺手牵羊」。每日回顾所需的浏览历史能力和媒体提取模块尚未在 Safari 接入，因此相关卡牌与页面不会出现。
 
 </details>
 
@@ -174,6 +181,8 @@ pnpm extension:package --platform=all
 ```
 
 产物在 `extension-dist/`。Chromium 和 Firefox 构建同时生成对应的 `*-browser-new-tab/` 目录，用于保留浏览器新标签页；与同平台标准版共用全部运行时文件。
+
+`extension-dist/safari/` 是 Safari 扩展资源目录，不是可直接安装的 macOS 应用。正式 Safari 分发还需要构建宿主 App、完成签名与苹果公证，并验证安装和扩展注册。
 
 ## 参与贡献
 
