@@ -65,7 +65,7 @@
 - 🎮 **科乐美秘技** — 鼠标、键盘、手柄一套操作；含屏幕键盘、拼音和语音
 - ☁️ **WebDAV 同步** — 在「设置 → 数据管理 → 跨设备同步」连接自己的服务，统一同步脚本、卡牌与插件配置，支持合并预览、冲突选择和历史恢复。
 
-同一套核心代码支持 Chromium、Firefox 和 Safari 构建。当前提供 Chromium 和 Firefox 下载；Safari 正式分发所需的签名、公证及安装验证尚未完成。
+同一套核心代码支持 Chromium、Firefox 和 Safari 构建。当前提供 Chromium 和 Firefox 下载；Safari 暂不提供安装包。
 
 ## 界面语言
 
@@ -87,7 +87,7 @@
 | Chromium（保留浏览器新标签页） | `card-master-chromium-browser-new-tab.zip` | 解压 → 加载未打包扩展 |
 | Firefox | `card-master-firefox.zip` | 解压 → 临时载入附加组件 |
 | Firefox（保留浏览器新标签页） | `card-master-firefox-browser-new-tab.zip` | 解压 → 临时载入附加组件 |
-| macOS Safari | 暂不提供下载 | 正式分发所需的签名、公证及安装验证尚未完成；背景见 [Issue #2](https://github.com/LYiHub/Card-master-browser-extension-public/issues/2) |
+| macOS Safari | 暂不提供安装包 | — |
 
 ### 更新已有安装
 
@@ -138,37 +138,7 @@
 
 ### Safari
 
-> 当前版本暂不提供 Safari 下载，请勿使用旧版未公证预览包或关闭系统安全检查。
-> 以下权限说明供源码构建使用，正式分发恢复后同样适用。
-
-打开 `Card Master.app` 之后，还要在 Safari 里勾完权限。只开 App、不授权网站，
-网页上不会出现牌阵。
-
-1. Safari → 设置 → 扩展 → 勾选「卡牌大师」。
-2. 点 **在每个网站上始终允许…**，确认对所有网站允许。
-3. 更新或重装后，先完全退出 Safari 再打开。
-
-牌阵快捷键是 <kbd>⌘⇧E</kbd>。Safari 没有 Chromium 那项用户脚本开关，脚本走扩展自带注入。
-
-<details>
-<summary>查看「在每个网站上始终允许」位置</summary>
-
-<p align="center">
-  <img
-    src="./.github/assets/safari-allow-all-websites.webp"
-    width="100%"
-    alt="在 Safari 扩展设置中点击「在每个网站上始终允许」"
-  />
-</p>
-
-</details>
-
-<details>
-<summary>Safari 没有新标签页和顺手牵羊</summary>
-
-Safari 构建目前不包含新标签页和「顺手牵羊」。每日回顾所需的浏览历史能力和媒体提取模块尚未在 Safari 接入，因此相关卡牌与页面不会出现。
-
-</details>
+Safari 暂不提供安装包。
 
 ## 从源码构建
 
@@ -182,7 +152,7 @@ pnpm extension:package --platform=all
 
 产物在 `extension-dist/`。Chromium 和 Firefox 构建同时生成对应的 `*-browser-new-tab/` 目录，用于保留浏览器新标签页；与同平台标准版共用全部运行时文件。
 
-`extension-dist/safari/` 是 Safari 扩展资源目录，不是可直接安装的 macOS 应用。正式 Safari 分发还需要构建宿主 App、完成签名与苹果公证，并验证安装和扩展注册。
+`extension-dist/safari/` 仅包含扩展资源，不能直接安装。
 
 ## 参与贡献
 

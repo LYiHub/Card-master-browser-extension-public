@@ -65,7 +65,7 @@
 - 🎮 **科樂美秘技** — 滑鼠、鍵盤、手把一套操作；包含螢幕鍵盤、拼音與語音輸入
 - ☁️ **WebDAV 同步** — 在「設定 → 資料管理 → 跨裝置同步」連接自己的服務，同步腳本、卡牌與擴充功能設定，支援合併預覽、衝突選擇與歷史版本還原。
 
-同一套核心程式碼支援 Chromium、Firefox 與 Safari 建置。目前提供 Chromium 與 Firefox 發行版下載；Safari 正式分發所需的簽章、公證及安裝驗證尚未完成。
+同一套核心程式碼支援 Chromium、Firefox 與 Safari 建置。目前提供 Chromium 與 Firefox 發行版下載；Safari 暫不提供安裝包。
 
 ## 介面語言
 
@@ -87,7 +87,7 @@
 | Chromium（保留瀏覽器原有的新分頁） | `card-master-chromium-browser-new-tab.zip` | 解壓縮 → 載入未封裝的擴充功能 |
 | Firefox | `card-master-firefox.zip` | 解壓縮 → 暫時載入附加元件 |
 | Firefox（保留瀏覽器原有的新分頁） | `card-master-firefox-browser-new-tab.zip` | 解壓縮 → 暫時載入附加元件 |
-| macOS Safari | 暫不提供下載 | 正式分發所需的簽章、公證及安裝驗證尚未完成；背景說明見 [Issue #2](https://github.com/LYiHub/Card-master-browser-extension-public/issues/2) |
+| macOS Safari | 暫不提供安裝包 | — |
 
 ### 更新既有安裝
 
@@ -138,37 +138,7 @@
 
 ### Safari
 
-> 目前暫不提供 Safari 下載，請勿使用舊版未公證預覽包，也不需要關閉系統安全檢查。
-> 以下權限說明適用於從原始碼建置的版本，恢復正式分發後同樣適用。
-
-開啟 `Card Master.app` 後，還需要在 Safari 中授予擴充功能權限。只開啟 App、未允許網站存取，
-網頁上就不會出現牌陣。
-
-1. Safari → 設定 → 延伸功能 → 勾選「卡牌大師」。
-2. 在網站存取權限中，選擇允許所有網站。
-3. 更新或重新安裝後，先完全結束 Safari，再重新開啟。
-
-牌陣快捷鍵為 <kbd>⌘⇧E</kbd>。Safari 沒有 Chromium 的使用者腳本開關，腳本會透過擴充功能內建的機制注入。
-
-<details>
-<summary>查看允許所有網站的位置</summary>
-
-<p align="center">
-  <img
-    src="./.github/assets/safari-allow-all-websites.webp"
-    width="100%"
-    alt="在 Safari 延伸功能設定中允許所有網站"
-  />
-</p>
-
-</details>
-
-<details>
-<summary>Safari 沒有新分頁與順手牽羊</summary>
-
-Safari 建置目前不包含新分頁與「順手牽羊」。每日回顧所需的瀏覽紀錄功能與媒體擷取模組尚未在 Safari 接入，因此相關卡牌與頁面不會出現。
-
-</details>
+Safari 暫不提供安裝包。
 
 ## 從原始碼建置
 
@@ -182,7 +152,7 @@ pnpm extension:package --platform=all
 
 產物位於 `extension-dist/`。Chromium 與 Firefox 建置時會同時產生對應的 `*-browser-new-tab/` 目錄，用來保留瀏覽器原有的新分頁；與同平台標準版共用所有執行時期檔案。
 
-`extension-dist/safari/` 是 Safari 擴充功能的資源目錄，並非可直接安裝的 macOS 應用程式。正式 Safari 分發仍需要建置宿主 App、完成簽章與 Apple 公證，並驗證安裝及擴充功能註冊。
+`extension-dist/safari/` 僅包含擴充功能資源，無法直接安裝。
 
 ## 參與貢獻
 
