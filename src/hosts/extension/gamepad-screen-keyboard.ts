@@ -13,6 +13,7 @@ import {
   type PinyinDictionary,
 } from '../../gamepad-control/pinyin';
 import type { NavigationDirection } from '../../input/intents';
+import { getLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import {
   type EditableTextTarget,
@@ -424,9 +425,68 @@ export class GamepadScreenKeyboard {
       return;
     }
     this.shortcuts = { ...shortcuts };
-    this.renderKeyboard();
-    this.renderSpeechButton();
+    this.refreshLanguage();
     this.schedulePosition();
+  }
+
+  refreshLanguage() {
+    this.element.lang = getLocale();
+    this.notice.lang = getLocale();
+    this.element.setAttribute(
+      'aria-label',
+      t('cm_gamepad_screen_keyboard_text_14'),
+    );
+    this.candidateBar.setAttribute(
+      'aria-label',
+      this.speechControl
+        ? t('cm_gamepad_screen_keyboard_text_15')
+        : t('cm_gamepad_screen_keyboard_text_16'),
+    );
+    const rows = this.currentRows();
+    for (const button of this.element.querySelectorAll<HTMLButtonElement>(
+      '.gamepad-keyboard__key',
+    )) {
+      const row = Number(button.dataset.row);
+      const column = Number(button.dataset.column);
+      let key =
+        row >= 0
+          ? rows[row]?.[column]
+          : this.keyDefinitions.get(`${row}:${column}`);
+      if (!key) continue;
+      if (key.action === 'candidate' && key.candidate)
+        key = {
+          ...key,
+          name: t('cm_gamepad_screen_keyboard_name_18', [key.candidate.word]),
+        };
+      if (key.action === 'candidate-expand')
+        key = {
+          ...key,
+          label: t('cm_gamepad_screen_keyboard_label_19'),
+          name: t('cm_gamepad_screen_keyboard_name_20'),
+        };
+      this.keyDefinitions.set(`${row}:${column}`, key);
+      button.setAttribute(
+        'aria-label',
+        `${key.name ?? key.label}${key.shortcut ? `，${key.shortcut}` : ''}`,
+      );
+      let shortcut = button.querySelector<HTMLElement>(
+        '.gamepad-keyboard__shortcut',
+      );
+      if (key.shortcut) {
+        if (!shortcut) {
+          shortcut = this.pageDocument.createElement('kbd');
+          shortcut.className = 'gamepad-keyboard__shortcut';
+          button.append(shortcut);
+        }
+        shortcut.textContent = key.shortcut;
+      } else shortcut?.remove();
+    }
+    const message = this.candidateList.querySelector<HTMLElement>(
+      '.gamepad-keyboard__candidate-message',
+    );
+    if (message) message.textContent = this.candidateMessage();
+    this.renderSelection();
+    this.renderSpeechButton();
   }
 
   setSpeechStatus(status: GamepadKeyboardSpeechStatus) {
@@ -850,6 +910,14 @@ export class GamepadScreenKeyboard {
     return button;
   }
 
+  private candidateMessage() {
+    return this.pinyinStatus === 'loading'
+      ? t('cm_gamepad_screen_keyboard_text_21')
+      : this.pinyinStatus === 'error'
+        ? t('cm_gamepad_screen_keyboard_text_22')
+        : t('cm_gamepad_screen_keyboard_text_23', [this.pinyinInput]);
+  }
+
   private renderCandidates() {
     const speechWasSelected = this.speechFocused;
     for (const key of [...this.keyDefinitions.keys()]) {
@@ -904,14 +972,7 @@ export class GamepadScreenKeyboard {
     } else if (hasComposition) {
       const message = this.pageDocument.createElement('span');
       message.className = 'gamepad-keyboard__candidate-message';
-      message.textContent =
-        this.pinyinStatus === 'loading'
-          ? t('cm_gamepad_screen_keyboard_text_21')
-          : this.pinyinStatus === 'error'
-            ? t('cm_gamepad_screen_keyboard_text_22')
-            : t('cm_gamepad_screen_keyboard_text_23', [
-                String(this.pinyinInput),
-              ]);
+      message.textContent = this.candidateMessage();
       this.candidateList.append(message);
     }
     const speechColumn =

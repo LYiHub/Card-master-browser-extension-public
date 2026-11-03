@@ -52,8 +52,10 @@ import type { PinyinDictionary } from '../../gamepad-control/pinyin';
 import { GamepadIntentAdapter } from '../../input/gamepad-intent-adapter';
 import type { IntentEnvelope, NavigationDirection } from '../../input/intents';
 import { rewriteProjectAssetUrls } from '../../lib/project-assets';
+import { getLocale, subscribeLanguage } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { mediaSpeedWheelVisible } from '../../media-speed/domain/types';
+import { extensionApiOrNull } from './api';
 import {
   installExtensionContextBoundary,
   onExtensionContextInvalidated,
@@ -236,6 +238,8 @@ function loadPinyinDictionary(api: GamepadExtensionApi) {
 }
 
 function mountGamepadControl(api: GamepadExtensionApi): GamepadControlRuntime {
+  // Bind preferences separately from the deliberately runtime-only gamepad transport.
+  extensionApiOrNull();
   const removeContextBoundary = installExtensionContextBoundary();
   removeStaleGamepadControlArtifacts(document);
   const speechCapability = extensionSpeechCapability();
@@ -1692,6 +1696,22 @@ function mountGamepadControl(api: GamepadExtensionApi): GamepadControlRuntime {
       if (disposed) return;
       applyControlSettings(null);
     });
+
+  const refreshLanguage = () => {
+    host.lang = getLocale();
+    panel.setAttribute('aria-label', t('cm_gamepad_control_content_text_1'));
+    closeIndicator.setAttribute(
+      'aria-label',
+      t('cm_gamepad_control_content_text_2'),
+    );
+    updateKeyboardShortcuts();
+    screenKeyboard.refreshLanguage();
+    renderSpeechStatus(speechViewState);
+    actionFeed.clear();
+    renderActiveActions();
+  };
+  refreshLanguage();
+  disposers.push(subscribeLanguage(refreshLanguage));
 
   const initialMediaSpeedSnapshot = readMediaSpeedSnapshot(document);
   speedWheelVisible = initialMediaSpeedSnapshot
