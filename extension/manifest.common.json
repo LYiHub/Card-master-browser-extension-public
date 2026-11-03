@@ -1,8 +1,8 @@
 {
-  "name": "卡牌大师",
-  "short_name": "卡牌大师",
+  "name": "__MSG_cm_extension_name__",
+  "short_name": "__MSG_cm_extension_name__",
   "version": "0.3.2",
-  "description": "以游戏化卡牌统一管理用户脚本与网页能力：AI 创建脚本、原生内容过滤、页面光影、媒体控制、视频增强与游戏手柄交互。",
+  "description": "__MSG_cm_extension_description__",
   "default_locale": "zh_CN",
   "host_permissions": ["<all_urls>"],
   "content_security_policy": {
@@ -15,7 +15,7 @@
     "128": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png"
   },
   "action": {
-    "default_title": "卡牌大师",
+    "default_title": "__MSG_cm_extension_name__",
     "default_icon": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png"
   },
   "options_ui": {
@@ -31,7 +31,7 @@
         "default": "Ctrl+E",
         "mac": "Command+E"
       },
-      "description": "展开或收起当前页面的卡牌"
+      "description": "__MSG_cm_extension_toggle_deck__"
     }
   },
   "content_scripts": [

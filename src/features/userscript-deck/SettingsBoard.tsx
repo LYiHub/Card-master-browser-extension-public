@@ -58,6 +58,7 @@ import {
   type DeckEntrySettings,
   type DeckEntrySettingsMutation,
 } from './deck-entry';
+import { LanguageSettings } from './LanguageSettings';
 
 const SETTINGS_SECTIONS = [
   { value: 'interface', label: '牌阵入口' },
@@ -859,6 +860,7 @@ export function SettingsBoard({
           </div>
         ) : section === 'interface' ? (
           <section className="manager-settings-panel">
+            <LanguageSettings />
             <UiToggle
               label="显示页面牌库入口"
               description="开启后在网页与新标签页显示可拖动的卡牌大师 Logo；点击可展开牌阵。关闭后仍可使用扩展栏图标或快捷键。"

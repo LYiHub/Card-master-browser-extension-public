@@ -1,0 +1,16 @@
+{
+  "cm_extension_name": { "message": "卡牌大师", "description": "扩展名称" },
+  "cm_extension_description": {
+    "message": "以游戏化卡牌统一管理用户脚本与网页能力：AI 创建脚本、原生内容过滤、页面光影、媒体控制、视频增强与游戏手柄交互。"
+  },
+  "cm_extension_open_assistant": { "message": "打开卡牌大师智能体" },
+  "cm_extension_assistant_title": { "message": "卡牌大师智能体" },
+  "cm_extension_toggle_deck": { "message": "展开或收起当前页面的卡牌" },
+  "cm_language_title": { "message": "界面语言" },
+  "cm_language_description": {
+    "message": "选择卡牌大师界面和 AI 默认回复使用的语言。"
+  },
+  "cm_language_auto": { "message": "跟随浏览器界面" },
+  "cm_language_simplified": { "message": "简体中文" },
+  "cm_language_traditional": { "message": "繁體中文（台灣）" }
+}

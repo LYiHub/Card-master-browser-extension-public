@@ -24,11 +24,11 @@
     "scripts": ["background.js"]
   },
   "action": {
-    "default_title": "打开卡牌大师智能体",
+    "default_title": "__MSG_cm_extension_open_assistant__",
     "default_icon": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png"
   },
   "sidebar_action": {
-    "default_title": "卡牌大师智能体",
+    "default_title": "__MSG_cm_extension_assistant_title__",
     "default_panel": "assistant.html",
     "default_icon": "project-assets/userscript-deck/visual/action-icons/card-master-logo.png",
     "open_at_install": false

@@ -33,6 +33,7 @@ import {
   extensionRuntimeAssets,
   extensionRuntimeAssetsFor,
 } from './extension-runtime-assets.mjs';
+import { APP_LOCALES, mergeCoreLocales } from './localization.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const projectMetadata = JSON.parse(
@@ -247,7 +248,7 @@ async function mergeLumnoLocale() {
   );
 }
 
-async function validateSingleLocaleRoot(localeRoot) {
+async function validateSingleLocaleRoot(localeRoot, expected = ['zh_CN']) {
   const locales = [];
   for (const entry of await readdir(localeRoot, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
@@ -256,9 +257,9 @@ async function validateSingleLocaleRoot(localeRoot) {
     ).catch(() => null);
     if (messages?.isFile()) locales.push(entry.name);
   }
-  if (locales.length !== 1 || locales[0] !== 'zh_CN') {
+  if (JSON.stringify(locales.sort()) !== JSON.stringify([...expected].sort())) {
     throw new Error(
-      `Extension runtime locales must contain only zh_CN: ${relative(output, localeRoot)} contains ${locales.join(', ') || 'none'}.`,
+      `Extension runtime locales must contain ${expected.join(', ')}: ${relative(output, localeRoot)} contains ${locales.join(', ') || 'none'}.`,
     );
   }
 }
@@ -1377,8 +1378,9 @@ if (extensionTarget !== 'safari') {
 if (extensionTarget !== 'safari') {
   await mergeCatCatchLocale(catCatchRoot, output);
 }
+await mergeCoreLocales(root, output);
 await Promise.all([
-  validateSingleLocaleRoot(resolve(output, '_locales')),
+  validateSingleLocaleRoot(resolve(output, '_locales'), APP_LOCALES),
   validateSingleLocaleRoot(resolve(output, 'vendor/bilibili/sponsor/_locales')),
   validateSingleLocaleRoot(resolve(output, 'vendor/youtube/sponsor/_locales')),
   ...(extensionTarget === 'safari' ? [] : [validateLumnoRuntime()]),

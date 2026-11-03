@@ -1,7 +1,9 @@
+import { initializeLanguagePreference } from '../../localization/preferences';
 import {
   extensionDiagnostics,
   isExtensionPageLifecycleInterrupted,
   notifyExtensionContextInvalidated,
+  reportExtensionFailure,
 } from './diagnostics';
 import { extensionGlobalApi } from './extension-runtime-api';
 import type { ExtensionRequest } from './protocol';
@@ -274,7 +276,11 @@ export function extensionApiOrNull(): ExtensionApi | null {
     ) {
       return null;
     }
-    return api as ExtensionApi;
+    const available = api as ExtensionApi;
+    void initializeLanguagePreference(available).catch((error) =>
+      reportExtensionFailure('localization', 'preferences-read-failed', error),
+    );
+    return available;
   } catch {
     return null;
   }

@@ -22,7 +22,7 @@
         "default": "Alt+Shift+E",
         "mac": "Command+Shift+E"
       },
-      "description": "展开或收起当前页面的卡牌"
+      "description": "__MSG_cm_extension_toggle_deck__"
     }
   },
   "content_scripts": [

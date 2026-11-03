@@ -11,12 +11,10 @@ const safariManifest = { ...commonManifest, ...safariTarget };
 
 describe('跨浏览器扩展清单', () => {
   it('保持统一的产品身份与能力描述', () => {
-    expect(commonManifest.name).toBe('卡牌大师');
-    expect(commonManifest.short_name).toBe('卡牌大师');
+    expect(commonManifest.name).toBe('__MSG_cm_extension_name__');
+    expect(commonManifest.short_name).toBe('__MSG_cm_extension_name__');
     expect(commonManifest.version).toBe('0.3.2');
-    expect(commonManifest.description).toBe(
-      '以游戏化卡牌统一管理用户脚本与网页能力：AI 创建脚本、原生内容过滤、页面光影、媒体控制、视频增强与游戏手柄交互。',
-    );
+    expect(commonManifest.description).toBe('__MSG_cm_extension_description__');
     expect(commonManifest.default_locale).toBe('zh_CN');
     expect(commonManifest.chrome_url_overrides).toEqual({
       newtab: 'new-tab.html',
@@ -90,9 +88,11 @@ describe('跨浏览器扩展清单', () => {
     expect(firefoxManifest.background).toEqual({
       scripts: ['background.js'],
     });
-    expect(firefoxManifest.action.default_title).toBe('打开卡牌大师智能体');
+    expect(firefoxManifest.action.default_title).toBe(
+      '__MSG_cm_extension_open_assistant__',
+    );
     expect(firefoxManifest.sidebar_action).toEqual({
-      default_title: '卡牌大师智能体',
+      default_title: '__MSG_cm_extension_assistant_title__',
       default_panel: 'assistant.html',
       default_icon:
         'project-assets/userscript-deck/visual/action-icons/card-master-logo.png',

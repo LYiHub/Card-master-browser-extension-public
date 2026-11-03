@@ -1,0 +1,16 @@
+{
+  "cm_extension_name": { "message": "卡牌大師", "description": "擴充功能名稱" },
+  "cm_extension_description": {
+    "message": "以遊戲化卡牌統一管理使用者腳本與網頁功能：AI 建立腳本、原生內容過濾、頁面光影、媒體控制、影片增強與遊戲控制器互動。"
+  },
+  "cm_extension_open_assistant": { "message": "開啟卡牌大師智慧助理" },
+  "cm_extension_assistant_title": { "message": "卡牌大師智慧助理" },
+  "cm_extension_toggle_deck": { "message": "展開或收起目前頁面的卡牌" },
+  "cm_language_title": { "message": "介面語言" },
+  "cm_language_description": {
+    "message": "選擇卡牌大師介面與 AI 預設回覆使用的語言。"
+  },
+  "cm_language_auto": { "message": "跟隨瀏覽器介面" },
+  "cm_language_simplified": { "message": "简体中文" },
+  "cm_language_traditional": { "message": "繁體中文（台灣）" }
+}
