@@ -1,4 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  DECK_ENTRY_SETTINGS_STORAGE_KEY,
+  DEFAULT_DECK_ENTRY_SETTINGS,
+} from '../../features/userscript-deck/deck-entry';
 import { DEFAULT_AI_SERVICES_CONFIG } from './ai-services-config';
 import { EXTENSION_CHANNEL, extensionRequest } from './protocol';
 import {
@@ -8,6 +12,63 @@ import {
 } from './sync-settings';
 
 describe('portable configuration trust boundaries', () => {
+  it('persists fullscreen opt-out through sync and restores legacy records with auto-hide enabled', async () => {
+    const { autoHideInFullscreen: _default, ...legacy } = {
+      ...DEFAULT_DECK_ENTRY_SETTINGS,
+      hiddenCardIds: [],
+    };
+    let stored: Record<string, unknown> = legacy;
+    const sendMessage = vi.fn(async () => undefined);
+    const services = {
+      api: {
+        runtime: { sendMessage },
+        storage: {
+          local: {
+            get: async () => ({ [DECK_ENTRY_SETTINGS_STORAGE_KEY]: stored }),
+            set: async (items: Record<string, Record<string, unknown>>) => {
+              stored = items[DECK_ENTRY_SETTINGS_STORAGE_KEY];
+            },
+          },
+        },
+      },
+      repository: { list: async () => [] },
+    } as unknown as Parameters<typeof syncSettings>[0];
+    const adapter = syncSettings(services)[0];
+    expect(adapter.key).toBe('deck');
+    expect(() => adapter.validate(legacy)).not.toThrow();
+    expect(() =>
+      adapter.validate({ ...legacy, autoHideInFullscreen: 'false' }),
+    ).toThrow();
+    expect(() => adapter.validate({ ...legacy, unknown: true })).toThrow();
+
+    await adapter.apply(
+      { ...legacy, autoHideInFullscreen: false },
+      await adapter.read(),
+    );
+    expect(stored.autoHideInFullscreen).toBe(false);
+    expect(sendMessage).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        settings: expect.objectContaining({ autoHideInFullscreen: false }),
+      }),
+    );
+    const reloaded = syncSettings(services)[0];
+    expect(await reloaded.read()).toEqual({
+      ...legacy,
+      autoHideInFullscreen: false,
+    });
+    const snapshot = JSON.parse(JSON.stringify(await reloaded.read()));
+    await reloaded.apply(legacy, await reloaded.read());
+    expect(stored).toEqual({ ...legacy, autoHideInFullscreen: true });
+    await reloaded.apply(snapshot, await reloaded.read());
+    expect(stored.autoHideInFullscreen).toBe(false);
+
+    const expected = await reloaded.read();
+    stored = { ...stored, autoHideInFullscreen: true };
+    await expect(reloaded.apply(snapshot, expected)).rejects.toThrow(
+      '本机配置刚发生变化',
+    );
+  });
+
   const credentials = {
     ...structuredClone(DEFAULT_AI_SERVICES_CONFIG),
     modelService: {

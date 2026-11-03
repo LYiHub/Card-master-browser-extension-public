@@ -51,6 +51,10 @@ import {
   onExtensionContextInvalidated,
   reportExtensionFailure,
 } from './diagnostics';
+import {
+  FULLSCREEN_ENTRY_STYLES,
+  installFullscreenEntryVisibility,
+} from './fullscreen-entry';
 import { registerGamepadVirtualPointerElement } from './gamepad-bridge';
 import { interceptUserscriptInstallLinks } from './installer';
 import {
@@ -288,6 +292,7 @@ function mountBootstrap(
   let audio: PageAudio | null = null;
   let currentSettings: DeckEntrySettings = {
     showDeckTrigger: true,
+    autoHideInFullscreen: true,
     showToolbarBadge: true,
     showDeckTriggerBadge: true,
     position: null,
@@ -369,11 +374,13 @@ function mountBootstrap(
   host.style.pointerEvents = 'none';
   const shadow = host.attachShadow({ mode: 'closed' });
   const style = document.createElement('style');
-  style.textContent = lightStyles(
-    api.runtime.getURL(
-      'project-assets/userscript-deck/visual/cursors/pointer.png',
-    ),
-  );
+  style.textContent =
+    FULLSCREEN_ENTRY_STYLES +
+    lightStyles(
+      api.runtime.getURL(
+        'project-assets/userscript-deck/visual/cursors/pointer.png',
+      ),
+    );
   const entry = document.createElement('button');
   entry.type = 'button';
   entry.className = 'entry';
@@ -396,6 +403,7 @@ function mountBootstrap(
   entry.append(logoAnchor);
   shadow.append(style, entry);
   document.documentElement.append(host);
+  disposers.push(installFullscreenEntryVisibility(document, host));
 
   const revealLightEntryWhenReady = () => {
     entry.style.visibility = bootstrapReady && settingsReady ? '' : 'hidden';
@@ -403,6 +411,7 @@ function mountBootstrap(
 
   const applySettings = (settings: DeckEntrySettings) => {
     currentSettings = settings;
+    entry.dataset.fullscreenAutoHide = String(settings.autoHideInFullscreen);
     entry.hidden = !currentSettings.showDeckTrigger;
     count.hidden = !currentSettings.showDeckTriggerBadge;
     host.dataset.deckEntryVisible = entry.hidden ? 'false' : 'true';

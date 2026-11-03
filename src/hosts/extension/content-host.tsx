@@ -29,6 +29,10 @@ import { ExtensionDataManagementController } from './data-management';
 import { ExtensionDeckEntryController } from './deck-entry';
 import { reportExtensionFailure } from './diagnostics';
 import { extensionUserscriptFetch } from './fetch';
+import {
+  FULLSCREEN_ENTRY_STYLES,
+  installFullscreenEntryVisibility,
+} from './fullscreen-entry';
 import { ExtensionGamepadControlController } from './gamepad-control-settings';
 import { ExtensionMediaResourcesController } from './media-resources';
 import { ExtensionMediaSpeedController } from './media-speed';
@@ -254,13 +258,14 @@ export function mountExtensionDeck(
     const style = document.createElement('style');
     style.dataset.userscriptDeck = 'styles';
     style.textContent = rewriteProjectAssetUrls(
-      `${deckStyles}\n${contentBlockingBoardStyles}\n${pageThemeBoardStyles}\n${mediaSpeedBoardStyles}\n${mediaResourcesBoardStyles}\n${bilibiliCapabilityBoardStyles}`,
+      `${FULLSCREEN_ENTRY_STYLES}\n${deckStyles}\n${contentBlockingBoardStyles}\n${pageThemeBoardStyles}\n${mediaSpeedBoardStyles}\n${mediaResourcesBoardStyles}\n${bilibiliCapabilityBoardStyles}`,
       api.runtime.getURL('project-assets/'),
     );
     const mountElement = document.createElement('div');
     shadowRoot.append(fontStyles, style, mountElement);
     document.documentElement.append(hostElement);
     cleanupScope.add(() => hostElement.remove());
+    cleanupScope.add(installFullscreenEntryVisibility(document, hostElement));
 
     const root = createRoot(mountElement);
     cleanupScope.add(() => disposeInputCoordinator(document));

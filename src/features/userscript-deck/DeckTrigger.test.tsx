@@ -15,6 +15,7 @@ function renderTrigger({
   visibleCount = 4,
   activeCount = visibleCount,
   showDeckTriggerBadge = true,
+  autoHideInFullscreen = true,
   receiving = false,
   mediaResourcesCount = 0,
   showMediaResourcesTrigger = true,
@@ -28,6 +29,7 @@ function renderTrigger({
   visibleCount?: number;
   activeCount?: number;
   showDeckTriggerBadge?: boolean;
+  autoHideInFullscreen?: boolean;
   receiving?: boolean;
   mediaResourcesCount?: number;
   showMediaResourcesTrigger?: boolean;
@@ -47,6 +49,7 @@ function renderTrigger({
       visibleCount={visibleCount}
       activeCount={activeCount}
       showDeckTriggerBadge={showDeckTriggerBadge}
+      autoHideInFullscreen={autoHideInFullscreen}
       ready={ready}
       hidden={hidden}
       receiving={receiving}
@@ -75,6 +78,25 @@ function renderTrigger({
 }
 
 describe('deck trigger and media speed wheel visibility', () => {
+  it.each([
+    true,
+    false,
+  ])('passes fullscreen auto-hide %s to the complete entry cluster', (autoHideInFullscreen) => {
+    const markup = renderTrigger({
+      hidden: false,
+      speedWheelVisible: true,
+      mediaResourcesCount: 2,
+      autoHideInFullscreen,
+    });
+    expect(markup).toMatch(
+      new RegExp(
+        `<div class="manager-deck-entry-cluster[^>]+data-fullscreen-auto-hide="${autoHideInFullscreen}"`,
+      ),
+    );
+    expect(markup).toContain('manager-media-speed-radial');
+    expect(markup).toContain('manager-media-resources-trigger');
+  });
+
   it('tracks drag globally and blocks native image dragging', () => {
     const triggerSource = readFileSync(
       new URL('./DeckTrigger.tsx', import.meta.url),

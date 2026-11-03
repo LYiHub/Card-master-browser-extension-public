@@ -871,6 +871,17 @@ export function SettingsBoard({
               }
             />
             <UiToggle
+              label="全屏时自动隐藏浮动入口"
+              description="视频全屏播放时，自动隐藏页面入口及倍速、媒体图标；退出视频全屏后恢复。"
+              checked={deckEntrySettings.autoHideInFullscreen}
+              onChange={(enabled) =>
+                void onDeckEntrySettingsChange({
+                  kind: 'set-fullscreen-auto-hide',
+                  enabled,
+                })
+              }
+            />
+            <UiToggle
               label="扩展栏显示激活卡牌数量"
               description="仅控制浏览器扩展栏图标上的数字，图标本身始终保持不变。"
               checked={deckEntrySettings.showToolbarBadge}

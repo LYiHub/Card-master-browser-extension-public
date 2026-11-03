@@ -17,7 +17,8 @@
 
 .app-ui-dialog {
   --app-ui-dialog-effective-gutter: var(--app-ui-dialog-gutter, 16px);
-  --app-ui-dialog-square-size: 56rem;
+  /* rem would couple the frame size to the host page's root font. */
+  --app-ui-dialog-square-size: 896px;
   --app-ui-dialog-safe-inline: 6%;
   --app-ui-dialog-safe-block: 6%;
   --app-ui-dialog-max-inline: calc(

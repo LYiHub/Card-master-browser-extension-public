@@ -11,6 +11,7 @@ import {
   readGamepadControlOwner,
   readGamepadControlState,
   readGamepadSnapshot,
+  registerGamepadVirtualPointerElement,
   registerGamepadVirtualPointerTarget,
   requestGamepadBrowserTabSwitch,
   subscribeGamepadBrowserTabSwitch,
@@ -36,6 +37,34 @@ function gamepadSnapshot(id: string, pressed: number[] = []) {
 }
 
 describe('gamepad extension-world bridge', () => {
+  it('ignores CSS-hidden floating entries without losing their layout bounds', () => {
+    const host = bridgeHost();
+    let visibility = 'visible';
+    const element = {
+      isConnected: true,
+      hidden: false,
+      matches: () => false,
+      ownerDocument: {
+        defaultView: { getComputedStyle: () => ({ visibility }) },
+      },
+      getBoundingClientRect: () => ({
+        left: 0,
+        top: 0,
+        right: 56,
+        bottom: 56,
+        width: 56,
+        height: 56,
+      }),
+      classList: { toggle: vi.fn() },
+    } as unknown as HTMLElement;
+    registerGamepadVirtualPointerElement({ element }, host);
+    expect(publishGamepadVirtualPointer({ x: 20, y: 20 }, host)).toBe(true);
+    visibility = 'hidden';
+    expect(publishGamepadVirtualPointer({ x: 20, y: 20 }, host)).toBe(false);
+    visibility = 'visible';
+    expect(publishGamepadVirtualPointer({ x: 20, y: 20 }, host)).toBe(true);
+  });
+
   it('publishes independent runtime and input ownership states', () => {
     const host = bridgeHost();
 

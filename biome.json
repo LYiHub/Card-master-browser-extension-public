@@ -5,6 +5,7 @@
     "includes": [
       "**",
       "!!.agents",
+      "!!.local",
       "!!assets",
       "!!artifacts",
       "!!dist",

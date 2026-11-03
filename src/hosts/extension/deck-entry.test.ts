@@ -65,6 +65,7 @@ describe('ExtensionDeckEntryController', () => {
           showDeckTrigger: false,
           showToolbarBadge: true,
           showDeckTriggerBadge: true,
+          autoHideInFullscreen: true,
           position: { x: 0.25, y: 0.75 },
           hiddenCardIds: [],
         },
@@ -77,6 +78,7 @@ describe('ExtensionDeckEntryController', () => {
       showDeckTrigger: false,
       showToolbarBadge: true,
       showDeckTriggerBadge: true,
+      autoHideInFullscreen: true,
       position: { x: 0.25, y: 0.75 },
       hiddenCardIds: [],
     });
@@ -98,6 +100,7 @@ describe('ExtensionDeckEntryController', () => {
           showDeckTrigger: false,
           showToolbarBadge: true,
           showDeckTriggerBadge: true,
+          autoHideInFullscreen: true,
           position: null,
           hiddenCardIds: ['script-a'],
         },
@@ -113,6 +116,7 @@ describe('ExtensionDeckEntryController', () => {
       showDeckTrigger: false,
       showToolbarBadge: true,
       showDeckTriggerBadge: true,
+      autoHideInFullscreen: true,
       position: null,
       hiddenCardIds: ['script-a'],
     });
@@ -270,6 +274,7 @@ describe('ExtensionDeckEntryController', () => {
           showDeckTrigger: true,
           showToolbarBadge: true,
           showDeckTriggerBadge: true,
+          autoHideInFullscreen: true,
           position: { x: 0.4, y: 0.6 },
           hiddenCardIds: ['script-a'],
         },
@@ -282,6 +287,7 @@ describe('ExtensionDeckEntryController', () => {
       showDeckTrigger: true,
       showToolbarBadge: true,
       showDeckTriggerBadge: true,
+      autoHideInFullscreen: true,
       position: { x: 0.4, y: 0.6 },
       hiddenCardIds: ['script-a'],
     });
@@ -296,6 +302,7 @@ describe('installExtensionDeckEntrySettingsHandler', () => {
       showDeckTrigger: true,
       showToolbarBadge: true,
       showDeckTriggerBadge: true,
+      autoHideInFullscreen: true,
       position: null,
       hiddenCardIds: [] as string[],
     };
@@ -326,9 +333,18 @@ describe('installExtensionDeckEntrySettingsHandler', () => {
         cardId: 'script-b',
         hidden: true,
       }),
+      mutateExtensionDeckEntrySettings(api, {
+        kind: 'set-fullscreen-auto-hide',
+        enabled: false,
+      }),
     ]);
 
     expect(stored.hiddenCardIds).toEqual(['script-a', 'script-b']);
+    expect(stored.autoHideInFullscreen).toBe(false);
+    expect(api.runtime.sendMessage).toHaveBeenLastCalledWith({
+      type: DECK_ENTRY_SETTINGS_CHANGED_MESSAGE_TYPE,
+      settings: stored,
+    });
   });
 
   it('keeps steward hide in the current browser session only', async () => {
@@ -418,6 +434,7 @@ describe('installExtensionDeckEntrySettingsHandler', () => {
               showDeckTrigger: true,
               showToolbarBadge: true,
               showDeckTriggerBadge: true,
+              autoHideInFullscreen: true,
               position: { x: 0.4, y: 0.6 },
               hiddenCardIds: [],
             },
@@ -440,6 +457,7 @@ describe('installExtensionDeckEntrySettingsHandler', () => {
       showDeckTrigger: true,
       showToolbarBadge: true,
       showDeckTriggerBadge: true,
+      autoHideInFullscreen: true,
       position: { x: 0.4, y: 0.6 },
       hiddenCardIds: ['script-a'],
     };
@@ -506,6 +524,7 @@ describe('installExtensionDeckEntrySettingsHandler', () => {
         showDeckTrigger: false,
         showToolbarBadge: true,
         showDeckTriggerBadge: true,
+        autoHideInFullscreen: true,
         position: { x: 0.25, y: 0.75 },
       },
     }));
@@ -547,6 +566,7 @@ describe('installExtensionDeckEntrySettingsHandler', () => {
         showDeckTrigger: false,
         showToolbarBadge: true,
         showDeckTriggerBadge: true,
+        autoHideInFullscreen: true,
         position: { x: 0.25, y: 0.75 },
         hiddenCardIds: DEFAULT_DECK_ENTRY_SETTINGS.hiddenCardIds,
       },

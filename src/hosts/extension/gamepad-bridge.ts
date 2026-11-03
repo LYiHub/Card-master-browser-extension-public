@@ -225,6 +225,8 @@ export function registerGamepadVirtualPointerElement(
       !element.isConnected ||
       element.hidden ||
       element.matches(':disabled') ||
+      element.ownerDocument.defaultView?.getComputedStyle(element)
+        .visibility === 'hidden' ||
       !enabled()
     ) {
       return false;

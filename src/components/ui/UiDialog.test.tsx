@@ -87,7 +87,7 @@ describe('UiDialog frame contract', () => {
 
     expect(css).toMatch(/aspect-ratio:\s*1\s*\/\s*1\s*!important/);
     expect(css).toMatch(/aspect-ratio:\s*3\s*\/\s*2\s*!important/);
-    expect(square).toContain('--app-ui-dialog-square-size: 56rem');
+    expect(square).toContain('--app-ui-dialog-square-size: 896px');
     expect(square).toContain('var(--app-ui-dialog-square-size)');
     expect(square).toContain('--app-ui-dialog-safe-inline: 6%');
     expect(square).toContain('--app-ui-dialog-safe-block: 6%');

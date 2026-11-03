@@ -45,7 +45,7 @@
   inset: 0;
   display: grid;
   grid-template-rows: minmax(0, 1fr);
-  grid-template-columns: minmax(8rem, 11rem) minmax(0, 56rem);
+  grid-template-columns: minmax(128px, 176px) minmax(0, 896px);
   gap: clamp(24px, 4vw, 54px);
   align-items: center;
   justify-content: center;
@@ -63,7 +63,7 @@
 }
 
 .manager-detail-stage.is-centered {
-  grid-template-columns: minmax(0, 56rem);
+  grid-template-columns: minmax(0, 896px);
 }
 
 .userscript-deck,

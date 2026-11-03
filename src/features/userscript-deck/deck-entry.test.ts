@@ -49,6 +49,7 @@ describe('deck entry settings', () => {
       showDeckTrigger: false,
       showToolbarBadge: true,
       showDeckTriggerBadge: true,
+      autoHideInFullscreen: true,
       position: null,
       hiddenCardIds: [
         NEW_TAB_CARD_ID,
@@ -57,6 +58,20 @@ describe('deck entry settings', () => {
         'preinstalled-copying-lifted',
       ],
     });
+  });
+
+  it('enables fullscreen auto-hide for old settings and preserves an explicit opt-out', () => {
+    const { autoHideInFullscreen: _default, ...legacy } =
+      DEFAULT_DECK_ENTRY_SETTINGS;
+    expect(normalizeDeckEntrySettings(legacy).autoHideInFullscreen).toBe(true);
+    expect(
+      normalizeDeckEntrySettings({ ...legacy, autoHideInFullscreen: 'false' })
+        .autoHideInFullscreen,
+    ).toBe(true);
+    expect(
+      normalizeDeckEntrySettings({ ...legacy, autoHideInFullscreen: false })
+        .autoHideInFullscreen,
+    ).toBe(false);
   });
 
   it('does not replace the visible trigger with the bottom launch anchor while settings load', () => {
@@ -85,6 +100,7 @@ describe('deck entry settings', () => {
       showDeckTrigger: true,
       showToolbarBadge: true,
       showDeckTriggerBadge: true,
+      autoHideInFullscreen: true,
       position: { x: 0.32, y: 0.68 },
       hiddenCardIds: [
         NEW_TAB_CARD_ID,
@@ -157,6 +173,18 @@ describe('deck entry settings', () => {
 
     expect(
       applyDeckEntrySettingsMutation(settings, {
+        kind: 'set-fullscreen-auto-hide',
+        enabled: false,
+      }),
+    ).toEqual({ ...settings, autoHideInFullscreen: false });
+    expect(
+      applyDeckEntrySettingsMutation(settings, {
+        kind: 'set-fullscreen-auto-hide',
+        enabled: true,
+      }),
+    ).toBe(settings);
+    expect(
+      applyDeckEntrySettingsMutation(settings, {
         kind: 'set-card-hidden',
         cardId: 'script-b',
         hidden: true,
@@ -216,6 +244,22 @@ describe('deck entry settings', () => {
         },
       }),
     ).toBe(false);
+  });
+
+  it.each([
+    true,
+    false,
+    'false',
+    null,
+    undefined,
+  ])('validates the fullscreen auto-hide mutation value %s', (enabled) => {
+    expect(
+      isDeckEntrySettingsMessage({
+        channel: DECK_ENTRY_SETTINGS_MESSAGE_CHANNEL,
+        type: DECK_ENTRY_SETTINGS_UPDATE_MESSAGE_TYPE,
+        mutation: { kind: 'set-fullscreen-auto-hide', enabled },
+      }),
+    ).toBe(typeof enabled === 'boolean');
   });
 
   it('requires an explicit extension-page tab identity during bootstrap', () => {
@@ -363,6 +407,7 @@ describe('deck entry settings', () => {
           showDeckTrigger: true,
           showToolbarBadge: true,
           showDeckTriggerBadge: true,
+          autoHideInFullscreen: true,
           position: { x: 0.4, y: 0.6 },
           hiddenCardIds: ['script-a'],
         },

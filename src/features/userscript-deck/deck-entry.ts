@@ -35,6 +35,7 @@ export type DeckEntryPosition = {
 
 export type DeckEntrySettings = {
   showDeckTrigger: boolean;
+  autoHideInFullscreen: boolean;
   showToolbarBadge: boolean;
   showDeckTriggerBadge: boolean;
   position: DeckEntryPosition | null;
@@ -45,6 +46,10 @@ export type DeckEntrySettingsMutation =
   | {
       kind: 'set-trigger-visible';
       visible: boolean;
+    }
+  | {
+      kind: 'set-fullscreen-auto-hide';
+      enabled: boolean;
     }
   | {
       kind: 'set-toolbar-badge-visible';
@@ -73,6 +78,7 @@ export type DeckCreationPreviewRequest = {
 
 export const DEFAULT_DECK_ENTRY_SETTINGS: DeckEntrySettings = {
   showDeckTrigger: true,
+  autoHideInFullscreen: true,
   showToolbarBadge: true,
   showDeckTriggerBadge: true,
   position: null,
@@ -152,6 +158,11 @@ export function applyDeckEntrySettingsMutation(
     return settings.showDeckTrigger === mutation.visible
       ? settings
       : { ...settings, showDeckTrigger: mutation.visible };
+  }
+  if (mutation.kind === 'set-fullscreen-auto-hide') {
+    return settings.autoHideInFullscreen === mutation.enabled
+      ? settings
+      : { ...settings, autoHideInFullscreen: mutation.enabled };
   }
   if (mutation.kind === 'set-toolbar-badge-visible') {
     return settings.showToolbarBadge === mutation.visible
@@ -295,6 +306,7 @@ export function normalizeDeckEntrySettings(value: unknown): DeckEntrySettings {
   }
   const settings = value as Record<string, unknown>;
   const showDeckTrigger = settings.showDeckTrigger;
+  const autoHideInFullscreen = settings.autoHideInFullscreen;
   const showToolbarBadge = settings.showToolbarBadge;
   const showDeckTriggerBadge = settings.showDeckTriggerBadge;
   return {
@@ -302,6 +314,10 @@ export function normalizeDeckEntrySettings(value: unknown): DeckEntrySettings {
       typeof showDeckTrigger === 'boolean'
         ? showDeckTrigger
         : DEFAULT_DECK_ENTRY_SETTINGS.showDeckTrigger,
+    autoHideInFullscreen:
+      typeof autoHideInFullscreen === 'boolean'
+        ? autoHideInFullscreen
+        : DEFAULT_DECK_ENTRY_SETTINGS.autoHideInFullscreen,
     showToolbarBadge:
       typeof showToolbarBadge === 'boolean'
         ? showToolbarBadge
@@ -322,6 +338,7 @@ function isDeckEntrySettings(value: unknown): value is DeckEntrySettings {
     typeof value === 'object' &&
     !Array.isArray(value) &&
     typeof settings.showDeckTrigger === 'boolean' &&
+    typeof settings.autoHideInFullscreen === 'boolean' &&
     typeof settings.showToolbarBadge === 'boolean' &&
     typeof settings.showDeckTriggerBadge === 'boolean' &&
     (settings.position === null || isDeckEntryPosition(settings.position)) &&
@@ -338,6 +355,9 @@ export function isDeckEntrySettingsMutation(
 ): value is DeckEntrySettingsMutation {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const mutation = value as Record<string, unknown>;
+  if (mutation.kind === 'set-fullscreen-auto-hide') {
+    return typeof mutation.enabled === 'boolean';
+  }
   if (mutation.kind === 'set-trigger-visible') {
     return typeof mutation.visible === 'boolean';
   }

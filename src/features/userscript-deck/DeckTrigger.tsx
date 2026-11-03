@@ -81,6 +81,7 @@ export function DeckTrigger({
   showDeckTriggerBadge,
   ready,
   hidden,
+  autoHideInFullscreen,
   receiving = false,
   position,
   speedWheelVisible,
@@ -105,6 +106,7 @@ export function DeckTrigger({
   showDeckTriggerBadge: boolean;
   ready: boolean;
   hidden: boolean;
+  autoHideInFullscreen: boolean;
   receiving?: boolean;
   position: DeckEntryPosition | null;
   speedWheelVisible: boolean;
@@ -390,6 +392,7 @@ export function DeckTrigger({
     <div
       className={`manager-deck-entry-cluster${radialVisible ? ' has-speed-radial' : ''}${mediaResourcesVisible ? ' has-media-resources-trigger' : ''}${hidden ? ' has-hidden-trigger' : ''}${position ? ' has-custom-position' : ''}${dragging ? ' is-dragging' : ''}`}
       data-core-state={presentation.coreState}
+      data-fullscreen-auto-hide={autoHideInFullscreen}
       data-accessories={presentation.accessoryState}
       data-media-resources-placement={
         presentation.resourcePlacement ?? undefined

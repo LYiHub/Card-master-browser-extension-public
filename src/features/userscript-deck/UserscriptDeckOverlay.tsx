@@ -1414,6 +1414,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
         visibleCount={visibleCardCount}
         activeCount={activeCardCount}
         showDeckTriggerBadge={resolvedDeckEntrySettings.showDeckTriggerBadge}
+        autoHideInFullscreen={resolvedDeckEntrySettings.autoHideInFullscreen}
         ready={libraryReady}
         hidden={
           importPresentationActive

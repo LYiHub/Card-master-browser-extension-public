@@ -194,9 +194,14 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
           ],
         ),
       (value) => {
-        const settings = normalizeDeckEntrySettings(value);
+        const { autoHideInFullscreen, ...settings } =
+          normalizeDeckEntrySettings(value);
         return {
           ...settings,
+          // Keep legacy cloud records valid; apply fills the new default.
+          ...(record(value) && 'autoHideInFullscreen' in value
+            ? { autoHideInFullscreen }
+            : {}),
           hiddenCardIds: [...settings.hiddenCardIds].sort(),
         };
       },
@@ -207,9 +212,9 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
           scripts.map((script) => [syncScriptKey(script), script.id]),
         );
         await updateExtensionDeckEntrySettings(api, (current) => {
-          assertUnchanged(project(current), expected);
+          assertUnchanged(project(current), project(expected));
           return {
-            ...value,
+            ...normalizeDeckEntrySettings(value),
             hiddenCardIds: value.hiddenCardIds.map(
               (key) => ids.get(key) ?? key,
             ),

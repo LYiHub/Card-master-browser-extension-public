@@ -9,7 +9,10 @@ import type { DeckEntryController } from './deck-entry';
 import { SettingsBoard } from './SettingsBoard';
 
 describe('SettingsBoard', () => {
-  it('keeps developer tools and card-owned settings out of general settings', () => {
+  it.each([
+    true,
+    false,
+  ])('renders fullscreen auto-hide %s in general settings', (autoHideInFullscreen) => {
     const markup = renderToStaticMarkup(
       <SettingsBoard
         repository={{} as ScriptRepository}
@@ -24,6 +27,7 @@ describe('SettingsBoard', () => {
           showDeckTrigger: true,
           showToolbarBadge: true,
           showDeckTriggerBadge: true,
+          autoHideInFullscreen,
           position: null,
           hiddenCardIds: [],
         }}
@@ -36,6 +40,12 @@ describe('SettingsBoard', () => {
     expect(markup).not.toContain('界面外观');
     expect(markup).not.toContain('跟随系统');
     expect(markup).toContain('显示页面牌库入口');
+    expect(markup).toContain('全屏时自动隐藏浮动入口');
+    expect(markup).toMatch(
+      new RegExp(
+        `全屏时自动隐藏浮动入口</strong>[^<]*(?:<small>[^<]*</small>)?</span><input[^>]*aria-checked="${autoHideInFullscreen}"`,
+      ),
+    );
     expect(markup).toContain('网页与新标签页显示可拖动的卡牌大师 Logo');
     expect(markup).not.toContain('显示右下角卡牌入口');
     expect(markup).toContain('扩展栏显示激活卡牌数量');
