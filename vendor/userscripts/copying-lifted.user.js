@@ -4,7 +4,7 @@
 // @name:zh-CN   Copying Lifted 解除复制限制
 // @namespace    https://palerock.cn
 // @version      1.0
-// @description  解除网页复制、选择和右键限制
+// @description  解除网页复制和选择限制
 // @author       Cangshi
 // @match        *://*/*
 // @run-at       document-start
@@ -81,7 +81,7 @@
     modifierActive = false;
     updateSelection();
   });
-  for (const type of ['copy', 'cut', 'contextmenu', 'selectstart']) {
+  for (const type of ['copy', 'cut', 'selectstart']) {
     listen(document, type, allowNativeAction, true);
   }
 

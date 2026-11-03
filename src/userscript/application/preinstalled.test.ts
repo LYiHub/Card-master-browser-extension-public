@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { runInNewContext } from 'node:vm';
+import { describe, expect, it, vi } from 'vitest';
 
 import { preinstalledCardMedia } from '../../lib/userscript-deck-media';
 import {
@@ -70,6 +71,40 @@ describe('preinstalled userscripts', () => {
     expect(copying?.source).not.toContain("querySelectorAll('*')");
     expect(copying?.source).not.toContain('EventTarget.prototype');
     expect(copying?.source).toContain('stopImmediatePropagation');
+  });
+
+  it('leaves right-click handling to the site while keeping copying support', () => {
+    const document = Object.assign(new EventTarget(), {
+      documentElement: {
+        append: vi.fn(),
+        classList: { toggle: vi.fn(), remove: vi.fn() },
+      },
+      createElement: () => ({ textContent: '', remove: vi.fn() }),
+    });
+    runInNewContext(PREINSTALLED_USERSCRIPTS[3].source, {
+      document,
+      window: new EventTarget(),
+    });
+
+    expect(
+      document.dispatchEvent(new Event('contextmenu', { cancelable: true })),
+    ).toBe(true);
+
+    const siteMenu = vi.fn((event: Event) => event.preventDefault());
+    document.addEventListener('contextmenu', siteMenu);
+    const contextmenu = new Event('contextmenu', { cancelable: true });
+    expect(document.dispatchEvent(contextmenu)).toBe(false);
+    expect(siteMenu).toHaveBeenCalledOnce();
+    expect(contextmenu.defaultPrevented).toBe(true);
+
+    for (const type of ['copy', 'cut', 'selectstart']) {
+      const restriction = vi.fn((event: Event) => event.preventDefault());
+      document.addEventListener(type, restriction);
+      expect(
+        document.dispatchEvent(new Event(type, { cancelable: true })),
+      ).toBe(true);
+      expect(restriction).not.toHaveBeenCalled();
+    }
   });
 
   it('does not hijack native Bilibili watch-later controls', () => {
@@ -181,16 +216,20 @@ describe('preinstalled userscripts', () => {
     ).toBe(false);
   });
 
-  it('migrates a managed same-version source without changing user settings', () => {
+  it.each([
+    true,
+    false,
+  ])('migrates a managed same-version source while preserving enabled=%s and settings', (enabled) => {
     const first = mergePendingPreinstalledUserscripts([], emptyState, {
       now: () => 42,
       random: () => 0,
     });
-    const current = first.scripts[2];
+    const current = first.scripts[3];
     const previousSource = current.source.code.replace(
-      'cerenkov修改版',
-      'cerenkov修改版 ',
+      "['copy', 'cut', 'selectstart']",
+      "['copy', 'cut', 'contextmenu', 'selectstart']",
     );
+    expect(previousSource).not.toBe(current.source.code);
     const previous = {
       ...current,
       source: {
@@ -200,8 +239,8 @@ describe('preinstalled userscripts', () => {
       },
       manager: {
         ...current.manager,
-        enabled: true,
-        userMatches: ['https://www.bilibili.com/*'],
+        enabled,
+        userMatches: ['https://example.com/*'],
       },
     };
     const migrated = mergePendingPreinstalledUserscripts(
@@ -218,12 +257,13 @@ describe('preinstalled userscripts', () => {
 
     expect(migrated.changedIds).toEqual([previous.id]);
     expect(migrated.scripts[0].source.code).toBe(
-      PREINSTALLED_USERSCRIPTS[2].source,
+      PREINSTALLED_USERSCRIPTS[3].source,
     );
     expect(migrated.scripts[0].source.installedAt).toBe(42);
     expect(migrated.scripts[0].source.updatedAt).toBe(126);
     expect(migrated.scripts[0].manager).toEqual(previous.manager);
     expect(migrated.scripts[0].presentation).toEqual(previous.presentation);
+    expect(migrated.scripts[0].runtime.pendingRefresh).toBe(enabled);
   });
 
   it('does not overwrite a legacy preinstalled script edited by the user', () => {
