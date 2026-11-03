@@ -1,6 +1,5 @@
 import { RotateCcw, Save, ShieldCheck } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-
 import type {
   BilibiliCapabilityCard,
   BilibiliCapabilityController,
@@ -21,25 +20,82 @@ import {
   UiTextField,
   UiToggle,
 } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 const RECOMMENDATION_MODES = [
-  { value: 'pure', label: '纯净' },
-  { value: 'explore', label: '探索' },
-  { value: 'mixed', label: '混合' },
-  { value: 'native', label: '原生' },
+  {
+    value: 'pure',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_1');
+    },
+  },
+  {
+    value: 'explore',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_2');
+    },
+  },
+  {
+    value: 'mixed',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_3');
+    },
+  },
+  {
+    value: 'native',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_4');
+    },
+  },
 ] as const;
 
 const SEGMENT_POLICIES = [
-  { value: 'auto', label: '自动跳过' },
-  { value: 'manual', label: '手动确认' },
-  { value: 'overlay', label: '仅标记' },
-  { value: 'disabled', label: '不处理' },
+  {
+    value: 'auto',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_5');
+    },
+  },
+  {
+    value: 'manual',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_6');
+    },
+  },
+  {
+    value: 'overlay',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_7');
+    },
+  },
+  {
+    value: 'disabled',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_8');
+    },
+  },
 ] as const;
 
 const DANMAKU_MARK_MODES = [
-  { value: 'prefix', label: '显示在开头' },
-  { value: 'suffix', label: '显示在结尾' },
-  { value: 'off', label: '不显示' },
+  {
+    value: 'prefix',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_9');
+    },
+  },
+  {
+    value: 'suffix',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_10');
+    },
+  },
+  {
+    value: 'off',
+    get label() {
+      return t('cm_bilibili_capability_settings_board_label_11');
+    },
+  },
 ] as const;
 
 function errorMessage(error: unknown) {
@@ -61,6 +117,8 @@ function NumericSetting({
   maximum: number;
   onChange: (value: number) => void;
 }) {
+  useLocale();
+
   return (
     <UiTextField
       id={id}
@@ -90,6 +148,8 @@ function SegmentPolicySetting({
   value: BilibiliSegmentPolicy;
   onChange: (value: BilibiliSegmentPolicy) => void;
 }) {
+  useLocale();
+
   return (
     <UiSelectField
       id={id}
@@ -119,10 +179,13 @@ export function BilibiliCapabilitySettingsBoard({
   onSnapshots: Parameters<BilibiliCapabilityController['subscribe']>[0];
   onClose: () => void;
 }) {
+  useLocale();
+
   const definition = bilibiliCapabilityDefinition(card.capabilityId);
   const unavailableReason = card.snapshot.available
     ? null
-    : (card.snapshot.unavailableReason ?? '当前平台不支持这张卡牌。');
+    : (card.snapshot.unavailableReason ??
+      t('cm_bilibili_capability_settings_board_text_12'));
   const [draft, setDraft] = useState<BilibiliCapabilitySettings | null>(null);
   const [busy, setBusy] = useState(true);
   const [status, setStatus] = useState('');
@@ -174,7 +237,7 @@ export function BilibiliCapabilitySettingsBoard({
     try {
       const snapshots = await controller.saveSettings(draft);
       onSnapshots(snapshots);
-      setStatus('设置已应用，当前支持的页面会同步更新。');
+      setStatus(t('cm_bilibili_capability_settings_board_text_13'));
     } catch (failure) {
       setStatus(errorMessage(failure));
       setError(true);
@@ -185,28 +248,32 @@ export function BilibiliCapabilitySettingsBoard({
 
   return (
     <UiDialog
-      ariaLabel={`${definition.title}设置`}
+      ariaLabel={t('cm_bilibili_capability_settings_board_text_14', [
+        String(definition.title),
+      ])}
       title={definition.title}
       status={{
         label: unavailableReason
           ? card.snapshot.stateLabel
           : card.snapshot.enabled
             ? card.snapshot.stateLabel
-            : '已停用',
+            : t('cm_bilibili_capability_settings_board_text_15'),
         tone:
           !unavailableReason && card.snapshot.enabled ? 'active' : 'inactive',
       }}
       onClose={onClose}
       footer={
         unavailableReason ? (
-          <UiButton onClick={onClose}>关闭</UiButton>
+          <UiButton onClick={onClose}>
+            {t('cm_bilibili_capability_settings_board_text_16')}
+          </UiButton>
         ) : (
           <>
             <UiLoader
               visible={busy && Boolean(draft)}
               compact
               className="manager-settings-operation-loader"
-              label="正在同步扩展能力设置"
+              label={t('cm_bilibili_capability_settings_board_label_17')}
             />
             {(!busy || !draft) && status && (
               <p className={error ? 'is-error' : ''}>{status}</p>
@@ -220,7 +287,9 @@ export function BilibiliCapabilitySettingsBoard({
                 void controller.readSettings(card.capabilityId).then(
                   (settings) => {
                     setDraft(structuredClone(settings));
-                    setStatus('已恢复最近保存的设置。');
+                    setStatus(
+                      t('cm_bilibili_capability_settings_board_text_18'),
+                    );
                     setError(false);
                     setBusy(false);
                   },
@@ -233,7 +302,7 @@ export function BilibiliCapabilitySettingsBoard({
               }}
             >
               <RotateCcw size={14} aria-hidden="true" />
-              撤销修改
+              {t('cm_bilibili_capability_settings_board_text_19')}
             </UiButton>
             <UiButton
               variant="primary"
@@ -241,7 +310,7 @@ export function BilibiliCapabilitySettingsBoard({
               onClick={() => void save()}
             >
               <Save size={14} aria-hidden="true" />
-              应用设置
+              {t('cm_bilibili_capability_settings_board_text_20')}
             </UiButton>
           </>
         )
@@ -255,23 +324,30 @@ export function BilibiliCapabilitySettingsBoard({
       </div>
 
       {unavailableReason ? (
-        <UiNotice title="Safari 不支持此卡牌">
+        <UiNotice title={t('cm_bilibili_capability_settings_board_title_21')}>
           <p>{unavailableReason}</p>
         </UiNotice>
       ) : !draft ? (
         error ? (
-          <UiNotice tone="error" title="设置读取失败" copyText={status}>
+          <UiNotice
+            tone="error"
+            title={t('cm_bilibili_capability_settings_board_title_22')}
+            copyText={status}
+          >
             <p>{status}</p>
           </UiNotice>
         ) : (
-          <UiLoader large label="正在载入该能力的完整配置" />
+          <UiLoader
+            large
+            label={t('cm_bilibili_capability_settings_board_label_23')}
+          />
         )
       ) : (
         <div className="manager-bilibili-capability-grid">
           {draft.id === 'recommendation-control' && (
             <>
               <UiSegmentedControl
-                label="推荐身份"
+                label={t('cm_bilibili_capability_settings_board_label_24')}
                 value={draft.settings.mode}
                 options={RECOMMENDATION_MODES}
                 onChange={(mode) =>
@@ -281,11 +357,10 @@ export function BilibiliCapabilitySettingsBoard({
                   })
                 }
               />
-              <UiNotice title="请求范围">
-                <p>
-                  只调整首页推荐接口的
-                  Cookie，不会退出登录，也不会修改收藏、评论、画质和账号数据。
-                </p>
+              <UiNotice
+                title={t('cm_bilibili_capability_settings_board_title_25')}
+              >
+                <p>{t('cm_bilibili_capability_settings_board_text_26')}</p>
                 {(draft.settings.mode === 'explore' ||
                   draft.settings.mode === 'mixed') && (
                   <UiButton
@@ -299,7 +374,9 @@ export function BilibiliCapabilitySettingsBoard({
                           (snapshots) => {
                             onSnapshots(snapshots);
                             setStatus(
-                              'B 站设备指纹已清除，页面刷新后将由 B 站重新签发。',
+                              t(
+                                'cm_bilibili_capability_settings_board_text_27',
+                              ),
                             );
                             setError(false);
                           },
@@ -312,7 +389,7 @@ export function BilibiliCapabilitySettingsBoard({
                     }}
                   >
                     <RotateCcw size={14} aria-hidden="true" />
-                    重置匿名指纹
+                    {t('cm_bilibili_capability_settings_board_text_28')}
                   </UiButton>
                 )}
               </UiNotice>
@@ -323,7 +400,7 @@ export function BilibiliCapabilitySettingsBoard({
             <>
               <NumericSetting
                 id="bilibili-danmaku-threshold"
-                label="合并时间窗口（秒）"
+                label={t('cm_bilibili_capability_settings_board_label_29')}
                 value={draft.settings.threshold}
                 minimum={-1}
                 maximum={180}
@@ -336,7 +413,7 @@ export function BilibiliCapabilitySettingsBoard({
               />
               <NumericSetting
                 id="bilibili-danmaku-distance"
-                label="最大文本距离"
+                label={t('cm_bilibili_capability_settings_board_label_30')}
                 value={draft.settings.maxDistance}
                 minimum={0}
                 maximum={100}
@@ -349,7 +426,7 @@ export function BilibiliCapabilitySettingsBoard({
               />
               <NumericSetting
                 id="bilibili-danmaku-cosine"
-                label="最大余弦角"
+                label={t('cm_bilibili_capability_settings_board_label_31')}
                 value={draft.settings.maxCosine}
                 minimum={0}
                 maximum={1_000}
@@ -362,7 +439,7 @@ export function BilibiliCapabilitySettingsBoard({
               />
               <NumericSetting
                 id="bilibili-danmaku-workers"
-                label="处理线程"
+                label={t('cm_bilibili_capability_settings_board_label_32')}
                 value={draft.settings.workerCount}
                 minimum={0}
                 maximum={6}
@@ -374,7 +451,7 @@ export function BilibiliCapabilitySettingsBoard({
                 }
               />
               <UiSegmentedControl
-                label="合并数量标记"
+                label={t('cm_bilibili_capability_settings_board_label_33')}
                 value={draft.settings.mark}
                 options={DANMAKU_MARK_MODES}
                 onChange={(mark) =>
@@ -386,7 +463,7 @@ export function BilibiliCapabilitySettingsBoard({
               />
               <NumericSetting
                 id="bilibili-danmaku-mark-threshold"
-                label="数量标记阈值"
+                label={t('cm_bilibili_capability_settings_board_label_34')}
                 value={draft.settings.markThreshold}
                 minimum={1}
                 maximum={9_999}
@@ -399,7 +476,7 @@ export function BilibiliCapabilitySettingsBoard({
               />
               <NumericSetting
                 id="bilibili-danmaku-shrink-threshold"
-                label="自动缩小密度阈值"
+                label={t('cm_bilibili_capability_settings_board_label_35')}
                 value={draft.settings.shrinkThreshold}
                 minimum={0}
                 maximum={999}
@@ -412,7 +489,7 @@ export function BilibiliCapabilitySettingsBoard({
               />
               <NumericSetting
                 id="bilibili-danmaku-drop-threshold"
-                label="自动优选密度阈值"
+                label={t('cm_bilibili_capability_settings_board_label_36')}
                 value={draft.settings.dropThreshold}
                 minimum={0}
                 maximum={999}
@@ -425,16 +502,46 @@ export function BilibiliCapabilitySettingsBoard({
               />
               {(
                 [
-                  ['trimPinyin', '忽略拼音差异'],
-                  ['trimEnding', '忽略句尾语气'],
-                  ['trimSpace', '忽略空格差异'],
-                  ['trimWidth', '统一全角半角'],
-                  ['crossMode', '跨弹幕模式合并'],
-                  ['subscript', '显示合并数量'],
-                  ['enlarge', '放大高频代表弹幕'],
-                  ['tooltip', '显示弹幕详情'],
-                  ['autoDisableDanmaku', '处理后关闭滚动弹幕'],
-                  ['autoOpenList', '自动展开弹幕列表'],
+                  [
+                    'trimPinyin',
+                    t('cm_bilibili_capability_settings_board_text_37'),
+                  ],
+                  [
+                    'trimEnding',
+                    t('cm_bilibili_capability_settings_board_text_38'),
+                  ],
+                  [
+                    'trimSpace',
+                    t('cm_bilibili_capability_settings_board_text_39'),
+                  ],
+                  [
+                    'trimWidth',
+                    t('cm_bilibili_capability_settings_board_text_40'),
+                  ],
+                  [
+                    'crossMode',
+                    t('cm_bilibili_capability_settings_board_text_41'),
+                  ],
+                  [
+                    'subscript',
+                    t('cm_bilibili_capability_settings_board_text_42'),
+                  ],
+                  [
+                    'enlarge',
+                    t('cm_bilibili_capability_settings_board_text_43'),
+                  ],
+                  [
+                    'tooltip',
+                    t('cm_bilibili_capability_settings_board_text_44'),
+                  ],
+                  [
+                    'autoDisableDanmaku',
+                    t('cm_bilibili_capability_settings_board_text_45'),
+                  ],
+                  [
+                    'autoOpenList',
+                    t('cm_bilibili_capability_settings_board_text_46'),
+                  ],
                 ] as const
               ).map(([key, label]) => (
                 <UiToggle
@@ -456,14 +563,32 @@ export function BilibiliCapabilitySettingsBoard({
             <>
               {(
                 [
-                  ['sponsor', '商业赞助'],
-                  ['selfPromotion', '自我推广'],
-                  ['interaction', '一键三连提示'],
-                  ['intro', '片头'],
-                  ['outro', '片尾'],
-                  ['preview', '预告与回顾'],
-                  ['filler', '无关填充'],
-                  ['musicOfftopic', '音乐外内容'],
+                  [
+                    'sponsor',
+                    t('cm_bilibili_capability_settings_board_text_47'),
+                  ],
+                  [
+                    'selfPromotion',
+                    t('cm_bilibili_capability_settings_board_text_48'),
+                  ],
+                  [
+                    'interaction',
+                    t('cm_bilibili_capability_settings_board_text_49'),
+                  ],
+                  ['intro', t('cm_bilibili_capability_settings_board_text_50')],
+                  ['outro', t('cm_bilibili_capability_settings_board_text_51')],
+                  [
+                    'preview',
+                    t('cm_bilibili_capability_settings_board_text_52'),
+                  ],
+                  [
+                    'filler',
+                    t('cm_bilibili_capability_settings_board_text_53'),
+                  ],
+                  [
+                    'musicOfftopic',
+                    t('cm_bilibili_capability_settings_board_text_54'),
+                  ],
                 ] as const
               ).map(([key, label]) => (
                 <SegmentPolicySetting
@@ -481,12 +606,30 @@ export function BilibiliCapabilitySettingsBoard({
               ))}
               {(
                 [
-                  ['audioNotification', '跳过时播放提示音'],
-                  ['showNotice', '显示跳过提示'],
-                  ['showTimeWithSkips', '显示扣除片段后的时长'],
-                  ['skipOnSeek', '拖动进度后继续跳过'],
-                  ['dynamicSponsorBlock', '识别 B 站动态中的推广'],
-                  ['commentSponsorBlock', '识别 B 站评论区推广'],
+                  [
+                    'audioNotification',
+                    t('cm_bilibili_capability_settings_board_text_55'),
+                  ],
+                  [
+                    'showNotice',
+                    t('cm_bilibili_capability_settings_board_text_56'),
+                  ],
+                  [
+                    'showTimeWithSkips',
+                    t('cm_bilibili_capability_settings_board_text_57'),
+                  ],
+                  [
+                    'skipOnSeek',
+                    t('cm_bilibili_capability_settings_board_text_58'),
+                  ],
+                  [
+                    'dynamicSponsorBlock',
+                    t('cm_bilibili_capability_settings_board_text_59'),
+                  ],
+                  [
+                    'commentSponsorBlock',
+                    t('cm_bilibili_capability_settings_board_text_60'),
+                  ],
                 ] as const
               ).map(([key, label]) => (
                 <UiToggle
@@ -501,11 +644,10 @@ export function BilibiliCapabilitySettingsBoard({
                   }
                 />
               ))}
-              <UiNotice title="双平台运行">
-                <p>
-                  分类策略、跳过提示和全局启停会同时应用到 BilibiliSponsorBlock
-                  与 YouTube SponsorBlock；动态和评论识别仅属于 B 站运行时。
-                </p>
+              <UiNotice
+                title={t('cm_bilibili_capability_settings_board_title_61')}
+              >
+                <p>{t('cm_bilibili_capability_settings_board_text_62')}</p>
               </UiNotice>
             </>
           )}

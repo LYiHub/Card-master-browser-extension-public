@@ -125,13 +125,18 @@ describe('GlobalLibraryWorkbench', () => {
     expect(source).toContain('function CardEnablementButton');
     expect(source).toContain('onOpenCardSettings(selected)');
     expect(source).toContain("(action) => action.kind === 'manage'");
-    expect(source).toContain("'在牌阵中隐藏'");
-    expect(source).toContain("'在牌阵中显示'");
-    expect(source).toContain("'暂时在牌阵中隐藏，重启浏览器恢复'");
-    expect(source).toContain("'重新显示'");
+    expect(source).toContain("t('cm_global_library_workbench_text_24')");
+    expect(source).toContain("t('cm_global_library_workbench_text_23')");
+    expect(source).toContain("t('cm_global_library_workbench_text_22')");
+    expect(source).toContain("t('cm_global_library_workbench_text_21')");
     expect(source).toContain('sessionOnly');
     expect(source).not.toContain('global-library-detail__hint');
-    expect(source).toContain("enabled ? '停用' : '启用'");
+    expect(source.replace(/\s+/gu, '')).toContain(
+      "enabled ? t('cm_global_library_workbench_text_27') : t('cm_global_library_workbench_text_28')".replace(
+        /\s+/gu,
+        '',
+      ),
+    );
     expect(source).toContain(
       'className="global-library-detail__actions is-script-actions"',
     );
@@ -162,14 +167,21 @@ describe('GlobalLibraryWorkbench', () => {
       'utf8',
     );
 
-    expect(source).toContain(
-      "title={removingScript ? '正在删除脚本' : '确认删除脚本'}",
+    expect(source.replace(/\s+/gu, '')).toContain(
+      "title={removingScript ? t('cm_global_library_workbench_text_113') : t('cm_global_library_workbench_text_114')}".replace(
+        /\s+/gu,
+        '',
+      ),
     );
     expect(source).toContain(
       'className="global-library-remove-dialog__loader"',
     );
-    expect(source).toContain('label="正在应用脚本变更"');
-    expect(source).toContain('label="正在应用卡牌变更"');
+    expect(source).toContain(
+      "label={t('cm_global_library_workbench_label_83')}",
+    );
+    expect(source).toContain(
+      "label={t('cm_global_library_workbench_label_29')}",
+    );
   });
 
   it('closes only when the global library backdrop itself is pressed', () => {
@@ -191,7 +203,7 @@ describe('GlobalLibraryWorkbench', () => {
     expect(source).toContain('userscriptSourcePageUrl(script)');
     expect(source).toContain('target="_blank"');
     expect(source).toContain('rel="noopener noreferrer"');
-    expect(source).toContain('在新标签页打开脚本来源');
+    expect(source).toContain("t('cm_global_library_workbench_title_13')");
   });
 
   it('keeps Bilibili and YouTube capabilities in one platform suite', () => {
@@ -200,15 +212,13 @@ describe('GlobalLibraryWorkbench', () => {
       'utf8',
     );
 
-    expect(source).toContain("title: 'B 站和油管能力套件'");
+    expect(source).toContain("t('cm_global_library_workbench_title_89')");
     expect(source).not.toContain("id: 'cross-platform'");
     expect(source).toContain(
       'cards: visibleCards.filter(isBilibiliCapabilityCard)',
     );
-    expect(source).toContain("'双平台 SponsorBlock 卡牌'");
-    expect(source).toContain(
-      '在 B 站调用 BilibiliSponsorBlock，在 YouTube 调用原版 SponsorBlock',
-    );
+    expect(source).toContain("t('cm_global_library_workbench_text_77')");
+    expect(source).toContain("t('cm_global_library_workbench_text_79')");
   });
 
   it('keeps unsupported platform cards in the library but removes their controls', () => {
@@ -223,8 +233,8 @@ describe('GlobalLibraryWorkbench', () => {
 
     expect(source).toContain('card.snapshot.available');
     expect(source).toContain('card.snapshot.unavailableReason');
-    expect(source).toContain("'Safari 不支持'");
-    expect(source).toContain("'当前平台不支持'");
+    expect(source).toContain("t('cm_global_library_workbench_text_7')");
+    expect(source).toContain("t('cm_global_library_workbench_text_8')");
     expect(source).toContain('cardUnavailableLabel(card)');
     expect(source).toContain('unavailableReason={cardUnavailableReason(card)}');
     expect(css).toContain('.global-library-card.is-unavailable');
@@ -241,10 +251,8 @@ describe('GlobalLibraryWorkbench', () => {
       'mediaResources.available ? [mediaResourcesCard(mediaResources)] : []',
     );
     expect(source).toContain('onToggleMediaResources');
-    expect(source).toContain('顺手牵羊诊断');
-    expect(source).toContain(
-      '从网页牌阵发动顺手牵羊，挑选、分析并取得当前页面的媒体资源',
-    );
+    expect(source).toContain("t('cm_global_library_workbench_title_73')");
+    expect(source).toContain("t('cm_global_library_workbench_text_76')");
   });
 
   it('keeps the new-tab system card configurable without enablement or deletion', () => {
@@ -257,7 +265,7 @@ describe('GlobalLibraryWorkbench', () => {
     expect(source).toContain('systemCardOfferedOnTarget(NEW_TAB_CARD_ID');
     expect(source).toContain('isNewTabCard(card)');
     expect(source).toContain('onOpenNewTabSettings');
-    expect(source).toContain('指定页面');
+    expect(source).toContain("t('cm_global_library_workbench_text_33')");
   });
 
   it('shows Safari Userscript capability limits in the installed script detail', () => {
@@ -267,7 +275,7 @@ describe('GlobalLibraryWorkbench', () => {
     );
 
     expect(source).toContain('userscriptPlatformCompatibilityDiagnostics');
-    expect(source).toContain('Safari 脚本能力限制');
+    expect(source).toContain("t('cm_global_library_workbench_title_84')");
     expect(source).toContain('platformDiagnostics.map');
   });
 
@@ -278,7 +286,7 @@ describe('GlobalLibraryWorkbench', () => {
     );
 
     expect(source).toContain('DECK_STEWARD_CARD');
-    expect(source).toContain('重启浏览器恢复');
+    expect(source).toContain("t('cm_global_library_workbench_text_22')");
     expect(source).not.toContain('全局 AI 系统卡牌');
     expect(source).toContain('GAMEPAD_CONTROL_CARD_ID');
   });

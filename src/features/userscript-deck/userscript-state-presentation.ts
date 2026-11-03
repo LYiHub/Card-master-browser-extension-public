@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { InstalledUserscript } from '../../userscript/domain/types';
 import type { CardStateTone } from '../manager-interaction/CardStateBadge';
 
@@ -21,11 +22,13 @@ export function userscriptStatePresentation(
 ): UserscriptStatePresentation {
   if (item.manager.enabled && executionUnavailable) {
     return {
-      badge: { label: '权限未开启', tone: 'error' },
+      badge: {
+        label: t('cm_userscript_state_presentation_label_1'),
+        tone: 'error',
+      },
       notice: {
-        title: '需要开启“允许运行用户脚本”',
-        description:
-          '请在扩展详情页开启“允许运行用户脚本”，然后重新加载扩展。Chrome 默认关闭这项开关。',
+        title: t('cm_userscript_state_presentation_title_2'),
+        description: t('cm_userscript_state_presentation_description_3'),
         tone: 'error',
       },
     };
@@ -33,18 +36,24 @@ export function userscriptStatePresentation(
   if (!item.manager.enabled) {
     return item.runtime.pendingRefresh
       ? {
-          badge: { label: '停用待刷新', tone: 'pending' },
+          badge: {
+            label: t('cm_userscript_state_presentation_label_4'),
+            tone: 'pending',
+          },
           notice: {
-            title: '脚本停用等待刷新',
-            description: '当前页面仍保留旧实例，刷新后将完成停用。',
+            title: t('cm_userscript_state_presentation_title_5'),
+            description: t('cm_userscript_state_presentation_description_6'),
             tone: 'inactive',
           },
         }
       : {
-          badge: { label: '已停用', tone: 'inactive' },
+          badge: {
+            label: t('cm_userscript_state_presentation_label_7'),
+            tone: 'inactive',
+          },
           notice: {
-            title: '脚本当前已停用',
-            description: '拖至右上角的启用区域即可恢复运行。',
+            title: t('cm_userscript_state_presentation_title_8'),
+            description: t('cm_userscript_state_presentation_description_9'),
             tone: 'inactive',
           },
         };
@@ -52,69 +61,90 @@ export function userscriptStatePresentation(
   if (item.runtime.pendingRefresh) {
     if (!item.runtime.instanceId) {
       return {
-        badge: { label: '待刷新', tone: 'pending' },
+        badge: {
+          label: t('cm_userscript_state_presentation_label_10'),
+          tone: 'pending',
+        },
         notice: {
-          title: '刷新页面以启用脚本',
-          description: '脚本已成功导入。刷新当前页面后，它会自动开始运行。',
+          title: t('cm_userscript_state_presentation_title_11'),
+          description: t('cm_userscript_state_presentation_description_12'),
           tone: 'neutral',
         },
       };
     }
     return {
-      badge: { label: '更新待刷新', tone: 'pending' },
+      badge: {
+        label: t('cm_userscript_state_presentation_label_13'),
+        tone: 'pending',
+      },
       notice: {
-        title: '脚本更新等待刷新',
-        description: '当前页面仍在运行旧实例，刷新后将载入最新脚本。',
+        title: t('cm_userscript_state_presentation_title_14'),
+        description: t('cm_userscript_state_presentation_description_15'),
         tone: 'neutral',
       },
     };
   }
   if (item.runtime.status === 'error') {
     return {
-      badge: { label: '执行异常', tone: 'error' },
+      badge: {
+        label: t('cm_userscript_state_presentation_label_16'),
+        tone: 'error',
+      },
       notice: {
-        title: '脚本执行异常',
+        title: t('cm_userscript_state_presentation_title_17'),
         description:
-          item.runtime.error ?? '脚本运行失败，但运行时没有返回错误详情。',
+          item.runtime.error ?? t('cm_userscript_state_presentation_text_18'),
         tone: 'error',
       },
     };
   }
   if (item.runtime.status === 'not-matched') {
     return {
-      badge: { label: '本站不生效', tone: 'inactive' },
+      badge: {
+        label: t('cm_userscript_state_presentation_label_19'),
+        tone: 'inactive',
+      },
       notice: {
-        title: '脚本在本站未激活',
-        description: '当前页面不符合脚本的匹配规则。',
+        title: t('cm_userscript_state_presentation_title_20'),
+        description: t('cm_userscript_state_presentation_description_21'),
         tone: 'neutral',
       },
     };
   }
   if (item.runtime.status === 'running') {
     return {
-      badge: { label: '正在连接', tone: 'pending' },
+      badge: {
+        label: t('cm_userscript_state_presentation_label_22'),
+        tone: 'pending',
+      },
       notice: {
-        title: '脚本正在连接',
-        description: '页面运行时正在建立脚本实例。',
+        title: t('cm_userscript_state_presentation_title_23'),
+        description: t('cm_userscript_state_presentation_description_24'),
         tone: 'neutral',
       },
     };
   }
   if (item.runtime.status === 'ready' && item.runtime.instanceId) {
     return {
-      badge: { label: '已唤醒', tone: 'active' },
+      badge: {
+        label: t('cm_userscript_state_presentation_label_25'),
+        tone: 'active',
+      },
       notice: {
-        title: '脚本已正常加载',
-        description: '此脚本没有注册页面指令。',
+        title: t('cm_userscript_state_presentation_title_26'),
+        description: t('cm_userscript_state_presentation_description_27'),
         tone: 'neutral',
       },
     };
   }
   return {
-    badge: { label: '待刷新', tone: 'pending' },
+    badge: {
+      label: t('cm_userscript_state_presentation_label_28'),
+      tone: 'pending',
+    },
     notice: {
-      title: '刷新页面以启用脚本',
-      description: '脚本已成功导入。刷新当前页面后，它会自动开始运行。',
+      title: t('cm_userscript_state_presentation_title_29'),
+      description: t('cm_userscript_state_presentation_description_30'),
       tone: 'neutral',
     },
   };

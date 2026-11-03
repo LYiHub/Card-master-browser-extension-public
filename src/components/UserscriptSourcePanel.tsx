@@ -10,13 +10,15 @@ import { useEffect, useRef, useState } from 'react';
 import { INPUT_SCOPE_PRIORITY } from '../input/coordinator';
 import { useSurfaceInputInteraction } from '../input/useSurfaceInputInteraction';
 import { classNames } from '../lib/class-names';
+import { t } from '../localization/messages';
+import { useLocale } from '../localization/react';
 import { copyDiagnosticText } from './ui/DiagnosticCopyButton';
 import { MotionIconSwap } from './ui/MotionIconSwap';
 import { UiButton } from './ui/Ui';
 
 export function UserscriptSourcePanel({
   source,
-  label = '完整 `.user.js` 源码',
+  label = t('cm_userscript_source_panel_text_1'),
   editable = false,
   onChange,
   onDownload,
@@ -41,6 +43,8 @@ export function UserscriptSourcePanel({
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
 }) {
+  useLocale();
+
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>(
     'idle',
   );
@@ -62,10 +66,10 @@ export function UserscriptSourcePanel({
 
   const copyTitle =
     copyState === 'copied'
-      ? '已复制'
+      ? t('cm_userscript_source_panel_text_2')
       : copyState === 'failed'
-        ? '复制失败，请重试'
-        : '复制完整源码';
+        ? t('cm_userscript_source_panel_text_3')
+        : t('cm_userscript_source_panel_text_4');
 
   return (
     <section
@@ -84,13 +88,13 @@ export function UserscriptSourcePanel({
           <UiButton
             title={
               publicationUrl
-                ? '在脚本发布页面查看详情'
-                : '脚本没有可识别的发布页面'
+                ? t('cm_userscript_source_panel_text_5')
+                : t('cm_userscript_source_panel_text_6')
             }
             aria-label={
               publicationUrl
-                ? '在脚本发布页面查看详情'
-                : '脚本没有可识别的发布页面'
+                ? t('cm_userscript_source_panel_text_7')
+                : t('cm_userscript_source_panel_text_8')
             }
             disabled={!publicationUrl}
             onClick={() => {
@@ -100,7 +104,7 @@ export function UserscriptSourcePanel({
             }}
           >
             <ExternalLink size={14} aria-hidden="true" />
-            发布页面
+            {t('cm_userscript_source_panel_text_9')}
           </UiButton>
           <UiButton
             title={copyTitle}
@@ -119,15 +123,17 @@ export function UserscriptSourcePanel({
                 { state: 'copied', icon: <Check size={14} /> },
               ]}
             />
-            {copyState === 'copied' ? '已复制' : '复制源码'}
+            {copyState === 'copied'
+              ? t('cm_userscript_source_panel_text_10')
+              : t('cm_userscript_source_panel_text_11')}
           </UiButton>
           <UiButton
-            title="下载完整源码"
-            aria-label="下载完整源码"
+            title={t('cm_userscript_source_panel_title_12')}
+            aria-label={t('cm_userscript_source_panel_aria_label_13')}
             onClick={onDownload}
           >
             <Download size={14} aria-hidden="true" />
-            下载源码
+            {t('cm_userscript_source_panel_text_14')}
           </UiButton>
         </div>
       </header>
@@ -136,8 +142,16 @@ export function UserscriptSourcePanel({
           <button
             type="button"
             className="userscript-source-panel__expand"
-            title={expanded ? '退出全屏源码查看（Esc）' : '全屏查看源码'}
-            aria-label={expanded ? '退出全屏源码查看（Esc）' : '全屏查看源码'}
+            title={
+              expanded
+                ? t('cm_userscript_source_panel_text_15')
+                : t('cm_userscript_source_panel_text_16')
+            }
+            aria-label={
+              expanded
+                ? t('cm_userscript_source_panel_text_17')
+                : t('cm_userscript_source_panel_text_18')
+            }
             onClick={() => onExpandedChange?.(!expanded)}
           >
             <MotionIconSwap

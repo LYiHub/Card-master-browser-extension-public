@@ -48,6 +48,8 @@ import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
 import { UiSegmentedControl } from '../../components/ui/Ui';
 import { extensionApiOrNull } from '../../hosts/extension/api';
 import type { ExtensionSpeechCapability } from '../../hosts/extension/speech-capability';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import type { UserscriptExecutionCapability } from '../../userscript/runtime/capabilities';
 import { MoreMenu, RenameDialog } from './AssistantConversationMenus';
 import {
@@ -66,33 +68,39 @@ import {
 type AwaitableAction = void | Promise<void>;
 
 const CHAT_SUGGESTIONS = [
-  '把这个网站的字号调大一些',
-  '把当前页面调整为暗色模式',
-  '隐藏当前页面的侧边栏',
-  '移除当前页面中的广告',
-  '让页面文字更容易阅读',
-  '增加段落之间的间距',
-  '让链接颜色更加醒目',
-  '隐藏 Cookie 提示横幅',
-  '让页面主要内容居中显示',
+  t('cm_ai_conversation_workbench_text_1'),
+  t('cm_ai_conversation_workbench_text_2'),
+  t('cm_ai_conversation_workbench_text_3'),
+  t('cm_ai_conversation_workbench_text_4'),
+  t('cm_ai_conversation_workbench_text_5'),
+  t('cm_ai_conversation_workbench_text_6'),
+  t('cm_ai_conversation_workbench_text_7'),
+  t('cm_ai_conversation_workbench_text_8'),
+  t('cm_ai_conversation_workbench_text_9'),
 ] as const;
 
 const WORKBENCH_SECTIONS = [
   {
     value: 'chat',
-    label: '对话',
+    get label() {
+      return t('cm_ai_conversation_workbench_label_10');
+    },
     icon: <MessageCircle size={14} aria-hidden="true" />,
     controls: 'chatPanel',
   },
   {
     value: 'conversations',
-    label: '全部会话',
+    get label() {
+      return t('cm_ai_conversation_workbench_label_11');
+    },
     icon: <List size={14} aria-hidden="true" />,
     controls: 'conversationsPanel',
   },
   {
     value: 'settings',
-    label: '设置',
+    get label() {
+      return t('cm_ai_conversation_workbench_label_12');
+    },
     icon: <Settings size={14} aria-hidden="true" />,
     controls: 'settingsPanel',
   },
@@ -149,6 +157,8 @@ export function AiConversationWorkbench({
   ) => AwaitableAction;
   onDeleteConversation: (conversationId: string) => AwaitableAction;
 }) {
+  useLocale();
+
   const [activeTab, setActiveTab] = useState<AssistantWorkbenchTab>(
     initialTab ?? 'chat',
   );
@@ -359,7 +369,10 @@ export function AiConversationWorkbench({
     const submittedDraft = draft;
     const submittedImages = images;
     const message =
-      draft.trim() || (submittedImages.length > 0 ? '请分析这些图片。' : '');
+      draft.trim() ||
+      (submittedImages.length > 0
+        ? t('cm_ai_conversation_workbench_text_13')
+        : '');
     if (!message || snapshot.running || sending || attachingImages) return;
     followStreamRef.current = true;
     setSending(true);
@@ -426,9 +439,9 @@ export function AiConversationWorkbench({
       setSpeechState({
         status: 'error',
         text: '',
-        error: `语音输入尚未就绪：${issues
-          .map((issue) => issue.title)
-          .join('；')}`,
+        error: t('cm_ai_conversation_workbench_error_14', [
+          String(issues.map((issue) => issue.title).join('；')),
+        ]),
       });
       return;
     }
@@ -515,12 +528,16 @@ export function AiConversationWorkbench({
       ).length;
       const content = [
         text,
-        ...(imageCount > 0 ? [`已附加 ${imageCount} 张参考图片。`] : []),
+        ...(imageCount > 0
+          ? [t('cm_ai_conversation_workbench_text_15', [String(imageCount)])]
+          : []),
       ]
         .filter(Boolean)
         .join('\n\n');
       return content
-        ? [`## ${item.role === 'user' ? '你' : '智能体'}\n\n${content}`]
+        ? [
+            `## ${item.role === 'user' ? t('cm_ai_conversation_workbench_text_16') : t('cm_ai_conversation_workbench_text_17')}\n\n${content}`,
+          ]
         : [];
     });
     const content = [`# ${conversation.title}`, ...transcript].join('\n\n');
@@ -529,7 +546,7 @@ export function AiConversationWorkbench({
     );
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = `${conversation.title || '会话'}.md`;
+    anchor.download = `${conversation.title || t('cm_ai_conversation_workbench_text_18')}.md`;
     anchor.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
   };
@@ -561,7 +578,7 @@ export function AiConversationWorkbench({
   return (
     <section
       className={`app-ui-theme cm-assistant-surface${className ? ` ${className}` : ''}`}
-      aria-label="卡牌大师智能体"
+      aria-label={t('cm_ai_conversation_workbench_aria_label_19')}
     >
       {renameConversation && (
         <RenameDialog
@@ -575,7 +592,7 @@ export function AiConversationWorkbench({
 
       <UiSegmentedControl
         className="cm-assistant-tabs"
-        label="工作台导航"
+        label={t('cm_ai_conversation_workbench_label_20')}
         value={activeTab}
         options={WORKBENCH_SECTIONS}
         contextNavigation
@@ -598,7 +615,7 @@ export function AiConversationWorkbench({
             <button
               type="button"
               className="cm-assistant-icon-button"
-              title="新建会话"
+              title={t('cm_ai_conversation_workbench_title_21')}
               disabled={snapshot.running}
               onClick={() => void onCreateConversation()}
             >
@@ -624,7 +641,7 @@ export function AiConversationWorkbench({
           }`}
           title={
             attachedPage?.available
-              ? '当前操作页面'
+              ? t('cm_ai_conversation_workbench_text_22')
               : assistantTargetStatus(attachedPage)
           }
         >
@@ -665,7 +682,9 @@ export function AiConversationWorkbench({
         >
           {error && (
             <div className="cm-assistant-inline-error">
-              <strong className="cm-assistant-inline-error__title">错误</strong>
+              <strong className="cm-assistant-inline-error__title">
+                {t('cm_ai_conversation_workbench_text_23')}
+              </strong>
               <p className="cm-assistant-inline-error__text">
                 {assistantUserFacingError(error)}
               </p>
@@ -682,13 +701,13 @@ export function AiConversationWorkbench({
                   size={14}
                   aria-hidden="true"
                 />
-                <span>正在响应</span>
+                <span>{t('cm_ai_conversation_workbench_text_24')}</span>
               </div>
             )}
         </div>
 
         <fieldset
-          aria-label="消息编辑器"
+          aria-label={t('cm_ai_conversation_workbench_aria_label_25')}
           className={`cm-assistant-chat-composer${
             showSpeechInput ? ' cm-assistant-chat-composer--speech' : ''
           }${draggingImages ? ' is-dragging-images' : ''}`}
@@ -727,10 +746,10 @@ export function AiConversationWorkbench({
               >
                 {speechState.error ??
                   (speechState.status === 'connecting'
-                    ? '正在连接语音识别…'
+                    ? t('cm_ai_conversation_workbench_text_26')
                     : speechState.status === 'stopping'
-                      ? '正在整理识别结果…'
-                      : '正在聆听…')}
+                      ? t('cm_ai_conversation_workbench_text_27')
+                      : t('cm_ai_conversation_workbench_text_28'))}
               </div>
             )}
           {composerError && (
@@ -739,8 +758,8 @@ export function AiConversationWorkbench({
               <span>{composerError}</span>
               <button
                 type="button"
-                title="关闭"
-                aria-label="关闭图片错误"
+                title={t('cm_ai_conversation_workbench_title_29')}
+                aria-label={t('cm_ai_conversation_workbench_aria_label_30')}
                 onClick={() => setComposerError(null)}
               >
                 <X size={13} />
@@ -751,12 +770,24 @@ export function AiConversationWorkbench({
             <div className="cm-assistant-composer-images">
               {images.map((image, index) => (
                 <figure key={image.id}>
-                  <img src={image.dataUrl} alt={`参考图片 ${index + 1}`} />
-                  <figcaption>参考图片 {index + 1}</figcaption>
+                  <img
+                    src={image.dataUrl}
+                    alt={t('cm_ai_conversation_workbench_text_31', [
+                      String(index + 1),
+                    ])}
+                  />
+                  <figcaption>
+                    {t('cm_ai_conversation_workbench_text_32')}
+                    {index + 1}
+                  </figcaption>
                   <button
                     type="button"
-                    title={`移除参考图片 ${index + 1}`}
-                    aria-label={`移除参考图片 ${index + 1}`}
+                    title={t('cm_ai_conversation_workbench_text_33', [
+                      String(index + 1),
+                    ])}
+                    aria-label={t('cm_ai_conversation_workbench_text_34', [
+                      String(index + 1),
+                    ])}
                     onClick={() =>
                       setImages((current) =>
                         current.filter((item) => item.id !== image.id),
@@ -774,7 +805,7 @@ export function AiConversationWorkbench({
               ref={textareaRef}
               className="chat-input"
               value={draft}
-              aria-label="对话内容"
+              aria-label={t('cm_ai_conversation_workbench_aria_label_35')}
               placeholder={
                 snapshot.messages.length === 0
                   ? CHAT_SUGGESTIONS[suggestionIndex]
@@ -825,8 +856,16 @@ export function AiConversationWorkbench({
             <button
               type="button"
               className="cm-assistant-composer-button"
-              title={attachingImages ? '正在处理图片' : '附加参考图片'}
-              aria-label={attachingImages ? '正在处理图片' : '附加参考图片'}
+              title={
+                attachingImages
+                  ? t('cm_ai_conversation_workbench_text_36')
+                  : t('cm_ai_conversation_workbench_text_37')
+              }
+              aria-label={
+                attachingImages
+                  ? t('cm_ai_conversation_workbench_text_38')
+                  : t('cm_ai_conversation_workbench_text_39')
+              }
               disabled={attachingImages || sending || snapshot.running}
               onClick={() => fileInputRef.current?.click()}
             >
@@ -844,13 +883,13 @@ export function AiConversationWorkbench({
                 }`}
                 title={
                   speechState.status === 'listening'
-                    ? '停止语音输入'
-                    : '开始语音输入'
+                    ? t('cm_ai_conversation_workbench_text_40')
+                    : t('cm_ai_conversation_workbench_text_41')
                 }
                 aria-label={
                   speechState.status === 'listening'
-                    ? '停止语音输入'
-                    : '开始语音输入'
+                    ? t('cm_ai_conversation_workbench_text_42')
+                    : t('cm_ai_conversation_workbench_text_43')
                 }
                 aria-pressed={speechState.status === 'listening'}
                 disabled={
@@ -884,8 +923,16 @@ export function AiConversationWorkbench({
               className={`cm-assistant-composer-button cm-assistant-composer-submit${
                 snapshot.running ? ' is-stop' : ''
               }`}
-              title={snapshot.running ? '停止回复' : '发送'}
-              aria-label={snapshot.running ? '停止回复' : '发送'}
+              title={
+                snapshot.running
+                  ? t('cm_ai_conversation_workbench_text_44')
+                  : t('cm_ai_conversation_workbench_text_45')
+              }
+              aria-label={
+                snapshot.running
+                  ? t('cm_ai_conversation_workbench_text_46')
+                  : t('cm_ai_conversation_workbench_text_47')
+              }
               disabled={
                 snapshot.running
                   ? false

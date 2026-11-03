@@ -16,6 +16,8 @@ import type {
   ContentBlockingSnapshot,
 } from '../../content-blocking/domain/types';
 import { contentBlockingSiteState } from '../../content-blocking/domain/types';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { ContentBlockingFilterListsPanel } from './ContentBlockingFilterListsPanel';
 import { ContentBlockingRulesPanel } from './ContentBlockingRulesPanel';
 import { useContentBlockingBoard } from './useContentBlockingBoard';
@@ -25,10 +27,30 @@ const MAX_CONFIGURATION_FILE_BYTES = 32 * 1024 * 1024;
 type ContentBlockingTab = 'general' | 'filters' | 'rules' | 'advanced';
 
 const TABS = [
-  { value: 'general', label: '常规' },
-  { value: 'filters', label: '过滤列表' },
-  { value: 'rules', label: '自定义规则' },
-  { value: 'advanced', label: '高级' },
+  {
+    value: 'general',
+    get label() {
+      return t('cm_content_blocking_settings_board_label_1');
+    },
+  },
+  {
+    value: 'filters',
+    get label() {
+      return t('cm_content_blocking_settings_board_label_2');
+    },
+  },
+  {
+    value: 'rules',
+    get label() {
+      return t('cm_content_blocking_settings_board_label_3');
+    },
+  },
+  {
+    value: 'advanced',
+    get label() {
+      return t('cm_content_blocking_settings_board_label_4');
+    },
+  },
 ] as const;
 
 function configurationFilename(now = new Date()) {
@@ -56,6 +78,8 @@ export function ContentBlockingSettingsBoard({
   onSnapshot: (snapshot: ContentBlockingSnapshot) => void;
   onClose: () => void;
 }) {
+  useLocale();
+
   const { view, activeOperations, isBusy, status, setStatus, run } =
     useContentBlockingBoard(controller, onSnapshot);
   const [tab, setTab] = useState<ContentBlockingTab>('general');
@@ -73,19 +97,26 @@ export function ContentBlockingSettingsBoard({
 
   if (!view) {
     return (
-      <UiDialog ariaLabel="内容拦截设置" title="杀" onClose={onClose}>
+      <UiDialog
+        ariaLabel={t('cm_content_blocking_settings_board_aria_label_5')}
+        title={t('cm_content_blocking_settings_board_title_6')}
+        onClose={onClose}
+      >
         {status.error ? (
           <UiNotice
             tone="error"
-            title="内容拦截设置读取失败"
+            title={t('cm_content_blocking_settings_board_title_7')}
             copyText={status.message}
           >
             <p>{status.message}</p>
           </UiNotice>
         ) : (
           <div className="manager-blocking-loading">
-            <UiLoader large label="正在读取内容拦截设置" />
-            <p>正在同步过滤列表、自定义规则与站点配置。</p>
+            <UiLoader
+              large
+              label={t('cm_content_blocking_settings_board_label_8')}
+            />
+            <p>{t('cm_content_blocking_settings_board_text_9')}</p>
           </div>
         )}
       </UiDialog>
@@ -103,10 +134,10 @@ export function ContentBlockingSettingsBoard({
     view.builtInFilters.filter((filter) => filter.enabled).length +
     snapshot.enabledSubscriptionCount;
   const headerStatus = !snapshot.rulesEnabled
-    ? '内容拦截已停用'
+    ? t('cm_content_blocking_settings_board_text_10')
     : site.filteringEnabled
-      ? '当前网站已启用'
-      : '当前网站已停用';
+      ? t('cm_content_blocking_settings_board_text_11')
+      : t('cm_content_blocking_settings_board_text_12');
 
   const saveGeneralSettings = async () => {
     const wereRulesEnabled = view.rulesEnabled;
@@ -117,7 +148,7 @@ export function ContentBlockingSettingsBoard({
           rulesEnabled,
           allowlist: allowlist.split(/\r?\n/),
         }),
-      '内容拦截常规设置已应用。',
+      t('cm_content_blocking_settings_board_text_13'),
     );
     if (!succeeded) return;
     setGeneralDirty(false);
@@ -133,14 +164,17 @@ export function ContentBlockingSettingsBoard({
         saved = next;
         return next;
       },
-      '自定义规则已保存。',
+      t('cm_content_blocking_settings_board_text_14'),
     );
     return succeeded ? saved : null;
   };
 
   const importConfiguration = async (file: File) => {
     if (file.size > MAX_CONFIGURATION_FILE_BYTES) {
-      setStatus({ message: '配置文件超过 32 MB 上限。', error: true });
+      setStatus({
+        message: t('cm_content_blocking_settings_board_message_15'),
+        error: true,
+      });
       return;
     }
     try {
@@ -148,7 +182,7 @@ export function ContentBlockingSettingsBoard({
       const succeeded = await run(
         'import-configuration',
         () => controller.importConfiguration(source),
-        '完整内容拦截配置已导入。',
+        t('cm_content_blocking_settings_board_text_16'),
       );
       if (succeeded) setGeneralDirty(false);
     } catch (error) {
@@ -161,8 +195,8 @@ export function ContentBlockingSettingsBoard({
 
   return (
     <UiDialog
-      ariaLabel="内容拦截设置"
-      title="杀"
+      ariaLabel={t('cm_content_blocking_settings_board_aria_label_17')}
+      title={t('cm_content_blocking_settings_board_title_18')}
       className="manager-blocking-dialog"
       status={{
         label: headerStatus,
@@ -174,7 +208,7 @@ export function ContentBlockingSettingsBoard({
       onClose={onClose}
       navigation={
         <UiSegmentedControl
-          label="内容拦截设置分类"
+          label={t('cm_content_blocking_settings_board_label_19')}
           value={tab}
           options={TABS}
           className="manager-blocking-primary-tabs"
@@ -187,7 +221,9 @@ export function ContentBlockingSettingsBoard({
             visible={activeOperations.size > 0}
             compact
             className="manager-blocking-operation-loader"
-            label={`正在同步 ${activeOperations.size} 项内容拦截配置`}
+            label={t('cm_content_blocking_settings_board_text_20', [
+              String(activeOperations.size),
+            ])}
           />
           {activeOperations.size === 0 && status.message && (
             <p
@@ -203,14 +239,14 @@ export function ContentBlockingSettingsBoard({
           {reloadRequired ? (
             <>
               <UiButton onClick={() => setReloadRequired(false)}>
-                稍后刷新
+                {t('cm_content_blocking_settings_board_text_21')}
               </UiButton>
               <UiButton
                 variant="primary"
                 onClick={() => window.location.reload()}
               >
                 <RefreshCw size={14} aria-hidden="true" />
-                刷新并恢复页面
+                {t('cm_content_blocking_settings_board_text_22')}
               </UiButton>
             </>
           ) : (
@@ -221,7 +257,7 @@ export function ContentBlockingSettingsBoard({
                 onClick={() => void saveGeneralSettings()}
               >
                 <Save size={14} aria-hidden="true" />
-                应用设置
+                {t('cm_content_blocking_settings_board_text_23')}
               </UiButton>
             )
           )}
@@ -236,45 +272,63 @@ export function ContentBlockingSettingsBoard({
           >
             <header className="manager-blocking-panel__header">
               <div>
-                <strong>常规</strong>
-                <span>控制过滤引擎总开关、站点白名单与当前运行状态。</span>
+                <strong>
+                  {t('cm_content_blocking_settings_board_text_24')}
+                </strong>
+                <span>{t('cm_content_blocking_settings_board_text_25')}</span>
               </div>
             </header>
 
             {reloadRequired && (
-              <UiNotice tone="warning" title="需要刷新当前页面">
-                <p>规则已暂停；刷新后可恢复本页已经执行的过滤效果。</p>
+              <UiNotice
+                tone="warning"
+                title={t('cm_content_blocking_settings_board_title_26')}
+              >
+                <p>{t('cm_content_blocking_settings_board_text_27')}</p>
               </UiNotice>
             )}
 
             <div className="manager-blocking-general-grid">
               <UiToggle
-                label="内容过滤总开关"
-                description="关闭后停止所有网站的内容过滤，但保留规则和列表配置。"
+                label={t('cm_content_blocking_settings_board_label_28')}
+                description={t(
+                  'cm_content_blocking_settings_board_description_29',
+                )}
                 checked={rulesEnabled}
                 onChange={(enabled) => {
                   setRulesEnabled(enabled);
                   setGeneralDirty(true);
                 }}
               />
-              <UiNotice title={`当前站点：${site.hostname || '无法识别'}`}>
+              <UiNotice
+                title={t('cm_content_blocking_settings_board_text_30', [
+                  String(
+                    site.hostname ||
+                      t('cm_content_blocking_settings_board_text_1'),
+                  ),
+                ])}
+              >
                 <p>
                   {!snapshot.rulesEnabled
-                    ? '内容过滤当前已全局停用。'
+                    ? t('cm_content_blocking_settings_board_text_31')
                     : site.filteringEnabled
-                      ? '当前站点正在应用内容过滤规则。'
-                      : '当前站点位于白名单中，内容过滤保持停用。'}
+                      ? t('cm_content_blocking_settings_board_text_32')
+                      : t('cm_content_blocking_settings_board_text_33')}
                 </p>
               </UiNotice>
             </div>
 
             <div className="manager-blocking-summary">
               <div className="manager-blocking-summary__item">
-                <span>引擎状态</span>
+                <span>{t('cm_content_blocking_settings_board_text_34')}</span>
                 <strong>{snapshot.status}</strong>
               </div>
               <div className="manager-blocking-summary__item">
-                <span>{snapshot.rulesEnabled ? '生效规则' : '已载入规则'}</span>
+                <span>
+                  {snapshot.rulesEnabled
+                    ? t('cm_content_blocking_settings_board_text_35')
+                    : t('cm_content_blocking_settings_board_text_36')}
+                </span>
                 <strong>
                   {snapshot.rulesEnabled
                     ? snapshot.activeRuleCount
@@ -282,11 +336,11 @@ export function ContentBlockingSettingsBoard({
                 </strong>
               </div>
               <div className="manager-blocking-summary__item">
-                <span>过滤列表</span>
+                <span>{t('cm_content_blocking_settings_board_text_37')}</span>
                 <strong>{enabledFilterCount}</strong>
               </div>
               <div className="manager-blocking-summary__item">
-                <span>自定义规则</span>
+                <span>{t('cm_content_blocking_settings_board_text_38')}</span>
                 <strong>{snapshot.userRuleCount}</strong>
               </div>
             </div>
@@ -294,7 +348,7 @@ export function ContentBlockingSettingsBoard({
             {diagnostics.length > 0 && (
               <UiNotice
                 tone="error"
-                title="过滤引擎诊断"
+                title={t('cm_content_blocking_settings_board_title_39')}
                 copyText={diagnostics.join('\n')}
               >
                 {diagnostics.map((diagnostic) => (
@@ -304,8 +358,8 @@ export function ContentBlockingSettingsBoard({
             )}
 
             <UiTextArea
-              label="站点白名单"
-              hint="每行一个域名；白名单中的站点不会应用内容过滤。"
+              label={t('cm_content_blocking_settings_board_label_40')}
+              hint={t('cm_content_blocking_settings_board_hint_41')}
               value={allowlist}
               spellCheck={false}
               onChange={(event) => {
@@ -343,8 +397,10 @@ export function ContentBlockingSettingsBoard({
           >
             <header className="manager-blocking-panel__header">
               <div>
-                <strong>高级</strong>
-                <span>迁移完整配置，并查看当前规则引擎的汇总信息。</span>
+                <strong>
+                  {t('cm_content_blocking_settings_board_text_42')}
+                </strong>
+                <span>{t('cm_content_blocking_settings_board_text_43')}</span>
               </div>
             </header>
             <input
@@ -358,17 +414,15 @@ export function ContentBlockingSettingsBoard({
                 event.currentTarget.value = '';
               }}
             />
-            <UiNotice title="完整配置归档">
-              <p>
-                配置文件包含总开关、过滤列表、自定义规则、订阅和站点白名单。
-              </p>
+            <UiNotice title={t('cm_content_blocking_settings_board_title_44')}>
+              <p>{t('cm_content_blocking_settings_board_text_45')}</p>
               <div className="manager-blocking-archive-actions">
                 <UiButton
                   disabled={settingsMutationBusy}
                   onClick={() => configurationInputRef.current?.click()}
                 >
                   <Upload size={14} aria-hidden="true" />
-                  导入完整配置
+                  {t('cm_content_blocking_settings_board_text_46')}
                 </UiButton>
                 <UiButton
                   disabled={
@@ -383,19 +437,24 @@ export function ContentBlockingSettingsBoard({
                         );
                         return view;
                       },
-                      '完整内容拦截配置已导出。',
+                      t('cm_content_blocking_settings_board_text_47'),
                     )
                   }
                 >
                   <Download size={14} aria-hidden="true" />
-                  导出完整配置
+                  {t('cm_content_blocking_settings_board_text_48')}
                 </UiButton>
               </div>
             </UiNotice>
-            <UiNotice title="引擎信息">
+            <UiNotice title={t('cm_content_blocking_settings_board_title_49')}>
               <p>
-                状态 {snapshot.status} · 修订 {snapshot.revision} · 已载入{' '}
-                {snapshot.loadedRuleCount.toLocaleString()} 条规则
+                {t('cm_content_blocking_settings_board_text_50')}
+                {snapshot.status}{' '}
+                {t('cm_content_blocking_settings_board_text_51')}
+                {snapshot.revision}{' '}
+                {t('cm_content_blocking_settings_board_text_52')}{' '}
+                {snapshot.loadedRuleCount.toLocaleString()}{' '}
+                {t('cm_content_blocking_settings_board_text_53')}
               </p>
             </UiNotice>
           </div>

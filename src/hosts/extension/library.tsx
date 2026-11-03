@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react';
 import { createRoot } from 'react-dom/client';
-
 import { AudioDirector } from '../../audio/AudioDirector';
 import { AudioDirectorProvider } from '../../audio/AudioDirectorProvider';
 import { pageAudioDirector } from '../../audio/page-audio-director';
@@ -38,6 +37,8 @@ import {
   releaseDocumentScrollLock,
 } from '../../lib/document-scroll-lock';
 import { rewriteProjectAssetUrls } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import type { MediaResourcesSnapshotListener } from '../../media-resources/domain/types';
 import type { MediaSpeedSnapshotListener } from '../../media-speed/domain/types';
 import type { PageThemeSnapshotListener } from '../../page-theme/domain/types';
@@ -68,7 +69,7 @@ const hostGeneration = document.documentElement.getAttribute(
 );
 document.documentElement.removeAttribute(GLOBAL_LIBRARY_GENERATION_ATTRIBUTE);
 if (!hostGeneration) {
-  throw new Error('全局牌库缺少当前扩展会话标识。');
+  throw new Error(t('cm_library_error_1'));
 }
 const existingHost = document.getElementById(GLOBAL_LIBRARY_HOST_ID);
 if (existingHost) {
@@ -195,11 +196,13 @@ function mountGlobalLibraryHost(generation: string) {
   const openNewTabSettings = async () => {
     const response = await newTab.openSettings();
     if (!response.supported) {
-      throw new Error(response.reason || '扩展未能打开新标签页设置。');
+      throw new Error(response.reason || t('cm_library_text_2'));
     }
   };
 
   function GlobalLibraryOverlay() {
+    useLocale();
+
     const [open, setOpen] = useState(true);
     const [closing, setClosing] = useState(false);
     const [cardSettingsOpen, setCardSettingsOpen] = useState(false);

@@ -1,3 +1,5 @@
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { userscriptIdentityConflict } from '../../userscript/application/install-service';
 import { updateUserscriptEditableMetadata } from '../../userscript/application/metadata-editor';
 import { userscriptInstallationDiagnostics } from '../../userscript/application/preflight';
@@ -26,12 +28,14 @@ export function useScriptEditorActions({
   selected: DeckCard | null;
   commitScript: (script: InstalledUserscript) => void;
 }) {
+  useLocale();
+
   const { runtime, runtimeContext } = host;
 
   const saveManagement = (draft: ManageScriptDraft) => {
     try {
       if (!selected || !isInstalledUserscript(selected)) {
-        return '当前卡牌不是可管理的用户脚本。';
+        return t('cm_use_script_editor_actions_text_1');
       }
       const source = updateUserscriptEditableMetadata(draft.source, {
         name: draft.name,
@@ -47,7 +51,9 @@ export function useScriptEditorActions({
         selected.id,
       );
       if (duplicate) {
-        return `脚本身份与已安装的“${userscriptDisplayName(duplicate.metadata)}”重复。`;
+        return t('cm_use_script_editor_actions_text_2', [
+          String(userscriptDisplayName(duplicate.metadata)),
+        ]);
       }
       for (const [kind, pattern] of [
         ...draft.userMatches.map((value) => ['@match', value] as const),
@@ -62,7 +68,7 @@ export function useScriptEditorActions({
         draft.coverPresentation !== null &&
         !isUserscriptPresentation(draft.coverPresentation)
       ) {
-        return '脚本封面或边框颜色无效。';
+        return t('cm_use_script_editor_actions_text_3');
       }
       const updated = {
         ...selected,

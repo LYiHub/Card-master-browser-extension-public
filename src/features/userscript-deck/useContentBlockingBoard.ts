@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-
 import type {
   ContentBlockingController,
   ContentBlockingSettingsView,
   ContentBlockingSnapshot,
 } from '../../content-blocking/domain/types';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 export type ContentBlockingBoardStatus = {
   message: string;
@@ -19,6 +20,8 @@ export function useContentBlockingBoard(
   controller: ContentBlockingController,
   onSnapshot: (snapshot: ContentBlockingSnapshot) => void,
 ) {
+  useLocale();
+
   const [view, setView] = useState<ContentBlockingSettingsView | null>(() =>
     controller.getCachedSettings(),
   );
@@ -62,12 +65,17 @@ export function useContentBlockingBoard(
       waitingForConfiguration.current = false;
       if (snapshot.status === 'error') {
         setStatus({
-          message: snapshot.errors.join(' ') || '内容拦截引擎更新失败。',
+          message:
+            snapshot.errors.join(' ') ||
+            t('cm_use_content_blocking_board_text_1'),
           error: true,
         });
         return;
       }
-      setStatus({ message: '内容拦截引擎已更新。', error: false });
+      setStatus({
+        message: t('cm_use_content_blocking_board_message_2'),
+        error: false,
+      });
     },
     [onSnapshot],
   );
@@ -111,7 +119,7 @@ export function useContentBlockingBoard(
         if (latestOperation.current === operationSequence) {
           setStatus({
             message: next.snapshot.configurationPending
-              ? `${message} 引擎正在后台更新。`
+              ? t('cm_use_content_blocking_board_text_3', [String(message)])
               : message,
             error: false,
           });

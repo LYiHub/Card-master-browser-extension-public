@@ -27,7 +27,9 @@ describe('InstallScriptCard', () => {
     expect(source).not.toContain('setInteractive');
     expect(source).not.toContain('onPointerEnter');
     expect(source).toContain('waiting');
-    expect(source).toContain('<UiLoader compact label="正在写入牌库" />');
+    expect(source).toContain(
+      "<UiLoader compact label={t('cm_install_script_card_label_1')} />",
+    );
     expect(materialSource).toContain('card-material__sparkles');
     expect(materialSource).not.toContain('card-material__foil');
     expect(materialSource).not.toContain('card-material__glare');

@@ -3,6 +3,7 @@ import { createElement, Fragment } from 'react';
 import { createRoot } from 'react-dom/client';
 import { extensionDiagnostics } from '../../hosts/extension/diagnostics';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
 import {
   inspectMediaSpeedVisibleVideo,
   MEDIA_SPEED_TARGET_SELECTOR,
@@ -476,8 +477,8 @@ function loadProjectileSequence(index: number) {
     if (loadedFrames.length === 0) {
       extensionDiagnostics.warn(
         DIAGNOSTIC_SCOPE,
-        '箭矢序列预载失败',
-        new Error('箭矢序列没有加载到任何可用帧。'),
+        t('cm_media_speed_projectile_effect_text_1'),
+        new Error(t('cm_media_speed_projectile_effect_error_2')),
         details,
       );
     }
@@ -522,8 +523,8 @@ function loadBorderSequence(index: number) {
     if (loadedFrames.length === 0) {
       extensionDiagnostics.warn(
         DIAGNOSTIC_SCOPE,
-        '命中边框序列预载失败',
-        new Error('命中边框序列没有加载到任何可用帧。'),
+        t('cm_media_speed_projectile_effect_text_3'),
+        new Error(t('cm_media_speed_projectile_effect_error_4')),
         details,
       );
     }
@@ -718,8 +719,8 @@ function mountImpactBorder(
   if (!context) {
     extensionDiagnostics.warn(
       DIAGNOSTIC_SCOPE,
-      '命中边框画布创建失败',
-      new Error('命中边框没有取得可用的 2D Canvas 上下文。'),
+      t('cm_media_speed_projectile_effect_text_5'),
+      new Error(t('cm_media_speed_projectile_effect_error_6')),
       { generation, sequenceId: sequence.sequenceId },
     );
     return;
@@ -817,8 +818,8 @@ function mountProjectileVolley(
   if (frames.length === 0) {
     extensionDiagnostics.warn(
       DIAGNOSTIC_SCOPE,
-      '箭矢挂载已取消',
-      new Error('待播放的箭矢序列没有可用帧。'),
+      t('cm_media_speed_projectile_effect_text_7'),
+      new Error(t('cm_media_speed_projectile_effect_error_8')),
       { generation },
     );
     return;
@@ -946,8 +947,8 @@ function mountProjectileVolley(
   if (projectiles.length !== trajectories.length) {
     extensionDiagnostics.warn(
       DIAGNOSTIC_SCOPE,
-      '箭矢画布创建失败',
-      new Error('部分箭矢没有取得可用的 2D Canvas 上下文。'),
+      t('cm_media_speed_projectile_effect_text_9'),
+      new Error(t('cm_media_speed_projectile_effect_error_10')),
       {
         generation,
         expectedCanvasCount: trajectories.length,

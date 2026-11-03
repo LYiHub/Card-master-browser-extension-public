@@ -24,75 +24,77 @@ import {
   type FlameSequenceId,
 } from '../../components/ui/FlameSequence';
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 const CREATE_USERSCRIPT_FLAME_SEQUENCES = FLAME_SEQUENCE_IDS;
 
 function toolTitle(name: string) {
   switch (name) {
     case 'execute_page':
-      return '操作页面';
+      return t('cm_assistant_conversation_message_text_1');
     case 'list_tabs':
-      return '查找页面';
+      return t('cm_assistant_conversation_message_text_2');
     case 'select_tab':
-      return '选择页面';
+      return t('cm_assistant_conversation_message_text_3');
     case 'activate_tab':
-      return '切换页面';
+      return t('cm_assistant_conversation_message_text_4');
     case 'close_tab':
-      return '关闭页面';
+      return t('cm_assistant_conversation_message_text_5');
     case 'inspect_page':
-      return '分析页面';
+      return t('cm_assistant_conversation_message_text_6');
     case 'query_dom':
-      return '查找页面内容';
+      return t('cm_assistant_conversation_message_text_7');
     case 'search_page_text':
-      return '搜索页面文字';
+      return t('cm_assistant_conversation_message_text_8');
     case 'read_dom_fragment':
-      return '读取页面内容';
+      return t('cm_assistant_conversation_message_text_9');
     case 'inspect_element':
-      return '检查页面内容';
+      return t('cm_assistant_conversation_message_text_10');
     case 'query_userscripts':
-      return '查找卡牌';
+      return t('cm_assistant_conversation_message_text_11');
     case 'search_greasyfork_scripts':
-      return '查找公开脚本';
+      return t('cm_assistant_conversation_message_text_12');
     case 'install_greasyfork_script':
-      return '安装脚本';
+      return t('cm_assistant_conversation_message_text_13');
     case 'read_userscript':
-      return '读取卡牌';
+      return t('cm_assistant_conversation_message_text_14');
     case 'create_userscript':
-      return '创建卡牌';
+      return t('cm_assistant_conversation_message_text_15');
     case 'edit_userscript':
-      return '修改卡牌';
+      return t('cm_assistant_conversation_message_text_16');
     case 'delete_userscript':
-      return '删除卡牌';
+      return t('cm_assistant_conversation_message_text_17');
     case 'set_userscript_enabled':
-      return '调整卡牌状态';
+      return t('cm_assistant_conversation_message_text_18');
     case 'set_userscript_site_enabled':
-      return '设置本站状态';
+      return t('cm_assistant_conversation_message_text_19');
     case 'inspect_page_userscript_runtimes':
     case 'inspect_userscript_runtime':
-      return '检查卡牌状态';
+      return t('cm_assistant_conversation_message_text_20');
     case 'invoke_userscript_command':
-      return '执行卡牌能力';
+      return t('cm_assistant_conversation_message_text_21');
     case 'generate_userscript_cover':
-      return '生成卡牌封面';
+      return t('cm_assistant_conversation_message_text_22');
     case 'reload_page':
-      return '刷新页面';
+      return t('cm_assistant_conversation_message_text_23');
     case 'set_deck_visibility':
-      return '切换牌阵';
+      return t('cm_assistant_conversation_message_text_24');
     default:
-      return '处理任务';
+      return t('cm_assistant_conversation_message_text_25');
   }
 }
 
 function toolStatus(status: AiToolCall['status']) {
   switch (status) {
     case 'pending':
-      return '准备中';
+      return t('cm_assistant_conversation_message_text_26');
     case 'running':
-      return '处理中';
+      return t('cm_assistant_conversation_message_text_27');
     case 'completed':
-      return '已完成';
+      return t('cm_assistant_conversation_message_text_28');
     case 'error':
-      return '未完成';
+      return t('cm_assistant_conversation_message_text_29');
   }
 }
 
@@ -114,6 +116,8 @@ const MarkdownContent = memo(function MarkdownContent({
 }: {
   content: string;
 }) {
+  useLocale();
+
   return (
     <div className="cm-assistant-markdown">
       <ReactMarkdown
@@ -128,6 +132,8 @@ const MarkdownContent = memo(function MarkdownContent({
 });
 
 export function ToolCallView({ call }: { call: AiToolCall }) {
+  useLocale();
+
   const busy = call.status === 'pending' || call.status === 'running';
   if (call.name === 'create_userscript' && call.status !== 'error') {
     return <CreateUserscriptToolCall call={call} />;
@@ -167,6 +173,8 @@ export function ToolCallView({ call }: { call: AiToolCall }) {
 }
 
 function CreateUserscriptToolCall({ call }: { call: AiToolCall }) {
+  useLocale();
+
   const [flameSequence] = useState<FlameSequenceId>(
     () =>
       CREATE_USERSCRIPT_FLAME_SEQUENCES[
@@ -262,6 +270,8 @@ function TimelineSegment({
   segment: AiConversationSegment;
   streaming?: boolean;
 }) {
+  useLocale();
+
   if (segment.type === 'tool') {
     return (
       <div className="cm-assistant-tool-list">
@@ -273,14 +283,19 @@ function TimelineSegment({
     return (
       <figure className="cm-assistant-message-image">
         {segment.attachment.available && segment.attachment.dataUrl ? (
-          <img src={segment.attachment.dataUrl} alt="参考图片" />
+          <img
+            src={segment.attachment.dataUrl}
+            alt={t('cm_assistant_conversation_message_alt_30')}
+          />
         ) : (
           <div className="cm-assistant-message-image__missing">
             <FileImage size={18} aria-hidden="true" />
-            <span>图片内容已失效，请重新附加后继续</span>
+            <span>{t('cm_assistant_conversation_message_text_31')}</span>
           </div>
         )}
-        <figcaption>参考图片</figcaption>
+        <figcaption>
+          {t('cm_assistant_conversation_message_text_32')}
+        </figcaption>
       </figure>
     );
   }
@@ -302,6 +317,8 @@ function ThoughtProcess({
   segments: AiConversationSegment[];
   live: boolean;
 }) {
+  useLocale();
+
   const visibleSegments = segments.filter((segment) => segment.type === 'tool');
   const content = (
     <div className="cm-assistant-thought-process__body">
@@ -315,11 +332,11 @@ function ThoughtProcess({
     return (
       <section
         className="cm-assistant-thought-process is-live"
-        aria-label="思考过程"
+        aria-label={t('cm_assistant_conversation_message_aria_label_33')}
       >
         <div className="cm-assistant-thought-process__heading" role="status">
           <Loader2 size={14} aria-hidden="true" />
-          <span>正在思考</span>
+          <span>{t('cm_assistant_conversation_message_text_34')}</span>
         </div>
         {visibleSegments.length > 0 && content}
       </section>
@@ -330,7 +347,7 @@ function ThoughtProcess({
   return (
     <details className="cm-assistant-thought-process">
       <summary>
-        <span>思考过程</span>
+        <span>{t('cm_assistant_conversation_message_text_35')}</span>
         <ChevronDown size={13} aria-hidden="true" />
       </summary>
       {content}
@@ -343,6 +360,8 @@ export function ConversationMessage({
 }: {
   message: AiConversationMessage;
 }) {
+  useLocale();
+
   const user = message.role === 'user';
   const { thoughtSegments, finalSegments, finalStarted } =
     conversationMessageParts(message);
@@ -374,7 +393,7 @@ export function ConversationMessage({
             aria-hidden="true"
           />
           <strong className="cm-assistant-message__error-title">
-            请求失败
+            {t('cm_assistant_conversation_message_text_36')}
           </strong>
           <span className="cm-assistant-message__error-text">
             {assistantUserFacingError(message.error)}

@@ -125,10 +125,12 @@ describe('new tab wallpaper mode readiness', () => {
 
   it('uses two explicit inactivity thresholds with matching controls', () => {
     const idleSettings = source.slice(
-      source.indexOf('label="静置进入时间"'),
-      source.indexOf('label="每日回顾画面风格"'),
+      source.indexOf("label={t('cm_new_tab_settings_page_label_166')}"),
+      source.indexOf("label={t('cm_new_tab_settings_page_label_173')}"),
     );
-    expect(idleSettings).toContain('label="最长等待时间"');
+    expect(idleSettings).toContain(
+      "label={t('cm_new_tab_settings_page_label_169')}",
+    );
     expect(idleSettings.match(/<select/gu)).toHaveLength(2);
     expect(idleSettings).toContain('DAILY_REVIEW_WALLPAPER_IDLE_SECONDS');
     expect(idleSettings).toContain('DAILY_REVIEW_WALLPAPER_FORCE_SECONDS');
@@ -137,7 +139,7 @@ describe('new tab wallpaper mode readiness', () => {
   });
 
   it('offers bounded AI wallpaper retention choices', () => {
-    expect(source).toContain('label="自动保留"');
+    expect(source).toContain("label={t('cm_new_tab_settings_page_label_162')}");
     expect(source).toContain('DAILY_REVIEW_WALLPAPER_RETENTION_DAY_OPTIONS');
     expect(source).toContain("'dailyReviewRetentionDays'");
     expect(source).toContain(
@@ -146,9 +148,9 @@ describe('new tab wallpaper mode readiness', () => {
   });
 
   it('lets users hide only the new-tab prompt surface', () => {
-    expect(source).toContain('label="顶部展示提示词"');
+    expect(source).toContain("label={t('cm_new_tab_settings_page_label_156')}");
     expect(source).toContain("patch('dailyReviewShowPrompt', checked)");
-    expect(source).toContain('生成历史中的提示词仍会保留');
+    expect(source).toContain("t('cm_new_tab_settings_page_description_155')");
   });
 
   it('expands generation history downward without scroll anchoring jumps', () => {
@@ -160,9 +162,13 @@ describe('new tab wallpaper mode readiness', () => {
 
   it('keeps the default source first while allowing the AI status panel to open', () => {
     const tabs = source.slice(
-      source.indexOf('aria-label="壁纸来源" role="tablist"'),
+      source.indexOf(
+        "aria-label={t('cm_new_tab_settings_page_aria_label_134')}",
+      ),
     );
-    expect(tabs.indexOf('默认壁纸')).toBeLessThan(tabs.indexOf('AI 每日回顾'));
+    expect(tabs.indexOf("t('cm_new_tab_settings_page_text_135')")).toBeLessThan(
+      tabs.indexOf("t('cm_new_tab_settings_page_text_137')"),
+    );
     expect(tabs).toContain("selectWallpaperSource('daily-review')");
     expect(tabs).toContain(
       "wallpaperSourcePanel === 'daily-review' && dailyReviewIssue",
@@ -173,8 +179,12 @@ describe('new tab wallpaper mode readiness', () => {
 
   it('keeps AI setup messages out of the default wallpaper panel', () => {
     expect(source).toContain("wallpaperSourcePanel === 'default'");
-    expect(source).toContain('aria-label="默认壁纸设置"');
-    expect(source).toContain('aria-label="壁纸颜色模式"');
+    expect(source).toContain(
+      "aria-label={t('cm_new_tab_settings_page_aria_label_181')}",
+    );
+    expect(source).toContain(
+      "aria-label={t('cm_new_tab_settings_page_aria_label_182')}",
+    );
     expect(source).toContain('NEW_TAB_BUILTIN_WALLPAPERS.map');
     expect(source).not.toContain('无壁纸');
     expect(source).toContain('className="cm-new-tab-wallpaper-check"');
@@ -235,14 +245,14 @@ describe('new tab wallpaper mode readiness', () => {
   });
 
   it('renders one continuous settings document with linked scroll navigation', () => {
-    expect(source).toContain(
-      '<SettingsContentSection id="general" label="常规">',
+    expect(source).toMatch(
+      /<SettingsContentSection\s+id="general"\s+label=\{t\('cm_new_tab_settings_page_label_41'\)\}/u,
     );
-    expect(source).toContain(
-      '<SettingsContentSection id="wallpaper" label="壁纸">',
+    expect(source).toMatch(
+      /<SettingsContentSection\s+id="wallpaper"\s+label=\{t\('cm_new_tab_settings_page_label_112'\)\}/u,
     );
-    expect(source).toContain(
-      '<SettingsContentSection id="favicons" label="图标与主题色">',
+    expect(source).toMatch(
+      /<SettingsContentSection\s+id="favicons"\s+label=\{t\('cm_new_tab_settings_page_label_192'\)\}/u,
     );
     expect(source).not.toContain("{section === 'general'");
     expect(source).not.toContain("{section === 'wallpaper'");

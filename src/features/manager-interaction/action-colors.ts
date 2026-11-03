@@ -1,10 +1,47 @@
+import { t } from '../../localization/messages';
 export const ACTION_RING_PALETTE = [
-  { id: 'gold', label: '金', color: '#f0c66e' },
-  { id: 'cyan', label: '青', color: '#79cee0' },
-  { id: 'blue', label: '蓝', color: '#8aaaf5' },
-  { id: 'green', label: '绿', color: '#7bdaa0' },
-  { id: 'amber', label: '橙', color: '#f1b96f' },
-  { id: 'red', label: '赤', color: '#ff8068' },
+  {
+    id: 'gold',
+    get label() {
+      return t('cm_action_colors_label_1');
+    },
+    color: '#f0c66e',
+  },
+  {
+    id: 'cyan',
+    get label() {
+      return t('cm_action_colors_label_2');
+    },
+    color: '#79cee0',
+  },
+  {
+    id: 'blue',
+    get label() {
+      return t('cm_action_colors_label_3');
+    },
+    color: '#8aaaf5',
+  },
+  {
+    id: 'green',
+    get label() {
+      return t('cm_action_colors_label_4');
+    },
+    color: '#7bdaa0',
+  },
+  {
+    id: 'amber',
+    get label() {
+      return t('cm_action_colors_label_5');
+    },
+    color: '#f1b96f',
+  },
+  {
+    id: 'red',
+    get label() {
+      return t('cm_action_colors_label_6');
+    },
+    color: '#ff8068',
+  },
 ] as const;
 
 const ACTION_RING_BASE_COLORS = ACTION_RING_PALETTE.map(({ color }) => color);

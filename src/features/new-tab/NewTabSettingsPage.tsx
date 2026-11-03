@@ -19,6 +19,8 @@ import {
   Upload,
 } from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import {
   DAILY_REVIEW_WALLPAPER_DEFAULT_STYLE,
   DAILY_REVIEW_WALLPAPER_MAX_IMAGE_BYTES,
@@ -56,16 +58,76 @@ import { NEW_TAB_SEARCH_SOURCES } from '../../new-tab/domain/types';
 import { DailyReviewWallpaperSettings } from './DailyReviewWallpaperSettings';
 
 const SECTIONS = [
-  { id: 'general', label: '常规', icon: Settings },
-  { id: 'appearance', label: '外观', icon: MonitorCog },
-  { id: 'wallpaper', label: '壁纸', icon: Image },
-  { id: 'home', label: '首页内容', icon: Home },
-  { id: 'search', label: '搜索结果', icon: Search },
-  { id: 'engines', label: '搜索源', icon: Compass },
-  { id: 'blacklist', label: '黑名单', icon: Link2 },
-  { id: 'bookmarks', label: '书签', icon: Bookmark },
-  { id: 'shortcuts', label: '快捷方式', icon: Sparkles },
-  { id: 'favicons', label: '图标与主题色', icon: MonitorCog },
+  {
+    id: 'general',
+    get label() {
+      return t('cm_new_tab_settings_page_label_1');
+    },
+    icon: Settings,
+  },
+  {
+    id: 'appearance',
+    get label() {
+      return t('cm_new_tab_settings_page_label_2');
+    },
+    icon: MonitorCog,
+  },
+  {
+    id: 'wallpaper',
+    get label() {
+      return t('cm_new_tab_settings_page_label_3');
+    },
+    icon: Image,
+  },
+  {
+    id: 'home',
+    get label() {
+      return t('cm_new_tab_settings_page_label_4');
+    },
+    icon: Home,
+  },
+  {
+    id: 'search',
+    get label() {
+      return t('cm_new_tab_settings_page_label_5');
+    },
+    icon: Search,
+  },
+  {
+    id: 'engines',
+    get label() {
+      return t('cm_new_tab_settings_page_label_6');
+    },
+    icon: Compass,
+  },
+  {
+    id: 'blacklist',
+    get label() {
+      return t('cm_new_tab_settings_page_label_7');
+    },
+    icon: Link2,
+  },
+  {
+    id: 'bookmarks',
+    get label() {
+      return t('cm_new_tab_settings_page_label_8');
+    },
+    icon: Bookmark,
+  },
+  {
+    id: 'shortcuts',
+    get label() {
+      return t('cm_new_tab_settings_page_label_9');
+    },
+    icon: Sparkles,
+  },
+  {
+    id: 'favicons',
+    get label() {
+      return t('cm_new_tab_settings_page_label_10');
+    },
+    icon: MonitorCog,
+  },
 ] as const;
 
 type SettingsSection = (typeof SECTIONS)[number]['id'];
@@ -126,6 +188,8 @@ function SettingsContentSection({
   id: SettingsSection;
   label: string;
 }) {
+  useLocale();
+
   const headingId = `${settingsSectionDomId(id)}-heading`;
   return (
     <section
@@ -149,6 +213,8 @@ function Field({
   description?: string;
   label: string;
 }) {
+  useLocale();
+
   return (
     <div className="cm-new-tab-settings-field">
       <div>
@@ -165,13 +231,15 @@ export function NewTabModeNotice({
 }: {
   overridesBrowserNewTab: boolean;
 }) {
+  useLocale();
+
   return (
     <Field
-      label="浏览器新标签页"
+      label={t('cm_new_tab_settings_page_label_11')}
       description={
         overridesBrowserNewTab
-          ? '当前使用卡牌大师新标签页。要恢复浏览器原生页面，请安装“保留浏览器新标签页版”。'
-          : '当前版本不接管浏览器新标签页。下方外观等设置仅用于手动打开的卡牌大师页面。'
+          ? t('cm_new_tab_settings_page_text_12')
+          : t('cm_new_tab_settings_page_text_13')
       }
     >
       <div className="cm-new-tab-settings-mode">
@@ -180,11 +248,9 @@ export function NewTabModeNotice({
           rel="noreferrer"
           target="_blank"
         >
-          查看安装包与切换说明
+          {t('cm_new_tab_settings_page_text_14')}
         </a>
-        <span>
-          切换版本需将对应包完整解压并覆盖原安装目录，再重新加载扩展。保留原目录，不要卸载扩展或清除数据。
-        </span>
+        <span>{t('cm_new_tab_settings_page_text_15')}</span>
       </div>
     </Field>
   );
@@ -201,6 +267,8 @@ function Toggle({
   label: string;
   onChange(checked: boolean): void;
 }) {
+  useLocale();
+
   return (
     <label className="cm-new-tab-settings-toggle">
       <input
@@ -225,16 +293,15 @@ export function dailyReviewReadinessIssue(
 ) {
   if (error) {
     return {
-      title: '无法检查 AI 服务配置',
+      title: t('cm_new_tab_settings_page_title_16'),
       detail: error,
     };
   }
   if (!readiness) return null;
   if (!readiness.imageServiceConfigured) {
     return {
-      title: '图像服务尚未配置',
-      detail:
-        '请先配置图像服务；规划模型可以稍后配置，自定义内容生成不依赖它。',
+      title: t('cm_new_tab_settings_page_title_17'),
+      detail: t('cm_new_tab_settings_page_detail_18'),
     };
   }
   return null;
@@ -284,6 +351,8 @@ export function NewTabSettingsPage({
   localWallpaperRepository: NewTabLocalWallpaperRepository;
   preferencesRepository: NewTabPreferencesRepository;
 }) {
+  useLocale();
+
   const sections = visibleNewTabSettingsSections(capabilities);
   const searchSources = NEW_TAB_SEARCH_SOURCES.filter(
     (source) => capabilities[SEARCH_SOURCE_CAPABILITY[source]],
@@ -332,7 +401,11 @@ export function NewTabSettingsPage({
         );
       })
       .catch((error) =>
-        setNotice(error instanceof Error ? error.message : '设置读取失败。'),
+        setNotice(
+          error instanceof Error
+            ? error.message
+            : t('cm_new_tab_settings_page_text_19'),
+        ),
       );
   }, [preferencesRepository]);
 
@@ -354,7 +427,9 @@ export function NewTabSettingsPage({
       .then(setLocalWallpapers)
       .catch((error) =>
         setNotice(
-          error instanceof Error ? error.message : '本地壁纸读取失败。',
+          error instanceof Error
+            ? error.message
+            : t('cm_new_tab_settings_page_text_20'),
         ),
       );
   }, [localWallpaperRepository]);
@@ -375,7 +450,9 @@ export function NewTabSettingsPage({
       } catch (error) {
         if (!active) return;
         setDailyReviewReadinessError(
-          error instanceof Error ? error.message : 'AI 服务配置状态读取失败。',
+          error instanceof Error
+            ? error.message
+            : t('cm_new_tab_settings_page_text_21'),
         );
       }
     };
@@ -478,14 +555,18 @@ export function NewTabSettingsPage({
   const mutate = useCallback(
     async (
       mutation: (current: NewTabPreferences) => NewTabPreferences,
-      message = '设置已保存。',
+      message = t('cm_new_tab_settings_page_text_22'),
     ) => {
       try {
         const next = await preferencesRepository.mutate(mutation);
         setPreferences(next);
         setNotice(message);
       } catch (error) {
-        setNotice(error instanceof Error ? error.message : '设置保存失败。');
+        setNotice(
+          error instanceof Error
+            ? error.message
+            : t('cm_new_tab_settings_page_text_23'),
+        );
       }
     },
     [preferencesRepository],
@@ -508,10 +589,20 @@ export function NewTabSettingsPage({
       await patch(
         tone === 'light' ? 'wallpaperLight' : 'wallpaperDark',
         wallpaper.id,
-        `${tone === 'light' ? '浅色' : '深色'}本地壁纸已保存。`,
+        t('cm_new_tab_settings_page_text_24', [
+          String(
+            tone === 'light'
+              ? t('cm_new_tab_settings_page_text_1')
+              : t('cm_new_tab_settings_page_text_2'),
+          ),
+        ]),
       );
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '本地壁纸保存失败。');
+      setNotice(
+        error instanceof Error
+          ? error.message
+          : t('cm_new_tab_settings_page_text_25'),
+      );
     }
   };
 
@@ -525,7 +616,7 @@ export function NewTabSettingsPage({
         : {}),
     };
     if (!draft.name || !draft.queryUrl.includes('{query}')) {
-      setNotice('搜索源需要名称，并在查询地址中包含 {query}。');
+      setNotice(t('cm_new_tab_settings_page_text_26'));
       return;
     }
     void mutate(
@@ -533,7 +624,7 @@ export function NewTabSettingsPage({
         ...current,
         searchEngines: [...current.searchEngines, draft],
       }),
-      '搜索源已添加。',
+      t('cm_new_tab_settings_page_text_27'),
     ).then(() => setEngineDraft({ name: '', keyword: '', queryUrl: '' }));
   };
 
@@ -544,12 +635,16 @@ export function NewTabSettingsPage({
         'destinationUrl',
         destinationUrl,
         destinationUrl
-          ? '新标签页将打开指定网页。'
-          : '新标签页将使用卡牌大师页面。',
+          ? t('cm_new_tab_settings_page_text_28')
+          : t('cm_new_tab_settings_page_text_29'),
       );
       setDestinationDraft(destinationUrl);
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '网址保存失败。');
+      setNotice(
+        error instanceof Error
+          ? error.message
+          : t('cm_new_tab_settings_page_text_30'),
+      );
     }
   };
 
@@ -573,10 +668,12 @@ export function NewTabSettingsPage({
   const openAiSettings = async () => {
     try {
       await dailyReviewController.openAiSettings();
-      setNotice('已打开 AI 服务设置。');
+      setNotice(t('cm_new_tab_settings_page_text_31'));
     } catch (error) {
       setNotice(
-        error instanceof Error ? error.message : '无法打开 AI 服务设置。',
+        error instanceof Error
+          ? error.message
+          : t('cm_new_tab_settings_page_text_32'),
       );
     }
   };
@@ -589,8 +686,8 @@ export function NewTabSettingsPage({
           ? current
           : { ...current, wallpaperSource: source },
       source === 'daily-review'
-        ? '已切换为 AI 每日回顾壁纸。'
-        : '已切换为默认壁纸。',
+        ? t('cm_new_tab_settings_page_text_33')
+        : t('cm_new_tab_settings_page_text_34'),
     );
     if (source === 'default') return;
     try {
@@ -602,7 +699,9 @@ export function NewTabSettingsPage({
       }
     } catch (error) {
       setDailyReviewReadinessError(
-        error instanceof Error ? error.message : 'AI 服务配置状态读取失败。',
+        error instanceof Error
+          ? error.message
+          : t('cm_new_tab_settings_page_text_35'),
       );
     }
     await openAiSettings();
@@ -610,7 +709,9 @@ export function NewTabSettingsPage({
 
   if (!preferences) {
     return (
-      <main className="cm-new-tab-settings-loading">正在读取新标签页设置</main>
+      <main className="cm-new-tab-settings-loading">
+        {t('cm_new_tab_settings_page_text_36')}
+      </main>
     );
   }
 
@@ -621,22 +722,22 @@ export function NewTabSettingsPage({
     >
       <header className="cm-new-tab-settings-header">
         <button
-          aria-label="打开卡牌大师页面"
+          aria-label={t('cm_new_tab_settings_page_aria_label_37')}
           onClick={() => {
             location.href = backUrl;
           }}
-          title="打开卡牌大师页面"
+          title={t('cm_new_tab_settings_page_title_38')}
           type="button"
         >
           <ArrowLeft aria-hidden="true" size={18} />
         </button>
         <div>
-          <strong>新标签页设置</strong>
+          <strong>{t('cm_new_tab_settings_page_text_39')}</strong>
         </div>
       </header>
 
       <div className="cm-new-tab-settings-layout">
-        <nav aria-label="设置分类">
+        <nav aria-label={t('cm_new_tab_settings_page_aria_label_40')}>
           {sections.map((item) => {
             const Icon = item.icon;
             return (
@@ -656,19 +757,22 @@ export function NewTabSettingsPage({
         </nav>
 
         <div className="cm-new-tab-settings-content">
-          <SettingsContentSection id="general" label="常规">
+          <SettingsContentSection
+            id="general"
+            label={t('cm_new_tab_settings_page_label_41')}
+          >
             <NewTabModeNotice overridesBrowserNewTab={overridesBrowserNewTab} />
             <Field
               description={
                 overridesBrowserNewTab
-                  ? '留空时使用卡牌大师新标签页；填写后，新建标签页会直接打开该网址。此处不用于恢复浏览器原生页面。'
-                  : '本版本不接管新标签页。已保存的网址会保留，切回标准版后继续使用。'
+                  ? t('cm_new_tab_settings_page_text_42')
+                  : t('cm_new_tab_settings_page_text_43')
               }
-              label="新标签页内容"
+              label={t('cm_new_tab_settings_page_label_44')}
             >
               <div className="cm-new-tab-settings-destination">
                 <input
-                  aria-label="指定新标签页网址"
+                  aria-label={t('cm_new_tab_settings_page_aria_label_45')}
                   disabled={!overridesBrowserNewTab}
                   onChange={(event) =>
                     setDestinationDraft(event.currentTarget.value)
@@ -679,7 +783,7 @@ export function NewTabSettingsPage({
                       void saveDestination();
                     }
                   }}
-                  placeholder="例如：https://www.bilibili.com/"
+                  placeholder={t('cm_new_tab_settings_page_placeholder_46')}
                   type="url"
                   value={destinationDraft}
                 />
@@ -689,7 +793,7 @@ export function NewTabSettingsPage({
                   type="button"
                 >
                   <Save aria-hidden="true" size={15} />
-                  保存
+                  {t('cm_new_tab_settings_page_text_47')}
                 </button>
                 <button
                   disabled={
@@ -701,17 +805,17 @@ export function NewTabSettingsPage({
                     void patch(
                       'destinationUrl',
                       '',
-                      '新标签页将使用卡牌大师页面。',
+                      t('cm_new_tab_settings_page_text_48'),
                     );
                   }}
                   type="button"
                 >
                   <RotateCcw aria-hidden="true" size={15} />
-                  使用卡牌大师页面
+                  {t('cm_new_tab_settings_page_text_49')}
                 </button>
               </div>
             </Field>
-            <Field label="主题">
+            <Field label={t('cm_new_tab_settings_page_label_50')}>
               <select
                 onChange={(event) =>
                   void patch(
@@ -721,41 +825,54 @@ export function NewTabSettingsPage({
                 }
                 value={preferences.themeMode}
               >
-                <option value="system">跟随系统</option>
-                <option value="light">浅色</option>
-                <option value="dark">深色</option>
+                <option value="system">
+                  {t('cm_new_tab_settings_page_text_51')}
+                </option>
+                <option value="light">
+                  {t('cm_new_tab_settings_page_text_52')}
+                </option>
+                <option value="dark">
+                  {t('cm_new_tab_settings_page_text_53')}
+                </option>
               </select>
             </Field>
-            <Field label="顶部时间">
+            <Field label={t('cm_new_tab_settings_page_label_54')}>
               <Toggle
                 checked={preferences.showClock}
-                label="显示"
+                label={t('cm_new_tab_settings_page_label_55')}
                 onChange={(checked) => void patch('showClock', checked)}
               />
             </Field>
             {webdavSync ? (
               <Field
-                label="跨设备同步"
-                description="新标签页配置由 WebDAV 统一同步，可在牌库设置的数据管理中查看状态。"
+                label={t('cm_new_tab_settings_page_label_56')}
+                description={t('cm_new_tab_settings_page_description_57')}
               >
-                <span>WebDAV 已连接</span>
+                <span>{t('cm_new_tab_settings_page_text_58')}</span>
               </Field>
             ) : capabilities.storageSync ? (
               <Field
-                description="同步布局、搜索和普通偏好；本地壁纸、自定义图标与书签顶部外观不参与同步。"
-                label="浏览器内置同步"
+                description={t('cm_new_tab_settings_page_description_59')}
+                label={t('cm_new_tab_settings_page_label_60')}
               >
                 <Toggle
                   checked={preferences.syncEnabled}
-                  label="启用"
+                  label={t('cm_new_tab_settings_page_label_61')}
                   onChange={(checked) => void patch('syncEnabled', checked)}
                 />
               </Field>
             ) : null}
           </SettingsContentSection>
 
-          <SettingsContentSection id="appearance" label="外观">
-            <Field label={`内容宽度 ${preferences.contentWidth}px`}>
+          <SettingsContentSection
+            id="appearance"
+            label={t('cm_new_tab_settings_page_label_62')}
+          >
+            <Field
+              label={t('cm_new_tab_settings_page_text_63', [
+                String(preferences.contentWidth),
+              ])}
+            >
               <input
                 max="1680"
                 min="720"
@@ -767,7 +884,11 @@ export function NewTabSettingsPage({
                 value={preferences.contentWidth}
               />
             </Field>
-            <Field label={`搜索框宽度 ${preferences.searchWidth}px`}>
+            <Field
+              label={t('cm_new_tab_settings_page_text_64', [
+                String(preferences.searchWidth),
+              ])}
+            >
               <input
                 max="1040"
                 min="520"
@@ -782,8 +903,11 @@ export function NewTabSettingsPage({
           </SettingsContentSection>
 
           {capabilities.history || capabilities.topSites ? (
-            <SettingsContentSection id="home" label="首页内容">
-              <Field label="网站来源">
+            <SettingsContentSection
+              id="home"
+              label={t('cm_new_tab_settings_page_label_65')}
+            >
+              <Field label={t('cm_new_tab_settings_page_label_66')}>
                 <select
                   onChange={(event) =>
                     void patch(
@@ -795,14 +919,22 @@ export function NewTabSettingsPage({
                   value={preferences.recentMode}
                 >
                   {capabilities.history ? (
-                    <option value="recent">最近访问</option>
+                    <option value="recent">
+                      {t('cm_new_tab_settings_page_text_67')}
+                    </option>
                   ) : null}
                   {capabilities.topSites ? (
-                    <option value="most-visited">最常访问</option>
+                    <option value="most-visited">
+                      {t('cm_new_tab_settings_page_text_68')}
+                    </option>
                   ) : null}
                 </select>
               </Field>
-              <Field label={`网站数量 ${preferences.recentCount}`}>
+              <Field
+                label={t('cm_new_tab_settings_page_text_69', [
+                  String(preferences.recentCount),
+                ])}
+              >
                 <input
                   max="16"
                   min="4"
@@ -813,20 +945,25 @@ export function NewTabSettingsPage({
                   value={preferences.recentCount}
                 />
               </Field>
-              <Field label="隐藏的网站">
+              <Field label={t('cm_new_tab_settings_page_label_70')}>
                 <button
                   disabled={preferences.hiddenSiteUrls.length === 0}
                   onClick={() => void patch('hiddenSiteUrls', [])}
                   type="button"
                 >
-                  恢复 {preferences.hiddenSiteUrls.length} 个网站
+                  {t('cm_new_tab_settings_page_text_71')}
+                  {preferences.hiddenSiteUrls.length}{' '}
+                  {t('cm_new_tab_settings_page_text_72')}
                 </button>
               </Field>
             </SettingsContentSection>
           ) : null}
 
-          <SettingsContentSection id="search" label="搜索结果">
-            <Field label="结果优先级">
+          <SettingsContentSection
+            id="search"
+            label={t('cm_new_tab_settings_page_label_73')}
+          >
+            <Field label={t('cm_new_tab_settings_page_label_74')}>
               <select
                 onChange={(event) =>
                   void patch(
@@ -837,13 +974,17 @@ export function NewTabSettingsPage({
                 }
                 value={preferences.searchPriority}
               >
-                <option value="autocomplete">补全结果优先</option>
+                <option value="autocomplete">
+                  {t('cm_new_tab_settings_page_text_75')}
+                </option>
                 {capabilities.browserSearch ? (
-                  <option value="browser-search">网页搜索优先</option>
+                  <option value="browser-search">
+                    {t('cm_new_tab_settings_page_text_76')}
+                  </option>
                 ) : null}
               </select>
             </Field>
-            <Field label="搜索来源">
+            <Field label={t('cm_new_tab_settings_page_label_77')}>
               <div className="cm-new-tab-settings-checks">
                 {searchSources.map((source) => (
                   <Toggle
@@ -851,10 +992,10 @@ export function NewTabSettingsPage({
                     key={source}
                     label={
                       {
-                        history: '历史',
-                        bookmark: '书签',
-                        'top-site': '常用网站',
-                        'open-tab': '当前标签页',
+                        history: t('cm_new_tab_settings_page_history_78'),
+                        bookmark: t('cm_new_tab_settings_page_bookmark_79'),
+                        'top-site': t('cm_new_tab_settings_page__top_site__80'),
+                        'open-tab': t('cm_new_tab_settings_page__open_tab__81'),
                       }[source]
                     }
                     onChange={(checked) => {
@@ -873,8 +1014,11 @@ export function NewTabSettingsPage({
             </Field>
           </SettingsContentSection>
 
-          <SettingsContentSection id="engines" label="搜索源">
-            <Field label="默认搜索源">
+          <SettingsContentSection
+            id="engines"
+            label={t('cm_new_tab_settings_page_label_82')}
+          >
+            <Field label={t('cm_new_tab_settings_page_label_83')}>
               <select
                 onChange={(event) =>
                   void patch('defaultSearchEngineId', event.currentTarget.value)
@@ -882,7 +1026,9 @@ export function NewTabSettingsPage({
                 value={preferences.defaultSearchEngineId}
               >
                 {capabilities.browserSearch ? (
-                  <option value="browser">浏览器默认</option>
+                  <option value="browser">
+                    {t('cm_new_tab_settings_page_text_84')}
+                  </option>
                 ) : null}
                 {preferences.searchEngines.map((engine) => (
                   <option key={engine.id} value={engine.id}>
@@ -902,7 +1048,9 @@ export function NewTabSettingsPage({
                     </small>
                   </span>
                   <button
-                    aria-label={`删除 ${engine.name}`}
+                    aria-label={t('cm_new_tab_settings_page_text_85', [
+                      String(engine.name),
+                    ])}
                     onClick={() =>
                       void mutate((current) => ({
                         ...current,
@@ -915,7 +1063,7 @@ export function NewTabSettingsPage({
                             : current.defaultSearchEngineId,
                       }))
                     }
-                    title="删除"
+                    title={t('cm_new_tab_settings_page_title_86')}
                     type="button"
                   >
                     <Trash2 aria-hidden="true" size={15} />
@@ -931,7 +1079,7 @@ export function NewTabSettingsPage({
                     name: event.currentTarget.value,
                   }))
                 }
-                placeholder="名称"
+                placeholder={t('cm_new_tab_settings_page_placeholder_87')}
                 value={engineDraft.name}
               />
               <input
@@ -941,7 +1089,7 @@ export function NewTabSettingsPage({
                     keyword: event.currentTarget.value,
                   }))
                 }
-                placeholder="站内关键词，例如 bilibili"
+                placeholder={t('cm_new_tab_settings_page_placeholder_88')}
                 value={engineDraft.keyword}
               />
               <input
@@ -955,12 +1103,15 @@ export function NewTabSettingsPage({
                 value={engineDraft.queryUrl}
               />
               <button onClick={addEngine} type="button">
-                添加搜索源
+                {t('cm_new_tab_settings_page_text_89')}
               </button>
             </div>
           </SettingsContentSection>
 
-          <SettingsContentSection id="blacklist" label="黑名单">
+          <SettingsContentSection
+            id="blacklist"
+            label={t('cm_new_tab_settings_page_label_90')}
+          >
             <div className="cm-new-tab-settings-list">
               {preferences.searchBlacklist.map((entry, index) => (
                 <div key={`${entry.mode}:${entry.value}`}>
@@ -968,16 +1119,20 @@ export function NewTabSettingsPage({
                     <strong>
                       {
                         {
-                          domain: '域名',
-                          'url-prefix': '网址前缀',
-                          'exact-url': '完整网址',
+                          domain: t('cm_new_tab_settings_page_domain_91'),
+                          'url-prefix': t(
+                            'cm_new_tab_settings_page__url_prefix__92',
+                          ),
+                          'exact-url': t(
+                            'cm_new_tab_settings_page__exact_url__93',
+                          ),
                         }[entry.mode]
                       }
                     </strong>
                     <small>{entry.value}</small>
                   </span>
                   <button
-                    aria-label="删除黑名单规则"
+                    aria-label={t('cm_new_tab_settings_page_aria_label_94')}
                     onClick={() =>
                       void patch(
                         'searchBlacklist',
@@ -986,7 +1141,7 @@ export function NewTabSettingsPage({
                         ),
                       )
                     }
-                    title="删除"
+                    title={t('cm_new_tab_settings_page_title_95')}
                     type="button"
                   >
                     <Trash2 aria-hidden="true" size={15} />
@@ -1005,9 +1160,15 @@ export function NewTabSettingsPage({
                 }
                 value={blacklistDraft.mode}
               >
-                <option value="domain">域名</option>
-                <option value="url-prefix">网址前缀</option>
-                <option value="exact-url">完整网址</option>
+                <option value="domain">
+                  {t('cm_new_tab_settings_page_text_96')}
+                </option>
+                <option value="url-prefix">
+                  {t('cm_new_tab_settings_page_text_97')}
+                </option>
+                <option value="exact-url">
+                  {t('cm_new_tab_settings_page_text_98')}
+                </option>
               </select>
               <input
                 onChange={(event) =>
@@ -1037,14 +1198,21 @@ export function NewTabSettingsPage({
                 }}
                 type="button"
               >
-                添加规则
+                {t('cm_new_tab_settings_page_text_99')}
               </button>
             </div>
           </SettingsContentSection>
 
           {capabilities.bookmarks ? (
-            <SettingsContentSection id="bookmarks" label="书签">
-              <Field label={`每页数量 ${preferences.bookmarkPageSize}`}>
+            <SettingsContentSection
+              id="bookmarks"
+              label={t('cm_new_tab_settings_page_label_100')}
+            >
+              <Field
+                label={t('cm_new_tab_settings_page_text_101', [
+                  String(preferences.bookmarkPageSize),
+                ])}
+              >
                 <input
                   max="30"
                   min="6"
@@ -1058,7 +1226,11 @@ export function NewTabSettingsPage({
                   value={preferences.bookmarkPageSize}
                 />
               </Field>
-              <Field label={`列数 ${preferences.bookmarkColumns}`}>
+              <Field
+                label={t('cm_new_tab_settings_page_text_102', [
+                  String(preferences.bookmarkColumns),
+                ])}
+              >
                 <input
                   max="6"
                   min="2"
@@ -1072,10 +1244,10 @@ export function NewTabSettingsPage({
                   value={preferences.bookmarkColumns}
                 />
               </Field>
-              <Field label="文件夹图标">
+              <Field label={t('cm_new_tab_settings_page_label_103')}>
                 <Toggle
                   checked={preferences.bookmarkFolderIcons}
-                  label="显示"
+                  label={t('cm_new_tab_settings_page_label_104')}
                   onChange={(checked) =>
                     void patch('bookmarkFolderIcons', checked)
                   }
@@ -1084,26 +1256,29 @@ export function NewTabSettingsPage({
             </SettingsContentSection>
           ) : null}
 
-          <SettingsContentSection id="shortcuts" label="快捷方式">
-            <Field label="快捷方式区域">
+          <SettingsContentSection
+            id="shortcuts"
+            label={t('cm_new_tab_settings_page_label_105')}
+          >
+            <Field label={t('cm_new_tab_settings_page_label_106')}>
               <div className="cm-new-tab-settings-checks">
                 <Toggle
                   checked={preferences.shortcutsVisible}
-                  label="显示快捷方式"
+                  label={t('cm_new_tab_settings_page_label_107')}
                   onChange={(checked) =>
                     void patch('shortcutsVisible', checked)
                   }
                 />
                 <Toggle
                   checked={preferences.shortcutAddVisible}
-                  label="显示添加按钮"
+                  label={t('cm_new_tab_settings_page_label_108')}
                   onChange={(checked) =>
                     void patch('shortcutAddVisible', checked)
                   }
                 />
                 <Toggle
                   checked={preferences.shortcutDockMagnification}
-                  label="悬浮放大"
+                  label={t('cm_new_tab_settings_page_label_109')}
                   onChange={(checked) =>
                     void patch('shortcutDockMagnification', checked)
                   }
@@ -1118,7 +1293,9 @@ export function NewTabSettingsPage({
                     <small>{shortcut.url}</small>
                   </span>
                   <button
-                    aria-label={`删除 ${shortcut.title}`}
+                    aria-label={t('cm_new_tab_settings_page_text_110', [
+                      String(shortcut.title),
+                    ])}
                     onClick={() =>
                       void patch(
                         'shortcuts',
@@ -1127,7 +1304,7 @@ export function NewTabSettingsPage({
                         ),
                       )
                     }
-                    title="删除"
+                    title={t('cm_new_tab_settings_page_title_111')}
                     type="button"
                   >
                     <Trash2 aria-hidden="true" size={15} />
@@ -1137,10 +1314,13 @@ export function NewTabSettingsPage({
             </div>
           </SettingsContentSection>
 
-          <SettingsContentSection id="wallpaper" label="壁纸">
-            <h2>显示效果</h2>
-            <section aria-label="壁纸显示参数">
-              <Field label="填充方式">
+          <SettingsContentSection
+            id="wallpaper"
+            label={t('cm_new_tab_settings_page_label_112')}
+          >
+            <h2>{t('cm_new_tab_settings_page_text_113')}</h2>
+            <section aria-label={t('cm_new_tab_settings_page_aria_label_114')}>
+              <Field label={t('cm_new_tab_settings_page_label_115')}>
                 <select
                   onChange={(event) =>
                     void patch(
@@ -1151,11 +1331,15 @@ export function NewTabSettingsPage({
                   }
                   value={preferences.wallpaperFit}
                 >
-                  <option value="cover">填满页面</option>
-                  <option value="contain">完整显示</option>
+                  <option value="cover">
+                    {t('cm_new_tab_settings_page_text_116')}
+                  </option>
+                  <option value="contain">
+                    {t('cm_new_tab_settings_page_text_117')}
+                  </option>
                 </select>
               </Field>
-              <Field label="壁纸位置">
+              <Field label={t('cm_new_tab_settings_page_label_118')}>
                 <select
                   onChange={(event) =>
                     void patch(
@@ -1166,14 +1350,28 @@ export function NewTabSettingsPage({
                   }
                   value={preferences.wallpaperPosition}
                 >
-                  <option value="center">居中</option>
-                  <option value="top">顶部</option>
-                  <option value="bottom">底部</option>
-                  <option value="left">左侧</option>
-                  <option value="right">右侧</option>
+                  <option value="center">
+                    {t('cm_new_tab_settings_page_text_119')}
+                  </option>
+                  <option value="top">
+                    {t('cm_new_tab_settings_page_text_120')}
+                  </option>
+                  <option value="bottom">
+                    {t('cm_new_tab_settings_page_text_121')}
+                  </option>
+                  <option value="left">
+                    {t('cm_new_tab_settings_page_text_122')}
+                  </option>
+                  <option value="right">
+                    {t('cm_new_tab_settings_page_text_123')}
+                  </option>
                 </select>
               </Field>
-              <Field label={`遮罩效果 ${preferences.wallpaperMask}%`}>
+              <Field
+                label={t('cm_new_tab_settings_page_text_124', [
+                  String(preferences.wallpaperMask),
+                ])}
+              >
                 <input
                   max="100"
                   min="0"
@@ -1187,16 +1385,16 @@ export function NewTabSettingsPage({
                   value={preferences.wallpaperMask}
                 />
               </Field>
-              <Field label="壁纸滤镜">
+              <Field label={t('cm_new_tab_settings_page_label_125')}>
                 <fieldset
-                  aria-label="壁纸滤镜"
+                  aria-label={t('cm_new_tab_settings_page_aria_label_126')}
                   className="cm-new-tab-wallpaper-effect-tabs"
                 >
                   {(
                     [
-                      ['none', '关闭'],
-                      ['grain', '颗粒'],
-                      ['halftone', '网点'],
+                      ['none', t('cm_new_tab_settings_page_text_127')],
+                      ['grain', t('cm_new_tab_settings_page_text_128')],
+                      ['halftone', t('cm_new_tab_settings_page_text_129')],
                       ['ascii', 'ASCII'],
                     ] as const
                   ).map(([effect, label]) => (
@@ -1218,7 +1416,9 @@ export function NewTabSettingsPage({
               </Field>
               {preferences.wallpaperEffect !== 'none' ? (
                 <Field
-                  label={`滤镜强度 ${preferences.wallpaperEffectStrength}`}
+                  label={t('cm_new_tab_settings_page_text_130', [
+                    String(preferences.wallpaperEffectStrength),
+                  ])}
                 >
                   <input
                     max="100"
@@ -1236,7 +1436,11 @@ export function NewTabSettingsPage({
               ) : null}
               {preferences.wallpaperEffect === 'halftone' ||
               preferences.wallpaperEffect === 'ascii' ? (
-                <Field label={`滤镜尺寸 ${preferences.wallpaperEffectSize}`}>
+                <Field
+                  label={t('cm_new_tab_settings_page_text_131', [
+                    String(preferences.wallpaperEffectSize),
+                  ])}
+                >
                   <input
                     max="100"
                     min="10"
@@ -1253,7 +1457,11 @@ export function NewTabSettingsPage({
               ) : null}
               {preferences.wallpaperEffect === 'halftone' ||
               preferences.wallpaperEffect === 'ascii' ? (
-                <Field label={`滤镜间距 ${preferences.wallpaperEffectSpacing}`}>
+                <Field
+                  label={t('cm_new_tab_settings_page_text_132', [
+                    String(preferences.wallpaperEffectSpacing),
+                  ])}
+                >
                   <input
                     max="100"
                     min="0"
@@ -1269,9 +1477,14 @@ export function NewTabSettingsPage({
                 </Field>
               ) : null}
             </section>
-            <h2 className="cm-new-tab-settings-subsection-title">壁纸来源</h2>
+            <h2 className="cm-new-tab-settings-subsection-title">
+              {t('cm_new_tab_settings_page_text_133')}
+            </h2>
             <div className="cm-new-tab-wallpaper-mode">
-              <div aria-label="壁纸来源" role="tablist">
+              <div
+                aria-label={t('cm_new_tab_settings_page_aria_label_134')}
+                role="tablist"
+              >
                 <button
                   aria-selected={wallpaperSourcePanel === 'default'}
                   data-current={
@@ -1285,8 +1498,10 @@ export function NewTabSettingsPage({
                   type="button"
                 >
                   <Image aria-hidden="true" size={15} />
-                  默认壁纸
-                  <span className="cm-new-tab-wallpaper-current">使用中</span>
+                  {t('cm_new_tab_settings_page_text_135')}
+                  <span className="cm-new-tab-wallpaper-current">
+                    {t('cm_new_tab_settings_page_text_136')}
+                  </span>
                 </button>
                 <button
                   aria-selected={wallpaperSourcePanel === 'daily-review'}
@@ -1303,14 +1518,16 @@ export function NewTabSettingsPage({
                   type="button"
                 >
                   <Sparkles aria-hidden="true" size={15} />
-                  AI 每日回顾
-                  <span className="cm-new-tab-wallpaper-current">使用中</span>
+                  {t('cm_new_tab_settings_page_text_137')}
+                  <span className="cm-new-tab-wallpaper-current">
+                    {t('cm_new_tab_settings_page_text_138')}
+                  </span>
                 </button>
               </div>
               <p>
                 {wallpaperSourcePanel === 'daily-review'
-                  ? '根据浏览历史自动回顾，或自己填写点题摘要和具体画面描述。摘要要点名当天全部主题，画面要把每个主题写成能认出的东西。'
-                  : '使用预设壁纸或你上传的本地图片。'}
+                  ? t('cm_new_tab_settings_page_text_139')
+                  : t('cm_new_tab_settings_page_text_140')}
               </p>
             </div>
 
@@ -1327,8 +1544,8 @@ export function NewTabSettingsPage({
                   size={18}
                 />
                 <div>
-                  <strong>正在检查创作服务</strong>
-                  <p>确认图像服务和可选的规划模型是否可用。</p>
+                  <strong>{t('cm_new_tab_settings_page_text_141')}</strong>
+                  <p>{t('cm_new_tab_settings_page_text_142')}</p>
                 </div>
               </div>
             ) : wallpaperSourcePanel === 'daily-review' && dailyReviewIssue ? (
@@ -1345,7 +1562,7 @@ export function NewTabSettingsPage({
                 <div>
                   <strong>{dailyReviewIssue.title}</strong>
                   <p>{dailyReviewIssue.detail}</p>
-                  <p>配置完成前，当前继续使用默认壁纸。</p>
+                  <p>{t('cm_new_tab_settings_page_text_143')}</p>
                   {dailyReviewCanConfigure ? (
                     <div className="cm-new-tab-wallpaper-mode-state-actions">
                       <button
@@ -1353,7 +1570,7 @@ export function NewTabSettingsPage({
                         type="button"
                       >
                         <Settings aria-hidden="true" size={14} />
-                        配置 AI 服务
+                        {t('cm_new_tab_settings_page_text_144')}
                       </button>
                     </div>
                   ) : null}
@@ -1363,7 +1580,7 @@ export function NewTabSettingsPage({
 
             {wallpaperSourcePanel === 'daily-review' && dailyReviewReady ? (
               <section
-                aria-label="AI 每日回顾壁纸设置"
+                aria-label={t('cm_new_tab_settings_page_aria_label_145')}
                 className="cm-new-tab-wallpaper-mode-panel"
                 role="tabpanel"
               >
@@ -1379,11 +1596,11 @@ export function NewTabSettingsPage({
                       size={18}
                     />
                     <div>
-                      <strong>自定义内容生成已可用</strong>
+                      <strong>{t('cm_new_tab_settings_page_text_146')}</strong>
                       <p>
                         {!dailyReviewSupported
-                          ? '当前平台不能读取完整历史，但你仍可直接填写摘要和画面描述生成图片。'
-                          : '规划模型尚未配置；你可以直接创作，或配置模型后启用历史自动回顾。'}
+                          ? t('cm_new_tab_settings_page_text_147')
+                          : t('cm_new_tab_settings_page_text_148')}
                       </p>
                       {!dailyReviewReadiness?.modelServiceConfigured ? (
                         <div className="cm-new-tab-wallpaper-mode-state-actions">
@@ -1392,7 +1609,7 @@ export function NewTabSettingsPage({
                             type="button"
                           >
                             <Settings aria-hidden="true" size={14} />
-                            配置规划模型
+                            {t('cm_new_tab_settings_page_text_149')}
                           </button>
                         </div>
                       ) : null}
@@ -1403,10 +1620,10 @@ export function NewTabSettingsPage({
                   description={
                     dailyReviewSupported &&
                     dailyReviewReadiness?.modelServiceConfigured
-                      ? '让规划模型先分析整天的浏览脉络，再写出点题摘要，以及把每个主题都写成具体道具的生图提示词。'
-                      : '配置模型服务并允许历史记录后可使用自动规划；下方自定义内容生成不受影响。'
+                      ? t('cm_new_tab_settings_page_text_150')
+                      : t('cm_new_tab_settings_page_text_151')
                   }
-                  label="生成前思考"
+                  label={t('cm_new_tab_settings_page_label_152')}
                 >
                   <Toggle
                     checked={
@@ -1418,7 +1635,9 @@ export function NewTabSettingsPage({
                       !dailyReviewReadiness?.modelServiceConfigured
                     }
                     label={
-                      preferences.dailyReviewReasoningEnabled ? '开启' : '关闭'
+                      preferences.dailyReviewReasoningEnabled
+                        ? t('cm_new_tab_settings_page_text_153')
+                        : t('cm_new_tab_settings_page_text_154')
                     }
                     onChange={(checked) =>
                       void patch('dailyReviewReasoningEnabled', checked)
@@ -1426,20 +1645,24 @@ export function NewTabSettingsPage({
                   />
                 </Field>
                 <Field
-                  description="控制 AI 壁纸顶部的摘要和提示词展开栏；生成历史中的提示词仍会保留。"
-                  label="顶部展示提示词"
+                  description={t('cm_new_tab_settings_page_description_155')}
+                  label={t('cm_new_tab_settings_page_label_156')}
                 >
                   <Toggle
                     checked={preferences.dailyReviewShowPrompt}
-                    label={preferences.dailyReviewShowPrompt ? '显示' : '隐藏'}
+                    label={
+                      preferences.dailyReviewShowPrompt
+                        ? t('cm_new_tab_settings_page_text_157')
+                        : t('cm_new_tab_settings_page_text_158')
+                    }
                     onChange={(checked) =>
                       void patch('dailyReviewShowPrompt', checked)
                     }
                   />
                 </Field>
                 <Field
-                  description="固定 16:9 比例，影响下一次生成的图片尺寸。"
-                  label="生成分辨率"
+                  description={t('cm_new_tab_settings_page_description_159')}
+                  label={t('cm_new_tab_settings_page_label_160')}
                 >
                   <select
                     onChange={(event) =>
@@ -1459,8 +1682,14 @@ export function NewTabSettingsPage({
                   </select>
                 </Field>
                 <Field
-                  description={`到期后自动清理；同时最多保留 ${DAILY_REVIEW_WALLPAPER_MAX_IMAGES} 张、同一日期 ${DAILY_REVIEW_WALLPAPER_MAX_IMAGES_PER_SOURCE_DATE} 张，原始图片合计不超过 ${DAILY_REVIEW_WALLPAPER_MAX_IMAGE_BYTES / 1024 / 1024} MB。当前展示和最新壁纸始终保留。`}
-                  label="自动保留"
+                  description={t('cm_new_tab_settings_page_text_161', [
+                    String(DAILY_REVIEW_WALLPAPER_MAX_IMAGES),
+                    String(DAILY_REVIEW_WALLPAPER_MAX_IMAGES_PER_SOURCE_DATE),
+                    String(
+                      DAILY_REVIEW_WALLPAPER_MAX_IMAGE_BYTES / 1024 / 1024,
+                    ),
+                  ])}
+                  label={t('cm_new_tab_settings_page_label_162')}
                 >
                   <select
                     onChange={(event) =>
@@ -1476,7 +1705,10 @@ export function NewTabSettingsPage({
                     {DAILY_REVIEW_WALLPAPER_RETENTION_DAY_OPTIONS.map(
                       (days) => (
                         <option key={days} value={days}>
-                          {days} 天{days === 7 ? '（默认）' : ''}
+                          {days} {t('cm_new_tab_settings_page_text_163')}
+                          {days === 7
+                            ? t('cm_new_tab_settings_page_text_164')
+                            : ''}
                         </option>
                       ),
                     )}
@@ -1493,8 +1725,8 @@ export function NewTabSettingsPage({
                   retentionDays={preferences.dailyReviewRetentionDays}
                 />
                 <Field
-                  description="AI 壁纸启用后，本标签页首次没有操作且没有待处理交互时，自动进入电子相框；活动返回后不再重复触发。"
-                  label="静置进入时间"
+                  description={t('cm_new_tab_settings_page_description_165')}
+                  label={t('cm_new_tab_settings_page_label_166')}
                 >
                   <select
                     onChange={(event) =>
@@ -1507,14 +1739,14 @@ export function NewTabSettingsPage({
                   >
                     {DAILY_REVIEW_WALLPAPER_IDLE_SECONDS.map((seconds) => (
                       <option key={seconds} value={seconds}>
-                        {seconds} 秒
+                        {seconds} {t('cm_new_tab_settings_page_text_167')}
                       </option>
                     ))}
                   </select>
                 </Field>
                 <Field
-                  description="AI 壁纸启用后，持续没有操作达到此时间时，忽略聚焦、悬浮和已打开的控件进入电子相框；每次活动后重新计时。"
-                  label="最长等待时间"
+                  description={t('cm_new_tab_settings_page_description_168')}
+                  label={t('cm_new_tab_settings_page_label_169')}
                 >
                   <select
                     onChange={(event) =>
@@ -1530,23 +1762,29 @@ export function NewTabSettingsPage({
                     {DAILY_REVIEW_WALLPAPER_FORCE_SECONDS.map((seconds) => (
                       <option key={seconds} value={seconds}>
                         {seconds < 60
-                          ? `${seconds} 秒`
-                          : `${seconds / 60} 分钟`}
+                          ? t('cm_new_tab_settings_page_text_170', [
+                              String(seconds),
+                            ])
+                          : t('cm_new_tab_settings_page_text_171', [
+                              String(seconds / 60),
+                            ])}
                       </option>
                     ))}
                   </select>
                 </Field>
                 <Field
-                  description="只影响后续生成的每日回顾图片。恢复默认会自动跟随后续的默认风格更新。"
-                  label="每日回顾画面风格"
+                  description={t('cm_new_tab_settings_page_description_172')}
+                  label={t('cm_new_tab_settings_page_label_173')}
                 >
                   <div className="cm-new-tab-settings-style-editor">
                     <textarea
-                      aria-label="每日回顾画面风格"
+                      aria-label={t('cm_new_tab_settings_page_aria_label_174')}
                       onChange={(event) =>
                         setDailyReviewStyleDraft(event.currentTarget.value)
                       }
-                      placeholder="请使用简体中文描述每日回顾壁纸的画面风格。"
+                      placeholder={t(
+                        'cm_new_tab_settings_page_placeholder_175',
+                      )}
                       rows={10}
                       value={dailyReviewStyleDraft}
                     />
@@ -1557,7 +1795,7 @@ export function NewTabSettingsPage({
                             dailyReviewStyleDraft.trim() &&
                             !dailyReviewPromptUsesChinese(dailyReviewStyleDraft)
                           ) {
-                            setNotice('画面风格必须使用简体中文。');
+                            setNotice(t('cm_new_tab_settings_page_text_176'));
                             return;
                           }
                           const override = normalizeDailyReviewStyleOverride(
@@ -1568,13 +1806,13 @@ export function NewTabSettingsPage({
                             override === DAILY_REVIEW_WALLPAPER_DEFAULT_STYLE
                               ? ''
                               : override,
-                            '每日回顾风格已保存，将从下一次生成开始使用。',
+                            t('cm_new_tab_settings_page_text_177'),
                           );
                         }}
                         type="button"
                       >
                         <Save aria-hidden="true" size={15} />
-                        保存
+                        {t('cm_new_tab_settings_page_text_178')}
                       </button>
                       <button
                         disabled={
@@ -1589,13 +1827,13 @@ export function NewTabSettingsPage({
                           void patch(
                             'dailyReviewStyleOverride',
                             '',
-                            '每日回顾风格已恢复默认。',
+                            t('cm_new_tab_settings_page_text_179'),
                           );
                         }}
                         type="button"
                       >
                         <RotateCcw aria-hidden="true" size={15} />
-                        恢复默认
+                        {t('cm_new_tab_settings_page_text_180')}
                       </button>
                     </div>
                   </div>
@@ -1603,12 +1841,12 @@ export function NewTabSettingsPage({
               </section>
             ) : wallpaperSourcePanel === 'default' ? (
               <section
-                aria-label="默认壁纸设置"
+                aria-label={t('cm_new_tab_settings_page_aria_label_181')}
                 className="cm-new-tab-wallpaper-mode-panel"
                 role="tabpanel"
               >
                 <div
-                  aria-label="壁纸颜色模式"
+                  aria-label={t('cm_new_tab_settings_page_aria_label_182')}
                   className="cm-new-tab-wallpaper-tone-tabs"
                   role="tablist"
                 >
@@ -1622,18 +1860,25 @@ export function NewTabSettingsPage({
                       role="tab"
                       type="button"
                     >
-                      {tone === 'light' ? '浅色模式' : '深色模式'}
+                      {tone === 'light'
+                        ? t('cm_new_tab_settings_page_text_183')
+                        : t('cm_new_tab_settings_page_text_184')}
                     </button>
                   ))}
                 </div>
                 <p className="cm-new-tab-wallpaper-tone-hint">
-                  正在设置{wallpaperTone === 'light' ? '浅色' : '深色'}
-                  模式壁纸
+                  {t('cm_new_tab_settings_page_text_185')}
+                  {wallpaperTone === 'light'
+                    ? t('cm_new_tab_settings_page_text_186')
+                    : t('cm_new_tab_settings_page_text_187')}
+                  {t('cm_new_tab_settings_page_text_188')}
                 </p>
                 <div className="cm-new-tab-wallpaper-picker">
                   {NEW_TAB_BUILTIN_WALLPAPERS.map((wallpaper) => (
                     <button
-                      aria-label={`使用${wallpaper.label}`}
+                      aria-label={t('cm_new_tab_settings_page_text_189', [
+                        String(wallpaper.label),
+                      ])}
                       data-selected={
                         (wallpaperTone === 'light'
                           ? preferences.wallpaperLight
@@ -1669,7 +1914,9 @@ export function NewTabSettingsPage({
                   ))}
                   {localWallpapers.map((wallpaper) => (
                     <button
-                      aria-label={`使用本地壁纸${wallpaper.name || ''}`}
+                      aria-label={t('cm_new_tab_settings_page_text_190', [
+                        String(wallpaper.name || ''),
+                      ])}
                       data-selected={
                         (wallpaperTone === 'light'
                           ? preferences.wallpaperLight
@@ -1700,7 +1947,13 @@ export function NewTabSettingsPage({
                     </button>
                   ))}
                   <label
-                    aria-label={`上传${wallpaperTone === 'light' ? '浅色' : '深色'}本地壁纸`}
+                    aria-label={t('cm_new_tab_settings_page_text_191', [
+                      String(
+                        wallpaperTone === 'light'
+                          ? t('cm_new_tab_settings_page_text_3')
+                          : t('cm_new_tab_settings_page_text_4'),
+                      ),
+                    ])}
                     className="cm-new-tab-wallpaper-upload-tile"
                   >
                     <span className="cm-new-tab-wallpaper-thumbnail">
@@ -1723,26 +1976,29 @@ export function NewTabSettingsPage({
           </SettingsContentSection>
 
           {capabilities.favicon ? (
-            <SettingsContentSection id="favicons" label="图标与主题色">
-              <Field label="网站图标">
+            <SettingsContentSection
+              id="favicons"
+              label={t('cm_new_tab_settings_page_label_192')}
+            >
+              <Field label={t('cm_new_tab_settings_page_label_193')}>
                 <Toggle
                   checked={preferences.faviconEnhanced}
-                  label="增强获取"
+                  label={t('cm_new_tab_settings_page_label_194')}
                   onChange={(checked) => void patch('faviconEnhanced', checked)}
                 />
               </Field>
-              <Field label="主题色">
+              <Field label={t('cm_new_tab_settings_page_label_195')}>
                 <Toggle
                   checked={preferences.faviconThemeColor}
-                  label="从网站图标提取"
+                  label={t('cm_new_tab_settings_page_label_196')}
                   onChange={(checked) =>
                     void patch('faviconThemeColor', checked)
                   }
                 />
               </Field>
               <Field
-                description="每行一个域名，这些网站的图标不参与主题色提取。"
-                label="排除规则"
+                description={t('cm_new_tab_settings_page_description_197')}
+                label={t('cm_new_tab_settings_page_label_198')}
               >
                 <textarea
                   onBlur={(event) =>

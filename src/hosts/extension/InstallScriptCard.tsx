@@ -1,8 +1,9 @@
 import { type CSSProperties, forwardRef, useEffect, useRef } from 'react';
-
 import { CardMetadataCopy } from '../../components/CardMetadataCopy';
 import { UiLoader } from '../../components/ui/Ui';
 import { CardMaterialLayers } from '../../features/manager-interaction/CardMaterialLayers';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 export type InstallCardAssets = {
   back: string;
@@ -36,6 +37,8 @@ export const InstallScriptCard = forwardRef<
   { assets, name, description, playing, waiting = false, status, accent },
   ref,
 ) {
+  useLocale();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const shouldPlay = assets.media.kind === 'video' && playing;
 
@@ -107,7 +110,7 @@ export const InstallScriptCard = forwardRef<
       <div className="install-card-reflection" />
       {waiting && (
         <div className="install-card-wait">
-          <UiLoader compact label="正在写入牌库" />
+          <UiLoader compact label={t('cm_install_script_card_label_1')} />
         </div>
       )}
     </div>

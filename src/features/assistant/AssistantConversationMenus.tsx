@@ -1,8 +1,9 @@
 import { Download, MoreVertical, Pencil, Pin, Trash2, X } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
 import { useDialogInteraction } from '../../components/useDialogInteraction';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { useTransitionPresence } from '../../motion/presence';
 
 type AwaitableAction = void | Promise<void>;
@@ -20,6 +21,8 @@ export function RenameDialog({
   onExitComplete: () => void;
   onSave: (title: string) => AwaitableAction;
 }) {
+  useLocale();
+
   const [draft, setDraft] = useState(title);
   const backdropRef = useRef<HTMLDivElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -57,7 +60,7 @@ export function RenameDialog({
       <button
         type="button"
         className="cm-assistant-dialog-backdrop__dismiss"
-        aria-label="关闭重命名对话框"
+        aria-label={t('cm_assistant_conversation_menus_aria_label_1')}
         tabIndex={-1}
         onClick={onClose}
       />
@@ -66,7 +69,7 @@ export function RenameDialog({
         className={`cm-assistant-dialog app-motion-modal is-${presence.phase}`}
         role="dialog"
         aria-modal="true"
-        aria-label="重命名会话"
+        aria-label={t('cm_assistant_conversation_menus_aria_label_2')}
       >
         <button
           type="button"
@@ -75,7 +78,9 @@ export function RenameDialog({
         >
           <X size={18} />
         </button>
-        <strong className="cm-assistant-dialog__title">重命名会话</strong>
+        <strong className="cm-assistant-dialog__title">
+          {t('cm_assistant_conversation_menus_text_3')}
+        </strong>
         <input
           ref={inputRef}
           value={draft}
@@ -90,14 +95,14 @@ export function RenameDialog({
             className="cm-assistant-secondary-button"
             onClick={onClose}
           >
-            取消
+            {t('cm_assistant_conversation_menus_text_4')}
           </button>
           <button
             type="button"
             className="cm-assistant-primary-button"
             onClick={save}
           >
-            保存
+            {t('cm_assistant_conversation_menus_text_5')}
           </button>
         </footer>
       </div>
@@ -118,6 +123,8 @@ export function MoreMenu({
   onExport: () => void;
   onDelete: () => void;
 }) {
+  useLocale();
+
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -150,7 +157,11 @@ export function MoreMenu({
         type="button"
         ref={triggerRef}
         className="cm-assistant-icon-button"
-        title={open ? '关闭操作菜单' : '其他操作'}
+        title={
+          open
+            ? t('cm_assistant_conversation_menus_text_6')
+            : t('cm_assistant_conversation_menus_text_7')
+        }
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
@@ -177,7 +188,9 @@ export function MoreMenu({
             onClick={() => action(onTogglePin)}
           >
             <Pin size={14} />
-            {pinned ? '取消置顶' : '置顶会话'}
+            {pinned
+              ? t('cm_assistant_conversation_menus_text_8')
+              : t('cm_assistant_conversation_menus_text_9')}
           </button>
           <button
             type="button"
@@ -186,7 +199,7 @@ export function MoreMenu({
             onClick={() => action(onRename)}
           >
             <Pencil size={14} />
-            重命名会话
+            {t('cm_assistant_conversation_menus_text_10')}
           </button>
           <button
             type="button"
@@ -195,7 +208,7 @@ export function MoreMenu({
             onClick={() => action(onExport)}
           >
             <Download size={14} />
-            导出会话
+            {t('cm_assistant_conversation_menus_text_11')}
           </button>
           <button
             type="button"
@@ -204,7 +217,7 @@ export function MoreMenu({
             onClick={() => action(onDelete)}
           >
             <Trash2 size={14} />
-            删除会话
+            {t('cm_assistant_conversation_menus_text_12')}
           </button>
         </div>
       )}

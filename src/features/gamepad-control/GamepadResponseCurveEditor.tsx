@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from 'react';
-
 import { UiSegmentedControl } from '../../components/ui/Ui';
 import { gamepadStickAxes } from '../../gamepad-control/domain/bindings';
 import { normalizedGamepadStickMagnitude } from '../../gamepad-control/domain/input';
@@ -23,6 +22,8 @@ import {
 } from '../../gamepad-control/domain/response-curve';
 import type { GamepadControlSettings } from '../../gamepad-control/domain/settings';
 import type { GamepadInputSnapshot } from '../../gamepad-control/domain/types';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 type CurveKind = 'cursor' | 'scroll';
 type CurvePoint = keyof GamepadResponseCurve;
@@ -36,8 +37,18 @@ type FeelPatch = Pick<
 >;
 
 const CURVE_MODES = [
-  { value: 'cursor', label: '光标曲线' },
-  { value: 'scroll', label: '滚动曲线' },
+  {
+    value: 'cursor',
+    get label() {
+      return t('cm_gamepad_response_curve_editor_label_1');
+    },
+  },
+  {
+    value: 'scroll',
+    get label() {
+      return t('cm_gamepad_response_curve_editor_label_2');
+    },
+  },
 ] as const;
 
 const GRAPH = {
@@ -111,6 +122,8 @@ export function GamepadResponseCurveEditor({
   snapshot: GamepadInputSnapshot;
   onChange: (patch: FeelPatch) => void;
 }) {
+  useLocale();
+
   const graphRef = useRef<SVGSVGElement>(null);
   const [kind, setKind] = useState<CurveKind>('cursor');
   const [dragging, setDragging] = useState<CurvePoint | null>(null);
@@ -137,7 +150,7 @@ export function GamepadResponseCurveEditor({
   const activePreset = matchingGamepadFeelPreset(settings);
   const activePresetLabel =
     GAMEPAD_FEEL_PRESETS.find((preset) => preset.id === activePreset)?.label ??
-    '自定义';
+    t('cm_gamepad_response_curve_editor_text_3');
 
   useEffect(() => {
     liveMotionRef.current = 0;
@@ -231,12 +244,17 @@ export function GamepadResponseCurveEditor({
 
   return (
     <div className="gamepad-response">
-      <section className="gamepad-response__presets" aria-label="手柄手感预设">
+      <section
+        className="gamepad-response__presets"
+        aria-label={t('cm_gamepad_response_curve_editor_aria_label_4')}
+      >
         <header>
           <div>
-            <strong className="gamepad-response__title">响应预设</strong>
+            <strong className="gamepad-response__title">
+              {t('cm_gamepad_response_curve_editor_text_5')}
+            </strong>
             <span className="gamepad-response__description">
-              先选整体手感，再微调速度与曲线
+              {t('cm_gamepad_response_curve_editor_text_6')}
             </span>
           </div>
           <output>{activePresetLabel}</output>
@@ -271,19 +289,24 @@ export function GamepadResponseCurveEditor({
       <section className="gamepad-response__editor">
         <header>
           <UiSegmentedControl
-            label="选择要编辑的响应曲线"
+            label={t('cm_gamepad_response_curve_editor_label_7')}
             value={kind}
             options={CURVE_MODES}
             onChange={setKind}
           />
           <div className="gamepad-response__readout">
-            <span>{Math.round(liveInput * 100)}% 输入</span>
+            <span>
+              {Math.round(liveInput * 100)}
+              {t('cm_gamepad_response_curve_editor_text_8')}
+            </span>
             <strong className="gamepad-response__readout-value">
-              当前 {Math.round(displayedMotion * speed)} px/s
+              {t('cm_gamepad_response_curve_editor_text_9')}
+              {Math.round(displayedMotion * speed)} px/s
             </strong>
             {kind === 'cursor' && (
               <small className="gamepad-response__target-value">
-                当前上限 {Math.round(liveOutput * speed)} px/s
+                {t('cm_gamepad_response_curve_editor_text_10')}
+                {Math.round(liveOutput * speed)} px/s
               </small>
             )}
           </div>
@@ -294,7 +317,13 @@ export function GamepadResponseCurveEditor({
             ref={graphRef}
             viewBox="0 0 360 230"
             role="img"
-            aria-label={`${kind === 'cursor' ? '光标' : '滚动'}摇杆响应曲线`}
+            aria-label={t('cm_gamepad_response_curve_editor_text_11', [
+              String(
+                kind === 'cursor'
+                  ? t('cm_gamepad_response_curve_editor_text_1')
+                  : t('cm_gamepad_response_curve_editor_text_2'),
+              ),
+            ])}
           >
             <defs>
               <linearGradient
@@ -381,11 +410,19 @@ export function GamepadResponseCurveEditor({
                   r="8"
                   role="slider"
                   tabIndex={0}
-                  aria-label={`控制点 ${index + 1}`}
+                  aria-label={t('cm_gamepad_response_curve_editor_text_12', [
+                    String(index + 1),
+                  ])}
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={Math.round(curve[point].y * 100)}
-                  aria-valuetext={`输入 ${Math.round(curve[point].x * 100)}%，输出 ${Math.round(curve[point].y * 100)}%`}
+                  aria-valuetext={t(
+                    'cm_gamepad_response_curve_editor_text_13',
+                    [
+                      String(Math.round(curve[point].x * 100)),
+                      String(Math.round(curve[point].y * 100)),
+                    ],
+                  )}
                   onKeyDown={(event) => handlePointKeyDown(point, event)}
                   onPointerDown={(event) => {
                     event.currentTarget.setPointerCapture(event.pointerId);
@@ -419,10 +456,10 @@ export function GamepadResponseCurveEditor({
             )}
 
             <text x={GRAPH.left} y="221">
-              轻推
+              {t('cm_gamepad_response_curve_editor_text_14')}
             </text>
             <text x={GRAPH.right} y="221" textAnchor="end">
-              满幅
+              {t('cm_gamepad_response_curve_editor_text_15')}
             </text>
             <text
               x="15"
@@ -430,24 +467,24 @@ export function GamepadResponseCurveEditor({
               textAnchor="middle"
               transform={`rotate(-90 15 ${(GRAPH.top + GRAPH.bottom) / 2})`}
             >
-              输出速度
+              {t('cm_gamepad_response_curve_editor_text_16')}
             </text>
           </svg>
           <div className="gamepad-response__values">
             <span>
-              控制点 1
+              {t('cm_gamepad_response_curve_editor_text_17')}
               <b>
                 {Math.round(curve.p1.x * 100)} / {Math.round(curve.p1.y * 100)}
               </b>
             </span>
             <span>
-              控制点 2
+              {t('cm_gamepad_response_curve_editor_text_18')}
               <b>
                 {Math.round(curve.p2.x * 100)} / {Math.round(curve.p2.y * 100)}
               </b>
             </span>
             <small className="gamepad-response__values-note">
-              横轴为摇杆幅度，纵轴为速度输出
+              {t('cm_gamepad_response_curve_editor_text_19')}
             </small>
           </div>
         </div>

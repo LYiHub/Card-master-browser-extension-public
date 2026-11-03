@@ -7,6 +7,8 @@ import type {
 } from '../../ai/domain/types';
 import { UiLoader } from '../../components/ui/Ui';
 import type { ExtensionSpeechCapability } from '../../hosts/extension/speech-capability';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { CredentialField } from './AssistantSettingsPrimitives';
 
 type AwaitableAction = void | Promise<void>;
@@ -27,6 +29,8 @@ export function SpeechRecognitionSettings({
   onConfigChange: (config: AiServicesConfigView) => void;
   onOpenMicrophonePermission?: () => AwaitableAction;
 }) {
+  useLocale();
+
   const [apiKey, setApiKey] = useState('');
   const [operation, setOperation] = useState<'save' | 'test' | null>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -43,7 +47,11 @@ export function SpeechRecognitionSettings({
   }
 
   if (!services) {
-    return <p className="cm-assistant-settings-copy">请在扩展设置中配置。</p>;
+    return (
+      <p className="cm-assistant-settings-copy">
+        {t('cm_speech_recognition_settings_text_1')}
+      </p>
+    );
   }
 
   const save = () => {
@@ -56,23 +64,27 @@ export function SpeechRecognitionSettings({
         const next = await services.saveSpeechService(candidate);
         onConfigChange(next);
         setApiKey('');
-        setStatus('语音识别配置已保存。');
+        setStatus(t('cm_speech_recognition_settings_text_2'));
         try {
           const probe = await services.testSpeechService(candidate);
           if (probe.ok) {
-            setStatus('语音识别配置已保存，连接测试通过。');
+            setStatus(t('cm_speech_recognition_settings_text_3'));
           } else {
             setError(
-              `语音识别配置已保存，但连接测试失败：${assistantUserFacingError(
-                probe.error || '无法连接语音识别服务',
-              )}`,
+              t('cm_speech_recognition_settings_text_4', [
+                String(
+                  assistantUserFacingError(
+                    probe.error || t('cm_speech_recognition_settings_text_9'),
+                  ),
+                ),
+              ]),
             );
           }
         } catch (failure) {
           setError(
-            `语音识别配置已保存，但连接测试失败：${assistantUserFacingError(
-              failure,
-            )}`,
+            t('cm_speech_recognition_settings_text_5', [
+              String(assistantUserFacingError(failure)),
+            ]),
           );
         }
       } catch (failure) {
@@ -91,11 +103,13 @@ export function SpeechRecognitionSettings({
       .testSpeechService(apiKey ? { apiKey } : {})
       .then((probe) => {
         if (probe.ok) {
-          setStatus('语音识别连接测试通过。');
+          setStatus(t('cm_speech_recognition_settings_text_6'));
           return;
         }
         setError(
-          assistantUserFacingError(probe.error || '无法连接语音识别服务。'),
+          assistantUserFacingError(
+            probe.error || t('cm_speech_recognition_settings_text_7'),
+          ),
         );
       })
       .catch((failure) => setError(assistantUserFacingError(failure)))
@@ -115,7 +129,7 @@ export function SpeechRecognitionSettings({
       .clearSpeechServiceCredential()
       .then((next) => {
         onConfigChange(next);
-        setStatus('语音识别 API 密钥已清除。');
+        setStatus(t('cm_speech_recognition_settings_text_8'));
       })
       .catch((failure) => setError(assistantUserFacingError(failure)))
       .finally(() => setOperation(null));
@@ -124,12 +138,14 @@ export function SpeechRecognitionSettings({
   return (
     <div className="cm-assistant-service-settings">
       <CredentialField
-        label="火山引擎 API 密钥"
+        label={t('cm_speech_recognition_settings_label_9')}
         value={apiKey}
         hasCredential={Boolean(config?.speechService.hasCredential)}
         busy={busy}
-        placeholder="输入语音识别 API 密钥"
-        clearSavedLabel="清除已保存语音识别密钥"
+        placeholder={t('cm_speech_recognition_settings_placeholder_10')}
+        clearSavedLabel={t(
+          'cm_speech_recognition_settings_clear_saved_label_11',
+        )}
         onChange={setApiKey}
         onClear={clearCredential}
       />
@@ -140,21 +156,23 @@ export function SpeechRecognitionSettings({
           target="_blank"
           rel="noreferrer"
         >
-          查看火山引擎配置指南
+          {t('cm_speech_recognition_settings_text_12')}
         </a>
       )}
       {permissionState !== 'granted' && (
         <div className="cm-assistant-service-permission">
-          <span className="cm-assistant-service-field__label">麦克风权限</span>
+          <span className="cm-assistant-service-field__label">
+            {t('cm_speech_recognition_settings_text_13')}
+          </span>
           <div className="cm-assistant-service-permission__control">
             <span
               className={`cm-assistant-service-permission__state is-${permissionState}`}
             >
               {permissionState === 'denied'
-                ? '已阻止'
+                ? t('cm_speech_recognition_settings_text_14')
                 : permissionState === 'prompt'
-                  ? '等待授权'
-                  : '等待检测'}
+                  ? t('cm_speech_recognition_settings_text_15')
+                  : t('cm_speech_recognition_settings_text_16')}
             </span>
             {onOpenMicrophonePermission && (
               <button
@@ -163,7 +181,7 @@ export function SpeechRecognitionSettings({
                 disabled={busy}
                 onClick={() => void onOpenMicrophonePermission()}
               >
-                授予权限
+                {t('cm_speech_recognition_settings_text_17')}
               </button>
             )}
           </div>
@@ -176,8 +194,8 @@ export function SpeechRecognitionSettings({
           className="cm-assistant-service-loader"
           label={
             operation === 'test'
-              ? '正在测试语音识别连接'
-              : '正在保存语音识别配置'
+              ? t('cm_speech_recognition_settings_text_18')
+              : t('cm_speech_recognition_settings_text_19')
           }
         />
         <button
@@ -186,7 +204,7 @@ export function SpeechRecognitionSettings({
           disabled={busy || (!apiKey && !config?.speechService.hasCredential)}
           onClick={test}
         >
-          测试连接
+          {t('cm_speech_recognition_settings_text_20')}
         </button>
         <button
           type="button"
@@ -194,7 +212,7 @@ export function SpeechRecognitionSettings({
           disabled={busy || !apiKey}
           onClick={save}
         >
-          保存语音配置
+          {t('cm_speech_recognition_settings_text_21')}
         </button>
       </div>
       {status && <p className="is-success">{status}</p>}

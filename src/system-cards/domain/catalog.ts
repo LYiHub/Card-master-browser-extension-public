@@ -4,6 +4,7 @@ import {
 } from '../../bilibili-capabilities/registry';
 import { CONTENT_BLOCKER_CARD_ID } from '../../content-blocking/domain/types';
 import { GAMEPAD_CONTROL_CARD_ID } from '../../gamepad-control/domain/types';
+import { t } from '../../localization/messages';
 import { MEDIA_RESOURCES_CARD_ID } from '../../media-resources/domain/types';
 import { MEDIA_SPEED_CARD_ID } from '../../media-speed/domain/types';
 import { PAGE_THEME_CARD_ID } from '../../page-theme/domain/types';
@@ -34,56 +35,84 @@ const CORE_SYSTEM_CARDS: readonly SystemCardDefinition[] = [
   {
     id: DECK_STEWARD_CARD_ID,
     kind: 'steward',
-    title: '了不起的脚本小子',
-    description: '查找本站现成脚本，没有合适的就按你的要求生成。',
+    get title() {
+      return t('cm_catalog_title_1');
+    },
+    get description() {
+      return t('cm_catalog_description_2');
+    },
     hideable: true,
     order: 0,
   },
   {
     id: NEW_TAB_CARD_ID,
     kind: 'new-tab',
-    title: '新标签页',
-    description: '用AI每日回顾壁纸、电子相框和搜索重做新标签页。',
+    get title() {
+      return t('cm_catalog_title_3');
+    },
+    get description() {
+      return t('cm_catalog_description_4');
+    },
     hideable: true,
     order: 10,
   },
   {
     id: GAMEPAD_CONTROL_CARD_ID,
     kind: 'gamepad-control',
-    title: '科乐美秘技',
-    description: '用实体手柄统一操作网页、牌阵、设置和扩展界面。',
+    get title() {
+      return t('cm_catalog_title_5');
+    },
+    get description() {
+      return t('cm_catalog_description_6');
+    },
     hideable: true,
     order: 20,
   },
   {
     id: CONTENT_BLOCKER_CARD_ID,
     kind: 'content-blocker',
-    title: '杀',
-    description: '点选网页广告或其他内容，加入本站隐藏规则并生效。',
+    get title() {
+      return t('cm_catalog_title_7');
+    },
+    get description() {
+      return t('cm_catalog_description_8');
+    },
     hideable: true,
     order: 30,
   },
   {
     id: PAGE_THEME_CARD_ID,
     kind: 'page-theme',
-    title: '暗夜降临',
-    description: '重算当前网页的背景、文字和控件明暗，随时可以开关。',
+    get title() {
+      return t('cm_catalog_title_9');
+    },
+    get description() {
+      return t('cm_catalog_description_10');
+    },
     hideable: true,
     order: 40,
   },
   {
     id: MEDIA_SPEED_CARD_ID,
     kind: 'media-speed',
-    title: '时光飞龙',
-    description: '统一调节当前网页及嵌入框架中视频和音频的速度。',
+    get title() {
+      return t('cm_catalog_title_11');
+    },
+    get description() {
+      return t('cm_catalog_description_12');
+    },
     hideable: true,
     order: 50,
   },
   {
     id: MEDIA_RESOURCES_CARD_ID,
     kind: 'media-resources',
-    title: '顺手牵羊',
-    description: '发现当前页面加载的音视频资源，挑选之后直接取得。',
+    get title() {
+      return t('cm_catalog_title_13');
+    },
+    get description() {
+      return t('cm_catalog_description_14');
+    },
     hideable: true,
     order: 60,
   },
@@ -93,8 +122,12 @@ const PLATFORM_SYSTEM_CARDS: readonly SystemCardDefinition[] =
   BILIBILI_CAPABILITIES.map((capability, index) => ({
     id: bilibiliCapabilityCardId(capability.id),
     kind: 'bilibili-capability',
-    title: capability.title,
-    description: capability.description,
+    get title() {
+      return capability.title;
+    },
+    get description() {
+      return capability.description;
+    },
     hideable: true,
     order: 100 + index,
   }));

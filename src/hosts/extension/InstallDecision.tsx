@@ -12,6 +12,8 @@ import {
 import type { RefObject } from 'react';
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
 import { CardStatusNotice, UiButton } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import {
   type UserscriptExecutionCapability,
   userscriptExecutionAvailable,
@@ -60,6 +62,8 @@ export function InstallDecision({
   onInstall: () => void;
   onInstallAndClose: () => void;
 }) {
+  useLocale();
+
   const executionReady = userscriptExecutionAvailable(executionCapability);
   const executionError =
     executionCapability && !executionReady ? executionCapability.message : null;
@@ -70,37 +74,37 @@ export function InstallDecision({
     <section
       ref={decisionRef}
       className="install-decision"
-      aria-label="用户脚本安装确认"
+      aria-label={t('cm_install_decision_aria_label_1')}
     >
       <header className="install-decision__heading">
         <h2 className="install-decision__title">
           {success
-            ? '卡牌已收录'
+            ? t('cm_install_decision_text_2')
             : preview?.mode === 'replaced'
-              ? '更新现有卡牌'
-              : '收录脚本卡牌'}
+              ? t('cm_install_decision_text_3')
+              : t('cm_install_decision_text_4')}
         </h2>
         <p className="install-decision__description">
           {success
             ? result?.mode === 'replaced'
-              ? '完整源码已更新，原有管理器配置保持不变。'
-              : '完整源码已保存，脚本会按 metadata 自动匹配并执行。'
-            : '确认后会保存完整 .user.js，并将它铸成一张可管理的脚本卡牌。'}
+              ? t('cm_install_decision_text_5')
+              : t('cm_install_decision_text_6')
+            : t('cm_install_decision_text_7')}
         </p>
       </header>
 
       {executionCapability === null ? (
         <CardStatusNotice
           tone="warning"
-          status="正在检查执行权限"
-          title="确认浏览器允许扩展运行用户脚本"
-          description="权限检查完成前不会写入或启动这张卡牌。"
+          status={t('cm_install_decision_status_8')}
+          title={t('cm_install_decision_title_9')}
+          description={t('cm_install_decision_description_10')}
         />
       ) : executionError ? (
         <CardStatusNotice
           tone="error"
-          status="执行权限未开启"
-          title="请先开启“允许运行用户脚本”"
+          status={t('cm_install_decision_status_11')}
+          title={t('cm_install_decision_title_12')}
           description={executionError}
           copyText={executionError}
         />
@@ -121,29 +125,31 @@ export function InstallDecision({
         <div>
           <strong className="install-readiness__title">
             {loadFailed
-              ? `${Math.max(1, blockingCount)} 项问题阻止安装`
+              ? t('cm_install_decision_text_13', [
+                  String(Math.max(1, blockingCount)),
+                ])
               : executionCapability === null
-                ? '正在确认脚本执行权限'
+                ? t('cm_install_decision_text_14')
                 : !executionReady
-                  ? '需要先开启脚本执行权限'
+                  ? t('cm_install_decision_text_15')
                   : success
                     ? result?.mode === 'replaced'
-                      ? '脚本已原位更新'
-                      : '脚本已安装'
+                      ? t('cm_install_decision_text_16')
+                      : t('cm_install_decision_text_17')
                     : warningCount > 0
-                      ? `可以安装 · ${warningCount} 项兼容提示`
-                      : '可以安全安装'}
+                      ? t('cm_install_decision_text_18', [String(warningCount)])
+                      : t('cm_install_decision_text_19')}
           </strong>
           <p className="install-readiness__description">
             {loadFailed
-              ? '详细原因已统一收纳在预检详情中。'
+              ? t('cm_install_decision_text_20')
               : executionCapability === null
-                ? '浏览器权限状态确认后即可继续。'
+                ? t('cm_install_decision_text_21')
                 : !executionReady
-                  ? '未开启该权限时，安装后的脚本无法在页面中运行。'
+                  ? t('cm_install_decision_text_22')
                   : success
-                    ? '返回原页面后即可通过右下角牌阵找到这张卡牌。'
-                    : '安装前仍可查看页面范围、权限和完整源码。'}
+                    ? t('cm_install_decision_text_23')
+                    : t('cm_install_decision_text_24')}
           </p>
         </div>
       </div>
@@ -154,10 +160,10 @@ export function InstallDecision({
             <Globe2 size={18} aria-hidden="true" />
             <span>
               <strong className="install-summary__title">
-                {matchScopeCount} 个页面范围
+                {matchScopeCount} {t('cm_install_decision_text_25')}
               </strong>
               <small className="install-summary__description">
-                脚本声明的匹配范围
+                {t('cm_install_decision_text_26')}
               </small>
             </span>
           </div>
@@ -168,7 +174,7 @@ export function InstallDecision({
                 {permissionSummary}
               </strong>
               <small className="install-summary__description">
-                脚本声明的 grant
+                {t('cm_install_decision_text_27')}
               </small>
             </span>
           </div>
@@ -178,7 +184,7 @@ export function InstallDecision({
       <div className="install-decision__actions">
         <UiButton disabled={!canInspect} onClick={onInspect}>
           <Eye size={17} aria-hidden="true" />
-          预检详情
+          {t('cm_install_decision_text_28')}
         </UiButton>
         {!success && phase !== 'stowing' && (
           <>
@@ -189,7 +195,7 @@ export function InstallDecision({
                 onClick={onRequestExecutionPermission}
               >
                 <KeyRound size={18} aria-hidden="true" />
-                授权并重启扩展
+                {t('cm_install_decision_text_29')}
               </UiButton>
             )}
             <UiButton
@@ -214,15 +220,15 @@ export function InstallDecision({
                 ]}
               />
               {busy
-                ? '正在安装'
+                ? t('cm_install_decision_text_30')
                 : preview?.mode === 'replaced'
-                  ? '更新'
+                  ? t('cm_install_decision_text_31')
                   : loadFailed ||
                       (executionCapability !== null && !executionReady)
-                    ? '暂时无法安装'
+                    ? t('cm_install_decision_text_32')
                     : executionCapability === null
-                      ? '正在检查权限'
-                      : '安装'}
+                      ? t('cm_install_decision_text_33')
+                      : t('cm_install_decision_text_34')}
             </UiButton>
             <UiButton
               variant="primary"
@@ -230,7 +236,9 @@ export function InstallDecision({
               onClick={onInstallAndClose}
             >
               <Download size={18} aria-hidden="true" />
-              {preview?.mode === 'replaced' ? '更新+关闭' : '安装+关闭'}
+              {preview?.mode === 'replaced'
+                ? t('cm_install_decision_text_35')
+                : t('cm_install_decision_text_36')}
               <kbd aria-label={shortcut.replace('⌘', 'Command')}>
                 {shortcut}
               </kbd>

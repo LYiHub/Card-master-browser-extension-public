@@ -1,7 +1,6 @@
 import { AlertTriangle, ArrowLeft, Check } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-
 import {
   ContextPlaque,
   type ContextPlaqueContent,
@@ -9,6 +8,8 @@ import {
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
 import { UiIconButton } from '../../components/ui/Ui';
 import { bundledCardMediaForVideo } from '../../lib/userscript-deck-media';
+import { t } from '../../localization/messages';
+import { useLocale, useLocalizedMemo } from '../../localization/react';
 import { DEFAULT_USERSCRIPT_MEDIA } from '../../userscript/application/presentation';
 import { hydrateScript } from '../../userscript/application/script-repository';
 import {
@@ -94,6 +95,8 @@ function returnToMarket() {
 }
 
 function InstallerPage() {
+  useLocale();
+
   const [preview, setPreview] = useState<UserscriptInstallPreview | null>(null);
   const [result, setResult] = useState<UserscriptInstallResult | null>(null);
   const [executionCapability, setExecutionCapability] =
@@ -235,24 +238,30 @@ function InstallerPage() {
   const capabilityReady = userscriptExecutionAvailable(executionCapability);
   const capabilityUnavailable =
     executionCapability !== null && !capabilityReady;
-  const title = metadata ? userscriptDisplayName(metadata) : '安装已中止';
+  const title = metadata
+    ? userscriptDisplayName(metadata)
+    : t('cm_install_text_1');
   const description =
     (metadata && userscriptDisplayDescription(metadata)) ||
-    '该脚本没有提供说明。';
+    t('cm_install_text_2');
   const version = metadata?.version ?? '';
-  const focusInfo = useMemo<ContextPlaqueContent>(
+  const focusInfo = useLocalizedMemo<ContextPlaqueContent>(
     () => ({
       key: success
         ? `installed:${title}:${version}`
         : loadFailure
           ? `blocked:${title}:${diagnostics.length}`
           : `ready:${title}:${version}`,
-      title: success ? '卡牌已收录' : title,
+      title: success ? t('cm_install_text_3') : title,
       description,
       stats: metadata
         ? [
-            `版本 ${metadata.version || '未声明'}`,
-            `作者 ${metadata.author || '未声明'}`,
+            t('cm_install_text_4', [
+              String(metadata.version || t('cm_install_text_6')),
+            ]),
+            t('cm_install_text_5', [
+              String(metadata.author || t('cm_install_text_9')),
+            ]),
           ]
         : [],
     }),
@@ -271,7 +280,7 @@ function InstallerPage() {
       if (!preview || busy || !capabilityReady) return;
       if (!preview.script.presentation) {
         setLoadFailure({
-          message: '安装预览缺少卡牌封面分配，请重新打开安装页面。',
+          message: t('cm_install_message_6'),
           diagnostics: [],
         });
         return;
@@ -319,8 +328,8 @@ function InstallerPage() {
     diagnostics.length > 0 || matchScope.length > 0 || Boolean(sourceCode);
   const permissionSummary =
     grants.length === 1 && grants[0] === 'none'
-      ? '无需额外权限'
-      : `${grants.length} 项脚本权限`;
+      ? t('cm_install_text_7')
+      : t('cm_install_text_8', [String(grants.length)]);
 
   if (loading) {
     return (
@@ -344,7 +353,7 @@ function InstallerPage() {
 
       <UiIconButton
         className="install-corner-back"
-        label="返回脚本市场"
+        label={t('cm_install_label_9')}
         onClick={returnToMarket}
       >
         <ArrowLeft size={19} />
@@ -361,10 +370,10 @@ function InstallerPage() {
           ]}
         />
         {loadFailure
-          ? '需要查看预检详情'
+          ? t('cm_install_text_10')
           : capabilityUnavailable
-            ? '脚本执行权限未开启'
-            : '完整源码已验证'}
+            ? t('cm_install_text_11')
+            : t('cm_install_text_12')}
       </div>
 
       <ContextPlaque

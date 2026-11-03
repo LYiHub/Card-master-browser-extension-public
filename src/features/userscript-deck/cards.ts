@@ -16,6 +16,7 @@ import {
   GAMEPAD_CONTROL_CARD_ID,
   type GamepadControlCard,
 } from '../../gamepad-control/domain/types';
+import { t } from '../../localization/messages';
 import {
   MEDIA_RESOURCES_CARD_ID,
   type MediaResourcesCard,
@@ -68,13 +69,23 @@ export type DeckCard =
   | BilibiliCapabilityCard;
 
 export const DECK_STEWARD_CARD: DeckStewardCard = {
-  ...systemCardCopy(DECK_STEWARD_CARD_ID),
+  get title() {
+    return systemCardCopy(DECK_STEWARD_CARD_ID).title;
+  },
+  get description() {
+    return systemCardCopy(DECK_STEWARD_CARD_ID).description;
+  },
   id: DECK_STEWARD_CARD_ID,
   kind: 'steward',
 };
 
 export const NEW_TAB_CARD: NewTabCard = {
-  ...systemCardCopy(NEW_TAB_CARD_ID),
+  get title() {
+    return systemCardCopy(NEW_TAB_CARD_ID).title;
+  },
+  get description() {
+    return systemCardCopy(NEW_TAB_CARD_ID).description;
+  },
   kind: 'new-tab',
   id: NEW_TAB_CARD_ID,
 };
@@ -92,10 +103,10 @@ export function gamepadControlCard({
     id: GAMEPAD_CONTROL_CARD_ID,
     title: definition.title,
     description: !enabled
-      ? '手柄网页控制已全局停用，牌库入口仍可用来恢复设置。'
+      ? t('cm_cards_text_1')
       : connected
-        ? '手柄已经连接，可以操作网页与扩展界面并检查输入。'
-        : '连接手柄之后，即可统一操作网页、牌阵与扩展界面。',
+        ? t('cm_cards_text_2')
+        : t('cm_cards_text_3'),
     enabled,
     connected,
     deviceName,

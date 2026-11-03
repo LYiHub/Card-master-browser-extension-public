@@ -13,6 +13,8 @@ import { INPUT_SCOPE_PRIORITY } from '../../input/coordinator';
 import { useSurfaceInputInteraction } from '../../input/useSurfaceInputInteraction';
 import { classNames } from '../../lib/class-names';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { useTransitionPresence } from '../../motion/presence';
 import { useDialogInteraction } from '../useDialogInteraction';
 import { DiagnosticCopyButton } from './DiagnosticCopyButton';
@@ -62,6 +64,8 @@ export function UiIconButton({
   buttonRef?: RefObject<HTMLButtonElement>;
   children?: ReactNode;
 }) {
+  useLocale();
+
   return (
     <button
       {...buttonProps}
@@ -99,6 +103,8 @@ export function UiButton({
   variant?: UiButtonVariant;
   buttonRef?: RefObject<HTMLButtonElement>;
 }) {
+  useLocale();
+
   return (
     <button
       {...buttonProps}
@@ -127,6 +133,8 @@ export function UiNotice({
   className?: string;
   copyText?: string;
 }) {
+  useLocale();
+
   return (
     <div
       className={classNames('app-ui-notice', `is-${tone}`, className)}
@@ -157,6 +165,8 @@ export function CardStatusNotice({
   tone?: CardStatusTone;
   copyText?: string;
 }) {
+  useLocale();
+
   return (
     <section
       className={classNames('card-status-notice', `is-${tone}`)}
@@ -191,6 +201,8 @@ export function UiField({
   htmlFor: string;
   children: ReactNode;
 }) {
+  useLocale();
+
   return (
     <div className={classNames('app-ui-field', className)}>
       <label className="app-ui-field__label" htmlFor={htmlFor}>
@@ -214,6 +226,8 @@ export function UiTextField({
   className?: string;
   actions?: ReactNode;
 }) {
+  useLocale();
+
   const generatedId = useId();
   const id = inputProps.id ?? generatedId;
   return (
@@ -240,6 +254,8 @@ export function UiTextArea({
   hint?: string;
   className?: string;
 }) {
+  useLocale();
+
   const generatedId = useId();
   const id = textareaProps.id ?? generatedId;
   return (
@@ -253,6 +269,8 @@ export function UiSelect({
   className,
   ...selectProps
 }: SelectHTMLAttributes<HTMLSelectElement>) {
+  useLocale();
+
   return (
     <select
       {...selectProps}
@@ -271,6 +289,8 @@ export function UiSelectField({
   hint?: string;
   className?: string;
 }) {
+  useLocale();
+
   const generatedId = useId();
   const id = selectProps.id ?? generatedId;
   return (
@@ -290,6 +310,8 @@ export function UiRange({
   hint?: string;
   className?: string;
 }) {
+  useLocale();
+
   const generatedId = useId();
   const id = inputProps.id ?? generatedId;
   return (
@@ -314,6 +336,8 @@ export function UiActionRow({
   tone?: UiActionRowTone;
   className?: string;
 }) {
+  useLocale();
+
   return (
     <div className={classNames('app-ui-action-row', `is-${tone}`, className)}>
       {icon && <span className="app-ui-action-row__icon">{icon}</span>}
@@ -343,6 +367,8 @@ export function UiToggle({
   className?: string;
   onChange: (checked: boolean) => void;
 }) {
+  useLocale();
+
   const [interacted, setInteracted] = useState(false);
   return (
     <label
@@ -372,7 +398,7 @@ export function UiToggle({
       />
       <span className="app-ui-toggle__control" aria-hidden="true">
         <i />
-        <b>{checked ? '开' : '关'}</b>
+        <b>{checked ? t('cm_ui_text_1') : t('cm_ui_text_2')}</b>
       </span>
     </label>
   );
@@ -391,6 +417,8 @@ export function UiLoader({
   className?: string;
   visible?: boolean;
 }) {
+  useLocale();
+
   const loaderRef = useRef<HTMLDivElement>(null);
   const presence = useTransitionPresence(visible, loaderRef);
   if (!presence.present) return null;
@@ -408,7 +436,7 @@ export function UiLoader({
       role="status"
       aria-live={visible ? 'polite' : 'off'}
       aria-hidden={!visible}
-      aria-label={label ?? '加载中'}
+      aria-label={label ?? t('cm_ui_text_3')}
     >
       <LoadingFlame
         className="app-ui-loader__flame"
@@ -438,6 +466,8 @@ export function UiWorkspace({
   onClose: () => void;
   children: ReactNode;
 }) {
+  useLocale();
+
   const workspaceRef = useRef<HTMLElement>(null);
   useSurfaceInputInteraction({
     surfaceRef: workspaceRef,
@@ -463,8 +493,8 @@ export function UiWorkspace({
             type="button"
             className="app-ui-workspace__close"
             onClick={onClose}
-            aria-label={`关闭${title}`}
-            title={`关闭${title}`}
+            aria-label={t('cm_ui_text_4', [String(title)])}
+            title={t('cm_ui_text_5', [String(title)])}
           >
             <X size={20} strokeWidth={2.2} aria-hidden="true" />
           </button>
@@ -483,6 +513,8 @@ export function UiBadge({
   children,
   ...props
 }: HTMLAttributes<HTMLSpanElement> & { compact?: boolean }) {
+  useLocale();
+
   return (
     <span
       {...props}
@@ -520,6 +552,8 @@ export function UiSegmentedControl<Value extends string>({
   contextNavigation = false,
   onChange,
 }: UiChoiceGroupProps<Value>) {
+  useLocale();
+
   const groupName = useId();
 
   return (
@@ -584,6 +618,8 @@ export function UiDialogInteractionBoundary({
   enabled: boolean;
   children: ReactNode;
 }) {
+  useLocale();
+
   return (
     <UiDialogInteractionContext.Provider value={enabled}>
       {children}
@@ -614,6 +650,8 @@ function UiDialogFrame({
   frame,
   phase,
 }: UiDialogFrameProps) {
+  useLocale();
+
   return (
     <section
       ref={dialogRef}
@@ -651,7 +689,7 @@ function UiDialogFrame({
             {headerActions}
             <UiIconButton
               buttonRef={closeButtonRef}
-              label={`关闭${title}`}
+              label={t('cm_ui_text_6', [String(title)])}
               close
               data-dialog-close="true"
               onClick={onClose}
@@ -661,7 +699,7 @@ function UiDialogFrame({
         {navigation && (
           <nav
             className="app-ui-dialog__navigation"
-            aria-label={`${title}分类导航`}
+            aria-label={t('cm_ui_text_7', [String(title)])}
           >
             {navigation}
           </nav>
@@ -687,6 +725,8 @@ export function UiDialog({
   children,
   className,
 }: UiDialogProps) {
+  useLocale();
+
   const dialogRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const interactionEnabled = useContext(UiDialogInteractionContext);
@@ -743,6 +783,8 @@ function UiLayeredDialogBase({
   children,
   className,
 }: UiLayeredDialogProps & { frame: 'square' | 'compact' }) {
+  useLocale();
+
   const layerRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -794,9 +836,13 @@ function UiLayeredDialogBase({
 }
 
 export function UiLayeredDialog(props: UiLayeredDialogProps) {
+  useLocale();
+
   return <UiLayeredDialogBase {...props} frame="square" />;
 }
 
 export function UiLayeredCompactDialog(props: UiLayeredDialogProps) {
+  useLocale();
+
   return <UiLayeredDialogBase {...props} frame="compact" />;
 }

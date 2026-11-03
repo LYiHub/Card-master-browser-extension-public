@@ -11,6 +11,8 @@ import {
   UiTextField,
   UiToggle,
 } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import {
   MAX_USERSCRIPT_COVER_PROMPT_LENGTH,
   prepareUserscriptCoverMedia,
@@ -62,11 +64,13 @@ function ruleLines(value: string) {
 
 function metadataEntries(values: readonly string[]) {
   const occurrences = new Map<string, number>();
-  return (values.length > 0 ? values : ['未声明']).map((value) => {
-    const occurrence = (occurrences.get(value) ?? 0) + 1;
-    occurrences.set(value, occurrence);
-    return { key: `${value}:${occurrence}`, value };
-  });
+  return (values.length > 0 ? values : [t('cm_manage_board_text_1')]).map(
+    (value) => {
+      const occurrence = (occurrences.get(value) ?? 0) + 1;
+      occurrences.set(value, occurrence);
+      return { key: `${value}:${occurrence}`, value };
+    },
+  );
 }
 
 function MetadataGroup({
@@ -76,6 +80,8 @@ function MetadataGroup({
   title: string;
   values: readonly string[];
 }) {
+  useLocale();
+
   return (
     <div className="manager-metadata-group">
       <span>{title}</span>
@@ -112,6 +118,8 @@ export function ManageBoard({
   executionCapability: UserscriptExecutionCapability | null;
   onClose: () => void;
 }) {
+  useLocale();
+
   type UpdatePanelState =
     | UpdateCheckResult
     | { status: 'idle' | 'checking' | 'installing' }
@@ -260,7 +268,7 @@ export function ManageBoard({
     if (source !== item.source.code) {
       setUpdateState({
         status: 'error',
-        reason: '源码存在未保存修改，请先保存或重新打开管理页。',
+        reason: t('cm_manage_board_reason_2'),
       });
       return;
     }
@@ -293,9 +301,9 @@ export function ManageBoard({
       await onOpenAiSettings();
     } catch (error) {
       setCoverError(
-        `AI API 密钥尚未配置，且无法自动打开设置：${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        t('cm_manage_board_text_3', [
+          String(error instanceof Error ? error.message : String(error)),
+        ]),
       );
     }
   };
@@ -303,14 +311,12 @@ export function ManageBoard({
   const generateCover = async () => {
     const prompt = coverPrompt.trim();
     if (!prompt) {
-      setCoverError('请输入封面生图提示词。');
+      setCoverError(t('cm_manage_board_text_4'));
       return;
     }
     if (coverServiceState === 'missing') {
       setCoverNeedsConfiguration(true);
-      setCoverError(
-        'AI API 密钥尚未配置。已打开卡牌大师智能体，请在“设置”中完成配置后重试。',
-      );
+      setCoverError(t('cm_manage_board_text_5'));
       await openAiSettings();
       return;
     }
@@ -327,9 +333,7 @@ export function ManageBoard({
       if (error instanceof UserscriptCoverConfigurationRequiredError) {
         setCoverServiceState('missing');
         setCoverNeedsConfiguration(true);
-        setCoverError(
-          'AI API 密钥尚未配置。请打开卡牌大师智能体，在“设置”中完成配置后重试。',
-        );
+        setCoverError(t('cm_manage_board_text_6'));
         void openAiSettings();
       } else {
         setCoverError(error instanceof Error ? error.message : String(error));
@@ -343,30 +347,30 @@ export function ManageBoard({
     switch (updateState.status) {
       case 'idle':
         return item.metadata.updateUrl || item.metadata.downloadUrl
-          ? '尚未检查远端版本。'
-          : '未配置更新地址。';
+          ? t('cm_manage_board_text_7')
+          : t('cm_manage_board_text_8');
       case 'checking':
-        return '正在检查远端版本信息...';
+        return t('cm_manage_board_text_9');
       case 'disabled':
-        return '自动检查已关闭，仍可手动检查。';
+        return t('cm_manage_board_text_10');
       case 'unavailable':
       case 'error':
         return updateState.reason;
       case 'current':
-        return `当前已是最新版本 v${updateState.version}。`;
+        return t('cm_manage_board_text_11', [String(updateState.version)]);
       case 'available':
         return updateState.sourceUrl
-          ? `发现新版本 v${updateState.version}，身份校验已通过。`
-          : `发现新版本 v${updateState.version}，但未配置可下载的脚本源码地址。`;
+          ? t('cm_manage_board_text_12', [String(updateState.version)])
+          : t('cm_manage_board_text_13', [String(updateState.version)]);
       case 'installing':
-        return '正在下载并校验更新...';
+        return t('cm_manage_board_text_14');
       case 'installed':
-        return `已安装 v${updateState.version} 并完成应用。`;
+        return t('cm_manage_board_text_15', [String(updateState.version)]);
     }
   })();
   const runtimeError =
     item.runtime.status === 'error'
-      ? (item.runtime.error ?? '脚本运行失败，但运行时没有返回错误详情。')
+      ? (item.runtime.error ?? t('cm_manage_board_text_16'))
       : null;
   const runtimeErrorSummary = runtimeError?.split('\n')[0] ?? '';
   const updateError =
@@ -392,22 +396,24 @@ export function ManageBoard({
           } as const)
         : resolvedCardMedia;
   const dialogStatus = executionError
-    ? { label: '执行权限未开启', tone: 'error' as const }
+    ? { label: t('cm_manage_board_label_17'), tone: 'error' as const }
     : runtimeError
-      ? { label: '运行异常', tone: 'error' as const }
+      ? { label: t('cm_manage_board_label_18'), tone: 'error' as const }
       : item.manager.enabled
-        ? { label: '脚本已启用', tone: 'active' as const }
-        : { label: '脚本已停用', tone: 'inactive' as const };
+        ? { label: t('cm_manage_board_label_19'), tone: 'active' as const }
+        : { label: t('cm_manage_board_label_20'), tone: 'inactive' as const };
 
   return (
     <UiDialog
-      ariaLabel={`${userscriptDisplayName(item.metadata)} 设置`}
-      title="脚本设置"
+      ariaLabel={t('cm_manage_board_text_21', [
+        String(userscriptDisplayName(item.metadata)),
+      ])}
+      title={t('cm_manage_board_title_22')}
       status={dialogStatus}
       onClose={onClose}
       footer={
         <>
-          <UiButton onClick={onClose}>返回牌阵</UiButton>
+          <UiButton onClick={onClose}>{t('cm_manage_board_text_23')}</UiButton>
           <UiButton
             variant="primary"
             disabled={coverBusy !== null}
@@ -430,7 +436,7 @@ export function ManageBoard({
               }
             }}
           >
-            保存并返回
+            {t('cm_manage_board_text_24')}
           </UiButton>
         </>
       }
@@ -439,8 +445,8 @@ export function ManageBoard({
         {executionError ? (
           <CardStatusNotice
             tone="error"
-            status="执行权限未开启"
-            title="这张卡牌暂时无法运行"
+            status={t('cm_manage_board_status_25')}
+            title={t('cm_manage_board_title_26')}
             description={executionError}
             copyText={executionError}
           />
@@ -448,13 +454,13 @@ export function ManageBoard({
           <>
             <CardStatusNotice
               tone="error"
-              status="执行异常"
-              title="脚本在当前页面运行失败"
+              status={t('cm_manage_board_status_27')}
+              title={t('cm_manage_board_title_28')}
               description={runtimeErrorSummary}
               copyText={runtimeError}
             />
             <details className="manager-runtime-diagnostic" open>
-              <summary>完整错误与堆栈</summary>
+              <summary>{t('cm_manage_board_text_29')}</summary>
               <pre>{runtimeError}</pre>
             </details>
           </>
@@ -466,24 +472,21 @@ export function ManageBoard({
         >
           <header className="manager-section-heading">
             <strong id={`manager-identity-title-${item.id}`}>
-              基本信息与封面
+              {t('cm_manage_board_text_30')}
             </strong>
-            <p>
-              图片和视频都会以画面中心自动适配为严格 3:4
-              卡面；名称与描述会写回脚本元数据。
-            </p>
+            <p>{t('cm_manage_board_text_31')}</p>
           </header>
           <div className="manager-card-identity-editor">
             <div className="manager-card-copy-fields">
               <UiTextField
-                label="脚本名称"
+                label={t('cm_manage_board_label_32')}
                 value={name}
                 maxLength={MAX_EDITABLE_USERSCRIPT_NAME_LENGTH}
                 onChange={(event) => setName(event.currentTarget.value)}
               />
               <UiTextArea
                 className="manager-script-description-field"
-                label="脚本描述"
+                label={t('cm_manage_board_label_33')}
                 value={description}
                 rows={2}
                 maxLength={MAX_EDITABLE_USERSCRIPT_DESCRIPTION_LENGTH}
@@ -492,11 +495,13 @@ export function ManageBoard({
             </div>
             <div className="manager-cover-workspace">
               <div className="manager-cover-editor">
-                <span className="manager-cover-editor__label">卡牌封面</span>
+                <span className="manager-cover-editor__label">
+                  {t('cm_manage_board_text_34')}
+                </span>
                 <div
                   className="manager-cover-preview"
                   role="img"
-                  aria-label="脚本封面预览"
+                  aria-label={t('cm_manage_board_aria_label_35')}
                 >
                   {previewMedia.kind === 'image' ? (
                     <img src={previewMedia.imageUrl} alt="" />
@@ -514,7 +519,7 @@ export function ManageBoard({
                   <UiLoader
                     visible={coverBusy === 'generate'}
                     className="manager-cover-generation-loader"
-                    label="正在生成卡牌封面"
+                    label={t('cm_manage_board_label_36')}
                   />
                 </div>
                 <input
@@ -534,29 +539,28 @@ export function ManageBoard({
                     onClick={() => coverInputRef.current?.click()}
                   >
                     <Upload size={14} aria-hidden="true" />
-                    {coverBusy === 'upload' ? '正在处理' : '上传图片或视频'}
+                    {coverBusy === 'upload'
+                      ? t('cm_manage_board_text_37')
+                      : t('cm_manage_board_text_38')}
                   </UiButton>
-                  <small>
-                    图片会居中裁剪并转为 480×640
-                    WebP；视频保留动态画面并生成首帧预览，单个文件不超过 20 MB。
-                  </small>
+                  <small>{t('cm_manage_board_text_39')}</small>
                 </div>
               </div>
               <div className="manager-card-copy-editor">
                 <UiTextArea
-                  label="封面生图提示词"
-                  hint="可以使用中文或英文。生成完成后先预览，再保存应用。"
+                  label={t('cm_manage_board_label_40')}
+                  hint={t('cm_manage_board_hint_41')}
                   value={coverPrompt}
                   rows={5}
                   maxLength={MAX_USERSCRIPT_COVER_PROMPT_LENGTH}
-                  placeholder="描述角色、场景、动作和你希望得到的画面……"
+                  placeholder={t('cm_manage_board_placeholder_42')}
                   onChange={(event) =>
                     setCoverPrompt(event.currentTarget.value)
                   }
                 />
                 <UiToggle
-                  label="注入默认卡牌风格"
-                  description="勾选后只追加项目统一的明亮手绘奇幻卡牌画风，不限制用户设计的构图和内容。"
+                  label={t('cm_manage_board_label_43')}
+                  description={t('cm_manage_board_description_44')}
                   checked={injectDefaultStyle}
                   disabled={coverBusy !== null}
                   onChange={setInjectDefaultStyle}
@@ -572,7 +576,9 @@ export function ManageBoard({
                     onClick={() => void generateCover()}
                   >
                     <Sparkles size={14} aria-hidden="true" />
-                    {coverBusy === 'generate' ? '正在生成' : '生成封面'}
+                    {coverBusy === 'generate'
+                      ? t('cm_manage_board_text_45')
+                      : t('cm_manage_board_text_46')}
                   </UiButton>
                 </div>
               </div>
@@ -584,7 +590,7 @@ export function ManageBoard({
               {coverNeedsConfiguration && (
                 <UiButton onClick={() => void openAiSettings()}>
                   <Settings size={14} aria-hidden="true" />
-                  打开 AI 设置
+                  {t('cm_manage_board_text_47')}
                 </UiButton>
               )}
               <DiagnosticCopyButton text={coverError} />
@@ -597,18 +603,20 @@ export function ManageBoard({
           aria-labelledby={`manager-update-title-${item.id}`}
         >
           <header className="manager-section-heading">
-            <strong id={`manager-update-title-${item.id}`}>脚本更新</strong>
-            <p>自动更新与手动检查使用同一份脚本更新地址。</p>
+            <strong id={`manager-update-title-${item.id}`}>
+              {t('cm_manage_board_text_48')}
+            </strong>
+            <p>{t('cm_manage_board_text_49')}</p>
           </header>
           <UiToggle
-            label="自动检查更新"
-            description="保存后按全局检查周期读取该脚本的新版本。"
+            label={t('cm_manage_board_label_50')}
+            description={t('cm_manage_board_description_51')}
             checked={checkForUpdates}
             onChange={setCheckForUpdates}
           />
           <div className="manager-update-panel" aria-live="polite">
             <div className="manager-update-status">
-              <span>版本状态</span>
+              <span>{t('cm_manage_board_text_52')}</span>
               <p>{updateMessage}</p>
               {updateError && <DiagnosticCopyButton text={updateError} />}
             </div>
@@ -621,7 +629,7 @@ export function ManageBoard({
                 onClick={() => void checkUpdate()}
               >
                 <RefreshCw size={14} aria-hidden="true" />
-                检查更新
+                {t('cm_manage_board_text_53')}
               </UiButton>
               {updateState.status === 'available' && (
                 <UiButton
@@ -630,7 +638,8 @@ export function ManageBoard({
                   onClick={() => void installUpdate(updateState)}
                 >
                   <Download size={14} aria-hidden="true" />
-                  安装 v{updateState.version}
+                  {t('cm_manage_board_text_54')}
+                  {updateState.version}
                 </UiButton>
               )}
             </div>
@@ -642,12 +651,14 @@ export function ManageBoard({
           aria-labelledby={`manager-rules-title-${item.id}`}
         >
           <header className="manager-section-heading">
-            <strong id={`manager-rules-title-${item.id}`}>匹配范围覆盖</strong>
-            <p>每行填写一条规则；留空时完全使用脚本原有声明。</p>
+            <strong id={`manager-rules-title-${item.id}`}>
+              {t('cm_manage_board_text_55')}
+            </strong>
+            <p>{t('cm_manage_board_text_56')}</p>
           </header>
           <div className="manager-rule-overrides">
             <label htmlFor={`manager-user-match-${item.id}`}>
-              <span>用户 @match</span>
+              <span>{t('cm_manage_board_text_57')}</span>
               <textarea
                 id={`manager-user-match-${item.id}`}
                 value={userMatches}
@@ -656,7 +667,7 @@ export function ManageBoard({
               />
             </label>
             <label htmlFor={`manager-user-include-${item.id}`}>
-              <span>用户 @include</span>
+              <span>{t('cm_manage_board_text_58')}</span>
               <textarea
                 id={`manager-user-include-${item.id}`}
                 value={userIncludes}
@@ -665,7 +676,7 @@ export function ManageBoard({
               />
             </label>
             <label htmlFor={`manager-user-exclude-match-${item.id}`}>
-              <span>用户 @exclude-match</span>
+              <span>{t('cm_manage_board_text_59')}</span>
               <textarea
                 id={`manager-user-exclude-match-${item.id}`}
                 value={userExcludeMatches}
@@ -674,7 +685,7 @@ export function ManageBoard({
               />
             </label>
             <label htmlFor={`manager-user-exclude-${item.id}`}>
-              <span>用户 @exclude</span>
+              <span>{t('cm_manage_board_text_60')}</span>
               <textarea
                 id={`manager-user-exclude-${item.id}`}
                 value={userExcludes}
@@ -690,50 +701,54 @@ export function ManageBoard({
           aria-labelledby={`manager-info-title-${item.id}`}
         >
           <header className="manager-section-heading">
-            <strong id={`manager-info-title-${item.id}`}>脚本信息</strong>
-            <p>当前安装版本、运行声明与外部资源。</p>
+            <strong id={`manager-info-title-${item.id}`}>
+              {t('cm_manage_board_text_61')}
+            </strong>
+            <p>{t('cm_manage_board_text_62')}</p>
           </header>
           <div className="manager-manifest">
             <dl>
               <div>
-                <dt>版本</dt>
+                <dt>{t('cm_manage_board_text_63')}</dt>
                 <dd>{item.metadata.version}</dd>
               </div>
               <div>
-                <dt>作者</dt>
-                <dd>{item.metadata.author || '未声明'}</dd>
+                <dt>{t('cm_manage_board_text_64')}</dt>
+                <dd>{item.metadata.author || t('cm_manage_board_text_65')}</dd>
               </div>
               <div>
-                <dt>运行时机</dt>
+                <dt>{t('cm_manage_board_text_66')}</dt>
                 <dd>{item.metadata.runAt}</dd>
               </div>
               <div>
-                <dt>当前状态</dt>
+                <dt>{t('cm_manage_board_text_67')}</dt>
                 <dd>
                   {item.runtime.status}
-                  {item.runtime.pendingRefresh ? ' · 需要刷新' : ''}
+                  {item.runtime.pendingRefresh
+                    ? t('cm_manage_board_text_68')
+                    : ''}
                 </dd>
               </div>
               <div>
-                <dt>脚本身份</dt>
+                <dt>{t('cm_manage_board_text_69')}</dt>
                 <dd>
                   {item.metadata.namespace || '(empty)'} / {item.metadata.name}
                 </dd>
               </div>
               <div>
-                <dt>安装来源</dt>
-                <dd>{item.source.origin || '本地创建或导入'}</dd>
+                <dt>{t('cm_manage_board_text_70')}</dt>
+                <dd>{item.source.origin || t('cm_manage_board_text_71')}</dd>
               </div>
               <div>
-                <dt>更新地址</dt>
+                <dt>{t('cm_manage_board_text_72')}</dt>
                 <dd>
                   {item.metadata.updateUrl ??
                     item.metadata.downloadUrl ??
-                    '未配置更新地址'}
+                    t('cm_manage_board_text_73')}
                 </dd>
               </div>
               <div>
-                <dt>项目链接</dt>
+                <dt>{t('cm_manage_board_text_74')}</dt>
                 <dd className="manager-manifest-links">
                   {item.metadata.homepageUrl && (
                     <a
@@ -741,7 +756,7 @@ export function ManageBoard({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      主页
+                      {t('cm_manage_board_text_75')}
                     </a>
                   )}
                   {item.metadata.supportUrl && (
@@ -750,25 +765,25 @@ export function ManageBoard({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      支持
+                      {t('cm_manage_board_text_76')}
                     </a>
                   )}
                   {!item.metadata.homepageUrl && !item.metadata.supportUrl
-                    ? '未声明'
+                    ? t('cm_manage_board_text_77')
                     : null}
                 </dd>
               </div>
             </dl>
             <div className="manager-metadata-groups">
               <MetadataGroup
-                title="脚本匹配"
+                title={t('cm_manage_board_title_78')}
                 values={[
                   ...item.metadata.matches.map((rule) => `@match ${rule}`),
                   ...item.metadata.includes.map((rule) => `@include ${rule}`),
                 ]}
               />
               <MetadataGroup
-                title="脚本排除"
+                title={t('cm_manage_board_title_79')}
                 values={[
                   ...item.metadata.excludeMatches.map(
                     (rule) => `@exclude-match ${rule}`,
@@ -777,23 +792,29 @@ export function ManageBoard({
                 ]}
               />
               <MetadataGroup
-                title="权限"
+                title={t('cm_manage_board_title_80')}
                 values={
                   item.metadata.grants.length > 0
                     ? item.metadata.grants
                     : ['none']
                 }
               />
-              <MetadataGroup title="依赖" values={item.metadata.requires} />
               <MetadataGroup
-                title="资源"
+                title={t('cm_manage_board_title_81')}
+                values={item.metadata.requires}
+              />
+              <MetadataGroup
+                title={t('cm_manage_board_title_82')}
                 values={Object.entries(item.metadata.resources).map(
                   ([name, url]) => `${name} ${url}`,
                 )}
               />
-              <MetadataGroup title="跨域范围" values={item.metadata.connects} />
               <MetadataGroup
-                title="本地化文案"
+                title={t('cm_manage_board_title_83')}
+                values={item.metadata.connects}
+              />
+              <MetadataGroup
+                title={t('cm_manage_board_title_84')}
                 values={Object.entries(item.metadata.localized).flatMap(
                   ([locale, values]) => [
                     ...(values.name ? [`@name:${locale} ${values.name}`] : []),

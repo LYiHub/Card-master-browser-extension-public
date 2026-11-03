@@ -8,9 +8,10 @@ import {
   useRef,
   useState,
 } from 'react';
-
 import { registerGamepadVirtualPointerElement } from '../../hosts/extension/gamepad-bridge';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import type {
   MediaSpeedSelection,
   MediaSpeedWheelItem,
@@ -125,6 +126,8 @@ export function DeckTrigger({
   mediaResourcesPopup?: ReactNode;
   onActivate: () => void;
 }) {
+  useLocale();
+
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const mediaResourcesButtonRef = useRef<HTMLButtonElement | null>(null);
   const dragSessionRef = useRef<DeckEntryDragSession | null>(null);
@@ -445,8 +448,10 @@ export function DeckTrigger({
           ref={mediaResourcesButtonRef}
           type="button"
           className="manager-media-resources-trigger"
-          aria-label={`打开发现的 ${mediaResourcesCount} 项媒体资源`}
-          title={`发现 ${mediaResourcesCount} 项媒体资源`}
+          aria-label={t('cm_deck_trigger_text_1', [
+            String(mediaResourcesCount),
+          ])}
+          title={t('cm_deck_trigger_text_2', [String(mediaResourcesCount)])}
           onPointerDown={(event) => event.stopPropagation()}
           onClick={(event) => {
             event.preventDefault();
@@ -510,12 +515,12 @@ export function DeckTrigger({
         aria-grabbed={dragging}
         aria-label={
           presentation.coreState === 'receiving'
-            ? '正在接收导入卡牌'
+            ? t('cm_deck_trigger_text_3')
             : presentation.coreState === 'transition'
-              ? '正在切换当前页面牌阵'
+              ? t('cm_deck_trigger_text_4')
               : presentation.coreState === 'suppressed'
-                ? '当前牌阵正在处理操作'
-                : `展开 ${visibleCount} 张匹配卡牌，可拖动调整入口位置`
+                ? t('cm_deck_trigger_text_5')
+                : t('cm_deck_trigger_text_6', [String(visibleCount)])
         }
       >
         <span className="manager-deck-trigger__logo-anchor">

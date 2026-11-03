@@ -9,6 +9,8 @@ import {
 import { type ReactNode, useEffect, useState } from 'react';
 import type { AssistantReadinessIssue } from '../../ai/domain/assistant-readiness';
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 type AwaitableAction = void | Promise<void>;
 
@@ -23,6 +25,8 @@ export function SettingsRow({
   label: string;
   children: ReactNode;
 }) {
+  useLocale();
+
   return (
     <div className="cm-assistant-settings-row">
       <div className="cm-assistant-settings-row__label">{label}</div>
@@ -50,6 +54,8 @@ export function CredentialField({
   onChange: (value: string) => void;
   onClear: () => void;
 }) {
+  useLocale();
+
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -68,7 +74,11 @@ export function CredentialField({
           value={value}
           autoComplete="new-password"
           spellCheck={false}
-          placeholder={hasCredential ? '已经配置好' : placeholder}
+          placeholder={
+            hasCredential
+              ? t('cm_assistant_settings_primitives_text_1')
+              : placeholder
+          }
           onChange={(event) => onChange(event.target.value)}
         />
         <div className="cm-assistant-password-field__actions">
@@ -76,8 +86,16 @@ export function CredentialField({
             <button
               type="button"
               className="cm-assistant-field-icon-button"
-              title={visible ? '隐藏当前输入' : '显示当前输入'}
-              aria-label={visible ? '隐藏当前输入' : '显示当前输入'}
+              title={
+                visible
+                  ? t('cm_assistant_settings_primitives_text_2')
+                  : t('cm_assistant_settings_primitives_text_3')
+              }
+              aria-label={
+                visible
+                  ? t('cm_assistant_settings_primitives_text_4')
+                  : t('cm_assistant_settings_primitives_text_5')
+              }
               aria-pressed={visible}
               disabled={busy}
               onClick={() => setVisible((current) => !current)}
@@ -95,8 +113,16 @@ export function CredentialField({
             <button
               type="button"
               className="cm-assistant-field-icon-button"
-              title={value ? '清空当前输入' : clearSavedLabel}
-              aria-label={value ? '清空当前输入' : clearSavedLabel}
+              title={
+                value
+                  ? t('cm_assistant_settings_primitives_text_6')
+                  : clearSavedLabel
+              }
+              aria-label={
+                value
+                  ? t('cm_assistant_settings_primitives_text_7')
+                  : clearSavedLabel
+              }
               disabled={busy}
               onClick={onClear}
             >
@@ -118,6 +144,8 @@ export function SettingsReadiness({
   loading: boolean;
   onOpenMicrophonePermission?: () => AwaitableAction;
 }) {
+  useLocale();
+
   if (loading) {
     return (
       <div className="cm-assistant-readiness is-loading" role="status">
@@ -126,7 +154,7 @@ export function SettingsReadiness({
           size={15}
           aria-hidden="true"
         />
-        <span>正在读取服务配置…</span>
+        <span>{t('cm_assistant_settings_primitives_text_8')}</span>
       </div>
     );
   }
@@ -135,7 +163,7 @@ export function SettingsReadiness({
     return (
       <div className="cm-assistant-readiness is-ready" role="status">
         <CircleCheck size={16} aria-hidden="true" />
-        <span>各项配置已完成，服务会在首次使用时验证连接</span>
+        <span>{t('cm_assistant_settings_primitives_text_9')}</span>
       </div>
     );
   }
@@ -148,7 +176,9 @@ export function SettingsReadiness({
     <div className="cm-assistant-readiness is-error" role="alert">
       <div className="cm-assistant-readiness__heading">
         <CircleAlert size={16} aria-hidden="true" />
-        <strong>{issues.length} 项配置需要处理</strong>
+        <strong>
+          {issues.length} {t('cm_assistant_settings_primitives_text_10')}
+        </strong>
       </div>
       <ul className="cm-assistant-readiness__issues">
         {issues.map((issue) => (
@@ -168,7 +198,7 @@ export function SettingsReadiness({
           className="cm-assistant-secondary-button"
           onClick={() => void onOpenMicrophonePermission()}
         >
-          处理麦克风权限
+          {t('cm_assistant_settings_primitives_text_11')}
         </button>
       )}
     </div>

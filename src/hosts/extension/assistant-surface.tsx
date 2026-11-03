@@ -18,6 +18,8 @@ import { isAssistantSurfaceNavigationMessage } from '../../ai/domain/types';
 import uiStyles from '../../components/ui/ui.css?inline';
 import { AiConversationWorkbench } from '../../features/assistant/AiConversationWorkbench';
 import workbenchStyles from '../../features/assistant/ai-conversation-workbench.css?inline';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import motionStyles from '../../motion/transitions.css?inline';
 import type { UserscriptExecutionCapability } from '../../userscript/runtime/capabilities';
 import { ExtensionAiServicesController } from './ai-services-controller';
@@ -75,7 +77,7 @@ class AssistantSurfaceErrorBoundary extends Component<
     if (this.state.error) {
       return (
         <main className="assistant-surface-fatal" role="alert">
-          <strong>卡牌大师智能体无法继续运行</strong>
+          <strong>{t('cm_assistant_surface_text_1')}</strong>
           <p>{this.state.error}</p>
         </main>
       );
@@ -177,7 +179,7 @@ async function resolveTabId(api: ExtensionApi) {
       currentWindow: true,
     })) ?? [];
   if (typeof active?.id !== 'number') {
-    throw new Error('卡牌大师智能体无法确定当前标签页。');
+    throw new Error(t('cm_assistant_surface_error_2'));
   }
   return active.id;
 }
@@ -191,6 +193,8 @@ function AssistantSurfaceApp({
   context: AssistantSurfaceContext;
   lifecyclePort: ExtensionPort | null;
 }) {
+  useLocale();
+
   const assistant = useMemo(
     () =>
       new ExtensionAssistantController(api, context.tabId, {
@@ -447,7 +451,7 @@ async function bootstrap() {
   });
   if (disposed) return;
   if (response.error) throw new Error(response.error);
-  if (!response.context) throw new Error('扩展未返回当前页面绑定信息。');
+  if (!response.context) throw new Error(t('cm_assistant_surface_error_3'));
 
   surfaceStyle = document.createElement('style');
   surfaceStyle.textContent = [
@@ -458,7 +462,7 @@ async function bootstrap() {
   ].join('\n');
   document.head.append(surfaceStyle);
   const root = document.getElementById('assistant-surface-root');
-  if (!root) throw new Error('卡牌大师智能体缺少挂载节点。');
+  if (!root) throw new Error(t('cm_assistant_surface_error_4'));
   surfaceRoot = createRoot(root);
   surfaceRoot.render(
     <AssistantSurfaceErrorBoundary>
@@ -476,7 +480,9 @@ void bootstrap().catch((error) => {
   reportExtensionFailure('assistant-surface', 'bootstrap-failed', error);
   const root = document.getElementById('assistant-surface-root');
   if (root) {
-    root.textContent = `卡牌大师智能体启动失败：${assistantUserFacingError(error)}`;
+    root.textContent = t('cm_assistant_surface_text_5', [
+      String(assistantUserFacingError(error)),
+    ]);
     root.dataset.error = 'true';
   }
 });

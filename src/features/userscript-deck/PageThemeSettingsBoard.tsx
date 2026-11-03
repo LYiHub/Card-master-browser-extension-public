@@ -13,6 +13,8 @@ import {
   UiTextField,
   UiToggle,
 } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import {
   exportDarkReaderSettings,
   importDarkReaderSettings,
@@ -30,15 +32,45 @@ type PageThemeTab = 'light' | 'sites' | 'automation' | 'advanced';
 type ThemeScope = 'global' | 'site';
 
 const TABS = [
-  { value: 'light', label: '光影' },
-  { value: 'sites', label: '站点' },
-  { value: 'automation', label: '自动' },
-  { value: 'advanced', label: '高级' },
+  {
+    value: 'light',
+    get label() {
+      return t('cm_page_theme_settings_board_label_1');
+    },
+  },
+  {
+    value: 'sites',
+    get label() {
+      return t('cm_page_theme_settings_board_label_2');
+    },
+  },
+  {
+    value: 'automation',
+    get label() {
+      return t('cm_page_theme_settings_board_label_3');
+    },
+  },
+  {
+    value: 'advanced',
+    get label() {
+      return t('cm_page_theme_settings_board_label_4');
+    },
+  },
 ] as const;
 
 const SCOPES = [
-  { value: 'global', label: '全局' },
-  { value: 'site', label: '当前站点' },
+  {
+    value: 'global',
+    get label() {
+      return t('cm_page_theme_settings_board_label_5');
+    },
+  },
+  {
+    value: 'site',
+    get label() {
+      return t('cm_page_theme_settings_board_label_6');
+    },
+  },
 ] as const;
 
 function downloadText(filename: string, text: string, type: string) {
@@ -73,6 +105,8 @@ export function PageThemeSettingsBoard({
   initialTab?: PageThemeTab;
   initialScope?: ThemeScope;
 }) {
+  useLocale();
+
   const { view, busy, status, setStatus, run } = usePageThemeBoard(
     controller,
     onSnapshot,
@@ -89,17 +123,21 @@ export function PageThemeSettingsBoard({
 
   if (!settings || !view) {
     return (
-      <UiDialog ariaLabel="暗夜降临设置" title="暗夜降临" onClose={onClose}>
+      <UiDialog
+        ariaLabel={t('cm_page_theme_settings_board_aria_label_7')}
+        title={t('cm_page_theme_settings_board_title_8')}
+        onClose={onClose}
+      >
         {status.error ? (
           <UiNotice
             tone="error"
-            title="暗夜降临设置读取失败"
+            title={t('cm_page_theme_settings_board_title_9')}
             copyText={status.message}
           >
             <p>{status.message}</p>
           </UiNotice>
         ) : (
-          <UiLoader large label="正在唤醒光影引擎" />
+          <UiLoader large label={t('cm_page_theme_settings_board_label_10')} />
         )}
       </UiDialog>
     );
@@ -129,13 +167,13 @@ export function PageThemeSettingsBoard({
     run(
       'save',
       () => controller.saveSettings(settings),
-      '暗夜降临设置已应用。',
+      t('cm_page_theme_settings_board_text_11'),
     );
   const reset = async () => {
     const succeeded = await run(
       'reset',
       () => controller.resetSettings(),
-      '暗夜降临已恢复默认设置。',
+      t('cm_page_theme_settings_board_text_12'),
     );
     if (succeeded) setScope('global');
   };
@@ -143,14 +181,14 @@ export function PageThemeSettingsBoard({
     try {
       const imported: unknown = JSON.parse(await file.text());
       if (!isPageThemeSettings(imported)) {
-        throw new Error('导入文件不是有效的暗夜降临设置。');
+        throw new Error(t('cm_page_theme_settings_board_error_13'));
       }
       setSettings({
         ...imported,
         revision: settings.revision,
       });
       setStatus({
-        message: '设置已载入，点击“应用设置”后生效。',
+        message: t('cm_page_theme_settings_board_message_14'),
         error: false,
       });
     } catch (error) {
@@ -171,11 +209,15 @@ export function PageThemeSettingsBoard({
       setSettings(migrated.settings);
       setStatus({
         message:
-          `Dark Reader 设置已载入，迁移 ${migrated.importedSiteOverrides} 个站点调校` +
+          t('cm_page_theme_settings_board_text_15', [
+            String(migrated.importedSiteOverrides),
+          ]) +
           (migrated.skippedSitePatterns > 0
-            ? `，跳过 ${migrated.skippedSitePatterns} 个路径或通配规则`
+            ? t('cm_page_theme_settings_board_text_16', [
+                String(migrated.skippedSitePatterns),
+              ])
             : '') +
-          '。点击“应用设置”后生效。',
+          t('cm_page_theme_settings_board_text_17'),
         error: false,
       });
     } catch (error) {
@@ -192,23 +234,29 @@ export function PageThemeSettingsBoard({
 
   return (
     <UiDialog
-      ariaLabel="暗夜降临设置"
-      title="暗夜降临"
+      ariaLabel={t('cm_page_theme_settings_board_aria_label_18')}
+      title={t('cm_page_theme_settings_board_title_19')}
       status={
         view.snapshot.activeOnPage
-          ? { label: '当前网站已启用', tone: 'active' }
+          ? {
+              label: t('cm_page_theme_settings_board_label_20'),
+              tone: 'active',
+            }
           : view.snapshot.inactiveReason === 'site-disabled'
-            ? { label: '当前网站已停用', tone: 'inactive' }
+            ? {
+                label: t('cm_page_theme_settings_board_label_21'),
+                tone: 'inactive',
+              }
             : view.snapshot.inactiveReason === 'automation'
-              ? { label: '自动休眠' }
+              ? { label: t('cm_page_theme_settings_board_label_22') }
               : view.snapshot.darkThemeDetected
-                ? { label: '检测到原生暗色' }
-                : { label: '当前网站未生效' }
+                ? { label: t('cm_page_theme_settings_board_label_23') }
+                : { label: t('cm_page_theme_settings_board_label_24') }
       }
       onClose={onClose}
       navigation={
         <UiSegmentedControl
-          label="暗夜降临设置分类"
+          label={t('cm_page_theme_settings_board_label_25')}
           value={tab}
           options={TABS}
           className="manager-theme-primary-tabs"
@@ -221,7 +269,7 @@ export function PageThemeSettingsBoard({
             visible={busy !== null}
             compact
             className="manager-settings-operation-loader"
-            label="正在同步暗夜降临设置"
+            label={t('cm_page_theme_settings_board_label_26')}
           />
           {busy === null && status.message && (
             <p className={status.error ? 'is-error' : ''}>{status.message}</p>
@@ -235,7 +283,7 @@ export function PageThemeSettingsBoard({
             onClick={() => void save()}
           >
             <Save size={14} aria-hidden="true" />
-            应用设置
+            {t('cm_page_theme_settings_board_text_27')}
           </UiButton>
         </>
       }
@@ -243,17 +291,19 @@ export function PageThemeSettingsBoard({
       {view.snapshot.status === 'error' && (
         <UiNotice
           tone="error"
-          title="光影引擎诊断"
+          title={t('cm_page_theme_settings_board_title_28')}
           copyText={view.snapshot.error}
         >
-          <p>{view.snapshot.error || '页面光影引擎运行异常。'}</p>
+          <p>
+            {view.snapshot.error || t('cm_page_theme_settings_board_text_29')}
+          </p>
         </UiNotice>
       )}
 
       {tab === 'light' && (
         <div className="manager-theme-panel">
           <UiSegmentedControl
-            label="设置作用范围"
+            label={t('cm_page_theme_settings_board_label_30')}
             value={scope}
             options={SCOPES}
             className="manager-theme-scope-tabs"
@@ -272,25 +322,29 @@ export function PageThemeSettingsBoard({
                 }
               >
                 <RotateCcw size={14} aria-hidden="true" />
-                清除本站调校
+                {t('cm_page_theme_settings_board_text_31')}
               </UiButton>
             </div>
           )}
           <div className="manager-theme-grid">
             <UiSelectField
               id="page-theme-mode"
-              label="色彩模式"
+              label={t('cm_page_theme_settings_board_label_32')}
               value={activeTheme.mode}
               onChange={(event) =>
                 updateTheme({ mode: Number(event.target.value) as 0 | 1 })
               }
             >
-              <option value={1}>暗色</option>
-              <option value={0}>亮色</option>
+              <option value={1}>
+                {t('cm_page_theme_settings_board_text_33')}
+              </option>
+              <option value={0}>
+                {t('cm_page_theme_settings_board_text_34')}
+              </option>
             </UiSelectField>
             <UiSelectField
               id="page-theme-engine"
-              label="渲染引擎"
+              label={t('cm_page_theme_settings_board_label_35')}
               value={activeTheme.engine}
               onChange={(event) =>
                 updateTheme({
@@ -298,13 +352,19 @@ export function PageThemeSettingsBoard({
                 })
               }
             >
-              <option value="dynamicTheme">动态主题</option>
-              <option value="cssFilter">滤镜后备</option>
+              <option value="dynamicTheme">
+                {t('cm_page_theme_settings_board_text_36')}
+              </option>
+              <option value="cssFilter">
+                {t('cm_page_theme_settings_board_text_37')}
+              </option>
             </UiSelectField>
           </div>
           <div className="manager-theme-range-grid">
             <UiRange
-              label={`亮度 ${activeTheme.brightness}%`}
+              label={t('cm_page_theme_settings_board_text_38', [
+                String(activeTheme.brightness),
+              ])}
               min={5}
               max={200}
               value={activeTheme.brightness}
@@ -313,7 +373,9 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiRange
-              label={`对比 ${activeTheme.contrast}%`}
+              label={t('cm_page_theme_settings_board_text_39', [
+                String(activeTheme.contrast),
+              ])}
               min={5}
               max={200}
               value={activeTheme.contrast}
@@ -322,7 +384,9 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiRange
-              label={`灰度 ${activeTheme.grayscale}%`}
+              label={t('cm_page_theme_settings_board_text_40', [
+                String(activeTheme.grayscale),
+              ])}
               min={0}
               max={100}
               value={activeTheme.grayscale}
@@ -331,7 +395,9 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiRange
-              label={`褐色 ${activeTheme.sepia}%`}
+              label={t('cm_page_theme_settings_board_text_41', [
+                String(activeTheme.sepia),
+              ])}
               min={0}
               max={100}
               value={activeTheme.sepia}
@@ -342,7 +408,7 @@ export function PageThemeSettingsBoard({
           </div>
           <div className="manager-theme-grid">
             <UiTextField
-              label="暗色背景"
+              label={t('cm_page_theme_settings_board_label_42')}
               type="color"
               value={activeTheme.darkSchemeBackgroundColor}
               onChange={(event) =>
@@ -350,7 +416,7 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiTextField
-              label="暗色文字"
+              label={t('cm_page_theme_settings_board_label_43')}
               type="color"
               value={activeTheme.darkSchemeTextColor}
               onChange={(event) =>
@@ -358,7 +424,7 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiTextField
-              label="亮色背景"
+              label={t('cm_page_theme_settings_board_label_44')}
               type="color"
               value={activeTheme.lightSchemeBackgroundColor}
               onChange={(event) =>
@@ -366,7 +432,7 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiTextField
-              label="亮色文字"
+              label={t('cm_page_theme_settings_board_label_45')}
               type="color"
               value={activeTheme.lightSchemeTextColor}
               onChange={(event) =>
@@ -374,33 +440,33 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiTextField
-              label="滚动条颜色"
+              label={t('cm_page_theme_settings_board_label_46')}
               value={activeTheme.scrollbarColor}
-              placeholder="auto 或颜色值"
+              placeholder={t('cm_page_theme_settings_board_placeholder_47')}
               onChange={(event) =>
                 updateTheme({ scrollbarColor: event.target.value })
               }
             />
             <UiTextField
-              label="选区颜色"
+              label={t('cm_page_theme_settings_board_label_48')}
               value={activeTheme.selectionColor}
-              placeholder="auto 或颜色值"
+              placeholder={t('cm_page_theme_settings_board_placeholder_49')}
               onChange={(event) =>
                 updateTheme({ selectionColor: event.target.value })
               }
             />
           </div>
           <UiToggle
-            label="页面控件"
-            description="同步调整表单控件与系统组件的配色。"
+            label={t('cm_page_theme_settings_board_label_50')}
+            description={t('cm_page_theme_settings_board_description_51')}
             checked={activeTheme.styleSystemControls}
             onChange={(styleSystemControls) =>
               updateTheme({ styleSystemControls })
             }
           />
           <UiToggle
-            label="立即重绘"
-            description="更积极地处理新出现的页面样式。"
+            label={t('cm_page_theme_settings_board_label_52')}
+            description={t('cm_page_theme_settings_board_description_53')}
             checked={activeTheme.immediateModify}
             onChange={(immediateModify) => updateTheme({ immediateModify })}
           />
@@ -410,15 +476,15 @@ export function PageThemeSettingsBoard({
       {tab === 'sites' && (
         <div className="manager-theme-panel">
           <UiToggle
-            label="默认覆盖新站点"
+            label={t('cm_page_theme_settings_board_label_54')}
             checked={settings.enabledByDefault}
             onChange={(enabledByDefault) =>
               setSettings({ ...settings, enabledByDefault })
             }
           />
           <UiToggle
-            label="检测站点原生暗色"
-            description="发现可靠的原生暗色主题时自动避让。"
+            label={t('cm_page_theme_settings_board_label_55')}
+            description={t('cm_page_theme_settings_board_description_56')}
             checked={settings.detectDarkTheme}
             onChange={(detectDarkTheme) =>
               setSettings({ ...settings, detectDarkTheme })
@@ -426,7 +492,7 @@ export function PageThemeSettingsBoard({
           />
           <div className="manager-theme-grid">
             <UiTextArea
-              label="强制启用站点"
+              label={t('cm_page_theme_settings_board_label_57')}
               value={settings.enabledFor.join('\n')}
               spellCheck={false}
               onChange={(event) =>
@@ -437,7 +503,7 @@ export function PageThemeSettingsBoard({
               }
             />
             <UiTextArea
-              label="排除站点"
+              label={t('cm_page_theme_settings_board_label_58')}
               value={settings.disabledFor.join('\n')}
               spellCheck={false}
               onChange={(event) =>
@@ -448,17 +514,21 @@ export function PageThemeSettingsBoard({
               }
             />
           </div>
-          <UiNotice title={`当前站点：${currentHost || '无法识别'}`}>
+          <UiNotice
+            title={t('cm_page_theme_settings_board_text_59', [
+              String(currentHost || t('cm_page_theme_settings_board_text_1')),
+            ])}
+          >
             <p>
               {view.snapshot.darkThemeDetected
-                ? '已检测到站点原生暗色，暗夜降临当前保持避让。'
+                ? t('cm_page_theme_settings_board_text_60')
                 : view.snapshot.activeOnPage
-                  ? '当前站点正在使用暗夜降临。'
+                  ? t('cm_page_theme_settings_board_text_61')
                   : view.snapshot.inactiveReason === 'site-disabled'
-                    ? '暗夜降临已在当前站点停用。'
+                    ? t('cm_page_theme_settings_board_text_62')
                     : view.snapshot.inactiveReason === 'automation'
-                      ? '自动规则当前处于休眠时段。'
-                      : '暗夜降临当前未在此页面生效。'}
+                      ? t('cm_page_theme_settings_board_text_63')
+                      : t('cm_page_theme_settings_board_text_64')}
             </p>
           </UiNotice>
         </div>
@@ -468,7 +538,7 @@ export function PageThemeSettingsBoard({
         <div className="manager-theme-panel">
           <UiSelectField
             id="page-theme-automation"
-            label="自动规则"
+            label={t('cm_page_theme_settings_board_label_65')}
             value={settings.automation.mode}
             onChange={(event) =>
               setSettings({
@@ -481,13 +551,19 @@ export function PageThemeSettingsBoard({
               })
             }
           >
-            <option value="none">不自动切换</option>
-            <option value="system">跟随系统</option>
-            <option value="time">按时间</option>
+            <option value="none">
+              {t('cm_page_theme_settings_board_text_66')}
+            </option>
+            <option value="system">
+              {t('cm_page_theme_settings_board_text_67')}
+            </option>
+            <option value="time">
+              {t('cm_page_theme_settings_board_text_68')}
+            </option>
           </UiSelectField>
           <UiSelectField
             id="page-theme-behavior"
-            label="自动行为"
+            label={t('cm_page_theme_settings_board_label_69')}
             value={settings.automation.behavior}
             onChange={(event) =>
               setSettings({
@@ -500,13 +576,17 @@ export function PageThemeSettingsBoard({
               })
             }
           >
-            <option value="on-off">启用或停用</option>
-            <option value="scheme">切换明暗方案</option>
+            <option value="on-off">
+              {t('cm_page_theme_settings_board_text_70')}
+            </option>
+            <option value="scheme">
+              {t('cm_page_theme_settings_board_text_71')}
+            </option>
           </UiSelectField>
           {settings.automation.mode === 'time' && (
             <div className="manager-theme-grid">
               <UiTextField
-                label="启用时间"
+                label={t('cm_page_theme_settings_board_label_72')}
                 type="time"
                 value={settings.time.activation}
                 onChange={(event) =>
@@ -517,7 +597,7 @@ export function PageThemeSettingsBoard({
                 }
               />
               <UiTextField
-                label="停用时间"
+                label={t('cm_page_theme_settings_board_label_73')}
                 type="time"
                 value={settings.time.deactivation}
                 onChange={(event) =>
@@ -538,12 +618,12 @@ export function PageThemeSettingsBoard({
       {tab === 'advanced' && (
         <div className="manager-theme-panel">
           <UiToggle
-            label="替换页面字体"
+            label={t('cm_page_theme_settings_board_label_74')}
             checked={activeTheme.useFont}
             onChange={(useFont) => updateTheme({ useFont })}
           />
           <UiTextField
-            label="字体"
+            label={t('cm_page_theme_settings_board_label_75')}
             value={activeTheme.fontFamily}
             disabled={!activeTheme.useFont}
             onChange={(event) =>
@@ -551,7 +631,9 @@ export function PageThemeSettingsBoard({
             }
           />
           <UiRange
-            label={`文字描边 ${activeTheme.textStroke.toFixed(1)}px`}
+            label={t('cm_page_theme_settings_board_text_76', [
+              String(activeTheme.textStroke.toFixed(1)),
+            ])}
             min={0}
             max={2}
             step={0.1}
@@ -571,11 +653,11 @@ export function PageThemeSettingsBoard({
               }
             >
               <Download size={14} aria-hidden="true" />
-              导出暗夜降临设置
+              {t('cm_page_theme_settings_board_text_77')}
             </UiButton>
             <UiButton onClick={() => importRef.current?.click()}>
               <Upload size={14} aria-hidden="true" />
-              导入暗夜降临设置
+              {t('cm_page_theme_settings_board_text_78')}
             </UiButton>
             <input
               ref={importRef}
@@ -597,11 +679,11 @@ export function PageThemeSettingsBoard({
               }
             >
               <Download size={14} aria-hidden="true" />
-              导出 Dark Reader
+              {t('cm_page_theme_settings_board_text_79')}
             </UiButton>
             <UiButton onClick={() => darkReaderImportRef.current?.click()}>
               <Upload size={14} aria-hidden="true" />
-              导入 Dark Reader
+              {t('cm_page_theme_settings_board_text_80')}
             </UiButton>
             <input
               ref={darkReaderImportRef}
@@ -619,12 +701,13 @@ export function PageThemeSettingsBoard({
               onClick={() => void reset()}
             >
               <RotateCcw size={14} aria-hidden="true" />
-              恢复默认
+              {t('cm_page_theme_settings_board_text_81')}
             </UiButton>
           </div>
-          <UiNotice title="引擎信息">
+          <UiNotice title={t('cm_page_theme_settings_board_title_82')}>
             <p>
-              Dark Reader 动态主题内核 · 状态 {view.snapshot.status} · 修订{' '}
+              {t('cm_page_theme_settings_board_text_83')}
+              {view.snapshot.status} {t('cm_page_theme_settings_board_text_84')}{' '}
               {view.snapshot.revision}
             </p>
           </UiNotice>

@@ -37,8 +37,8 @@ describe('daily review wallpaper settings', () => {
   });
 
   it('offers a bounded manual image path with the shared settings hierarchy', () => {
-    expect(source).toContain('手动生成图片');
-    expect(source).toContain('摘要点名全部主题，画面描述写成能认出的具体东西');
+    expect(source).toContain("t('cm_daily_review_wallpaper_settings_text_83')");
+    expect(source).toContain("t('cm_daily_review_wallpaper_settings_text_84')");
     expect(source).not.toContain('不读取历史');
     expect(source).not.toContain('只跳过历史分析');
     expect(source).toContain('normalizeDailyReviewWallpaperPlan({');

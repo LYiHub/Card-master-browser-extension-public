@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
 import { DiagnosticCopyButton, UiLayeredDialog } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { formatMetadataDiagnostic } from '../../userscript/domain/metadata';
 import type { MetadataDiagnostic } from '../../userscript/domain/types';
 
@@ -25,12 +27,14 @@ export function InstallInspectionDialog({
   sourceCode?: string;
   onClose: () => void;
 }) {
+  useLocale();
+
   const diagnosticText = diagnostics.map(formatMetadataDiagnostic).join('\n');
   return (
     <UiLayeredDialog
       open={open}
-      title="预检详情"
-      ariaLabel="脚本兼容性预检详情"
+      title={t('cm_install_inspection_dialog_title_1')}
+      ariaLabel={t('cm_install_inspection_dialog_aria_label_2')}
       headerActions={
         diagnosticText ? <DiagnosticCopyButton text={diagnosticText} /> : null
       }
@@ -50,7 +54,7 @@ export function InstallInspectionDialog({
             ]}
           />
           <strong className="install-inspection__section-title">
-            兼容性诊断
+            {t('cm_install_inspection_dialog_text_3')}
           </strong>
         </header>
         {diagnostics.length > 0 ? (
@@ -61,14 +65,18 @@ export function InstallInspectionDialog({
                 key={`${diagnostic.code}:${diagnostic.line ?? 0}:${diagnostic.message}`}
               >
                 <strong className="install-diagnostic__title">
-                  {diagnostic.severity === 'error' ? '阻止安装' : '兼容提示'}
+                  {diagnostic.severity === 'error'
+                    ? t('cm_install_inspection_dialog_text_4')
+                    : t('cm_install_inspection_dialog_text_5')}
                 </strong>
                 <p>{formatMetadataDiagnostic(diagnostic)}</p>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="install-inspection__empty">没有发现阻止安装的问题。</p>
+          <p className="install-inspection__empty">
+            {t('cm_install_inspection_dialog_text_6')}
+          </p>
         )}
       </section>
 
@@ -77,14 +85,14 @@ export function InstallInspectionDialog({
           <header>
             <Globe2 size={17} aria-hidden="true" />
             <strong className="install-inspection__section-title">
-              页面范围
+              {t('cm_install_inspection_dialog_text_7')}
             </strong>
           </header>
           <div className="install-token-list">
             {matchScope.length > 0 ? (
               matchScope.map((scope) => <code key={scope}>{scope}</code>)
             ) : (
-              <p>未声明 @match 或 @include。</p>
+              <p>{t('cm_install_inspection_dialog_text_8')}</p>
             )}
           </div>
         </section>
@@ -92,7 +100,7 @@ export function InstallInspectionDialog({
           <header>
             <KeyRound size={17} aria-hidden="true" />
             <strong className="install-inspection__section-title">
-              脚本权限
+              {t('cm_install_inspection_dialog_text_9')}
             </strong>
           </header>
           <div className="install-token-list">
@@ -108,9 +116,11 @@ export function InstallInspectionDialog({
           <summary>
             <Code2 size={17} aria-hidden="true" />
             <span>
-              <strong className="install-source__title">完整源码</strong>
+              <strong className="install-source__title">
+                {t('cm_install_inspection_dialog_text_10')}
+              </strong>
               <small className="install-source__size">
-                {sourceCode.length} 字符
+                {sourceCode.length} {t('cm_install_inspection_dialog_text_11')}
               </small>
             </span>
           </summary>

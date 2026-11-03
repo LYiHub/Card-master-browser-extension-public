@@ -13,14 +13,41 @@ import {
   MODEL_SERVICE_PRESETS,
 } from '../../ai/domain/types';
 import { UiLoader } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { CredentialField } from './AssistantSettingsPrimitives';
 
 const REASONING_EFFORT_OPTIONS = [
-  { value: 'off', label: '关闭' },
-  { value: 'low', label: '低' },
-  { value: 'medium', label: '中' },
-  { value: 'high', label: '高' },
-  { value: 'max', label: '最高' },
+  {
+    value: 'off',
+    get label() {
+      return t('cm_model_service_settings_label_1');
+    },
+  },
+  {
+    value: 'low',
+    get label() {
+      return t('cm_model_service_settings_label_2');
+    },
+  },
+  {
+    value: 'medium',
+    get label() {
+      return t('cm_model_service_settings_label_3');
+    },
+  },
+  {
+    value: 'high',
+    get label() {
+      return t('cm_model_service_settings_label_4');
+    },
+  },
+  {
+    value: 'max',
+    get label() {
+      return t('cm_model_service_settings_label_5');
+    },
+  },
 ] as const satisfies readonly {
   value: AiReasoningEffort;
   label: string;
@@ -30,12 +57,16 @@ const MODEL_PROTOCOL_OPTIONS = [
   {
     value: 'responses',
     label: 'Responses API',
-    description: '使用统一的 Responses 输入项、流式事件和函数工具格式。',
+    get description() {
+      return t('cm_model_service_settings_description_6');
+    },
   },
   {
     value: 'chat-completions',
     label: 'Chat Completions API',
-    description: '使用 messages、tool_calls 和流式增量格式。',
+    get description() {
+      return t('cm_model_service_settings_description_7');
+    },
   },
 ] as const satisfies readonly {
   value: AiModelProtocol;
@@ -52,6 +83,8 @@ export function ModelServiceSettings({
   config: AiServicesConfigView | null;
   onConfigChange: (config: AiServicesConfigView) => void;
 }) {
+  useLocale();
+
   const [baseUrl, setBaseUrl] = useState('');
   const [model, setModel] = useState<string>(DEFAULT_MODEL_SERVICE_MODEL);
   const [protocol, setProtocol] = useState<AiModelProtocol>('responses');
@@ -73,7 +106,11 @@ export function ModelServiceSettings({
   }, [config, dirty]);
 
   if (!services) {
-    return <p className="cm-assistant-settings-copy">请在扩展设置中配置。</p>;
+    return (
+      <p className="cm-assistant-settings-copy">
+        {t('cm_model_service_settings_text_8')}
+      </p>
+    );
   }
 
   const input = () => ({
@@ -108,13 +145,15 @@ export function ModelServiceSettings({
   return (
     <div className="cm-assistant-service-settings">
       <label className="cm-assistant-service-field">
-        <span className="cm-assistant-service-field__label">API 地址</span>
+        <span className="cm-assistant-service-field__label">
+          {t('cm_model_service_settings_text_9')}
+        </span>
         <input
           className="cm-assistant-form-control"
           value={baseUrl}
           type="url"
           list="cm-assistant-base-url-presets"
-          placeholder="API 基础地址"
+          placeholder={t('cm_model_service_settings_placeholder_10')}
           disabled={busy}
           onChange={(event) => update(() => setBaseUrl(event.target.value))}
         />
@@ -127,17 +166,19 @@ export function ModelServiceSettings({
         </datalist>
       </label>
       <CredentialField
-        label="API 密钥"
+        label={t('cm_model_service_settings_label_11')}
         value={apiKey}
         hasCredential={Boolean(config?.modelService.hasCredential)}
         busy={busy}
-        placeholder="输入 API 密钥"
-        clearSavedLabel="清除已保存密钥"
+        placeholder={t('cm_model_service_settings_placeholder_12')}
+        clearSavedLabel={t('cm_model_service_settings_clear_saved_label_13')}
         onChange={setApiKey}
         onClear={clearCredential}
       />
       <label className="cm-assistant-service-field">
-        <span className="cm-assistant-service-field__label">API 格式</span>
+        <span className="cm-assistant-service-field__label">
+          {t('cm_model_service_settings_text_14')}
+        </span>
         <select
           className="cm-assistant-form-control"
           value={protocol}
@@ -160,12 +201,14 @@ export function ModelServiceSettings({
         }
       </p>
       <label className="cm-assistant-service-field">
-        <span className="cm-assistant-service-field__label">模型</span>
+        <span className="cm-assistant-service-field__label">
+          {t('cm_model_service_settings_text_15')}
+        </span>
         <input
           className="cm-assistant-form-control"
           value={model}
           list="cm-assistant-model-presets"
-          placeholder="输入服务支持的模型 ID"
+          placeholder={t('cm_model_service_settings_placeholder_16')}
           disabled={busy}
           spellCheck={false}
           onChange={(event) => update(() => setModel(event.target.value))}
@@ -177,7 +220,9 @@ export function ModelServiceSettings({
         </datalist>
       </label>
       <label className="cm-assistant-service-field">
-        <span className="cm-assistant-service-field__label">推理强度</span>
+        <span className="cm-assistant-service-field__label">
+          {t('cm_model_service_settings_text_17')}
+        </span>
         <select
           className="cm-assistant-form-control"
           value={reasoningEffort}
@@ -200,7 +245,7 @@ export function ModelServiceSettings({
           visible={busy}
           compact
           className="cm-assistant-service-loader"
-          label="正在处理模型服务"
+          label={t('cm_model_service_settings_label_18')}
         />
         <button
           type="button"
@@ -217,7 +262,7 @@ export function ModelServiceSettings({
               .finally(() => setBusy(false));
           }}
         >
-          测试连接
+          {t('cm_model_service_settings_text_19')}
         </button>
         <button
           type="button"
@@ -235,16 +280,18 @@ export function ModelServiceSettings({
                 setDirty(false);
                 setApiKey('');
                 onConfigChange(next);
-                setStatus('模型配置已保存。');
+                setStatus(t('cm_model_service_settings_text_20'));
                 try {
                   const result = await services.testModelService(candidate);
                   setProbe(result);
                   if (result.ok) {
-                    setStatus('模型配置已保存，连接测试通过。');
+                    setStatus(t('cm_model_service_settings_text_21'));
                   }
                 } catch (failure) {
                   setError(
-                    `模型配置已保存，但连接测试失败：${assistantUserFacingError(failure)}`,
+                    t('cm_model_service_settings_text_22', [
+                      String(assistantUserFacingError(failure)),
+                    ]),
                   );
                 }
               } catch (failure) {
@@ -255,17 +302,20 @@ export function ModelServiceSettings({
             })();
           }}
         >
-          保存
+          {t('cm_model_service_settings_text_23')}
         </button>
       </div>
       {status && <p className="is-success">{status}</p>}
       {probe && (
         <p className={probe.ok ? 'is-success' : 'is-error'}>
           {probe.ok
-            ? `${probe.model} 连接成功（${(probe.durationMs / 1_000).toFixed(
-                2,
-              )} 秒）`
-            : assistantUserFacingError(probe.error || '连接失败')}
+            ? t('cm_model_service_settings_text_24', [
+                String(probe.model),
+                String((probe.durationMs / 1_000).toFixed(2)),
+              ])
+            : assistantUserFacingError(
+                probe.error || t('cm_model_service_settings_text_25'),
+              )}
         </p>
       )}
       {error && <p className="is-error">{error}</p>}

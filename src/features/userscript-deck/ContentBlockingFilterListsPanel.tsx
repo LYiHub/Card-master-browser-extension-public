@@ -13,22 +13,64 @@ import type {
   ContentBlockingSettingsView,
   ContentBlockingSubscriptionView,
 } from '../../content-blocking/domain/types';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 const FILTER_GROUPS: Array<{
   id: ContentBlockingFilterGroup;
   label: string;
 }> = [
-  { id: 'ads', label: '广告' },
-  { id: 'privacy', label: '隐私' },
-  { id: 'security', label: '安全' },
-  { id: 'social', label: '社交组件' },
-  { id: 'annoyances', label: '骚扰' },
-  { id: 'regional', label: '区域与语言' },
+  {
+    id: 'ads',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_1');
+    },
+  },
+  {
+    id: 'privacy',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_2');
+    },
+  },
+  {
+    id: 'security',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_3');
+    },
+  },
+  {
+    id: 'social',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_4');
+    },
+  },
+  {
+    id: 'annoyances',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_5');
+    },
+  },
+  {
+    id: 'regional',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_6');
+    },
+  },
 ];
 
 const FILTER_LIST_VIEWS = [
-  { value: 'built-in', label: '内置列表' },
-  { value: 'subscriptions', label: '第三方订阅' },
+  {
+    value: 'built-in',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_7');
+    },
+  },
+  {
+    value: 'subscriptions',
+    get label() {
+      return t('cm_content_blocking_filter_lists_panel_label_8');
+    },
+  },
 ] as const;
 
 type FilterListView = (typeof FILTER_LIST_VIEWS)[number]['value'];
@@ -40,7 +82,7 @@ type RunOperation = (
 ) => Promise<boolean>;
 
 function formattedTime(value?: number) {
-  if (!value) return '尚无';
+  if (!value) return t('cm_content_blocking_filter_lists_panel_text_9');
   return new Intl.DateTimeFormat('zh-CN', {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -66,13 +108,15 @@ function FilterListRow({
   onToggle: (enabled: boolean) => void;
   actions?: ReactNode;
 }) {
+  useLocale();
+
   return (
     <article className="manager-filter-list-row">
       <input
         type="checkbox"
         checked={enabled}
         disabled={disabled}
-        aria-label={`${enabled ? '停用' : '启用'} ${title}`}
+        aria-label={`${enabled ? t('cm_content_blocking_filter_lists_panel_text_10') : t('cm_content_blocking_filter_lists_panel_text_11')} ${title}`}
         onChange={(event) => onToggle(event.target.checked)}
       />
       <div>
@@ -99,12 +143,19 @@ function BuiltInFilterRow({
   busy: boolean;
   onToggle: (enabled: boolean) => void;
 }) {
+  useLocale();
+
   return (
     <FilterListRow
       enabled={filter.enabled}
       title={filter.name}
       description={filter.description}
-      details={<span>{filter.ruleCount.toLocaleString()} 条规则</span>}
+      details={
+        <span>
+          {filter.ruleCount.toLocaleString()}{' '}
+          {t('cm_content_blocking_filter_lists_panel_text_12')}
+        </span>
+      }
       disabled={busy}
       onToggle={onToggle}
     />
@@ -128,6 +179,8 @@ function CustomFilterRow({
   onRefresh: () => void;
   onRemove: () => void;
 }) {
+  useLocale();
+
   return (
     <FilterListRow
       enabled={subscription.enabled}
@@ -135,14 +188,24 @@ function CustomFilterRow({
       description={subscription.url}
       details={
         <>
-          <span>{subscription.ruleCount.toLocaleString()} 条规则</span>
+          <span>
+            {subscription.ruleCount.toLocaleString()}{' '}
+            {t('cm_content_blocking_filter_lists_panel_text_13')}
+          </span>
           {subscription.rejectedRuleCount > 0 && (
             <span className="is-warning">
-              {subscription.rejectedRuleCount.toLocaleString()} 条已拒绝
+              {subscription.rejectedRuleCount.toLocaleString()}{' '}
+              {t('cm_content_blocking_filter_lists_panel_text_14')}
             </span>
           )}
-          <span>检查 {formattedTime(subscription.lastCheckedAt)}</span>
-          <span>变更 {formattedTime(subscription.lastUpdatedAt)}</span>
+          <span>
+            {t('cm_content_blocking_filter_lists_panel_text_15')}
+            {formattedTime(subscription.lastCheckedAt)}
+          </span>
+          <span>
+            {t('cm_content_blocking_filter_lists_panel_text_16')}
+            {formattedTime(subscription.lastUpdatedAt)}
+          </span>
         </>
       }
       error={subscription.error}
@@ -151,14 +214,18 @@ function CustomFilterRow({
       actions={
         <>
           <UiIconButton
-            label={`更新 ${subscription.name}`}
+            label={t('cm_content_blocking_filter_lists_panel_text_17', [
+              String(subscription.name),
+            ])}
             disabled={refreshBusy || removeBusy}
             onClick={onRefresh}
           >
             <RefreshCw size={14} aria-hidden="true" />
           </UiIconButton>
           <UiIconButton
-            label={`删除 ${subscription.name}`}
+            label={t('cm_content_blocking_filter_lists_panel_text_18', [
+              String(subscription.name),
+            ])}
             disabled={removeBusy || refreshBusy}
             onClick={onRemove}
           >
@@ -183,6 +250,8 @@ export function ContentBlockingFilterListsPanel({
   isBusy: (operation: string) => boolean;
   run: RunOperation;
 }) {
+  useLocale();
+
   const [importUrls, setImportUrls] = useState('');
   const [search, setSearch] = useState('');
   const [filterListView, setFilterListView] =
@@ -219,7 +288,9 @@ export function ContentBlockingFilterListsPanel({
     const succeeded = await run(
       'add-subscriptions',
       () => controller.addSubscriptions(urls),
-      `已处理 ${new Set(urls).size} 个过滤列表，失败项已保留以便重试。`,
+      t('cm_content_blocking_filter_lists_panel_text_19', [
+        String(new Set(urls).size),
+      ]),
     );
     if (succeeded) setImportUrls('');
   };
@@ -228,8 +299,8 @@ export function ContentBlockingFilterListsPanel({
     <div className="manager-blocking-panel manager-blocking-filter-panel">
       <header className="manager-blocking-panel__header">
         <div>
-          <strong>过滤列表</strong>
-          <span>管理扩展内置规则集和可更新的第三方订阅。</span>
+          <strong>{t('cm_content_blocking_filter_lists_panel_text_20')}</strong>
+          <span>{t('cm_content_blocking_filter_lists_panel_text_21')}</span>
         </div>
         {filterListView === 'subscriptions' && (
           <UiButton
@@ -238,19 +309,19 @@ export function ContentBlockingFilterListsPanel({
               void run(
                 'refresh-all',
                 () => controller.refreshSubscriptions(),
-                '自定义过滤列表已全部检查更新。',
+                t('cm_content_blocking_filter_lists_panel_text_22'),
               )
             }
           >
             <RefreshCw size={14} aria-hidden="true" />
-            检查更新
+            {t('cm_content_blocking_filter_lists_panel_text_23')}
           </UiButton>
         )}
       </header>
 
       <div className="manager-filter-lists-workspace">
         <UiSegmentedControl
-          label="过滤列表类型"
+          label={t('cm_content_blocking_filter_lists_panel_label_24')}
           value={filterListView}
           options={FILTER_LIST_VIEWS}
           className="manager-filter-list-tabs"
@@ -261,8 +332,12 @@ export function ContentBlockingFilterListsPanel({
           <input
             type="search"
             value={search}
-            placeholder="搜索过滤列表"
-            aria-label="搜索过滤列表"
+            placeholder={t(
+              'cm_content_blocking_filter_lists_panel_placeholder_25',
+            )}
+            aria-label={t(
+              'cm_content_blocking_filter_lists_panel_aria_label_26',
+            )}
             onChange={(event) => setSearch(event.target.value)}
           />
         </label>
@@ -272,8 +347,10 @@ export function ContentBlockingFilterListsPanel({
         >
           <header className="manager-filter-lists-panel__header">
             <div>
-              <strong>内置过滤列表</strong>
-              <span>按用途独立启停，变更后由引擎增量应用。</span>
+              <strong>
+                {t('cm_content_blocking_filter_lists_panel_text_27')}
+              </strong>
+              <span>{t('cm_content_blocking_filter_lists_panel_text_28')}</span>
             </div>
             <b>
               {enabledBuiltInCount}/{builtInFilters.length}
@@ -307,7 +384,18 @@ export function ContentBlockingFilterListsPanel({
                               filter.filterId,
                               enabled,
                             ),
-                          `${filter.name} 已${enabled ? '启用' : '停用'}。`,
+                          t('cm_content_blocking_filter_lists_panel_text_29', [
+                            String(filter.name),
+                            String(
+                              enabled
+                                ? t(
+                                    'cm_content_blocking_filter_lists_panel_text_1',
+                                  )
+                                : t(
+                                    'cm_content_blocking_filter_lists_panel_text_2',
+                                  ),
+                            ),
+                          ]),
                         )
                       }
                     />
@@ -324,23 +412,33 @@ export function ContentBlockingFilterListsPanel({
         >
           <header className="manager-filter-lists-panel__header">
             <div>
-              <strong>第三方订阅</strong>
-              <span>每行导入一个 HTTPS 地址，并按需更新或停用。</span>
+              <strong>
+                {t('cm_content_blocking_filter_lists_panel_text_30')}
+              </strong>
+              <span>{t('cm_content_blocking_filter_lists_panel_text_31')}</span>
             </div>
             <b>{subscriptions.length}</b>
           </header>
           <div className="manager-filter-lists-panel__body--custom">
             <div className="manager-filter-auto-update">
               <UiToggle
-                label="自动更新订阅列表"
-                description="每天检查已导入地址，仅在内容变化时重新应用规则。"
+                label={t('cm_content_blocking_filter_lists_panel_label_32')}
+                description={t(
+                  'cm_content_blocking_filter_lists_panel_description_33',
+                )}
                 checked={view.autoUpdateSubscriptions}
                 disabled={isBusy('auto-update')}
                 onChange={(enabled) =>
                   void run(
                     'auto-update',
                     () => controller.setSubscriptionAutoUpdate(enabled),
-                    `订阅列表自动更新已${enabled ? '开启' : '关闭'}。`,
+                    t('cm_content_blocking_filter_lists_panel_text_34', [
+                      String(
+                        enabled
+                          ? t('cm_content_blocking_filter_lists_panel_text_3')
+                          : t('cm_content_blocking_filter_lists_panel_text_4'),
+                      ),
+                    ]),
                   )
                 }
               />
@@ -348,8 +446,12 @@ export function ContentBlockingFilterListsPanel({
             <div className="manager-filter-import">
               <textarea
                 value={importUrls}
-                aria-label="过滤列表地址"
-                placeholder="每行一个 HTTPS 过滤列表地址"
+                aria-label={t(
+                  'cm_content_blocking_filter_lists_panel_aria_label_35',
+                )}
+                placeholder={t(
+                  'cm_content_blocking_filter_lists_panel_placeholder_36',
+                )}
                 spellCheck={false}
                 onChange={(event) => setImportUrls(event.target.value)}
               />
@@ -358,15 +460,15 @@ export function ContentBlockingFilterListsPanel({
                 onClick={() => void addSubscriptions()}
               >
                 <Plus size={14} aria-hidden="true" />
-                导入列表
+                {t('cm_content_blocking_filter_lists_panel_text_37')}
               </UiButton>
             </div>
             <div className="manager-filter-lists-scroll manager-filter-custom-list">
               {visibleSubscriptions.length === 0 ? (
                 <p className="manager-filter-list-empty">
                   {subscriptions.length === 0
-                    ? '尚未导入第三方过滤列表。'
-                    : '没有匹配的第三方过滤列表。'}
+                    ? t('cm_content_blocking_filter_lists_panel_text_38')
+                    : t('cm_content_blocking_filter_lists_panel_text_39')}
                 </p>
               ) : (
                 visibleSubscriptions.map((subscription) => (
@@ -395,21 +497,36 @@ export function ContentBlockingFilterListsPanel({
                             subscription.id,
                             enabled,
                           ),
-                        `${subscription.name} 已${enabled ? '启用' : '停用'}。`,
+                        t('cm_content_blocking_filter_lists_panel_text_40', [
+                          String(subscription.name),
+                          String(
+                            enabled
+                              ? t(
+                                  'cm_content_blocking_filter_lists_panel_text_5',
+                                )
+                              : t(
+                                  'cm_content_blocking_filter_lists_panel_text_6',
+                                ),
+                          ),
+                        ]),
                       )
                     }
                     onRefresh={() =>
                       void run(
                         `refresh:${subscription.id}`,
                         () => controller.refreshSubscription(subscription.id),
-                        `${subscription.name} 已更新。`,
+                        t('cm_content_blocking_filter_lists_panel_text_41', [
+                          String(subscription.name),
+                        ]),
                       )
                     }
                     onRemove={() =>
                       void run(
                         `remove:${subscription.id}`,
                         () => controller.removeSubscription(subscription.id),
-                        `${subscription.name} 已删除。`,
+                        t('cm_content_blocking_filter_lists_panel_text_42', [
+                          String(subscription.name),
+                        ]),
                       )
                     }
                   />

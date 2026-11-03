@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react';
+import { t } from '../localization/messages';
+import { useLocale } from '../localization/react';
 
 const ROOT_STYLE: CSSProperties = {
   display: 'grid',
@@ -34,13 +36,15 @@ export function CardMetadataCopy({
   description: string;
   className?: string;
 }) {
+  useLocale();
+
   return (
     <span className={className} style={ROOT_STYLE}>
       <strong title={name} style={NAME_STYLE}>
         {name}
       </strong>
       <small title={description} style={DESCRIPTION_STYLE}>
-        {description || '该卡牌未提供说明。'}
+        {description || t('cm_card_metadata_copy_text_1')}
       </small>
     </span>
   );

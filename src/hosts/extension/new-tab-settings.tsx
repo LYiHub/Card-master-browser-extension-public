@@ -1,11 +1,11 @@
 import { createRoot } from 'react-dom/client';
-
 import {
   NewTabSettingsPage,
   newTabSettingsCapabilities,
 } from '../../features/new-tab/NewTabSettingsPage';
 import foundationStyles from '../../features/new-tab/new-tab-foundation.css?inline';
 import settingsStyles from '../../features/new-tab/new-tab-settings.css?inline';
+import { t } from '../../localization/messages';
 import { NewTabLocalWallpaperRepository } from '../../new-tab/application/local-wallpaper';
 import { NewTabPreferencesRepository } from '../../new-tab/application/preferences';
 import { requireExtensionApi } from './api';
@@ -17,7 +17,7 @@ import { extensionTarget } from './platform';
 try {
   const api = requireExtensionApi();
   const root = document.getElementById('new-tab-settings-root');
-  if (!root) throw new Error('新标签页设置缺少挂载节点。');
+  if (!root) throw new Error(t('cm_new_tab_settings_error_1'));
   createRoot(root).render(
     <>
       <style>{foundationStyles}</style>
@@ -44,8 +44,8 @@ try {
   if (root) {
     root.textContent =
       error instanceof Error
-        ? `新标签页设置启动失败：${error.message}`
-        : '新标签页设置启动失败。';
+        ? t('cm_new_tab_settings_text_2', [String(error.message)])
+        : t('cm_new_tab_settings_text_3');
     root.dataset.error = 'true';
   }
 }

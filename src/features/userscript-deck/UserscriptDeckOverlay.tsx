@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from 'react';
-
 import { useAudioDirector } from '../../audio/AudioDirectorProvider';
 import type { AudioCue } from '../../audio/cues';
 import type { GamepadControlSettings } from '../../gamepad-control/domain/settings';
@@ -21,6 +20,8 @@ import { inputCoordinatorFor } from '../../input/coordinator';
 import { useInputModality } from '../../input/useInputModality';
 import { lockDocumentScroll } from '../../lib/document-scroll-lock';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale, useLocalizedMemo } from '../../localization/react';
 import { MEDIA_RESOURCES_CARD_ID } from '../../media-resources/domain/types';
 import {
   DEFAULT_MEDIA_SPEED_WHEEL_ITEMS,
@@ -148,19 +149,30 @@ function libraryImportContextPrompt(
   if (!activeItem) {
     return {
       key: 'library-import-start',
-      title: '正在整理导入卡牌',
-      description: '脚本已经写入牌库，正在按当前页面的匹配结果完成落位。',
-      stats: [`${presentation.items.length} 张卡牌等待落位`],
+      title: t('cm_userscript_deck_overlay_title_1'),
+      description: t('cm_userscript_deck_overlay_description_2'),
+      stats: [
+        t('cm_userscript_deck_overlay_text_3', [
+          String(presentation.items.length),
+        ]),
+      ],
     };
   }
   return {
     key: `library-import-${activeItem.id}-${activeItem.destination}`,
     title: activeItem.card.title,
-    description: activeItem.card.description || '该脚本未提供说明。',
+    description:
+      activeItem.card.description || t('cm_userscript_deck_overlay_text_4'),
     stats:
       activeItem.destination === 'formation'
-        ? ['牌阵召唤', '当前页面立即生效']
-        : ['牌库收纳', '当前页面暂不生效'],
+        ? [
+            t('cm_userscript_deck_overlay_text_5'),
+            t('cm_userscript_deck_overlay_text_6'),
+          ]
+        : [
+            t('cm_userscript_deck_overlay_text_7'),
+            t('cm_userscript_deck_overlay_text_8'),
+          ],
   };
 }
 
@@ -200,6 +212,8 @@ function actionAudioCues(kind: ManagerActionKind): readonly AudioCue[] {
 }
 
 export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
+  useLocale();
+
   const audio = useAudioDirector();
   const { runtimeContext } = host;
   const [interactionError, setInteractionError] = useState<string | null>(null);
@@ -361,7 +375,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
     mode,
   });
   const visibleCardCount = visibleItems.length;
-  const activeCardCount = useMemo(
+  const activeCardCount = useLocalizedMemo(
     () =>
       activeDeckCardSummary({
         scripts: items,
@@ -511,7 +525,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
         new Event(GLOBAL_LIBRARY_CARD_SETTINGS_CLOSED_EVENT),
       );
       if (!host.mediaResources) {
-        setInteractionError('当前宿主没有提供顺手牵羊设置。');
+        setInteractionError(t('cm_userscript_deck_overlay_text_9'));
         return;
       }
       audio.play('panelOpen', { positionX: window.innerWidth / 2 });
@@ -541,7 +555,9 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
       document.dispatchEvent(
         new Event(GLOBAL_LIBRARY_CARD_SETTINGS_CLOSED_EVENT),
       );
-      setInteractionError(`${cardTitle(card)}没有独立设置窗口。`);
+      setInteractionError(
+        t('cm_userscript_deck_overlay_text_10', [String(cardTitle(card))]),
+      );
       return;
     }
     audio.play('panelOpen', { positionX: window.innerWidth / 2 });
@@ -695,27 +711,28 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
         mode === 'targeting' ||
         mode === 'resolving'),
   );
-  const actionScene = useMemo<ManagerActionScene<ManagerAction> | null>(() => {
-    if (!actionStageVisible || !actionSubject) return null;
-    return {
-      key: actionSubject.id,
-      title: cardTitle(actionSubject),
+  const actionScene =
+    useLocalizedMemo<ManagerActionScene<ManagerAction> | null>(() => {
+      if (!actionStageVisible || !actionSubject) return null;
+      return {
+        key: actionSubject.id,
+        title: cardTitle(actionSubject),
+        actions,
+        notice:
+          userscriptDeckActionNotice(actionSubject, {
+            libraryError,
+            interactionError,
+            executionCapability,
+          }) ?? undefined,
+      };
+    }, [
+      actionStageVisible,
+      actionSubject,
       actions,
-      notice:
-        userscriptDeckActionNotice(actionSubject, {
-          libraryError,
-          interactionError,
-          executionCapability,
-        }) ?? undefined,
-    };
-  }, [
-    actionStageVisible,
-    actionSubject,
-    actions,
-    executionCapability,
-    interactionError,
-    libraryError,
-  ]);
+      executionCapability,
+      interactionError,
+      libraryError,
+    ]);
   const atmosphereDuration =
     mode === 'collecting' ? 0.22 : dealActive ? 0.24 : 0.32;
   const contextPrompt = userscriptDeckContextPrompt({
@@ -936,7 +953,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
         void (async () => {
           const script = await host.repository.get(scriptId);
           if (!script) {
-            throw new Error('找不到刚刚创建的脚本卡牌，无法播放入库动画。');
+            throw new Error(t('cm_userscript_deck_overlay_error_11'));
           }
           if (creationPreviewLoadRef.current !== loadId) return;
           setCreationPreview({
@@ -1234,10 +1251,10 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
         tabIndex={-1}
         aria-label={
           mode === 'targeting'
-            ? '取消卡牌施法'
+            ? t('cm_userscript_deck_overlay_text_12')
             : selectingPageElement
-              ? '选择页面元素'
-              : '收起脚本牌阵'
+              ? t('cm_userscript_deck_overlay_text_13')
+              : t('cm_userscript_deck_overlay_text_14')
         }
         onClick={
           mode === 'targeting'
@@ -1256,7 +1273,9 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
         hoveredAction={emphasizedActionId}
         cancelAction={CANCEL_ACTION}
         actionFrameUrl={ACTION_FRAME_URL}
-        cornerActionsLabel="脚本管理操作"
+        cornerActionsLabel={t(
+          'cm_userscript_deck_overlay_corner_actions_label_15',
+        )}
         actionPlacement={actionPlacement}
         cornerPositionForAction={cornerPositionForAction}
         onHoverAction={(actionId) =>

@@ -1,7 +1,8 @@
 import { type CSSProperties, useLayoutEffect, useRef, useState } from 'react';
-
 import type { AudioDirector } from '../../audio/AudioDirector';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { gsap } from '../../motion/gsap-motion-path';
 import { matchInstalledUserscript } from '../../userscript/domain/matcher';
 import type {
@@ -199,6 +200,8 @@ export function LibraryImportCelebration({
   onActiveItemChange?: (item: LibraryImportCelebrationItem | null) => void;
   onComplete: (requestId: string) => void;
 }) {
+  useLocale();
+
   const layerRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef(new Map<string, HTMLDivElement>());
   const [collectedCardIds, setCollectedCardIds] = useState<ReadonlySet<string>>(
@@ -924,7 +927,7 @@ export function LibraryImportCelebration({
                       : item.card.media
                   }
                   edgeUrl={CARD_EDGE_URL}
-                  stateLabel="收入牌库"
+                  stateLabel={t('cm_library_import_celebration_state_label_1')}
                   stateTone="inactive"
                   title={item.card.title}
                   description={item.card.description}

@@ -13,6 +13,8 @@ import type {
   ContentBlockingController,
   ContentBlockingSettingsView,
 } from '../../content-blocking/domain/types';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { FilterRuleEditor } from './FilterRuleEditor';
 
 const MAX_RULE_FILE_BYTES = 4 * 1024 * 1024;
@@ -48,6 +50,8 @@ export function ContentBlockingRulesPanel({
   saving: boolean;
   onSave: (rules: string) => Promise<ContentBlockingSettingsView | null>;
 }) {
+  useLocale();
+
   const [persistedUserRules, setPersistedUserRules] = useState(persistedRules);
   const [userRules, setUserRules] = useState(persistedRules);
   const [notice, setNotice] = useState('');
@@ -120,7 +124,7 @@ export function ContentBlockingRulesPanel({
       );
       userRulesRef.current = merged;
       setUserRules(merged);
-      setNotice('规则已在其他位置更新，本地修改已自动合并。');
+      setNotice(t('cm_content_blocking_rules_panel_text_1'));
     };
     applyPersistedRules(persistedRules);
     return controller.subscribeUserRules(applyPersistedRules);
@@ -133,13 +137,13 @@ export function ContentBlockingRulesPanel({
 
   const importRules = async (file: File) => {
     if (file.size > MAX_RULE_FILE_BYTES) {
-      setNotice('规则文件超过 4 MB 上限。');
+      setNotice(t('cm_content_blocking_rules_panel_text_2'));
       return;
     }
     updateUserRules(
       (await file.text()).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n'),
     );
-    setNotice('规则文件已载入，点击“应用规则”后生效。');
+    setNotice(t('cm_content_blocking_rules_panel_text_3'));
   };
 
   const saveRules = async () => {
@@ -156,8 +160,11 @@ export function ContentBlockingRulesPanel({
     <div className="manager-blocking-panel manager-blocking-rules-panel">
       <header className="manager-blocking-panel__header">
         <div>
-          <strong>自定义规则</strong>
-          <span>{notice || `${ruleCount} 条个人静态过滤规则`}</span>
+          <strong>{t('cm_content_blocking_rules_panel_text_4')}</strong>
+          <span>
+            {notice ||
+              t('cm_content_blocking_rules_panel_text_5', [String(ruleCount)])}
+          </span>
         </div>
         <div className="manager-blocking-panel__actions">
           <input
@@ -176,14 +183,14 @@ export function ContentBlockingRulesPanel({
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload size={14} aria-hidden="true" />
-            导入
+            {t('cm_content_blocking_rules_panel_text_6')}
           </UiButton>
           <UiButton
             disabled={!userRules}
             onClick={() => exportRules(userRules)}
           >
             <Download size={14} aria-hidden="true" />
-            导出
+            {t('cm_content_blocking_rules_panel_text_7')}
           </UiButton>
           <UiButton
             variant="primary"
@@ -191,19 +198,21 @@ export function ContentBlockingRulesPanel({
             onClick={() => void saveRules()}
           >
             <Save size={14} aria-hidden="true" />
-            应用规则
+            {t('cm_content_blocking_rules_panel_text_8')}
           </UiButton>
         </div>
       </header>
       <section className="manager-custom-rules-editor">
         <header>
-          <strong>当前规则</strong>
-          <span>{ruleCount} 条</span>
+          <strong>{t('cm_content_blocking_rules_panel_text_9')}</strong>
+          <span>
+            {ruleCount} {t('cm_content_blocking_rules_panel_text_10')}
+          </span>
         </header>
         <FilterRuleEditor
           ref={editorRef}
           value={userRules}
-          aria-label="自定义过滤规则"
+          aria-label={t('cm_content_blocking_rules_panel_aria_label_11')}
           onChange={updateUserRules}
         />
       </section>

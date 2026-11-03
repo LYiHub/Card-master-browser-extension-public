@@ -11,6 +11,8 @@ import type {
 } from '../../ai/domain/types';
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
 import type { ExtensionSpeechCapability } from '../../hosts/extension/speech-capability';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import type { UserscriptExecutionCapability } from '../../userscript/runtime/capabilities';
 import { SettingsReadiness, SettingsRow } from './AssistantSettingsPrimitives';
 import { ImageServiceSettings } from './ImageServiceSettings';
@@ -50,27 +52,29 @@ export function AssistantSettingsPanel({
   onOpenMicrophonePermission?: () => AwaitableAction;
   onRequestUserscriptPermission?: () => AwaitableAction;
 }) {
+  useLocale();
+
   return (
     <div
       className="cm-assistant-panel cm-assistant-settings-panel"
       id="settingsPanel"
       hidden={!visible}
     >
-      <SettingsRow label="配置检查">
+      <SettingsRow label={t('cm_assistant_settings_panel_label_1')}>
         <SettingsReadiness
           issues={readinessIssues}
           loading={readinessLoading}
           onOpenMicrophonePermission={onOpenMicrophonePermission}
         />
       </SettingsRow>
-      <SettingsRow label="模型服务">
+      <SettingsRow label={t('cm_assistant_settings_panel_label_2')}>
         <ModelServiceSettings
           services={services}
           config={servicesConfig}
           onConfigChange={onConfigChange}
         />
       </SettingsRow>
-      <SettingsRow label="脚本执行">
+      <SettingsRow label={t('cm_assistant_settings_panel_label_3')}>
         <div className="cm-assistant-capability-setting">
           <span
             className={`cm-assistant-capability-setting__state is-${
@@ -89,10 +93,10 @@ export function AssistantSettingsPanel({
               ]}
             />
             {userscriptCapability === null
-              ? '正在检查'
+              ? t('cm_assistant_settings_panel_text_4')
               : userscriptCapability.status === 'available'
-                ? '已授权'
-                : '需要处理'}
+                ? t('cm_assistant_settings_panel_text_5')
+                : t('cm_assistant_settings_panel_text_6')}
           </span>
           {userscriptCapability?.status === 'permission-required' &&
             onRequestUserscriptPermission && (
@@ -102,7 +106,7 @@ export function AssistantSettingsPanel({
                 onClick={() => void onRequestUserscriptPermission()}
               >
                 <KeyRound size={14} aria-hidden="true" />
-                授权并重启扩展
+                {t('cm_assistant_settings_panel_text_7')}
               </button>
             )}
           {userscriptCapability?.status !== 'available' &&
@@ -113,7 +117,7 @@ export function AssistantSettingsPanel({
             )}
         </div>
       </SettingsRow>
-      <SettingsRow label="唤出快捷键">
+      <SettingsRow label={t('cm_assistant_settings_panel_label_8')}>
         <div className="cm-assistant-shortcut-setting">
           {onOpenShortcuts ? (
             <button
@@ -122,22 +126,22 @@ export function AssistantSettingsPanel({
               onClick={() => void onOpenShortcuts()}
             >
               <ExternalLink size={14} aria-hidden="true" />
-              修改快捷键
+              {t('cm_assistant_settings_panel_text_9')}
             </button>
           ) : (
             <span className="cm-assistant-shortcut-setting__label">
-              当前快捷键
+              {t('cm_assistant_settings_panel_text_10')}
             </span>
           )}
-          <kbd>{shortcut || '未设置'}</kbd>
+          <kbd>{shortcut || t('cm_assistant_settings_panel_text_11')}</kbd>
         </div>
       </SettingsRow>
-      <SettingsRow label="操作目标">
+      <SettingsRow label={t('cm_assistant_settings_panel_label_12')}>
         <p className="cm-assistant-settings-copy">
           {assistantTargetStatus(attachedPage)}
         </p>
       </SettingsRow>
-      <SettingsRow label="图像生成">
+      <SettingsRow label={t('cm_assistant_settings_panel_label_13')}>
         <ImageServiceSettings
           services={services}
           config={servicesConfig}
@@ -145,7 +149,7 @@ export function AssistantSettingsPanel({
         />
       </SettingsRow>
       {speechCapability.available && (
-        <SettingsRow label="语音识别">
+        <SettingsRow label={t('cm_assistant_settings_panel_label_14')}>
           <SpeechRecognitionSettings
             services={services}
             config={servicesConfig}

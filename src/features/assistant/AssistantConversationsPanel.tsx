@@ -6,15 +6,23 @@ import type {
   AiConversationSummary,
 } from '../../ai/domain/types';
 import { aiConversationText } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { MoreMenu } from './AssistantConversationMenus';
 
 type AwaitableAction = void | Promise<void>;
 
 function relativeTime(timestamp: number) {
   const elapsed = Math.max(0, Date.now() - timestamp);
-  if (elapsed < 60_000) return '刚刚';
-  if (elapsed < 3_600_000) return `${Math.floor(elapsed / 60_000)} 分钟前`;
-  if (elapsed < 86_400_000) return `${Math.floor(elapsed / 3_600_000)} 小时前`;
+  if (elapsed < 60_000) return t('cm_assistant_conversations_panel_text_1');
+  if (elapsed < 3_600_000)
+    return t('cm_assistant_conversations_panel_text_2', [
+      String(Math.floor(elapsed / 60_000)),
+    ]);
+  if (elapsed < 86_400_000)
+    return t('cm_assistant_conversations_panel_text_3', [
+      String(Math.floor(elapsed / 3_600_000)),
+    ]);
   return new Date(timestamp).toLocaleDateString('zh-CN');
 }
 
@@ -49,6 +57,8 @@ export function AssistantConversationsPanel({
   onExportConversation: (conversationId: string) => void;
   onDeleteConversation: (conversationId: string) => AwaitableAction;
 }) {
+  useLocale();
+
   const [search, setSearch] = useState('');
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const [onlyCurrentConversation, setOnlyCurrentConversation] = useState(false);
@@ -92,14 +102,14 @@ export function AssistantConversationsPanel({
       hidden={!visible}
     >
       <div className="cm-assistant-list-header">
-        <h2>全部会话</h2>
+        <h2>{t('cm_assistant_conversations_panel_text_4')}</h2>
         <button
           type="button"
           className="cm-assistant-add-button"
           disabled={snapshot.running}
           onMouseDown={() => void onCreateConversation()}
         >
-          + 会话
+          {t('cm_assistant_conversations_panel_text_5')}
         </button>
       </div>
       <div
@@ -111,13 +121,13 @@ export function AssistantConversationsPanel({
           <Search className="cm-assistant-search-field__icon" size={16} />
           <input
             value={search}
-            placeholder="搜索会话"
+            placeholder={t('cm_assistant_conversations_panel_placeholder_6')}
             onChange={(event) => setSearch(event.target.value)}
           />
           {search && (
             <button
               type="button"
-              title="清除搜索"
+              title={t('cm_assistant_conversations_panel_title_7')}
               onClick={() => setSearch('')}
             >
               <X size={14} />
@@ -127,14 +137,16 @@ export function AssistantConversationsPanel({
         <button
           type="button"
           className={advancedSearch ? 'is-active' : ''}
-          title="高级筛选"
+          title={t('cm_assistant_conversations_panel_title_8')}
           onClick={() => {
             setAdvancedSearch((current) => !current);
             if (advancedSearch) setOnlyCurrentConversation(false);
           }}
         >
           <SlidersHorizontal size={16} />
-          {!advancedSearch && <span>高级</span>}
+          {!advancedSearch && (
+            <span>{t('cm_assistant_conversations_panel_text_9')}</span>
+          )}
         </button>
         {advancedSearch && (
           <label className="cm-assistant-page-filter">
@@ -145,19 +157,23 @@ export function AssistantConversationsPanel({
                 setOnlyCurrentConversation(event.target.checked)
               }
             />
-            仅显示当前会话
+            {t('cm_assistant_conversations_panel_text_10')}
           </label>
         )}
       </div>
       {(search || onlyCurrentConversation) && (
         <p className="cm-assistant-filter-count">
-          共 {historyConversations.length} 个会话，当前显示{' '}
-          {conversations.length} 个
+          {t('cm_assistant_conversations_panel_text_11')}
+          {historyConversations.length}{' '}
+          {t('cm_assistant_conversations_panel_text_12')} {conversations.length}{' '}
+          {t('cm_assistant_conversations_panel_text_13')}
         </p>
       )}
       <div className="conversations-list">
         {conversations.length === 0 ? (
-          <p className="cm-assistant-empty-list">还没有会话</p>
+          <p className="cm-assistant-empty-list">
+            {t('cm_assistant_conversations_panel_text_14')}
+          </p>
         ) : (
           conversations.map((conversation) => (
             <article
@@ -182,10 +198,12 @@ export function AssistantConversationsPanel({
                 <p>
                   {conversation.id === snapshot.activeConversationId
                     ? conversationPreview(snapshot.messages.at(-1)) ||
-                      '还没有消息'
+                      t('cm_assistant_conversations_panel_text_15')
                     : conversation.messageCount > 0
-                      ? `${conversation.messageCount} 条消息`
-                      : '还没有消息'}
+                      ? t('cm_assistant_conversations_panel_text_16', [
+                          String(conversation.messageCount),
+                        ])
+                      : t('cm_assistant_conversations_panel_text_17')}
                 </p>
                 <small>{relativeTime(conversation.updatedAt)}</small>
               </button>

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-
 import type { AudioDirector } from '../../audio/AudioDirector';
 import { AudioDirectorProvider } from '../../audio/AudioDirectorProvider';
 import { GLOBAL_LIBRARY_CLOSED_EVENT } from '../../features/global-library/lifecycle';
@@ -14,6 +13,8 @@ import { UserscriptDeckOverlay } from '../../features/userscript-deck/Userscript
 import { disposeInputCoordinator } from '../../input/coordinator';
 import { releaseDocumentScrollLock } from '../../lib/document-scroll-lock';
 import { rewriteProjectAssetUrls } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { UserscriptUpdateService } from '../../userscript/application/update-service';
 import { BrowserUserscriptSourceExporter } from '../../userscript/infrastructure/browser-source-export';
 import type { UserscriptExecutionCapability } from '../../userscript/runtime/capabilities';
@@ -112,7 +113,7 @@ function createExtensionServices(
         });
         if (response.error) throw new Error(response.error);
         if (!response.ok) {
-          throw new Error('扩展未能打开全局脚本牌库。');
+          throw new Error(t('cm_content_host_error_1'));
         }
         await closed;
       } catch (error) {
@@ -132,7 +133,7 @@ function createExtensionServices(
         type: 'site-script-search-open',
       });
       if (response.error) throw new Error(response.error);
-      if (!response.ok) throw new Error('扩展未能打开本站脚本检索页。');
+      if (!response.ok) throw new Error(t('cm_content_host_error_2'));
     },
     openNewTab: async () => {
       const response = await sendExtensionRequest<{
@@ -143,7 +144,7 @@ function createExtensionServices(
         type: 'new-tab-open',
       });
       if (!response.supported) {
-        throw new Error(response.reason || '扩展未能打开新标签页。');
+        throw new Error(response.reason || t('cm_content_host_text_3'));
       }
     },
     openNewTabSettings: async () => {
@@ -155,7 +156,7 @@ function createExtensionServices(
         type: 'new-tab-settings-open',
       });
       if (!response.supported) {
-        throw new Error(response.reason || '扩展未能打开新标签页设置。');
+        throw new Error(response.reason || t('cm_content_host_text_4'));
       }
     },
     openAssistantPanel: (tab) => openAssistantSurface(api, tab),
@@ -179,6 +180,8 @@ function ExtensionDeckRoot({
   api: ExtensionApi;
   options: ExtensionDeckMountOptions;
 }) {
+  useLocale();
+
   const services = useMemo(
     () => createExtensionServices(api, options),
     [api, options],

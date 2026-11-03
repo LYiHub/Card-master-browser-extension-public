@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 const POPUP_MIN_HEIGHT = 96;
 const POPUP_MAX_WIDTH = 640;
@@ -102,6 +104,8 @@ export function CatCatchPopup({
   onClose: () => void;
   tabId?: number;
 }) {
+  useLocale();
+
   const rootRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<HTMLIFrameElement | null>(null);
   const [contentHeight, setContentHeight] = useState(POPUP_MIN_HEIGHT);
@@ -171,7 +175,7 @@ export function CatCatchPopup({
       <iframe
         ref={frameRef}
         src={source}
-        title="顺手牵羊"
+        title={t('cm_cat_catch_popup_title_1')}
         allow="clipboard-write; fullscreen"
         onLoad={() => {
           if (typeof tabId !== 'number' || tabId <= 0) return;

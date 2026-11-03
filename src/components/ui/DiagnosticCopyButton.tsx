@@ -1,7 +1,8 @@
 import { Check, Copy } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
 import { classNames } from '../../lib/class-names';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { MotionIconSwap } from './MotionIconSwap';
 
 export async function copyDiagnosticText(value: string) {
@@ -36,13 +37,15 @@ export async function copyDiagnosticText(value: string) {
 
 export function DiagnosticCopyButton({
   text,
-  label = '复制错误信息',
+  label = t('cm_diagnostic_copy_button_text_1'),
   className,
 }: {
   text: string;
   label?: string;
   className?: string;
 }) {
+  useLocale();
+
   const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
 
   useEffect(() => {
@@ -54,9 +57,9 @@ export function DiagnosticCopyButton({
   if (!text.trim()) return null;
   const title =
     state === 'copied'
-      ? '已复制'
+      ? t('cm_diagnostic_copy_button_text_2')
       : state === 'failed'
-        ? '复制失败，请重试'
+        ? t('cm_diagnostic_copy_button_text_3')
         : label;
 
   return (

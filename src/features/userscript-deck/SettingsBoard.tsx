@@ -38,6 +38,8 @@ import type {
 } from '../../data-management/domain/types';
 import { detectBrowserEnvironment } from '../../hosts/extension/browser-detection';
 import { extensionTarget } from '../../hosts/extension/platform';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import type {
   SyncCommand,
   SyncController,
@@ -61,9 +63,24 @@ import {
 import { LanguageSettings } from './LanguageSettings';
 
 const SETTINGS_SECTIONS = [
-  { value: 'interface', label: '牌阵入口' },
-  { value: 'scripts', label: '脚本运行' },
-  { value: 'library', label: '数据管理' },
+  {
+    value: 'interface',
+    get label() {
+      return t('cm_settings_board_label_1');
+    },
+  },
+  {
+    value: 'scripts',
+    get label() {
+      return t('cm_settings_board_label_2');
+    },
+  },
+  {
+    value: 'library',
+    get label() {
+      return t('cm_settings_board_label_3');
+    },
+  },
 ] as const;
 type SettingsSection = (typeof SETTINGS_SECTIONS)[number]['value'];
 type BusyState =
@@ -86,107 +103,189 @@ type DataActionDefinition = {
 const DATA_ACTIONS: readonly DataActionDefinition[] = [
   {
     action: 'scripts',
-    title: '删除所有脚本',
-    description: '注销并删除全部用户脚本，同时清除这些脚本保存的 GM 数据。',
-    buttonLabel: '删除脚本',
+    get title() {
+      return t('cm_settings_board_title_4');
+    },
+    get description() {
+      return t('cm_settings_board_description_5');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_6');
+    },
     icon: Trash2,
     danger: true,
   },
   {
     action: 'script-values',
-    title: '清除所有脚本 GM 数据',
-    description: '保留脚本本身，只清除脚本通过 GM 存储保存的本机数据。',
-    buttonLabel: '清除数据',
+    get title() {
+      return t('cm_settings_board_title_7');
+    },
+    get description() {
+      return t('cm_settings_board_description_8');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_9');
+    },
     icon: Database,
   },
   {
     action: 'assistant-conversations',
-    title: '清空所有智能体会话',
-    description: '终止当前生成任务，删除历史消息，并创建一个新的空白会话。',
-    buttonLabel: '清空会话',
+    get title() {
+      return t('cm_settings_board_title_10');
+    },
+    get description() {
+      return t('cm_settings_board_description_11');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_12');
+    },
     icon: Bot,
   },
   {
     action: 'assistant-config',
-    title: '清除完整智能体配置',
-    description: '清除模型服务、图像生成与语音识别的地址、模型和密钥配置。',
-    buttonLabel: '清除配置',
+    get title() {
+      return t('cm_settings_board_title_13');
+    },
+    get description() {
+      return t('cm_settings_board_description_14');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_15');
+    },
     icon: UserRoundCog,
     danger: true,
   },
   {
     action: 'assistant-pins',
-    title: '清除会话置顶',
-    description: '清除智能体全部会话的置顶状态，不影响其他设置。',
-    buttonLabel: '清除置顶',
+    get title() {
+      return t('cm_settings_board_title_16');
+    },
+    get description() {
+      return t('cm_settings_board_description_17');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_18');
+    },
     icon: Sparkles,
   },
   {
     action: 'content-blocking',
-    title: '重置内容拦截',
-    description: '恢复默认过滤列表，并清空自定义规则、订阅和站点白名单。',
-    buttonLabel: '重置拦截',
+    get title() {
+      return t('cm_settings_board_title_19');
+    },
+    get description() {
+      return t('cm_settings_board_description_20');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_21');
+    },
     icon: Shield,
   },
   {
     action: 'page-theme',
-    title: '重置暗夜降临',
-    description: '恢复默认主题参数，并清空所有站点启用与停用规则。',
-    buttonLabel: '重置暗夜',
+    get title() {
+      return t('cm_settings_board_title_22');
+    },
+    get description() {
+      return t('cm_settings_board_description_23');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_24');
+    },
     icon: Moon,
   },
   {
     action: 'media-speed',
-    title: '重置媒体倍速',
-    description: '恢复默认档位、轮盘选项、站点倍率和站点停用规则。',
-    buttonLabel: '重置倍速',
+    get title() {
+      return t('cm_settings_board_title_25');
+    },
+    get description() {
+      return t('cm_settings_board_description_26');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_27');
+    },
     icon: Gauge,
   },
   {
     action: 'media-resources',
-    title: '重置顺手牵羊',
-    description: '清空所有标签页的媒体资源记录，并恢复默认发现状态。',
-    buttonLabel: '重置资源',
+    get title() {
+      return t('cm_settings_board_title_28');
+    },
+    get description() {
+      return t('cm_settings_board_description_29');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_30');
+    },
     icon: Radio,
   },
   {
     action: 'gamepad-control',
-    title: '重置手柄控制',
-    description: '恢复默认按键映射、摇杆职责、控制手感和站点范围。',
-    buttonLabel: '重置手柄',
+    get title() {
+      return t('cm_settings_board_title_31');
+    },
+    get description() {
+      return t('cm_settings_board_description_32');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_33');
+    },
     icon: Keyboard,
   },
   {
     action: 'bilibili-capabilities',
-    title: '重置 B 站增强能力',
-    description:
-      '恢复流量探险家、合成大弹幕和绯红空降的设置，并清除未提交片段与临时缓存。',
-    buttonLabel: '重置增强',
+    get title() {
+      return t('cm_settings_board_title_34');
+    },
+    get description() {
+      return t('cm_settings_board_description_35');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_36');
+    },
     icon: Sparkles,
   },
   {
     action: 'diagnostics',
-    title: '清除诊断数据',
-    description: '清除脚本运行时错误与命令状态快照，不影响脚本和设置。',
-    buttonLabel: '清除诊断',
+    get title() {
+      return t('cm_settings_board_title_37');
+    },
+    get description() {
+      return t('cm_settings_board_description_38');
+    },
+    get buttonLabel() {
+      return t('cm_settings_board_button_label_39');
+    },
     icon: Eraser,
   },
 ];
 
 const PREFERENCES_ACTION: DataActionDefinition = {
   action: 'preferences',
-  title: '恢复默认偏好',
-  description: '恢复牌阵入口显示与位置、脚本刷新和更新偏好，以及全局声音设置。',
-  buttonLabel: '恢复默认',
+  get title() {
+    return t('cm_settings_board_title_40');
+  },
+  get description() {
+    return t('cm_settings_board_description_41');
+  },
+  get buttonLabel() {
+    return t('cm_settings_board_button_label_42');
+  },
   icon: RotateCcw,
 };
 
 const ALL_ACTION: DataActionDefinition = {
   action: 'reset-all',
-  title: '恢复为全新安装状态',
-  description:
-    '删除所有脚本、脚本数据、智能体会话与配置，并重置内容拦截、暗夜降临、媒体倍速、手柄控制、B 站增强、诊断和全部偏好。',
-  buttonLabel: '全部清空',
+  get title() {
+    return t('cm_settings_board_title_43');
+  },
+  get description() {
+    return t('cm_settings_board_description_44');
+  },
+  get buttonLabel() {
+    return t('cm_settings_board_button_label_45');
+  },
   icon: Trash2,
   danger: true,
 };
@@ -201,6 +300,8 @@ function downloadArchive(blob: Blob, filename: string) {
 }
 
 function SyncSettings({ controller }: { controller: SyncController }) {
+  useLocale();
+
   const [snapshot, setSnapshot] = useState<SyncSnapshot | null>(null);
   const [url, setUrl] = useState('');
   const [username, setUsername] = useState('');
@@ -257,16 +358,13 @@ function SyncSettings({ controller }: { controller: SyncController }) {
   return (
     <section className="manager-data-section manager-sync" aria-busy={busy}>
       <header className="manager-data-section__heading">
-        <strong>跨设备同步</strong>
-        <p>
-          一次连接，自动同步全部脚本、卡牌与插件配置。密钥、密码、浏览器授权、脚本
-          GM 数据和临时运行状态保留在本机。
-        </p>
+        <strong>{t('cm_settings_board_text_46')}</strong>
+        <p>{t('cm_settings_board_text_47')}</p>
       </header>
       {!connected && !snapshot?.preview ? (
         <>
           <label className="manager-sync-field">
-            WebDAV 地址
+            {t('cm_settings_board_text_48')}
             <input
               value={url}
               onChange={(event) => setUrl(event.target.value)}
@@ -274,7 +372,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
             />
           </label>
           <label className="manager-sync-field">
-            账号
+            {t('cm_settings_board_text_49')}
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
@@ -282,7 +380,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
             />
           </label>
           <label className="manager-sync-field">
-            应用密码
+            {t('cm_settings_board_text_50')}
             <input
               value={password}
               onChange={(event) => setPassword(event.target.value)}
@@ -300,16 +398,21 @@ function SyncSettings({ controller }: { controller: SyncController }) {
               })
             }
           >
-            {busy ? '正在连接…' : '连接并预览'}
+            {busy
+              ? t('cm_settings_board_text_51')
+              : t('cm_settings_board_text_52')}
           </UiButton>
         </>
       ) : (
         <>
-          <UiNotice title={snapshot?.message || '已连接'}>
-            <p>实际同步目录：{snapshot?.directory}</p>
+          <UiNotice title={snapshot?.message || t('cm_settings_board_text_53')}>
+            <p>
+              {t('cm_settings_board_text_54')}
+              {snapshot?.directory}
+            </p>
             {snapshot?.lastSyncedAt ? (
               <p>
-                上次同步：
+                {t('cm_settings_board_text_55')}
                 {new Date(snapshot.lastSyncedAt).toLocaleString('zh-CN', {
                   hour12: false,
                 })}
@@ -319,11 +422,14 @@ function SyncSettings({ controller }: { controller: SyncController }) {
           {snapshot?.preview ? (
             <div className="manager-sync-conflicts" key={snapshot.preview.id}>
               <strong>
-                {snapshot.preview.restore ? '恢复预览' : '合并预览'}
+                {snapshot.preview.restore
+                  ? t('cm_settings_board_text_56')
+                  : t('cm_settings_board_text_57')}
               </strong>
               <p>
-                {snapshot.preview.changes.length} 项差异，{conflicts.length}{' '}
-                项需要选择。确认前不会替换本机或远端数据。
+                {snapshot.preview.changes.length}{' '}
+                {t('cm_settings_board_text_58')}
+                {conflicts.length} {t('cm_settings_board_text_59')}
               </p>
               {snapshot.preview.changes
                 .filter((change) => change.kind !== 'conflict')
@@ -331,31 +437,33 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                   <p key={change.key}>
                     {change.name} ·{' '}
                     {change.kind === 'add'
-                      ? '新增'
+                      ? t('cm_settings_board_text_60')
                       : change.kind === 'delete'
-                        ? '删除'
-                        : '更新'}
+                        ? t('cm_settings_board_text_61')
+                        : t('cm_settings_board_text_62')}
                   </p>
                 ))}
               {conflicts.map((change) => (
                 <div key={change.key} className="manager-sync-conflict">
                   <strong>{change.name}</strong>
                   <div className="manager-sync-comparison">
-                    <section aria-label="本机内容">
-                      <strong>本机内容</strong>
+                    <section aria-label={t('cm_settings_board_aria_label_63')}>
+                      <strong>{t('cm_settings_board_text_64')}</strong>
                       <pre>
                         {change.local
                           ? JSON.stringify(change.local.value, null, 2)
-                          : '已删除'}
+                          : t('cm_settings_board_text_65')}
                       </pre>
                     </section>
                     {!change.alternatives && (
-                      <section aria-label="远端内容">
-                        <strong>远端内容</strong>
+                      <section
+                        aria-label={t('cm_settings_board_aria_label_66')}
+                      >
+                        <strong>{t('cm_settings_board_text_67')}</strong>
                         <pre>
                           {change.remote
                             ? JSON.stringify(change.remote.value, null, 2)
-                            : '已删除'}
+                            : t('cm_settings_board_text_68')}
                         </pre>
                       </section>
                     )}
@@ -368,13 +476,15 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                         <pre>
                           {alternative.entry
                             ? JSON.stringify(alternative.entry.value, null, 2)
-                            : '已删除'}
+                            : t('cm_settings_board_text_69')}
                         </pre>
                       </section>
                     ))}
                   </div>
                   <select
-                    aria-label={`${change.name}保留版本`}
+                    aria-label={t('cm_settings_board_text_70', [
+                      String(change.name),
+                    ])}
                     value={choices[change.key] ?? ''}
                     onChange={(event) =>
                       setChoices((current) => ({
@@ -383,8 +493,10 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                       }))
                     }
                   >
-                    <option value="">请选择</option>
-                    <option value="local">保留本机</option>
+                    <option value="">{t('cm_settings_board_text_71')}</option>
+                    <option value="local">
+                      {t('cm_settings_board_text_72')}
+                    </option>
                     {change.alternatives ? (
                       change.alternatives.map((alternative) => (
                         <option key={alternative.id} value={alternative.id}>
@@ -392,7 +504,9 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                         </option>
                       ))
                     ) : (
-                      <option value="remote">保留远端</option>
+                      <option value="remote">
+                        {t('cm_settings_board_text_73')}
+                      </option>
                     )}
                   </select>
                 </div>
@@ -410,19 +524,21 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                   })
                 }
               >
-                {snapshot.preview.restore ? '确认恢复' : '确认并开启同步'}
+                {snapshot.preview.restore
+                  ? t('cm_settings_board_text_74')
+                  : t('cm_settings_board_text_75')}
               </UiButton>
               <UiButton
                 disabled={busy}
                 onClick={() => void request({ type: 'cancel' })}
               >
-                取消
+                {t('cm_settings_board_text_76')}
               </UiButton>
             </div>
           ) : null}
           {snapshot?.history.length ? (
             <div className="manager-sync-history">
-              <strong>同步历史</strong>
+              <strong>{t('cm_settings_board_text_77')}</strong>
               {snapshot.history.map((version) => (
                 <UiButton
                   key={version.id}
@@ -431,7 +547,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                     void request({ type: 'restore', versionId: version.id })
                   }
                 >
-                  恢复{' '}
+                  {t('cm_settings_board_text_78')}{' '}
                   {new Date(version.at).toLocaleString('zh-CN', {
                     hour12: false,
                   })}
@@ -444,13 +560,15 @@ function SyncSettings({ controller }: { controller: SyncController }) {
               disabled={busy || !connected || Boolean(snapshot?.preview)}
               onClick={() => void request({ type: 'run' })}
             >
-              {busy ? '正在同步…' : '立即同步'}
+              {busy
+                ? t('cm_settings_board_text_79')
+                : t('cm_settings_board_text_80')}
             </UiButton>
             <UiButton
               disabled={busy}
               onClick={() => void request({ type: 'disconnect' })}
             >
-              断开同步
+              {t('cm_settings_board_text_81')}
             </UiButton>
           </div>
         </>
@@ -458,7 +576,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
       {error ? <p className="is-error">{error}</p> : null}
       {Boolean(snapshot?.diagnostics.length) && (
         <div className="manager-sync-history">
-          <strong>连接诊断</strong>
+          <strong>{t('cm_settings_board_text_82')}</strong>
           <pre>{snapshot?.diagnostics.join('\n')}</pre>
           <DiagnosticCopyButton text={snapshot?.diagnostics.join('\n') ?? ''} />
         </div>
@@ -501,6 +619,8 @@ export function SettingsBoard({
   onImportCancel?: (requestId: string) => void;
   onClose: () => void;
 }) {
+  useLocale();
+
   const browserInfo = useMemo(() => detectBrowserEnvironment(), []);
   const [section, setSection] = useState<SettingsSection>(initialSection);
   const [reloadAfterScriptChange, setReloadAfterScriptChange] = useState(false);
@@ -604,8 +724,10 @@ export function SettingsBoard({
       setAssistantPanelMode(settings.assistantPanelMode);
       setStatus(
         settings.updateIntervalDays === 0
-          ? '自动检查脚本更新已关闭。'
-          : `脚本设置已保存，更新将每 ${settings.updateIntervalDays} 天检查一次。`,
+          ? t('cm_settings_board_text_83')
+          : t('cm_settings_board_text_84', [
+              String(settings.updateIntervalDays),
+            ]),
       );
       setError(false);
     } catch (failure) {
@@ -622,7 +744,7 @@ export function SettingsBoard({
   const openShortcutSettings = async () => {
     try {
       await deckEntry.openShortcutSettings();
-      setStatus('已打开浏览器扩展快捷键页面。修改后返回即可刷新显示。');
+      setStatus(t('cm_settings_board_text_85'));
       setError(false);
       setErrorCopyText('');
     } catch (failure) {
@@ -645,9 +767,7 @@ export function SettingsBoard({
         exportUserscriptLibrary(scripts),
         libraryArchiveFilename(),
       );
-      setStatus(
-        `已导出 ${scripts.length} 张用户脚本。系统内置卡牌与能力设置不会写入脚本归档。`,
-      );
+      setStatus(t('cm_settings_board_text_86', [String(scripts.length)]));
       setError(false);
     } catch (failure) {
       reportError?.('library-transfer', 'export-failed', failure, {
@@ -665,7 +785,7 @@ export function SettingsBoard({
 
   const importLibrary = async (file: File) => {
     setBusy('import');
-    setStatus('正在读取并校验归档…');
+    setStatus(t('cm_settings_board_text_87'));
     setErrorCopyText('');
     const startedAt = performance.now();
     let presentationRequestId: string | null = null;
@@ -679,14 +799,14 @@ export function SettingsBoard({
       );
       if (result.installed > 0) {
         presentationRequestId = onImportPrepare?.(importedScripts) ?? null;
-        setStatus(`校验完成，正在提交 ${result.installed} 张新脚本…`);
+        setStatus(t('cm_settings_board_text_88', [String(result.installed)]));
         await repository.replaceAll(result.scripts);
       }
       const summary = [
-        `${result.installed} 张新增`,
-        `${result.skipped.length} 张重复跳过`,
+        t('cm_settings_board_text_89', [String(result.installed)]),
+        t('cm_settings_board_text_90', [String(result.skipped.length)]),
         ...(result.rejected.length > 0
-          ? [`${result.rejected.length} 张未导入`]
+          ? [t('cm_settings_board_text_91', [String(result.rejected.length)])]
           : []),
       ].join(' · ');
       setStatus(
@@ -715,7 +835,9 @@ export function SettingsBoard({
         failure instanceof Error ? failure.message : String(failure);
       setStatus(message);
       setError(true);
-      setErrorCopyText(`导入文件：${file.name}\n${message}`);
+      setErrorCopyText(
+        t('cm_settings_board_text_92', [String(file.name), String(message)]),
+      );
     } finally {
       if (importInputRef.current) importInputRef.current.value = '';
       if (!closingAfterImport) setBusy(null);
@@ -754,7 +876,7 @@ export function SettingsBoard({
           ? (result.steps ?? [])
               .map(
                 (step) =>
-                  `${step.status === 'completed' ? '完成' : '失败'} · ${step.action} · ${step.message}`,
+                  `${step.status === 'completed' ? t('cm_settings_board_text_93') : t('cm_settings_board_text_94')} · ${step.action} · ${step.message}`,
               )
               .join('\n')
           : '',
@@ -796,14 +918,14 @@ export function SettingsBoard({
   return (
     <>
       <UiDialog
-        ariaLabel="全局设置"
-        title="设置"
+        ariaLabel={t('cm_settings_board_aria_label_95')}
+        title={t('cm_settings_board_title_96')}
         className={`manager-settings-dialog${importing ? ' is-importing' : ''}`}
         onClose={requestClose}
         navigation={
           importing ? undefined : (
             <UiSegmentedControl
-              label="设置分类"
+              label={t('cm_settings_board_label_97')}
               className="manager-settings-sections"
               value={section}
               options={SETTINGS_SECTIONS}
@@ -833,7 +955,9 @@ export function SettingsBoard({
                 onClick={() => void saveUserscriptSettings()}
               >
                 <Save size={14} aria-hidden="true" />
-                {busy === 'save-scripts' ? '正在保存' : '保存脚本设置'}
+                {busy === 'save-scripts'
+                  ? t('cm_settings_board_text_98')
+                  : t('cm_settings_board_text_99')}
               </UiButton>
             </>
           ) : (
@@ -855,15 +979,15 @@ export function SettingsBoard({
             role="status"
             aria-live="polite"
           >
-            <UiLoader large label={status || '正在导入脚本'} />
-            <p>正在校验并写入脚本牌库，请保持当前页面打开。</p>
+            <UiLoader large label={status || t('cm_settings_board_text_100')} />
+            <p>{t('cm_settings_board_text_101')}</p>
           </div>
         ) : section === 'interface' ? (
           <section className="manager-settings-panel">
             <LanguageSettings />
             <UiToggle
-              label="显示页面牌库入口"
-              description="开启后在网页与新标签页显示可拖动的卡牌大师 Logo；点击可展开牌阵。关闭后仍可使用扩展栏图标或快捷键。"
+              label={t('cm_settings_board_label_102')}
+              description={t('cm_settings_board_description_103')}
               checked={deckEntrySettings.showDeckTrigger}
               onChange={(showDeckTrigger) =>
                 void onDeckEntrySettingsChange({
@@ -873,8 +997,8 @@ export function SettingsBoard({
               }
             />
             <UiToggle
-              label="全屏时自动隐藏浮动入口"
-              description="视频全屏播放时，自动隐藏页面入口及倍速、媒体图标；退出视频全屏后恢复。"
+              label={t('cm_settings_board_label_104')}
+              description={t('cm_settings_board_description_105')}
               checked={deckEntrySettings.autoHideInFullscreen}
               onChange={(enabled) =>
                 void onDeckEntrySettingsChange({
@@ -884,8 +1008,8 @@ export function SettingsBoard({
               }
             />
             <UiToggle
-              label="扩展栏显示激活卡牌数量"
-              description="仅控制浏览器扩展栏图标上的数字，图标本身始终保持不变。"
+              label={t('cm_settings_board_label_106')}
+              description={t('cm_settings_board_description_107')}
               checked={deckEntrySettings.showToolbarBadge}
               onChange={(visible) =>
                 void onDeckEntrySettingsChange({
@@ -895,8 +1019,8 @@ export function SettingsBoard({
               }
             />
             <UiToggle
-              label="页面入口显示激活卡牌数量"
-              description="仅控制网页与新标签页中卡牌大师 Logo 右上角的数字。"
+              label={t('cm_settings_board_label_108')}
+              description={t('cm_settings_board_description_109')}
               checked={deckEntrySettings.showDeckTriggerBadge}
               onChange={(visible) =>
                 void onDeckEntrySettingsChange({
@@ -908,7 +1032,7 @@ export function SettingsBoard({
             {deckEntry.shortcutSettingsAvailable() ? (
               <UiActionRow
                 icon={<Keyboard size={18} aria-hidden="true" />}
-                title="牌阵快捷键"
+                title={t('cm_settings_board_title_110')}
                 description={
                   shortcutKeys.length > 0 ? (
                     <span className="manager-shortcut-keys">
@@ -920,12 +1044,12 @@ export function SettingsBoard({
                       ))}
                     </span>
                   ) : (
-                    '未设置'
+                    t('cm_settings_board_text_111')
                   )
                 }
                 actions={
                   <UiIconButton
-                    label="在浏览器中配置牌阵快捷键"
+                    label={t('cm_settings_board_label_112')}
                     onClick={() => void openShortcutSettings()}
                   >
                     <ExternalLink size={15} aria-hidden="true" />
@@ -937,19 +1061,16 @@ export function SettingsBoard({
         ) : section === 'scripts' ? (
           <section className="manager-settings-panel">
             <UiToggle
-              label="脚本变更后刷新当前页面"
-              description="脚本会先立即注入；开启后，再刷新当前页面以重新经历完整加载流程。"
+              label={t('cm_settings_board_label_113')}
+              description={t('cm_settings_board_description_114')}
               checked={reloadAfterScriptChange}
               onChange={setReloadAfterScriptChange}
             />
-            <UiNotice title="自动检查脚本更新">
-              <p>
-                定期读取脚本声明的 `@updateURL` 或
-                `@downloadURL`。每张卡牌自己的“检查更新”开关仍然优先生效。
-              </p>
+            <UiNotice title={t('cm_settings_board_title_115')}>
+              <p>{t('cm_settings_board_text_116')}</p>
             </UiNotice>
             <UiTextField
-              label="检查间隔（天）"
+              label={t('cm_settings_board_label_117')}
               type="number"
               min={0}
               max={365}
@@ -965,14 +1086,16 @@ export function SettingsBoard({
               }}
             />
             <UiToggle
-              label="只检查已启用脚本"
-              description="关闭后也会检查当前处于停用状态、且允许检查更新的脚本。"
+              label={t('cm_settings_board_label_118')}
+              description={t('cm_settings_board_description_119')}
               checked={updateEnabledOnly}
               onChange={setUpdateEnabledOnly}
             />
             <div className="manager-browser-notice">
               <div className="manager-browser-notice-header">
-                <span className="manager-browser-badge">环境识别</span>
+                <span className="manager-browser-badge">
+                  {t('cm_settings_board_text_120')}
+                </span>
                 <span className="manager-browser-name">
                   {browserInfo.displayName}
                 </span>
@@ -980,8 +1103,8 @@ export function SettingsBoard({
                   className={`manager-browser-mode-tag ${assistantPanelMode === 'popup' ? 'is-popup' : 'is-sidepanel'}`}
                 >
                   {assistantPanelMode === 'popup'
-                    ? '独立弹出窗口'
-                    : '原生侧边栏'}
+                    ? t('cm_settings_board_text_121')
+                    : t('cm_settings_board_text_122')}
                 </span>
               </div>
               <p className="manager-browser-notice-description">
@@ -989,11 +1112,11 @@ export function SettingsBoard({
               </p>
             </div>
             <UiToggle
-              label="弹出窗口替代侧边栏"
+              label={t('cm_settings_board_label_123')}
               description={
                 browserInfo.brand === 'arc'
-                  ? '已为你自动开启。Arc 浏览器未提供原生侧边栏容器，以独立窗口模式呈现。'
-                  : '开启后，脚本工坊将以独立窗口形式呈现。适用于 Arc 等未启用原生侧边栏的浏览器。'
+                  ? t('cm_settings_board_text_124')
+                  : t('cm_settings_board_text_125')
               }
               checked={assistantPanelMode === 'popup'}
               onChange={(checked) => {
@@ -1028,11 +1151,17 @@ export function SettingsBoard({
                 }
               }}
             />
-            <UiNotice title="检查状态">
+            <UiNotice title={t('cm_settings_board_title_126')}>
               <p>
                 {lastUpdateCheckAt > 0
-                  ? `上次检查：${new Date(lastUpdateCheckAt).toLocaleString('zh-CN', { hour12: false })}`
-                  : '尚未执行自动检查。设置为 0 天可以关闭此功能。'}
+                  ? t('cm_settings_board_text_127', [
+                      String(
+                        new Date(lastUpdateCheckAt).toLocaleString('zh-CN', {
+                          hour12: false,
+                        }),
+                      ),
+                    ])
+                  : t('cm_settings_board_text_128')}
               </p>
             </UiNotice>
           </section>
@@ -1041,17 +1170,14 @@ export function SettingsBoard({
             {sync ? <SyncSettings controller={sync} /> : null}
             <section className="manager-data-section">
               <header className="manager-data-section__heading">
-                <strong>备份与恢复</strong>
-                <p>在进行破坏性清理前，可以先导出全部用户脚本。</p>
+                <strong>{t('cm_settings_board_text_129')}</strong>
+                <p>{t('cm_settings_board_text_130')}</p>
               </header>
               <UiNotice
                 icon={<ArchiveRestore size={18} aria-hidden="true" />}
-                title="脚本卡牌归档"
+                title={t('cm_settings_board_title_131')}
               >
-                <p>
-                  导出标准 ZIP 与完整 `.user.js`。归档只包含
-                  用户脚本，不包含系统内置卡牌及其能力设置。
-                </p>
+                <p>{t('cm_settings_board_text_132')}</p>
               </UiNotice>
               <div className="manager-library-transfer__actions">
                 <UiButton
@@ -1059,7 +1185,7 @@ export function SettingsBoard({
                   onClick={() => importInputRef.current?.click()}
                 >
                   <FileUp size={16} aria-hidden="true" />
-                  导入脚本
+                  {t('cm_settings_board_text_133')}
                 </UiButton>
                 <UiButton
                   variant="primary"
@@ -1067,7 +1193,9 @@ export function SettingsBoard({
                   onClick={() => void exportLibrary()}
                 >
                   <Download size={16} aria-hidden="true" />
-                  {busy === 'export' ? '正在导出' : '导出全部'}
+                  {busy === 'export'
+                    ? t('cm_settings_board_text_134')
+                    : t('cm_settings_board_text_135')}
                 </UiButton>
               </div>
             </section>
@@ -1084,8 +1212,8 @@ export function SettingsBoard({
 
             <section className="manager-data-section">
               <header className="manager-data-section__heading">
-                <strong>恢复默认偏好</strong>
-                <p>只恢复使用偏好，不删除脚本、站点规则、会话或凭据。</p>
+                <strong>{t('cm_settings_board_text_136')}</strong>
+                <p>{t('cm_settings_board_text_137')}</p>
               </header>
               <DataActionRow
                 definition={PREFERENCES_ACTION}
@@ -1096,8 +1224,8 @@ export function SettingsBoard({
 
             <section className="manager-data-section">
               <header className="manager-data-section__heading">
-                <strong>分类清理</strong>
-                <p>每项操作彼此独立，并在执行前再次确认。</p>
+                <strong>{t('cm_settings_board_text_138')}</strong>
+                <p>{t('cm_settings_board_text_139')}</p>
               </header>
               <div className="manager-data-list">
                 {DATA_ACTIONS.filter(
@@ -1117,8 +1245,8 @@ export function SettingsBoard({
 
             <section className="manager-data-section is-danger">
               <header className="manager-data-section__heading">
-                <strong>危险区域</strong>
-                <p>恢复后无法撤销，浏览器扩展快捷键不会被更改。</p>
+                <strong>{t('cm_settings_board_text_140')}</strong>
+                <p>{t('cm_settings_board_text_141')}</p>
               </header>
               <DataActionRow
                 definition={ALL_ACTION}
@@ -1132,7 +1260,9 @@ export function SettingsBoard({
       {confirmation && (
         <UiLayeredCompactDialog
           open={confirmationOpen}
-          ariaLabel={`确认${confirmation.title}`}
+          ariaLabel={t('cm_settings_board_text_142', [
+            String(confirmation.title),
+          ])}
           title={confirmation.title}
           onClose={closeConfirmation}
           onExitComplete={() => {
@@ -1141,7 +1271,7 @@ export function SettingsBoard({
           footer={
             <>
               <UiButton disabled={busy !== null} onClick={closeConfirmation}>
-                取消
+                {t('cm_settings_board_text_143')}
               </UiButton>
               <UiButton
                 variant={confirmation.danger ? 'danger' : 'primary'}
@@ -1149,7 +1279,7 @@ export function SettingsBoard({
                 onClick={() => void runDataAction(confirmation.action)}
               >
                 {busy === `data:${confirmation.action}`
-                  ? '正在处理'
+                  ? t('cm_settings_board_text_144')
                   : confirmation.buttonLabel}
               </UiButton>
             </>
@@ -1158,7 +1288,7 @@ export function SettingsBoard({
           <div className="manager-data-confirmation">
             <UiNotice
               tone={confirmation.danger ? 'warning' : 'info'}
-              title="请确认操作范围"
+              title={t('cm_settings_board_title_145')}
             >
               <p>{confirmation.description}</p>
             </UiNotice>
@@ -1168,7 +1298,7 @@ export function SettingsBoard({
                 onClick={() => void exportLibrary()}
               >
                 <Download size={16} aria-hidden="true" />
-                先导出全部脚本
+                {t('cm_settings_board_text_146')}
               </UiButton>
             )}
           </div>
@@ -1187,6 +1317,8 @@ function DataActionRow({
   busy: BusyState;
   onRequest: (definition: DataActionDefinition) => void;
 }) {
+  useLocale();
+
   const Icon = definition.icon;
   return (
     <UiActionRow

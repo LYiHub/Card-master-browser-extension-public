@@ -1,6 +1,5 @@
 import { Gauge, RotateCcw, Save } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-
 import {
   DiagnosticCopyButton,
   UiButton,
@@ -11,6 +10,8 @@ import {
   UiTextArea,
   UiToggle,
 } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import {
   defaultMediaSpeedSettings,
   isMediaSpeedStandardSpeed,
@@ -41,8 +42,8 @@ function wheelDefinition(items: readonly MediaSpeedWheelItem[]) {
       item.kind === 'speed'
         ? String(item.speed)
         : item.kind === 'random'
-          ? '随机'
-          : '地狱',
+          ? t('cm_media_speed_settings_board_text_1')
+          : t('cm_media_speed_settings_board_text_2'),
     )
     .join('\n');
 }
@@ -52,8 +53,10 @@ function parseWheelDefinition(value: string): MediaSpeedWheelItem[] {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
-  if (lines.length === 0) throw new Error('速度法印至少需要一个位置。');
-  if (lines.length > 12) throw new Error('速度法印最多支持 12 个位置。');
+  if (lines.length === 0)
+    throw new Error(t('cm_media_speed_settings_board_error_3'));
+  if (lines.length > 12)
+    throw new Error(t('cm_media_speed_settings_board_error_4'));
 
   const items: MediaSpeedWheelItem[] = [];
   const speeds = new Set<number>();
@@ -61,30 +64,36 @@ function parseWheelDefinition(value: string): MediaSpeedWheelItem[] {
   let hellAdded = false;
   for (const line of lines) {
     if (/^(随机|骰子|random)$/i.test(line)) {
-      if (randomAdded) throw new Error('随机位置只能添加一次。');
+      if (randomAdded)
+        throw new Error(t('cm_media_speed_settings_board_error_5'));
       randomAdded = true;
       items.push({ kind: 'random' });
       continue;
     }
     if (/^地狱$/u.test(line)) {
-      if (hellAdded) throw new Error('地狱位置只能添加一次。');
+      if (hellAdded)
+        throw new Error(t('cm_media_speed_settings_board_error_6'));
       hellAdded = true;
       items.push({ kind: 'hell' });
       continue;
     }
     const speed = Number(line.replace(/×$/u, ''));
     if (!isMediaSpeedStandardSpeed(speed)) {
-      throw new Error(`“${line}”不是 0.1 至 16 之间的有效倍速。`);
+      throw new Error(
+        t('cm_media_speed_settings_board_error_7', [String(line)]),
+      );
     }
     const normalized = Math.round(speed * 100) / 100;
     if (speeds.has(normalized)) {
-      throw new Error(`倍速 ${normalized}× 重复出现。`);
+      throw new Error(
+        t('cm_media_speed_settings_board_error_8', [String(normalized)]),
+      );
     }
     speeds.add(normalized);
     items.push({ kind: 'speed', speed: normalized });
   }
   if (speeds.size === 0) {
-    throw new Error('速度法印至少需要一个数字倍速，供默认与随机模式使用。');
+    throw new Error(t('cm_media_speed_settings_board_error_9'));
   }
   return items;
 }
@@ -98,6 +107,8 @@ export function MediaSpeedSettingsBoard({
   onSnapshot: (snapshot: MediaSpeedSnapshot) => void;
   onClose: () => void;
 }) {
+  useLocale();
+
   const [view, setView] = useState<MediaSpeedSettingsView | null>(null);
   const [settings, setSettings] = useState<MediaSpeedSettings | null>(null);
   const [wheelText, setWheelText] = useState('');
@@ -157,17 +168,21 @@ export function MediaSpeedSettingsBoard({
 
   if (!view || !settings) {
     return (
-      <UiDialog ariaLabel="媒体倍速设置" title="媒体倍速" onClose={onClose}>
+      <UiDialog
+        ariaLabel={t('cm_media_speed_settings_board_aria_label_10')}
+        title={t('cm_media_speed_settings_board_title_11')}
+        onClose={onClose}
+      >
         {status.error ? (
           <UiNotice
             tone="error"
-            title="媒体倍速设置读取失败"
+            title={t('cm_media_speed_settings_board_title_12')}
             copyText={status.message}
           >
             <p>{status.message}</p>
           </UiNotice>
         ) : (
-          <UiLoader large label="正在读取媒体时间设置" />
+          <UiLoader large label={t('cm_media_speed_settings_board_label_13')} />
         )}
       </UiDialog>
     );
@@ -189,7 +204,7 @@ export function MediaSpeedSettingsBoard({
     setWheelText(wheelDefinition(defaults.wheelItems));
     setWheelError(null);
     setStatus({
-      message: '已载入全部默认设置，点击“应用设置”后生效。',
+      message: t('cm_media_speed_settings_board_message_14'),
       error: false,
     });
   };
@@ -222,19 +237,31 @@ export function MediaSpeedSettingsBoard({
 
   return (
     <UiDialog
-      ariaLabel="媒体倍速设置"
-      title="媒体倍速"
+      ariaLabel={t('cm_media_speed_settings_board_aria_label_15')}
+      title={t('cm_media_speed_settings_board_title_16')}
       status={
         !settings.enabled
-          ? { label: '全局已停用', tone: 'inactive' }
+          ? {
+              label: t('cm_media_speed_settings_board_label_17'),
+              tone: 'inactive',
+            }
           : !currentSiteEnabled
-            ? { label: '当前网站已停用', tone: 'inactive' }
+            ? {
+                label: t('cm_media_speed_settings_board_label_18'),
+                tone: 'inactive',
+              }
             : view.snapshot.mediaCount > 0
               ? {
-                  label: `视频 ${view.snapshot.videoCount} · 音频 ${view.snapshot.audioCount}`,
+                  label: t('cm_media_speed_settings_board_label_19', [
+                    String(view.snapshot.videoCount),
+                    String(view.snapshot.audioCount),
+                  ]),
                   tone: 'active',
                 }
-              : { label: '等待媒体', tone: 'active' }
+              : {
+                  label: t('cm_media_speed_settings_board_label_20'),
+                  tone: 'active',
+                }
       }
       onClose={onClose}
       footer={
@@ -243,7 +270,7 @@ export function MediaSpeedSettingsBoard({
             visible={busy !== null}
             compact
             className="manager-settings-operation-loader"
-            label="正在同步媒体倍速设置"
+            label={t('cm_media_speed_settings_board_label_21')}
           />
           {busy === null && status.message && (
             <p className={status.error ? 'is-error' : ''}>{status.message}</p>
@@ -253,7 +280,7 @@ export function MediaSpeedSettingsBoard({
           )}
           <UiButton disabled={busy !== null} onClick={resetDraft}>
             <RotateCcw size={14} aria-hidden="true" />
-            恢复全部默认设置
+            {t('cm_media_speed_settings_board_text_22')}
           </UiButton>
           <UiButton
             variant="primary"
@@ -262,12 +289,12 @@ export function MediaSpeedSettingsBoard({
               void run(
                 'save',
                 () => controller.saveSettings(settings),
-                '媒体倍速设置已应用。',
+                t('cm_media_speed_settings_board_text_23'),
               )
             }
           >
             <Save size={14} aria-hidden="true" />
-            应用设置
+            {t('cm_media_speed_settings_board_text_24')}
           </UiButton>
         </>
       }
@@ -275,27 +302,27 @@ export function MediaSpeedSettingsBoard({
       {view.snapshot.status === 'error' && (
         <UiNotice
           tone="error"
-          title="媒体时间引擎诊断"
+          title={t('cm_media_speed_settings_board_title_25')}
           copyText={view.snapshot.error}
         >
-          <p>{view.snapshot.error || '媒体时间引擎运行异常。'}</p>
+          <p>
+            {view.snapshot.error || t('cm_media_speed_settings_board_text_26')}
+          </p>
         </UiNotice>
       )}
 
       <div className="manager-media-speed-intro">
         <Gauge size={22} aria-hidden="true" />
         <div>
-          <strong>页面级时间控制</strong>
-          <p>
-            选定档位会应用到当前页面及嵌入框架中的视频和音频；未锁定时播放器仍可自行调整。
-          </p>
+          <strong>{t('cm_media_speed_settings_board_text_27')}</strong>
+          <p>{t('cm_media_speed_settings_board_text_28')}</p>
         </div>
       </div>
 
       <div className="manager-media-speed-grid">
         <UiTextArea
-          label="速度法印"
-          hint="每行一个位置，按顺时针排列。数字代表倍速；“随机”和“地狱”均可删除。最多 12 个位置。"
+          label={t('cm_media_speed_settings_board_label_29')}
+          hint={t('cm_media_speed_settings_board_hint_30')}
           className="manager-media-speed-wheel-editor"
           value={wheelText}
           spellCheck={false}
@@ -303,7 +330,7 @@ export function MediaSpeedSettingsBoard({
         />
         <UiSelectField
           id="media-speed-default"
-          label="默认播放速度"
+          label={t('cm_media_speed_settings_board_label_31')}
           value={settings.defaultSpeed}
           onChange={(event) =>
             setSettings((current) =>
@@ -325,8 +352,8 @@ export function MediaSpeedSettingsBoard({
           ))}
         </UiSelectField>
         <UiToggle
-          label="显示速度法印"
-          description="检测到可控媒体后，在牌库入口周围依次展开速度选项。"
+          label={t('cm_media_speed_settings_board_label_32')}
+          description={t('cm_media_speed_settings_board_description_33')}
           checked={settings.showWheel}
           onChange={(showWheel) =>
             setSettings((current) =>
@@ -335,8 +362,8 @@ export function MediaSpeedSettingsBoard({
           }
         />
         <UiToggle
-          label="同时控制音频"
-          description="关闭后恢复页面音频元素的正常速度，只继续控制视频。"
+          label={t('cm_media_speed_settings_board_label_34')}
+          description={t('cm_media_speed_settings_board_description_35')}
           checked={settings.includeAudio}
           onChange={(includeAudio) =>
             setSettings((current) =>
@@ -345,8 +372,8 @@ export function MediaSpeedSettingsBoard({
           }
         />
         <UiToggle
-          label="全局启用"
-          description="引擎保持常驻，这里只切换媒体时间控制是否生效。"
+          label={t('cm_media_speed_settings_board_label_36')}
+          description={t('cm_media_speed_settings_board_description_37')}
           checked={settings.enabled}
           onChange={(enabled) =>
             setSettings((current) =>
@@ -355,11 +382,13 @@ export function MediaSpeedSettingsBoard({
           }
         />
         <UiToggle
-          label="在当前网站启用"
+          label={t('cm_media_speed_settings_board_label_38')}
           description={
             currentHost
-              ? `单独控制 ${currentHost}，并记忆该网站最后选择的倍速。`
-              : '当前页面无法识别网站地址。'
+              ? t('cm_media_speed_settings_board_text_39', [
+                  String(currentHost),
+                ])
+              : t('cm_media_speed_settings_board_text_40')
           }
           checked={currentSiteEnabled}
           disabled={!currentHost}
@@ -372,11 +401,11 @@ export function MediaSpeedSettingsBoard({
           }
         />
         <UiToggle
-          label="阻止播放器自动重置"
+          label={t('cm_media_speed_settings_board_label_41')}
           description={
             currentHost
-              ? '仅在网站反复改回倍率时启用；你的原生倍速操作仍会同步。'
-              : '当前页面无法识别网站地址。'
+              ? t('cm_media_speed_settings_board_text_42')
+              : t('cm_media_speed_settings_board_text_43')
           }
           checked={currentSiteLocked}
           disabled={!currentHost || !currentSiteEnabled}

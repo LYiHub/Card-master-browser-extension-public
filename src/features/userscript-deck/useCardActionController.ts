@@ -5,7 +5,6 @@ import {
   useEffect,
   useRef,
 } from 'react';
-
 import type { useAudioDirector } from '../../audio/AudioDirectorProvider';
 import type { BilibiliCapabilitySnapshot } from '../../bilibili-capabilities/domain/types';
 import type {
@@ -14,6 +13,8 @@ import type {
 } from '../../content-blocking/domain/types';
 import { createElementHidingRule } from '../../content-blocking/infrastructure/element-hiding-rule';
 import { type BurnAnimator, makeBurnAnimator } from '../../lib/burn-effect';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import type { MediaResourcesSnapshot } from '../../media-resources/domain/types';
 import type { MediaSpeedSnapshot } from '../../media-speed/domain/types';
 import { gsap } from '../../motion/gsap';
@@ -77,7 +78,7 @@ type AudioDirector = ReturnType<typeof useAudioDirector>;
 function interactionFailureMessage(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
   if (/storage already initialized/i.test(message)) {
-    return '内容拦截引擎检测到重复的存储初始化，当前操作没有生效。扩展将继续复用已有存储状态，请重新尝试。';
+    return t('cm_use_card_action_controller_text_1');
   }
   return message;
 }
@@ -163,6 +164,8 @@ export function useCardActionController({
   returnCardToSpread: (cardId: string) => void;
   setInteractionError: Dispatch<SetStateAction<string | null>>;
 }) {
+  useLocale();
+
   const {
     contentBlocking,
     pageTheme,
@@ -568,7 +571,9 @@ export function useCardActionController({
           return;
         }
         if (action.kind !== 'manage') {
-          throw new Error(`卡牌大师智能体不支持操作：${action.kind}`);
+          throw new Error(
+            t('cm_use_card_action_controller_error_2', [String(action.kind)]),
+          );
         }
         dispatchManager({
           type: 'openDetail',
@@ -591,7 +596,9 @@ export function useCardActionController({
           returnToCardSpread();
           return;
         }
-        throw new Error(`新标签页不支持操作：${action.kind}`);
+        throw new Error(
+          t('cm_use_card_action_controller_error_3', [String(action.kind)]),
+        );
       }
 
       if (isGamepadControlCard(item)) {
@@ -614,12 +621,14 @@ export function useCardActionController({
           await finishToggleAction(element);
           return;
         }
-        throw new Error(`手柄控制不支持操作：${action.kind}`);
+        throw new Error(
+          t('cm_use_card_action_controller_error_4', [String(action.kind)]),
+        );
       }
 
       if (isContentBlockingCard(item)) {
         if (!contentBlocking) {
-          throw new Error('当前宿主没有提供原生内容拦截能力。');
+          throw new Error(t('cm_use_card_action_controller_error_5'));
         }
         if (action.kind === 'manage') {
           audio.play('panelOpen', { positionX: window.innerWidth / 2 });
@@ -641,7 +650,7 @@ export function useCardActionController({
         }
         if (action.kind === 'site-toggle') {
           if (!item.site.hostname) {
-            throw new Error('当前页面没有可配置的站点域名。');
+            throw new Error(t('cm_use_card_action_controller_error_6'));
           }
           await runClosingCast(item, element, action, async () => {
             const settings = await contentBlocking.setCurrentSiteFiltering(
@@ -655,7 +664,7 @@ export function useCardActionController({
         if (action.kind === 'undo-block') {
           const batch = item.snapshot.lastElementBlockingBatch;
           if (!batch || batch.hostname !== item.site.hostname) {
-            throw new Error('当前站点没有可恢复的元素拦截批次。');
+            throw new Error(t('cm_use_card_action_controller_error_7'));
           }
           await runClosingCast(item, element, action, async () => {
             setContentBlockingSnapshot(
@@ -669,7 +678,7 @@ export function useCardActionController({
 
       if (isPageThemeCard(item)) {
         if (!pageTheme) {
-          throw new Error('当前宿主没有提供页面光影能力。');
+          throw new Error(t('cm_use_card_action_controller_error_8'));
         }
         if (action.kind === 'manage' || action.kind === 'theme-tune') {
           audio.play('panelOpen', { positionX: window.innerWidth / 2 });
@@ -711,7 +720,7 @@ export function useCardActionController({
 
       if (isMediaSpeedCard(item)) {
         if (!mediaSpeed) {
-          throw new Error('当前宿主没有提供媒体倍速能力。');
+          throw new Error(t('cm_use_card_action_controller_error_9'));
         }
         if (action.kind === 'manage') {
           audio.play('panelOpen', { positionX: window.innerWidth / 2 });
@@ -732,7 +741,8 @@ export function useCardActionController({
         }
         if (action.kind === 'speed-select') {
           const speed = action.speed;
-          if (!speed) throw new Error('倍速档位缺少速度值。');
+          if (!speed)
+            throw new Error(t('cm_use_card_action_controller_error_10'));
           await runClosingCast(item, element, action, async () => {
             setMediaSpeedSnapshot(
               await mediaSpeed.setSelection({
@@ -748,7 +758,7 @@ export function useCardActionController({
 
       if (isMediaResourcesCard(item)) {
         if (!mediaResources) {
-          throw new Error('当前宿主没有提供媒体资源发现能力。');
+          throw new Error(t('cm_use_card_action_controller_error_11'));
         }
         if (action.kind === 'manage') {
           audio.play('panelOpen', { positionX: window.innerWidth / 2 });
@@ -775,7 +785,7 @@ export function useCardActionController({
 
       if (isBilibiliCapabilityCard(item)) {
         if (!bilibiliCapabilities) {
-          throw new Error('当前宿主没有提供 B 站增强能力。');
+          throw new Error(t('cm_use_card_action_controller_error_12'));
         }
         if (action.kind === 'manage') {
           audio.play('panelOpen', { positionX: window.innerWidth / 2 });
@@ -800,7 +810,7 @@ export function useCardActionController({
         if (action.kind === 'capability-command') {
           const command = action.command;
           if (!command) {
-            throw new Error('B 站能力指令缺少命令身份。');
+            throw new Error(t('cm_use_card_action_controller_error_13'));
           }
           await runClosingCast(item, element, action, async () => {
             setBilibiliCapabilitySnapshots(
@@ -1014,7 +1024,7 @@ export function useCardActionController({
     if (action.kind === 'block' && !blockingSession) {
       recoverFromInteractionError(
         'element-targeting-session-missing',
-        new Error('永久拦截会话已经结束，请重新进入点选模式。'),
+        new Error(t('cm_use_card_action_controller_error_14')),
         {
           actionId: action.id,
           cardId: targeting.item.id,

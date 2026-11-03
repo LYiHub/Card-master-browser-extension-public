@@ -1,6 +1,7 @@
 import { type ComponentProps, useEffect, useRef } from 'react';
-
 import { useAudioDirector } from '../../audio/AudioDirectorProvider';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import {
   cardHoverIndexAtPoint,
   type Point,
@@ -86,6 +87,8 @@ export function CardSpread({
   executionUnavailable: boolean;
   onReorderRelease: (cardId: string, point: Point | null) => void;
 }) {
+  useLocale();
+
   const audio = useAudioDirector();
   const mode = managerState.mode;
   const hoverEnabled =
@@ -151,7 +154,7 @@ export function CardSpread({
   return (
     <section
       className={`manager-card-spread${interactionId ? ' has-active-interaction' : ''}`}
-      aria-label="当前页面可用的卡牌牌阵"
+      aria-label={t('cm_card_spread_aria_label_1')}
     >
       {renderedItems.map((item) => {
         const index = visibleIndexById.get(item.id) ?? -1;

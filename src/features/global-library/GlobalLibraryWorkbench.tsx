@@ -55,6 +55,8 @@ import { useGamepadConnection } from '../../gamepad-control/useGamepadSnapshot';
 import { extensionTarget } from '../../hosts/extension/platform';
 import { useElementVisibility } from '../../lib/element-visibility';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale, useLocalizedMemo } from '../../localization/react';
 import {
   MEDIA_RESOURCES_CARD_ID,
   type MediaResourcesSnapshot,
@@ -131,14 +133,39 @@ type InspectionMode = 'metadata' | 'source';
 type GlobalLibraryCard = DeckCard;
 
 const FILTERS = [
-  { value: 'all', label: '全部' },
-  { value: 'enabled', label: '已启用' },
-  { value: 'disabled', label: '已停用' },
+  {
+    value: 'all',
+    get label() {
+      return t('cm_global_library_workbench_label_1');
+    },
+  },
+  {
+    value: 'enabled',
+    get label() {
+      return t('cm_global_library_workbench_label_2');
+    },
+  },
+  {
+    value: 'disabled',
+    get label() {
+      return t('cm_global_library_workbench_label_3');
+    },
+  },
 ] as const;
 
 const INSPECTION_MODES = [
-  { value: 'metadata', label: '卡牌信息' },
-  { value: 'source', label: '完整源码' },
+  {
+    value: 'metadata',
+    get label() {
+      return t('cm_global_library_workbench_label_4');
+    },
+  },
+  {
+    value: 'source',
+    get label() {
+      return t('cm_global_library_workbench_label_5');
+    },
+  },
 ] as const;
 
 function cardHiddenFromDeck(
@@ -153,13 +180,17 @@ function cardUnavailableReason(card: GlobalLibraryCard) {
     (isBilibiliCapabilityCard(card) || isMediaResourcesCard(card)) &&
     !card.snapshot.available
   ) {
-    return card.snapshot.unavailableReason ?? '当前平台不支持这张卡牌。';
+    return (
+      card.snapshot.unavailableReason ?? t('cm_global_library_workbench_text_6')
+    );
   }
   return null;
 }
 
 function cardUnavailableLabel(card: GlobalLibraryCard) {
-  return isBilibiliCapabilityCard(card) ? 'Safari 不支持' : '当前平台不支持';
+  return isBilibiliCapabilityCard(card)
+    ? t('cm_global_library_workbench_text_7')
+    : t('cm_global_library_workbench_text_8');
 }
 
 function GlobalLibraryCard({
@@ -179,6 +210,8 @@ function GlobalLibraryCard({
   onInspect: (card: GlobalLibraryCard, element: HTMLElement) => void;
   onInspectEnd: (cardId: string) => void;
 }) {
+  useLocale();
+
   const { ref: visibilityRef, visible } =
     useElementVisibility<HTMLButtonElement>();
   const rootRef = useRef<HTMLButtonElement | null>(null);
@@ -274,7 +307,7 @@ function GlobalLibraryCard({
       className={`global-library-card${selected ? ' is-selected' : ''}${hidden ? ' is-deck-hidden' : ''}${unavailableReason ? ' is-unavailable' : ''}`}
       style={{ '--manager-accent': accent } as CSSProperties}
       aria-pressed={selected}
-      aria-label={`${cardTitle(card)}${unavailableReason ? `，${cardUnavailableLabel(card)}` : hidden ? '，已从牌阵隐藏' : ''}`}
+      aria-label={`${cardTitle(card)}${unavailableReason ? `，${cardUnavailableLabel(card)}` : hidden ? t('cm_global_library_workbench_text_9') : ''}`}
       onClick={() => {
         previousBoundsRef.current =
           rootRef.current?.getBoundingClientRect() ?? null;
@@ -335,7 +368,7 @@ function GlobalLibraryCard({
       ) : hidden ? (
         <span className="global-library-card__visibility-badge">
           <EyeOff size={13} aria-hidden="true" />
-          已隐藏
+          {t('cm_global_library_workbench_text_10')}
         </span>
       ) : null}
     </button>
@@ -375,6 +408,8 @@ function HoveredCardPlaque({
 }: {
   inspection: HoveredCardInspection;
 }) {
+  useLocale();
+
   const plaqueRef = useRef<HTMLElement | null>(null);
   const [position, setPosition] = useState({
     left: inspection.left,
@@ -427,7 +462,7 @@ function HoveredCardPlaque({
       <p>
         {cardUnavailableReason(inspection.card) ??
           cardDescription(inspection.card) ??
-          '该卡牌未提供说明。'}
+          t('cm_global_library_workbench_text_11')}
       </p>
     </CardInfoPopover>
   );
@@ -442,8 +477,12 @@ function MetadataValues({
   values: readonly string[];
   href?: string | null;
 }) {
+  useLocale();
+
   const occurrences = new Map<string, number>();
-  const entries = (values.length > 0 ? values : ['未声明']).map((value) => {
+  const entries = (
+    values.length > 0 ? values : [t('cm_global_library_workbench_text_12')]
+  ).map((value) => {
     const occurrence = (occurrences.get(value) ?? 0) + 1;
     occurrences.set(value, occurrence);
     return { key: `${value}:${occurrence}`, value };
@@ -459,7 +498,7 @@ function MetadataValues({
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              title="在新标签页打开脚本来源"
+              title={t('cm_global_library_workbench_title_13')}
             >
               <code>{entry.value}</code>
               <ExternalLink size={12} aria-hidden="true" />
@@ -474,6 +513,8 @@ function MetadataValues({
 }
 
 function ExpandableDescription({ description }: { description: string }) {
+  useLocale();
+
   const [expanded, setExpanded] = useState(false);
   const [expandable, setExpandable] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement | null>(null);
@@ -494,7 +535,9 @@ function ExpandableDescription({ description }: { description: string }) {
     <div
       className={`global-library-detail__description${expanded ? ' is-expanded' : ''}`}
     >
-      <p ref={descriptionRef}>{description || '该卡牌未提供说明。'}</p>
+      <p ref={descriptionRef}>
+        {description || t('cm_global_library_workbench_text_14')}
+      </p>
       {expandable && (
         <button type="button" onClick={() => setExpanded((value) => !value)}>
           <MotionIconSwap
@@ -504,7 +547,9 @@ function ExpandableDescription({ description }: { description: string }) {
               { state: 'expanded', icon: <ChevronUp size={14} /> },
             ]}
           />
-          {expanded ? '收起说明' : '展开说明'}
+          {expanded
+            ? t('cm_global_library_workbench_text_15')
+            : t('cm_global_library_workbench_text_16')}
         </button>
       )}
     </div>
@@ -522,6 +567,8 @@ function DeckVisibilityButton({
   sessionOnly?: boolean;
   onChange: (hidden: boolean) => Promise<void>;
 }) {
+  useLocale();
+
   return (
     <UiButton
       variant={hidden ? 'primary' : 'secondary'}
@@ -530,11 +577,11 @@ function DeckVisibilityButton({
       title={
         sessionOnly
           ? hidden
-            ? '重新放回当前牌阵'
-            : '先从牌阵拿开，重启浏览器后会回来'
+            ? t('cm_global_library_workbench_text_17')
+            : t('cm_global_library_workbench_text_18')
           : hidden
-            ? '恢复在牌阵中显示'
-            : '从牌阵中隐藏，卡牌仍继续运行'
+            ? t('cm_global_library_workbench_text_19')
+            : t('cm_global_library_workbench_text_20')
       }
       onClick={() => void onChange(!hidden)}
     >
@@ -553,11 +600,11 @@ function DeckVisibilityButton({
       />
       {sessionOnly
         ? hidden
-          ? '重新显示'
-          : '暂时在牌阵中隐藏，重启浏览器恢复'
+          ? t('cm_global_library_workbench_text_21')
+          : t('cm_global_library_workbench_text_22')
         : hidden
-          ? '在牌阵中显示'
-          : '在牌阵中隐藏'}
+          ? t('cm_global_library_workbench_text_23')
+          : t('cm_global_library_workbench_text_24')}
     </UiButton>
   );
 }
@@ -571,13 +618,19 @@ function CardEnablementButton({
   busy: boolean;
   onChange: (enabled: boolean) => Promise<void>;
 }) {
+  useLocale();
+
   return (
     <UiButton
       variant={enabled ? 'secondary' : 'primary'}
       disabled={busy}
       aria-pressed={enabled}
       data-action={enabled ? 'disable' : 'enable'}
-      title={enabled ? '当前已启用，点击停用' : '当前已停用，点击启用'}
+      title={
+        enabled
+          ? t('cm_global_library_workbench_text_25')
+          : t('cm_global_library_workbench_text_26')
+      }
       onClick={() => void onChange(!enabled)}
     >
       <MotionIconSwap
@@ -593,7 +646,9 @@ function CardEnablementButton({
           },
         ]}
       />
-      {enabled ? '停用' : '启用'}
+      {enabled
+        ? t('cm_global_library_workbench_text_27')
+        : t('cm_global_library_workbench_text_28')}
     </UiButton>
   );
 }
@@ -628,6 +683,8 @@ function SystemCardDetail({
   onOpenNewTabSettings: () => Promise<void>;
   onOpenSettings: (() => void) | null;
 }) {
+  useLocale();
+
   if (card.kind === 'steward') {
     return (
       <>
@@ -643,7 +700,7 @@ function SystemCardDetail({
           visible={busy}
           compact
           className="global-library-detail__loader"
-          label="正在应用卡牌变更"
+          label={t('cm_global_library_workbench_label_29')}
         />
       </>
     );
@@ -660,23 +717,20 @@ function SystemCardDetail({
           />
           <UiButton disabled={busy} onClick={() => void onOpenNewTabSettings()}>
             <Settings size={15} aria-hidden="true" />
-            设置
+            {t('cm_global_library_workbench_text_30')}
           </UiButton>
         </div>
         <UiLoader
           visible={busy}
           compact
           className="global-library-detail__loader"
-          label="正在应用卡牌变更"
+          label={t('cm_global_library_workbench_label_31')}
         />
         <UiNotice
           icon={<WandSparkles size={18} aria-hidden="true" />}
-          title="浏览器新标签页"
+          title={t('cm_global_library_workbench_title_32')}
         >
-          <p>
-            默认打开卡牌大师
-            新标签页；也可以在设置中填写一个网址，让新标签页直接前往指定页面。
-          </p>
+          <p>{t('cm_global_library_workbench_text_33')}</p>
         </UiNotice>
       </>
     );
@@ -720,7 +774,7 @@ function SystemCardDetail({
         {onOpenSettings && (
           <UiButton disabled={busy} onClick={onOpenSettings}>
             <Settings size={15} aria-hidden="true" />
-            设置
+            {t('cm_global_library_workbench_text_34')}
           </UiButton>
         )}
       </div>
@@ -728,7 +782,7 @@ function SystemCardDetail({
         visible={busy}
         compact
         className="global-library-detail__loader"
-        label="正在应用卡牌变更"
+        label={t('cm_global_library_workbench_label_35')}
       />
     </>
   );
@@ -740,11 +794,13 @@ function SystemCardDetail({
     return (
       <UiNotice
         icon={<CircleSlash2 size={18} aria-hidden="true" />}
-        title={`${cardUnavailableLabel(card)}此卡牌`}
+        title={t('cm_global_library_workbench_text_36', [
+          String(cardUnavailableLabel(card)),
+        ])}
       >
         <p>
           {card.snapshot.unavailableReason ??
-            '当前平台不支持这张卡牌，因此不会显示在牌阵中，也无法启用。'}
+            t('cm_global_library_workbench_text_37')}
         </p>
       </UiNotice>
     );
@@ -756,11 +812,9 @@ function SystemCardDetail({
         {managementActions}
         <UiNotice
           icon={<Sparkles size={18} aria-hidden="true" />}
-          title="手柄网页控制"
+          title={t('cm_global_library_workbench_title_38')}
         >
-          <p>
-            连接手柄后，页面会在牌库入口附近显示实时输入状态，并启用光标、滚动、空间导航、历史导航与屏幕键盘。
-          </p>
+          <p>{t('cm_global_library_workbench_text_39')}</p>
         </UiNotice>
       </>
     );
@@ -773,21 +827,21 @@ function SystemCardDetail({
         <div className="global-library-facts">
           <span>
             <b>{card.snapshot.activeRuleCount.toLocaleString()}</b>
-            活动规则
+            {t('cm_global_library_workbench_text_40')}
           </span>
           <span>
             <b>{card.snapshot.userRuleCount.toLocaleString()}</b>
-            用户规则
+            {t('cm_global_library_workbench_text_41')}
           </span>
           <span>
             <b>{card.snapshot.subscriptionCount.toLocaleString()}</b>
-            第三方订阅
+            {t('cm_global_library_workbench_text_42')}
           </span>
         </div>
         {card.snapshot.errors.length > 0 && (
           <UiNotice
             tone="error"
-            title="内容拦截诊断"
+            title={t('cm_global_library_workbench_title_43')}
             copyText={card.snapshot.errors.join('\n')}
           >
             <p>{card.snapshot.errors.join(' ')}</p>
@@ -805,30 +859,38 @@ function SystemCardDetail({
           <span>
             <b>
               {card.snapshot.activeOnPage
-                ? '生效'
+                ? t('cm_global_library_workbench_text_44')
                 : card.snapshot.inactiveReason === 'site-disabled'
-                  ? '停用'
+                  ? t('cm_global_library_workbench_text_45')
                   : card.snapshot.inactiveReason === 'automation'
-                    ? '休眠'
+                    ? t('cm_global_library_workbench_text_46')
                     : card.snapshot.darkThemeDetected
-                      ? '避让'
-                      : '未生效'}
+                      ? t('cm_global_library_workbench_text_47')
+                      : t('cm_global_library_workbench_text_48')}
             </b>
-            当前站点
+            {t('cm_global_library_workbench_text_49')}
           </span>
           <span>
-            <b>{card.snapshot.engine === 'dynamicTheme' ? '动态' : '滤镜'}</b>
-            渲染引擎
+            <b>
+              {card.snapshot.engine === 'dynamicTheme'
+                ? t('cm_global_library_workbench_text_50')
+                : t('cm_global_library_workbench_text_51')}
+            </b>
+            {t('cm_global_library_workbench_text_52')}
           </span>
           <span>
-            <b>{card.snapshot.darkThemeDetected ? '已发现' : '未发现'}</b>
-            原生暗色
+            <b>
+              {card.snapshot.darkThemeDetected
+                ? t('cm_global_library_workbench_text_53')
+                : t('cm_global_library_workbench_text_54')}
+            </b>
+            {t('cm_global_library_workbench_text_55')}
           </span>
         </div>
         {card.snapshot.error && (
           <UiNotice
             tone="error"
-            title="暗夜降临引擎诊断"
+            title={t('cm_global_library_workbench_title_56')}
             copyText={card.snapshot.error}
           >
             <p>{card.snapshot.error}</p>
@@ -836,9 +898,9 @@ function SystemCardDetail({
         )}
         <UiNotice
           icon={<WandSparkles size={18} aria-hidden="true" />}
-          title="页面光影系统卡牌"
+          title={t('cm_global_library_workbench_title_57')}
         >
-          <p>站点范围、自动切换和完整调校从网页牌阵中的暗夜降临进入。</p>
+          <p>{t('cm_global_library_workbench_text_58')}</p>
         </UiNotice>
       </>
     );
@@ -851,25 +913,29 @@ function SystemCardDetail({
         <div className="global-library-facts">
           <span>
             <b>{card.snapshot.mediaCount}</b>
-            当前媒体
+            {t('cm_global_library_workbench_text_59')}
           </span>
           <span>
             <b>
               {card.snapshot.selection.mode === 'hell'
-                ? '地狱'
+                ? t('cm_global_library_workbench_text_60')
                 : `${card.snapshot.selection.speed}×`}
             </b>
-            页面档位
+            {t('cm_global_library_workbench_text_61')}
           </span>
           <span>
-            <b>{card.snapshot.showWheel ? '显示' : '隐藏'}</b>
-            速度法印
+            <b>
+              {card.snapshot.showWheel
+                ? t('cm_global_library_workbench_text_62')
+                : t('cm_global_library_workbench_text_63')}
+            </b>
+            {t('cm_global_library_workbench_text_64')}
           </span>
         </div>
         {card.snapshot.error && (
           <UiNotice
             tone="error"
-            title="媒体倍速引擎诊断"
+            title={t('cm_global_library_workbench_title_65')}
             copyText={card.snapshot.error}
           >
             <p>{card.snapshot.error}</p>
@@ -877,9 +943,9 @@ function SystemCardDetail({
         )}
         <UiNotice
           icon={<WandSparkles size={18} aria-hidden="true" />}
-          title="页面媒体系统卡牌"
+          title={t('cm_global_library_workbench_title_66')}
         >
-          <p>默认档位、站点范围和速度法印从网页牌阵中的媒体倍速进入。</p>
+          <p>{t('cm_global_library_workbench_text_67')}</p>
         </UiNotice>
       </>
     );
@@ -895,36 +961,40 @@ function SystemCardDetail({
         <div className="global-library-facts">
           <span>
             <b>{card.snapshot.resources.length}</b>
-            当前资源
+            {t('cm_global_library_workbench_text_68')}
           </span>
           <span>
             <b>{manifests}</b>
-            播放清单
+            {t('cm_global_library_workbench_text_69')}
           </span>
           <span>
-            <b>{card.snapshot.downloadAvailable ? '可用' : '不可用'}</b>
-            浏览器下载
+            <b>
+              {card.snapshot.downloadAvailable
+                ? t('cm_global_library_workbench_text_70')
+                : t('cm_global_library_workbench_text_71')}
+            </b>
+            {t('cm_global_library_workbench_text_72')}
           </span>
         </div>
         {card.snapshot.error && (
           <UiNotice
             tone="error"
-            title="顺手牵羊诊断"
+            title={t('cm_global_library_workbench_title_73')}
             copyText={card.snapshot.error}
           >
             <p>{card.snapshot.error}</p>
           </UiNotice>
         )}
         {card.snapshot.limitation && (
-          <UiNotice title="当前平台限制">
+          <UiNotice title={t('cm_global_library_workbench_title_74')}>
             <p>{card.snapshot.limitation}</p>
           </UiNotice>
         )}
         <UiNotice
           icon={<WandSparkles size={18} aria-hidden="true" />}
-          title="页面媒体资源系统卡牌"
+          title={t('cm_global_library_workbench_title_75')}
         >
-          <p>从网页牌阵发动顺手牵羊，挑选、分析并取得当前页面的媒体资源。</p>
+          <p>{t('cm_global_library_workbench_text_76')}</p>
         </UiNotice>
       </>
     );
@@ -947,13 +1017,15 @@ function SystemCardDetail({
         <UiNotice
           icon={<WandSparkles size={18} aria-hidden="true" />}
           title={
-            crossPlatform ? '双平台 SponsorBlock 卡牌' : 'B 站增强能力卡牌'
+            crossPlatform
+              ? t('cm_global_library_workbench_text_77')
+              : t('cm_global_library_workbench_text_78')
           }
         >
           <p>
             {crossPlatform
-              ? '在 B 站调用 BilibiliSponsorBlock，在 YouTube 调用原版 SponsorBlock；分类策略、启停状态与卡牌入口保持统一。'
-              : '完整参数与页面动作从 B 站网页牌阵中的对应卡牌进入。'}
+              ? t('cm_global_library_workbench_text_79')
+              : t('cm_global_library_workbench_text_80')}
           </p>
         </UiNotice>
       </>
@@ -988,6 +1060,8 @@ function UserscriptDetail({
   onOpenSettings: () => void;
   onRemove: () => void;
 }) {
+  useLocale();
+
   const platformDiagnostics = userscriptPlatformCompatibilityDiagnostics(
     script,
     extensionTarget(),
@@ -1016,22 +1090,25 @@ function UserscriptDetail({
         />
         <UiButton disabled={busy} onClick={onOpenSettings}>
           <Settings size={14} aria-hidden="true" />
-          设置
+          {t('cm_global_library_workbench_text_81')}
         </UiButton>
         <UiButton variant="danger" disabled={busy} onClick={onRemove}>
           <Trash2 size={14} aria-hidden="true" />
-          删除
+          {t('cm_global_library_workbench_text_82')}
         </UiButton>
       </div>
       <UiLoader
         visible={busy}
         compact
         className="global-library-detail__loader"
-        label="正在应用脚本变更"
+        label={t('cm_global_library_workbench_label_83')}
       />
 
       {platformDiagnostics.length > 0 && (
-        <UiNotice tone="warning" title="Safari 脚本能力限制">
+        <UiNotice
+          tone="warning"
+          title={t('cm_global_library_workbench_title_84')}
+        >
           {platformDiagnostics.map((diagnostic) => (
             <p key={diagnostic.code}>{diagnostic.message}</p>
           ))}
@@ -1039,7 +1116,7 @@ function UserscriptDetail({
       )}
 
       <UiSegmentedControl
-        label="脚本检查视图"
+        label={t('cm_global_library_workbench_label_85')}
         value={inspectionMode}
         options={INSPECTION_MODES}
         onChange={onInspectionModeChange}
@@ -1062,8 +1139,10 @@ function UserscriptDetail({
           <MetadataValues label="@grant" values={script.metadata.grants} />
           <MetadataValues label="@run-at" values={[script.metadata.runAt]} />
           <MetadataValues
-            label="来源"
-            values={[script.source.origin ?? '本地安装']}
+            label={t('cm_global_library_workbench_label_86')}
+            values={[
+              script.source.origin ?? t('cm_global_library_workbench_text_87'),
+            ]}
             href={userscriptSourcePageUrl(script)}
           />
         </div>
@@ -1146,6 +1225,8 @@ export function GlobalLibraryWorkbench({
   onOpenCardSettings: (card: GlobalLibraryCard) => void;
   onClose: () => void;
 }) {
+  useLocale();
+
   const [scripts, setScripts] = useState<InstalledUserscript[]>([]);
   const [contentBlocking, setContentBlocking] = useState(
     initialContentBlockingSnapshot,
@@ -1361,7 +1442,7 @@ export function GlobalLibraryWorkbench({
       ).length,
     [cards, hiddenCardIdSet],
   );
-  const visibleCards = useMemo(() => {
+  const visibleCards = useLocalizedMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
     return cards.filter((card) => {
       if (filter === 'enabled' && !cardEnabled(card)) return false;
@@ -1384,12 +1465,12 @@ export function GlobalLibraryWorkbench({
   const selectedHidden =
     !selectedUnavailableReason &&
     cardHiddenFromDeck(selected.id, hiddenCardIdSet);
-  const visibleGroups = useMemo(
+  const visibleGroups = useLocalizedMemo(
     () =>
       [
         {
           id: 'system',
-          title: '系统卡牌',
+          title: t('cm_global_library_workbench_title_88'),
           cards: visibleCards.filter(
             (card) =>
               !isInstalledUserscript(card) && !isBilibiliCapabilityCard(card),
@@ -1397,12 +1478,12 @@ export function GlobalLibraryWorkbench({
         },
         {
           id: 'bilibili',
-          title: 'B 站和油管能力套件',
+          title: t('cm_global_library_workbench_title_89'),
           cards: visibleCards.filter(isBilibiliCapabilityCard),
         },
         {
           id: 'userscripts',
-          title: '用户脚本',
+          title: t('cm_global_library_workbench_title_90'),
           cards: visibleCards.filter(isInstalledUserscript),
         },
       ].filter((group) => group.cards.length > 0),
@@ -1622,12 +1703,12 @@ export function GlobalLibraryWorkbench({
   if (loading) {
     return (
       <UiDialog
-        ariaLabel="正在打开全局脚本牌库"
-        title="全局脚本牌库"
+        ariaLabel={t('cm_global_library_workbench_aria_label_91')}
+        title={t('cm_global_library_workbench_title_92')}
         className="global-library-loading-dialog"
         onClose={onClose}
       >
-        <UiLoader large label="正在整理全部卡牌" />
+        <UiLoader large label={t('cm_global_library_workbench_label_93')} />
       </UiDialog>
     );
   }
@@ -1635,9 +1716,9 @@ export function GlobalLibraryWorkbench({
   return (
     <>
       <UiWorkspace
-        ariaLabel="全局脚本牌库"
-        title="全局脚本牌库"
-        description="集中查看系统卡牌与全部已安装用户脚本。"
+        ariaLabel={t('cm_global_library_workbench_aria_label_94')}
+        title={t('cm_global_library_workbench_title_95')}
+        description={t('cm_global_library_workbench_description_96')}
         className="global-library-frame"
         bodyClassName="global-library-frame__body"
         onClose={onClose}
@@ -1645,15 +1726,15 @@ export function GlobalLibraryWorkbench({
           <div className="global-library-header__stats">
             <span>
               <b>{cards.length}</b>
-              全部卡牌
+              {t('cm_global_library_workbench_text_97')}
             </span>
             <span>
               <b>{scripts.filter((script) => script.manager.enabled).length}</b>
-              已启用脚本
+              {t('cm_global_library_workbench_text_98')}
             </span>
             <span>
               <b>{hiddenCardCount}</b>
-              已隐藏
+              {t('cm_global_library_workbench_text_99')}
             </span>
           </div>
         }
@@ -1666,7 +1747,7 @@ export function GlobalLibraryWorkbench({
           <section
             ref={collectionRef}
             className="global-library-collection"
-            aria-label="全部卡牌"
+            aria-label={t('cm_global_library_workbench_aria_label_100')}
             onScroll={() => setHoveredCard(null)}
           >
             <div className="global-library-toolbar">
@@ -1675,19 +1756,20 @@ export function GlobalLibraryWorkbench({
                 <input
                   value={query}
                   type="search"
-                  placeholder="搜索名称、描述、作者或匹配范围"
+                  placeholder={t('cm_global_library_workbench_placeholder_101')}
                   onChange={(event) => setQuery(event.currentTarget.value)}
                 />
               </label>
               <UiSegmentedControl
-                label="牌库筛选"
+                label={t('cm_global_library_workbench_label_102')}
                 value={filter}
                 options={FILTERS}
                 contextNavigation
                 onChange={setFilter}
               />
               <span className="global-library-result-count" aria-live="polite">
-                {visibleCards.length} 张
+                {visibleCards.length}{' '}
+                {t('cm_global_library_workbench_text_103')}
               </span>
             </div>
 
@@ -1701,7 +1783,10 @@ export function GlobalLibraryWorkbench({
                   >
                     <header>
                       <h3>{group.title}</h3>
-                      <span>{group.cards.length} 张</span>
+                      <span>
+                        {group.cards.length}{' '}
+                        {t('cm_global_library_workbench_text_104')}
+                      </span>
                     </header>
                     <div className="global-library-grid">
                       {group.cards.map((card) => (
@@ -1738,9 +1823,9 @@ export function GlobalLibraryWorkbench({
             ) : (
               <UiNotice
                 icon={<Archive size={18} aria-hidden="true" />}
-                title="没有符合条件的卡牌"
+                title={t('cm_global_library_workbench_title_105')}
               >
-                <p>调整搜索内容或筛选状态后重新查看。</p>
+                <p>{t('cm_global_library_workbench_text_106')}</p>
               </UiNotice>
             )}
           </section>
@@ -1748,7 +1833,7 @@ export function GlobalLibraryWorkbench({
           <aside
             ref={detailRef}
             className="global-library-detail"
-            aria-label="卡牌详情"
+            aria-label={t('cm_global_library_workbench_aria_label_107')}
           >
             <header>
               <div className="global-library-detail__title-row">
@@ -1756,7 +1841,9 @@ export function GlobalLibraryWorkbench({
                 {selectedHidden && (
                   <span className="global-library-detail__visibility-badge">
                     <EyeOff size={14} aria-hidden="true" />
-                    {selected.kind === 'steward' ? '暂时隐藏' : '已隐藏'}
+                    {selected.kind === 'steward'
+                      ? t('cm_global_library_workbench_text_108')
+                      : t('cm_global_library_workbench_text_109')}
                   </span>
                 )}
                 {selectedUnavailableReason && (
@@ -1768,7 +1855,10 @@ export function GlobalLibraryWorkbench({
               </div>
               {isInstalledUserscript(selected) && (
                 <div className="global-library-detail__byline">
-                  <span>{selected.metadata.author || '未署名'}</span>
+                  <span>
+                    {selected.metadata.author ||
+                      t('cm_global_library_workbench_text_110')}
+                  </span>
                   <span>v{selected.metadata.version || '0.0.0'}</span>
                 </div>
               )}
@@ -1779,7 +1869,11 @@ export function GlobalLibraryWorkbench({
             </header>
 
             {error && (
-              <UiNotice tone="error" title="牌库操作失败" copyText={error}>
+              <UiNotice
+                tone="error"
+                title={t('cm_global_library_workbench_title_111')}
+                copyText={error}
+              >
                 <p>{error}</p>
               </UiNotice>
             )}
@@ -1843,22 +1937,30 @@ export function GlobalLibraryWorkbench({
         <UiLayeredCompactDialog
           open={removeDialogOpen}
           closeOnBackdrop
-          ariaLabel={`删除 ${userscriptDisplayName(removeCandidate.metadata)}`}
-          title={removingScript ? '正在删除脚本' : '确认删除脚本'}
+          ariaLabel={t('cm_global_library_workbench_text_112', [
+            String(userscriptDisplayName(removeCandidate.metadata)),
+          ])}
+          title={
+            removingScript
+              ? t('cm_global_library_workbench_text_113')
+              : t('cm_global_library_workbench_text_114')
+          }
           className="global-library-remove-dialog"
           onClose={closeRemoveDialog}
           onExitComplete={() => setRemoveCandidate(null)}
           footer={
             removingScript ? null : (
               <>
-                <UiButton onClick={closeRemoveDialog}>取消</UiButton>
+                <UiButton onClick={closeRemoveDialog}>
+                  {t('cm_global_library_workbench_text_115')}
+                </UiButton>
                 <UiButton
                   variant="danger"
                   disabled={busyIds.has(removeCandidate.id)}
                   onClick={() => void removeScript(removeCandidate)}
                 >
                   <Trash2 size={14} aria-hidden="true" />
-                  确认删除
+                  {t('cm_global_library_workbench_text_116')}
                 </UiButton>
               </>
             )
@@ -1867,7 +1969,9 @@ export function GlobalLibraryWorkbench({
           <UiLoader
             visible={removingScript}
             className="global-library-remove-dialog__loader"
-            label={`正在删除 ${userscriptDisplayName(removeCandidate.metadata)}`}
+            label={t('cm_global_library_workbench_text_117', [
+              String(userscriptDisplayName(removeCandidate.metadata)),
+            ])}
           />
           {!removingScript && (
             <div className="global-library-remove-dialog__content">
@@ -1876,10 +1980,7 @@ export function GlobalLibraryWorkbench({
                 <strong>
                   {userscriptDisplayName(removeCandidate.metadata)}
                 </strong>
-                <p>
-                  将移除完整源码、管理配置、GM
-                  值和安装记录。此操作不会保留兼容副本。
-                </p>
+                <p>{t('cm_global_library_workbench_text_118')}</p>
               </div>
             </div>
           )}

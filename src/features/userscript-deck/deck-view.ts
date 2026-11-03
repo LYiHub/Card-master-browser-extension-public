@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-
 import type { BilibiliCapabilitySnapshot } from '../../bilibili-capabilities/domain/types';
 import type { ContentBlockingSnapshot } from '../../content-blocking/domain/types';
 import {
@@ -14,6 +13,8 @@ import {
   isExtensionPageLifecycleInterrupted,
   isExtensionStorageSpaceFailure,
 } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
+import { useLocale, useLocalizedMemo } from '../../localization/react';
 import type { MediaResourcesSnapshot } from '../../media-resources/domain/types';
 import type { MediaSpeedSnapshot } from '../../media-speed/domain/types';
 import type { PageThemeSnapshot } from '../../page-theme/domain/types';
@@ -74,20 +75,20 @@ export function userscriptDeckActionNotice(
   if (context.libraryError) {
     if (isExtensionPageLifecycleInterrupted(context.libraryError)) {
       return {
-        title: '扩展已更新，请刷新页面',
-        description: '当前网页仍在使用旧的扩展连接，牌库数据没有丢失。',
+        title: t('cm_deck_view_title_1'),
+        description: t('cm_deck_view_description_2'),
         tone: 'inactive' as const,
       };
     }
     return {
-      title: '脚本仓库错误',
+      title: t('cm_deck_view_title_3'),
       description: context.libraryError,
       tone: 'error' as const,
     };
   }
   if (context.interactionError) {
     return {
-      title: '当前操作未能完成',
+      title: t('cm_deck_view_title_4'),
       description: context.interactionError,
       tone: 'error' as const,
     };
@@ -95,8 +96,8 @@ export function userscriptDeckActionNotice(
   if (isContentBlockingCard(card)) {
     if (!card.snapshot.rulesEnabled) {
       return {
-        title: '内容拦截已停用',
-        description: '拖至右上角的启用区域即可恢复所有过滤规则。',
+        title: t('cm_deck_view_title_5'),
+        description: t('cm_deck_view_description_6'),
         tone: 'inactive' as const,
       };
     }
@@ -106,22 +107,22 @@ export function userscriptDeckActionNotice(
   if (isPageThemeCard(card)) {
     if (card.snapshot.status === 'error') {
       return {
-        title: '暗夜降临引擎异常',
-        description: card.snapshot.error ?? '页面光影引擎没有返回错误详情。',
+        title: t('cm_deck_view_title_7'),
+        description: card.snapshot.error ?? t('cm_deck_view_text_8'),
         tone: 'error' as const,
       };
     }
     if (!card.snapshot.enabled) {
       return {
-        title: '暗夜降临已停用',
-        description: '拖至右上角的启用区域即可恢复页面光影。',
+        title: t('cm_deck_view_title_9'),
+        description: t('cm_deck_view_description_10'),
         tone: 'inactive' as const,
       };
     }
     if (card.snapshot.darkThemeDetected) {
       return {
-        title: '检测到站点原生暗色',
-        description: '暗夜降临已避让当前站点的原生暗色主题。',
+        title: t('cm_deck_view_title_11'),
+        description: t('cm_deck_view_description_12'),
         tone: 'neutral' as const,
       };
     }
@@ -130,22 +131,22 @@ export function userscriptDeckActionNotice(
   if (isMediaSpeedCard(card)) {
     if (card.snapshot.status === 'error') {
       return {
-        title: '媒体倍速引擎异常',
-        description: card.snapshot.error ?? '媒体倍速引擎没有返回错误详情。',
+        title: t('cm_deck_view_title_13'),
+        description: card.snapshot.error ?? t('cm_deck_view_text_14'),
         tone: 'error' as const,
       };
     }
     if (!card.snapshot.enabled) {
       return {
-        title: '媒体倍速已停用',
-        description: '拖至右上角的启用区域即可恢复媒体时间控制。',
+        title: t('cm_deck_view_title_15'),
+        description: t('cm_deck_view_description_16'),
         tone: 'inactive' as const,
       };
     }
     if (card.snapshot.mediaCount === 0) {
       return {
-        title: '当前页面没有可调媒体',
-        description: '检测到视频或音频后，速度法印会出现在牌库入口周围。',
+        title: t('cm_deck_view_title_17'),
+        description: t('cm_deck_view_description_18'),
         tone: 'neutral' as const,
       };
     }
@@ -154,25 +155,25 @@ export function userscriptDeckActionNotice(
   if (isMediaResourcesCard(card)) {
     if (card.snapshot.status === 'error') {
       return {
-        title: '顺手牵羊异常',
+        title: t('cm_deck_view_title_19'),
         description:
           card.snapshot.error ??
           card.snapshot.unavailableReason ??
-          '顺手牵羊没有返回错误详情。',
+          t('cm_deck_view_text_20'),
         tone: 'error' as const,
       };
     }
     if (!card.snapshot.enabled) {
       return {
-        title: '顺手牵羊已停用',
-        description: '拖至右上角的启用区域即可继续记录媒体请求。',
+        title: t('cm_deck_view_title_21'),
+        description: t('cm_deck_view_description_22'),
         tone: 'inactive' as const,
       };
     }
     if (card.snapshot.resources.length === 0 && !card.snapshot.captureEnabled) {
       return {
-        title: '等待页面加载媒体',
-        description: '播放视频或音频后，即可发动卡牌收取新发现的资源。',
+        title: t('cm_deck_view_title_23'),
+        description: t('cm_deck_view_description_24'),
         tone: 'neutral' as const,
       };
     }
@@ -181,8 +182,8 @@ export function userscriptDeckActionNotice(
   if (isBilibiliCapabilityCard(card)) {
     if (!card.snapshot.enabled) {
       return {
-        title: `${cardTitle(card)}已停用`,
-        description: '拖至右上角的启用区域即可恢复这项扩展能力。',
+        title: t('cm_deck_view_title_25', [String(cardTitle(card))]),
+        description: t('cm_deck_view_description_26'),
         tone: 'inactive' as const,
       };
     }
@@ -194,7 +195,7 @@ export function userscriptDeckActionNotice(
     !userscriptExecutionAvailable(context.executionCapability)
   ) {
     return {
-      title: '需要开启“允许运行用户脚本”',
+      title: t('cm_deck_view_title_27'),
       description: context.executionCapability.message,
       tone: 'error' as const,
     };
@@ -231,11 +232,13 @@ export function useUserscriptDeckCards({
   runtimeContext: ScriptMatchContext;
   mode: ManagerMode;
 }) {
+  useLocale();
+
   const hiddenCardIdSet = useMemo(
     () => new Set(hiddenCardIds),
     [hiddenCardIds],
   );
-  const platformCards = useMemo(
+  const platformCards = useLocalizedMemo(
     () =>
       bilibiliIntegrationCardsForPage(
         bilibiliCapabilitySnapshots,
@@ -401,48 +404,79 @@ export function userscriptDeckContextPrompt({
       : inputModality === 'gamepad'
         ? mode === 'targeting'
           ? [
-              { key: '十字键', label: '选择指令' },
-              { key: gamepadConfirm, label: '确认' },
-              { key: gamepadBack, label: '返回' },
+              {
+                key: t('cm_deck_view_key_1'),
+                label: t('cm_deck_view_label_28'),
+              },
+              { key: gamepadConfirm, label: t('cm_deck_view_label_29') },
+              { key: gamepadBack, label: t('cm_deck_view_label_30') },
             ]
           : [
-              { key: '十字键', label: '选择卡牌' },
-              { key: `上 / ${gamepadConfirm}`, label: '激活' },
-              { key: gamepadBack, label: '收起' },
+              {
+                key: t('cm_deck_view_key_2'),
+                label: t('cm_deck_view_label_31'),
+              },
+              {
+                key: t('cm_deck_view_key_3', [String(gamepadConfirm)]),
+                label: t('cm_deck_view_label_32'),
+              },
+              { key: gamepadBack, label: t('cm_deck_view_label_33') },
             ]
         : inputModality === 'keyboard'
           ? mode === 'targeting'
             ? [
-                { key: '方向键', label: '选择指令' },
-                { key: '空格', label: '确认' },
-                { key: 'Esc', label: '返回' },
+                {
+                  key: t('cm_deck_view_key_4'),
+                  label: t('cm_deck_view_label_34'),
+                },
+                {
+                  key: t('cm_deck_view_key_5'),
+                  label: t('cm_deck_view_label_35'),
+                },
+                { key: 'Esc', label: t('cm_deck_view_label_36') },
               ]
             : [
-                { key: '← →', label: '选择卡牌' },
-                { key: '↑ / 空格', label: '激活' },
-                { key: 'Esc', label: '收起' },
+                { key: '← →', label: t('cm_deck_view_label_37') },
+                {
+                  key: t('cm_deck_view_key_6'),
+                  label: t('cm_deck_view_label_38'),
+                },
+                { key: 'Esc', label: t('cm_deck_view_label_39') },
               ]
           : mode === 'targeting'
             ? [
-                { key: '移动', label: '选择指令' },
-                { key: '单击', label: '确认' },
-                { key: 'Esc', label: '返回' },
+                {
+                  key: t('cm_deck_view_key_7'),
+                  label: t('cm_deck_view_label_40'),
+                },
+                {
+                  key: t('cm_deck_view_key_8'),
+                  label: t('cm_deck_view_label_41'),
+                },
+                { key: 'Esc', label: t('cm_deck_view_label_42') },
               ]
             : [
-                { key: '悬浮', label: '查看卡牌' },
-                { key: '单击', label: '激活' },
-                { key: 'Esc', label: '收起' },
+                {
+                  key: t('cm_deck_view_key_9'),
+                  label: t('cm_deck_view_label_43'),
+                },
+                {
+                  key: t('cm_deck_view_key_10'),
+                  label: t('cm_deck_view_label_44'),
+                },
+                { key: 'Esc', label: t('cm_deck_view_label_45') },
               ];
   if (mode === 'forging' && selected && isInstalledUserscript(selected)) {
     return {
       key: `forging-${selected.id}`,
       title: userscriptDisplayName(selected.metadata),
       description:
-        userscriptDisplayDescription(selected.metadata) || '该脚本未提供说明。',
+        userscriptDisplayDescription(selected.metadata) ||
+        t('cm_deck_view_text_46'),
       stats: [
-        '标准 .user.js',
+        t('cm_deck_view_text_47'),
         `v${scriptVersion(selected)}`,
-        selected.metadata.author || '作者未声明',
+        selected.metadata.author || t('cm_deck_view_text_48'),
       ],
     };
   }
@@ -468,9 +502,12 @@ export function userscriptDeckContextPrompt({
     return {
       key: `${mode}-${active.id}-${installed ? active.manager.enabled : 'forge'}`,
       title: cardTitle(active),
-      description: cardDescription(active) || '该脚本未提供说明。',
+      description: cardDescription(active) || t('cm_deck_view_text_49'),
       stats: installed
-        ? [`v${scriptVersion(active)}`, active.metadata.author || '作者未声明']
+        ? [
+            `v${scriptVersion(active)}`,
+            active.metadata.author || t('cm_deck_view_text_50'),
+          ]
         : [],
       shortcuts,
     };
@@ -479,36 +516,35 @@ export function userscriptDeckContextPrompt({
     if (isExtensionPageLifecycleInterrupted(libraryError)) {
       return {
         key: 'extension-page-lifecycle-interrupted',
-        title: '扩展已更新，请刷新当前页面',
-        description: '当前网页仍在使用更新前的扩展连接，刷新后会自动重新连接。',
-        stats: ['当前牌库数据没有丢失'],
+        title: t('cm_deck_view_title_51'),
+        description: t('cm_deck_view_description_52'),
+        stats: [t('cm_deck_view_text_53')],
         tone: 'neutral',
       };
     }
     if (isExtensionStorageSpaceFailure(libraryError)) {
       return {
         key: 'extension-storage-space-error',
-        title: '扩展本地存储写入失败',
-        description:
-          '浏览器返回存储空间错误，当前无法保存牌库、设置或运行状态。',
-        stats: ['释放磁盘空间后重新加载扩展'],
+        title: t('cm_deck_view_title_54'),
+        description: t('cm_deck_view_description_55'),
+        stats: [t('cm_deck_view_text_56')],
         tone: 'error',
       };
     }
     return {
       key: 'library-error',
-      title: '无法持久化当前牌库',
+      title: t('cm_deck_view_title_57'),
       description: libraryError,
-      stats: ['需要处理后再继续安装或编辑'],
+      stats: [t('cm_deck_view_text_58')],
       tone: 'error',
     };
   }
   if (interactionError) {
     return {
       key: 'interaction-error',
-      title: '当前操作未能完成',
+      title: t('cm_deck_view_title_59'),
       description: interactionError,
-      stats: ['牌阵已恢复，可以重新尝试'],
+      stats: [t('cm_deck_view_text_60')],
       tone: 'error',
     };
   }
@@ -518,17 +554,16 @@ export function userscriptDeckContextPrompt({
   ) {
     return {
       key: 'userscript-capability-unavailable',
-      title: '需要开启“允许运行用户脚本”',
+      title: t('cm_deck_view_title_61'),
       description: executionCapability.message,
-      stats: ['已安装卡牌仍会保留', '开启后恢复页面脚本注入'],
+      stats: [t('cm_deck_view_text_62'), t('cm_deck_view_text_63')],
       tone: 'error',
     };
   }
   return {
     key: 'spread-overview',
-    title: '选择一张卡牌',
-    description:
-      '鼠标与键盘可以无缝接管牌阵，每张普通卡牌仍对应完整 `.user.js`。',
+    title: t('cm_deck_view_title_64'),
+    description: t('cm_deck_view_description_65'),
     stats: [],
     shortcuts,
   };

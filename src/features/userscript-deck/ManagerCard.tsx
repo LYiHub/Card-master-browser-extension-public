@@ -1,6 +1,8 @@
 import { bilibiliCapabilityDefinition } from '../../bilibili-capabilities/registry';
 import { CardBottomFrame } from '../../components/CardBottomFrame';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { isCardAccent } from '../../userscript/application/card-accent';
 import { managerActionRoot } from '../manager-interaction/action-hit-testing';
 import type { CardStateTone } from '../manager-interaction/CardStateBadge';
@@ -56,61 +58,61 @@ export function cardStatePresentation(
       item.snapshot.status === 'starting' ||
       item.snapshot.configurationPending
     ) {
-      return { label: '正在部署', tone: 'pending' };
+      return { label: t('cm_manager_card_label_1'), tone: 'pending' };
     }
     if (item.snapshot.status === 'error') {
-      return { label: '引擎异常', tone: 'error' };
+      return { label: t('cm_manager_card_label_2'), tone: 'error' };
     }
     return item.snapshot.rulesEnabled
-      ? { label: '规则生效', tone: 'active' }
-      : { label: '规则停用', tone: 'inactive' };
+      ? { label: t('cm_manager_card_label_3'), tone: 'active' }
+      : { label: t('cm_manager_card_label_4'), tone: 'inactive' };
   }
 
   if (pageTheme) {
     if (!item.snapshot.enabled) {
-      return { label: '停用', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_5'), tone: 'inactive' };
     }
     if (item.snapshot.status === 'starting') {
-      return { label: '正在启用', tone: 'pending' };
+      return { label: t('cm_manager_card_label_6'), tone: 'pending' };
     }
     if (item.snapshot.status === 'error') {
-      return { label: '引擎异常', tone: 'error' };
+      return { label: t('cm_manager_card_label_7'), tone: 'error' };
     }
     if (item.snapshot.darkThemeDetected) {
-      return { label: '原生暗色', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_8'), tone: 'inactive' };
     }
     if (item.snapshot.activeOnPage) {
-      return { label: '本站生效', tone: 'active' };
+      return { label: t('cm_manager_card_label_9'), tone: 'active' };
     }
     if (item.snapshot.inactiveReason === 'site-disabled') {
-      return { label: '本站停用', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_10'), tone: 'inactive' };
     }
     if (item.snapshot.inactiveReason === 'automation') {
-      return { label: '自动休眠', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_11'), tone: 'inactive' };
     }
-    return { label: '本站未生效', tone: 'inactive' };
+    return { label: t('cm_manager_card_label_12'), tone: 'inactive' };
   }
 
   if (mediaSpeed) {
     if (item.snapshot.status === 'starting') {
-      return { label: '正在校时', tone: 'pending' };
+      return { label: t('cm_manager_card_label_13'), tone: 'pending' };
     }
     if (item.snapshot.status === 'error') {
-      return { label: '引擎异常', tone: 'error' };
+      return { label: t('cm_manager_card_label_14'), tone: 'error' };
     }
     if (!item.snapshot.enabled) {
-      return { label: '全局停用', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_15'), tone: 'inactive' };
     }
     if (!item.snapshot.activeOnPage) {
-      return { label: '本站停用', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_16'), tone: 'inactive' };
     }
     if (item.snapshot.mediaCount === 0) {
-      return { label: '等待媒体', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_17'), tone: 'inactive' };
     }
     return {
       label:
         item.snapshot.selection.mode === 'hell'
-          ? '地狱'
+          ? t('cm_manager_card_text_18')
           : `${item.snapshot.selection.speed}×`,
       tone: 'active',
     };
@@ -118,31 +120,33 @@ export function cardStatePresentation(
 
   if (mediaResources) {
     if (!item.snapshot.available || item.snapshot.status === 'error') {
-      return { label: '平台不可用', tone: 'error' };
+      return { label: t('cm_manager_card_label_19'), tone: 'error' };
     }
     if (!item.snapshot.enabled) {
-      return { label: '全局停用', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_20'), tone: 'inactive' };
     }
     if (item.snapshot.captureEnabled) {
-      return { label: '缓存捕捉中', tone: 'active' };
+      return { label: t('cm_manager_card_label_21'), tone: 'active' };
     }
     return item.snapshot.resources.length > 0
       ? {
-          label: `${item.snapshot.resources.length} 项资源`,
+          label: t('cm_manager_card_label_22', [
+            String(item.snapshot.resources.length),
+          ]),
           tone: 'active',
         }
-      : { label: '等待媒体', tone: 'pending' };
+      : { label: t('cm_manager_card_label_23'), tone: 'pending' };
   }
 
   if (bilibiliCapability) {
     if (item.snapshot.status === 'starting') {
-      return { label: '正在接入', tone: 'pending' };
+      return { label: t('cm_manager_card_label_24'), tone: 'pending' };
     }
     if (item.snapshot.status === 'error') {
-      return { label: '能力异常', tone: 'error' };
+      return { label: t('cm_manager_card_label_25'), tone: 'error' };
     }
     if (!item.snapshot.enabled) {
-      return { label: '已停用', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_26'), tone: 'inactive' };
     }
     if (!item.snapshot.activeOnPage) {
       return {
@@ -155,11 +159,11 @@ export function cardStatePresentation(
 
   if (gamepadControl) {
     if (!item.enabled) {
-      return { label: '全局停用', tone: 'inactive' };
+      return { label: t('cm_manager_card_label_27'), tone: 'inactive' };
     }
     return item.connected
-      ? { label: '手柄已连接', tone: 'active' }
-      : { label: '等待手柄', tone: 'pending' };
+      ? { label: t('cm_manager_card_label_28'), tone: 'active' }
+      : { label: t('cm_manager_card_label_29'), tone: 'pending' };
   }
 
   return { label: null, tone: 'active' };
@@ -192,31 +196,31 @@ export function cardSnapshot(element: HTMLElement, item: DeckCard) {
         ? {
             enabled,
             enabledLabel: contentBlocking
-              ? '规则生效'
+              ? t('cm_manager_card_text_30')
               : pageTheme
-                ? '暗夜降临启用'
+                ? t('cm_manager_card_text_31')
                 : mediaSpeed
-                  ? '媒体倍速启用'
+                  ? t('cm_manager_card_text_32')
                   : mediaResources
-                    ? '顺手牵羊启用'
+                    ? t('cm_manager_card_text_33')
                     : bilibiliCapability
-                      ? '扩展能力启用'
+                      ? t('cm_manager_card_text_34')
                       : gamepadControl
-                        ? '手柄输入监听'
-                        : '已启用',
+                        ? t('cm_manager_card_text_35')
+                        : t('cm_manager_card_text_36'),
             disabledLabel: contentBlocking
-              ? '规则停用'
+              ? t('cm_manager_card_text_37')
               : pageTheme
-                ? '暗夜降临停用'
+                ? t('cm_manager_card_text_38')
                 : mediaSpeed
-                  ? '媒体倍速停用'
+                  ? t('cm_manager_card_text_39')
                   : mediaResources
-                    ? '顺手牵羊停用'
+                    ? t('cm_manager_card_text_40')
                     : bilibiliCapability
-                      ? '扩展能力停用'
+                      ? t('cm_manager_card_text_41')
                       : gamepadControl
-                        ? '手柄输入停止'
-                        : '已停用',
+                        ? t('cm_manager_card_text_42')
+                        : t('cm_manager_card_text_43'),
           }
         : undefined,
   });
@@ -241,6 +245,8 @@ export function CardFace({
   preloadFrame?: boolean;
   resetPlayback?: boolean;
 }) {
+  useLocale();
+
   const contentBlocking = isContentBlockingCard(item);
   const pageTheme = isPageThemeCard(item);
   const mediaSpeed = isMediaSpeedCard(item);
@@ -307,6 +313,8 @@ export function ManagerCard({
   executionUnavailable,
   ...props
 }: UserscriptManagerCardProps) {
+  useLocale();
+
   const title = cardTitle(item);
   const accent = useCardAccent(item);
   const resetPlayback = props.mode === 'closed';
@@ -317,7 +325,7 @@ export function ManagerCard({
       deckSource={deckTriggerElement}
       actionRoot={managerActionRoot(deckTriggerElement, document)}
       accent={accent}
-      ariaLabel={`${title}，${item.kind === 'steward' ? '打开脚本管理与生成' : item.kind === 'gamepad-control' ? '查看手柄网页控制' : item.kind === 'content-blocker' ? '设置内容拦截' : item.kind === 'page-theme' ? '设置暗夜降临' : item.kind === 'media-speed' ? '设置媒体倍速' : item.kind === 'media-resources' ? '查看媒体资源' : item.kind === 'bilibili-capability' ? '设置扩展能力' : '设置脚本'}`}
+      ariaLabel={`${title}，${item.kind === 'steward' ? t('cm_manager_card_text_44') : item.kind === 'gamepad-control' ? t('cm_manager_card_text_45') : item.kind === 'content-blocker' ? t('cm_manager_card_text_46') : item.kind === 'page-theme' ? t('cm_manager_card_text_47') : item.kind === 'media-speed' ? t('cm_manager_card_text_48') : item.kind === 'media-resources' ? t('cm_manager_card_text_49') : item.kind === 'bilibili-capability' ? t('cm_manager_card_text_50') : t('cm_manager_card_text_51')}`}
       backImageUrl={CARD_BACK_URL}
       cardKindDataAttribute="data-deck-card-kind"
       renderFace={(active, playing, audioActive) => (

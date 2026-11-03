@@ -9,6 +9,8 @@ import {
   useState,
 } from 'react';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { MEDIA_SPEED_HELL_RATE } from '../../media-speed/domain/playback-rate';
 import type {
   MediaSpeedSelection,
@@ -80,7 +82,7 @@ export function mediaSpeedRadialOptions(
         ? {
             id: 'random',
             kind: 'random',
-            label: '命运投掷',
+            label: t('cm_media_speed_radial_menu_label_1'),
             item,
             transient: false,
             colorIndex,
@@ -88,7 +90,7 @@ export function mediaSpeedRadialOptions(
         : {
             id: 'hell',
             kind: 'hell',
-            label: '地狱',
+            label: t('cm_media_speed_radial_menu_label_2'),
             item,
             transient: false,
             colorIndex,
@@ -161,6 +163,8 @@ export function MediaSpeedRadialMenu({
   onRequestExpand: () => void;
   onSelect: (selection: MediaSpeedSelection) => void;
 }) {
+  useLocale();
+
   const rootRef = useRef<HTMLFieldSetElement | null>(null);
   const ringRef = useRef<HTMLDivElement | null>(null);
   const presenceTimelineRef = useRef<gsap.core.Timeline | null>(null);
@@ -602,7 +606,7 @@ export function MediaSpeedRadialMenu({
       data-option-count={options.length}
       aria-hidden={!visible}
     >
-      <legend>页面视频速度</legend>
+      <legend>{t('cm_media_speed_radial_menu_text_3')}</legend>
       <div ref={ringRef} className="manager-media-speed-radial__ring">
         {options.map((option, index) => {
           const angle = index * slotAngle;

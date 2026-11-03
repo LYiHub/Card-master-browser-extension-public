@@ -1,4 +1,6 @@
 import { type CSSProperties, useLayoutEffect, useRef } from 'react';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { actionFanLayout } from '../manager-interaction/layout';
 import type { ManagerAction } from './actions';
 
@@ -22,6 +24,8 @@ export function ElementTargetingHint({
   actionRoot: ParentNode;
   actionFrameUrl: string;
 }) {
+  useLocale();
+
   const hintRef = useRef<HTMLSpanElement | null>(null);
   const layout = actionFanLayout(
     0,
@@ -67,8 +71,8 @@ export function ElementTargetingHint({
         <span className="manager-action__activation-aura" aria-hidden="true" />
         <img className="manager-action__frame" src={actionFrameUrl} alt="" />
         <span className="manager-element-targeting-hint__copy">
-          <span>单击拦截所选内容</span>
-          <span>ESC 结束内容拦截</span>
+          <span>{t('cm_element_targeting_hint_text_1')}</span>
+          <span>{t('cm_element_targeting_hint_text_2')}</span>
         </span>
       </span>
     </span>

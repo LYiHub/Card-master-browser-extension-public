@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   MediaResource,
   MediaResourceKind,
@@ -14,12 +15,48 @@ const RESOURCE_GROUPS: readonly {
   label: string;
   kinds: readonly MediaResourceKind[];
 }[] = [
-  { id: 'manifest', label: '播放清单', kinds: ['hls', 'dash'] },
-  { id: 'video', label: '视频', kinds: ['video'] },
-  { id: 'audio', label: '音频', kinds: ['audio'] },
-  { id: 'image', label: '图片', kinds: ['image'] },
-  { id: 'subtitle', label: '字幕', kinds: ['subtitle'] },
-  { id: 'other', label: '其他媒体', kinds: ['media'] },
+  {
+    id: 'manifest',
+    get label() {
+      return t('cm_media_resource_workbench_label_1');
+    },
+    kinds: ['hls', 'dash'],
+  },
+  {
+    id: 'video',
+    get label() {
+      return t('cm_media_resource_workbench_label_2');
+    },
+    kinds: ['video'],
+  },
+  {
+    id: 'audio',
+    get label() {
+      return t('cm_media_resource_workbench_label_3');
+    },
+    kinds: ['audio'],
+  },
+  {
+    id: 'image',
+    get label() {
+      return t('cm_media_resource_workbench_label_4');
+    },
+    kinds: ['image'],
+  },
+  {
+    id: 'subtitle',
+    get label() {
+      return t('cm_media_resource_workbench_label_5');
+    },
+    kinds: ['subtitle'],
+  },
+  {
+    id: 'other',
+    get label() {
+      return t('cm_media_resource_workbench_label_6');
+    },
+    kinds: ['media'],
+  },
 ];
 
 function kindPriority(kind: MediaResourceKind) {

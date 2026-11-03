@@ -1,11 +1,32 @@
+import { t } from '../../localization/messages';
 import { gamepadAxis, STANDARD_GAMEPAD_AXIS } from './input';
 import type { GamepadInputSnapshot } from './types';
 
 export const GAMEPAD_BUTTON_OPTIONS = [
-  { value: 0, label: '叉键 / A' },
-  { value: 1, label: '圆键 / B' },
-  { value: 2, label: '方块 / X' },
-  { value: 3, label: '三角 / Y' },
+  {
+    value: 0,
+    get label() {
+      return t('cm_bindings_label_1');
+    },
+  },
+  {
+    value: 1,
+    get label() {
+      return t('cm_bindings_label_2');
+    },
+  },
+  {
+    value: 2,
+    get label() {
+      return t('cm_bindings_label_3');
+    },
+  },
+  {
+    value: 3,
+    get label() {
+      return t('cm_bindings_label_4');
+    },
+  },
   { value: 4, label: 'L1 / LB' },
   { value: 5, label: 'R1 / RB' },
   { value: 6, label: 'L2 / LT' },
@@ -14,12 +35,37 @@ export const GAMEPAD_BUTTON_OPTIONS = [
   { value: 9, label: 'Options / Menu' },
   { value: 10, label: 'L3' },
   { value: 11, label: 'R3' },
-  { value: 12, label: '十字键上' },
-  { value: 13, label: '十字键下' },
-  { value: 14, label: '十字键左' },
-  { value: 15, label: '十字键右' },
+  {
+    value: 12,
+    get label() {
+      return t('cm_bindings_label_5');
+    },
+  },
+  {
+    value: 13,
+    get label() {
+      return t('cm_bindings_label_6');
+    },
+  },
+  {
+    value: 14,
+    get label() {
+      return t('cm_bindings_label_7');
+    },
+  },
+  {
+    value: 15,
+    get label() {
+      return t('cm_bindings_label_8');
+    },
+  },
   { value: 16, label: 'PS / Guide' },
-  { value: 17, label: '触摸板' },
+  {
+    value: 17,
+    get label() {
+      return t('cm_bindings_label_9');
+    },
+  },
 ] as const;
 
 export type GamepadButtonIndex =
@@ -28,108 +74,206 @@ export type GamepadButtonIndex =
 export const GAMEPAD_BUTTON_BINDING_DEFINITIONS = [
   {
     action: 'confirm',
-    label: '确认与执行',
-    description: '点击当前目标，或执行牌阵与模态框中的当前动作',
-    pointer: '单击',
+    get label() {
+      return t('cm_bindings_label_10');
+    },
+    get description() {
+      return t('cm_bindings_description_11');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_12');
+    },
     keyboard: 'Enter / Space',
   },
   {
     action: 'back',
-    label: '返回上一层',
-    description: '取消当前操作，或关闭最上层界面',
-    pointer: '关闭 / 返回按钮',
+    get label() {
+      return t('cm_bindings_label_13');
+    },
+    get description() {
+      return t('cm_bindings_description_14');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_15');
+    },
     keyboard: 'Esc',
   },
   {
     action: 'browserTabPrevious',
-    label: '上一个浏览器标签页',
-    description: '切换到当前窗口左侧相邻的浏览器标签页',
-    pointer: '单击左侧标签页',
+    get label() {
+      return t('cm_bindings_label_16');
+    },
+    get description() {
+      return t('cm_bindings_description_17');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_18');
+    },
     keyboard: 'Ctrl + Shift + Tab',
   },
   {
     action: 'browserTabNext',
-    label: '下一个浏览器标签页',
-    description: '切换到当前窗口右侧相邻的浏览器标签页',
-    pointer: '单击右侧标签页',
+    get label() {
+      return t('cm_bindings_label_19');
+    },
+    get description() {
+      return t('cm_bindings_description_20');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_21');
+    },
     keyboard: 'Ctrl + Tab',
   },
   {
     action: 'contextPrevious',
-    label: '上一页 / 上一个标签',
-    description: '网页中后退一页；扩展界面中切换到上一个标签',
-    pointer: '浏览器后退 / 单击标签',
+    get label() {
+      return t('cm_bindings_label_22');
+    },
+    get description() {
+      return t('cm_bindings_description_23');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_24');
+    },
     keyboard: 'Alt + ← / Ctrl + PageUp',
   },
   {
     action: 'contextNext',
-    label: '下一页 / 下一个标签',
-    description: '网页中前进一页；扩展界面中切换到下一个标签',
-    pointer: '浏览器前进 / 单击标签',
+    get label() {
+      return t('cm_bindings_label_25');
+    },
+    get description() {
+      return t('cm_bindings_description_26');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_27');
+    },
     keyboard: 'Alt + → / Ctrl + PageDown',
   },
   {
     action: 'pagePrevious',
-    label: '向上翻页',
-    description: '按住时根据扳机压力或按钮状态连续向上翻页',
-    pointer: '滚轮向上',
+    get label() {
+      return t('cm_bindings_label_28');
+    },
+    get description() {
+      return t('cm_bindings_description_29');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_30');
+    },
     keyboard: 'PageUp',
   },
   {
     action: 'pageNext',
-    label: '向下翻页',
-    description: '按住时根据扳机压力或按钮状态连续向下翻页',
-    pointer: '滚轮向下',
+    get label() {
+      return t('cm_bindings_label_31');
+    },
+    get description() {
+      return t('cm_bindings_description_32');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_33');
+    },
     keyboard: 'PageDown',
   },
   {
     action: 'reload',
-    label: '刷新网页',
-    description: '刷新当前浏览器标签页',
-    pointer: '浏览器刷新按钮',
+    get label() {
+      return t('cm_bindings_label_34');
+    },
+    get description() {
+      return t('cm_bindings_description_35');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_36');
+    },
     keyboard: 'Ctrl / Cmd + R',
   },
   {
     action: 'toggleScreenKeyboard',
-    label: '屏幕键盘',
-    description: '为当前网页输入框打开或关闭手柄屏幕键盘',
-    pointer: '单击输入框',
-    keyboard: '无固定快捷键',
+    get label() {
+      return t('cm_bindings_label_37');
+    },
+    get description() {
+      return t('cm_bindings_description_38');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_39');
+    },
+    get keyboard() {
+      return t('cm_bindings_keyboard_40');
+    },
   },
   {
     action: 'pushToTalk',
-    label: '按住说话',
-    description: '长按后开始语音输入，松开时识别并写入当前网页输入框',
-    pointer: '输入框中的语音按钮',
-    keyboard: '无固定快捷键',
+    get label() {
+      return t('cm_bindings_label_41');
+    },
+    get description() {
+      return t('cm_bindings_description_42');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_43');
+    },
+    get keyboard() {
+      return t('cm_bindings_keyboard_44');
+    },
   },
   {
     action: 'newTab',
-    label: '新建浏览器标签页',
-    description: '打开一个新的浏览器标签页',
-    pointer: '浏览器新建标签按钮',
+    get label() {
+      return t('cm_bindings_label_45');
+    },
+    get description() {
+      return t('cm_bindings_description_46');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_47');
+    },
     keyboard: 'Ctrl / Cmd + T',
   },
   {
     action: 'cursorReset',
-    label: '重置虚拟光标',
-    description: '将手柄虚拟光标移回当前视口中央',
-    pointer: '直接移动鼠标',
-    keyboard: '无固定快捷键',
+    get label() {
+      return t('cm_bindings_label_48');
+    },
+    get description() {
+      return t('cm_bindings_description_49');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_50');
+    },
+    get keyboard() {
+      return t('cm_bindings_keyboard_51');
+    },
   },
   {
     action: 'toggleAudio',
-    label: '交互声音',
-    description: '在牌阵展开时开启或关闭交互声音',
-    pointer: '声音按钮',
+    get label() {
+      return t('cm_bindings_label_52');
+    },
+    get description() {
+      return t('cm_bindings_description_53');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_54');
+    },
     keyboard: 'M',
   },
   {
     action: 'toggleDeck',
-    label: '展开或收起牌库',
-    description: '长按指定按钮打开牌库；短按仍可执行同键的普通命令',
-    pointer: '单击牌库入口',
-    keyboard: '聚焦入口后 Enter',
+    get label() {
+      return t('cm_bindings_label_55');
+    },
+    get description() {
+      return t('cm_bindings_description_56');
+    },
+    get pointer() {
+      return t('cm_bindings_pointer_57');
+    },
+    get keyboard() {
+      return t('cm_bindings_keyboard_58');
+    },
   },
 ] as const;
 
@@ -322,10 +466,10 @@ export function gamepadStickAxes(stick: GamepadStick) {
 }
 
 const PLAYSTATION_BUTTON_LABELS = [
-  '叉键',
-  '圆键',
-  '方块',
-  '三角',
+  t('cm_bindings_text_59'),
+  t('cm_bindings_text_60'),
+  t('cm_bindings_text_61'),
+  t('cm_bindings_text_62'),
   'L1',
   'R1',
   'L2',
@@ -334,51 +478,51 @@ const PLAYSTATION_BUTTON_LABELS = [
   'Options',
   'L3',
   'R3',
-  '十字键上',
-  '十字键下',
-  '十字键左',
-  '十字键右',
+  t('cm_bindings_text_63'),
+  t('cm_bindings_text_64'),
+  t('cm_bindings_text_65'),
+  t('cm_bindings_text_66'),
   'PS',
-  '触摸板',
+  t('cm_bindings_text_67'),
 ] as const;
 
 const XBOX_BUTTON_LABELS = [
-  'A 键',
-  'B 键',
-  'X 键',
-  'Y 键',
+  t('cm_bindings_text_68'),
+  t('cm_bindings_text_69'),
+  t('cm_bindings_text_70'),
+  t('cm_bindings_text_71'),
   'LB',
   'RB',
   'LT',
   'RT',
   'View',
   'Menu',
-  '左摇杆',
-  '右摇杆',
-  '十字键上',
-  '十字键下',
-  '十字键左',
-  '十字键右',
+  t('cm_bindings_text_72'),
+  t('cm_bindings_text_73'),
+  t('cm_bindings_text_74'),
+  t('cm_bindings_text_75'),
+  t('cm_bindings_text_76'),
+  t('cm_bindings_text_77'),
   'Xbox',
 ] as const;
 
 const NINTENDO_BUTTON_LABELS = [
-  'B 键',
-  'A 键',
-  'Y 键',
-  'X 键',
+  t('cm_bindings_text_78'),
+  t('cm_bindings_text_79'),
+  t('cm_bindings_text_80'),
+  t('cm_bindings_text_81'),
   'L',
   'R',
   'ZL',
   'ZR',
-  '减号键',
-  '加号键',
-  '左摇杆',
-  '右摇杆',
-  '十字键上',
-  '十字键下',
-  '十字键左',
-  '十字键右',
+  t('cm_bindings_text_82'),
+  t('cm_bindings_text_83'),
+  t('cm_bindings_text_84'),
+  t('cm_bindings_text_85'),
+  t('cm_bindings_text_86'),
+  t('cm_bindings_text_87'),
+  t('cm_bindings_text_88'),
+  t('cm_bindings_text_89'),
   'Home',
   'Capture',
 ] as const;
@@ -398,11 +542,11 @@ export function gamepadButtonLabel(
   button: GamepadButtonIndex | null,
   deviceId = '',
 ) {
-  if (button === null) return '未设置';
+  if (button === null) return t('cm_bindings_text_90');
   return (
     controllerButtonLabels(deviceId)?.[button] ??
     GAMEPAD_BUTTON_OPTIONS.find((option) => option.value === button)?.label ??
-    `按钮 ${button}`
+    t('cm_bindings_text_91', [String(button)])
   );
 }
 
@@ -431,21 +575,23 @@ function activeActionLabel(
   action: GamepadBindingAction,
   context: GamepadBindingContext,
 ) {
-  if (action === 'toggleDeck') return '长按牌库';
+  if (action === 'toggleDeck') return t('cm_bindings_text_92');
   if (context === 'paused') return null;
-  if (action === 'pushToTalk') return '按住说话';
+  if (action === 'pushToTalk') return t('cm_bindings_text_93');
   if (context === 'keyboard' || context === 'keyboard-candidates') {
     const labels: Partial<Record<GamepadBindingAction, string>> = {
       confirm:
-        context === 'keyboard-candidates' ? '选择候选词' : '输入当前键帽',
-      back: '关闭键盘',
-      browserTabPrevious: '退格',
-      browserTabNext: '回车',
-      toggleScreenKeyboard: '关闭键盘',
+        context === 'keyboard-candidates'
+          ? t('cm_bindings_text_94')
+          : t('cm_bindings_text_95'),
+      back: t('cm_bindings_back_96'),
+      browserTabPrevious: t('cm_bindings_browser_tab_previous_97'),
+      browserTabNext: t('cm_bindings_browser_tab_next_98'),
+      toggleScreenKeyboard: t('cm_bindings_toggle_screen_keyboard_99'),
       ...(context === 'keyboard-candidates'
         ? {
-            contextPrevious: '上一个候选词',
-            contextNext: '下一个候选词',
+            contextPrevious: t('cm_bindings_context_previous_100'),
+            contextNext: t('cm_bindings_context_next_101'),
           }
         : {}),
     };
@@ -453,33 +599,33 @@ function activeActionLabel(
   }
   if (context === 'extension') {
     const labels: Partial<Record<GamepadBindingAction, string>> = {
-      confirm: '确认',
-      back: '返回',
-      browserTabPrevious: '上一个浏览器标签页',
-      browserTabNext: '下一个浏览器标签页',
-      contextPrevious: '上一个标签',
-      contextNext: '下一个标签',
-      pagePrevious: '向上翻页',
-      pageNext: '向下翻页',
-      toggleAudio: '声音开关',
-      pushToTalk: '按住说话',
+      confirm: t('cm_bindings_confirm_102'),
+      back: t('cm_bindings_back_103'),
+      browserTabPrevious: t('cm_bindings_browser_tab_previous_104'),
+      browserTabNext: t('cm_bindings_browser_tab_next_105'),
+      contextPrevious: t('cm_bindings_context_previous_106'),
+      contextNext: t('cm_bindings_context_next_107'),
+      pagePrevious: t('cm_bindings_page_previous_108'),
+      pageNext: t('cm_bindings_page_next_109'),
+      toggleAudio: t('cm_bindings_toggle_audio_110'),
+      pushToTalk: t('cm_bindings_push_to_talk_111'),
     };
     return labels[action] ?? null;
   }
   const labels: Partial<Record<GamepadBindingAction, string>> = {
-    confirm: '点击',
-    back: '取消',
-    browserTabPrevious: '上一个标签页',
-    browserTabNext: '下一个标签页',
-    contextPrevious: '浏览器后退',
-    contextNext: '浏览器前进',
-    pagePrevious: '向上翻页',
-    pageNext: '向下翻页',
-    reload: '刷新网页',
-    toggleScreenKeyboard: '屏幕键盘',
-    pushToTalk: '按住说话',
-    newTab: '新建标签页',
-    cursorReset: '重置光标',
+    confirm: t('cm_bindings_confirm_112'),
+    back: t('cm_bindings_back_113'),
+    browserTabPrevious: t('cm_bindings_browser_tab_previous_114'),
+    browserTabNext: t('cm_bindings_browser_tab_next_115'),
+    contextPrevious: t('cm_bindings_context_previous_116'),
+    contextNext: t('cm_bindings_context_next_117'),
+    pagePrevious: t('cm_bindings_page_previous_118'),
+    pageNext: t('cm_bindings_page_next_119'),
+    reload: t('cm_bindings_reload_120'),
+    toggleScreenKeyboard: t('cm_bindings_toggle_screen_keyboard_121'),
+    pushToTalk: t('cm_bindings_push_to_talk_122'),
+    newTab: t('cm_bindings_new_tab_123'),
+    cursorReset: t('cm_bindings_cursor_reset_124'),
   };
   return labels[action] ?? null;
 }
@@ -508,9 +654,15 @@ export function activeGamepadBindingActions({
     (index) => gamepadAxis(snapshot, index, deadZone) !== 0,
   );
   if (context !== 'paused' && primaryActive) {
-    add(context === 'page' ? '移动光标' : '方向导航', true);
+    add(
+      context === 'page'
+        ? t('cm_bindings_text_125')
+        : t('cm_bindings_text_126'),
+      true,
+    );
   }
-  if (context !== 'paused' && secondaryActive) add('滚动', true);
+  if (context !== 'paused' && secondaryActive)
+    add(t('cm_bindings_text_127'), true);
 
   const claimedButtons = gamepadClaimedButtons(bindings);
   if (
@@ -521,7 +673,7 @@ export function activeGamepadBindingActions({
         (snapshot.buttons[button] ?? 0) >= 0.5,
     )
   ) {
-    add('方向导航', true);
+    add(t('cm_bindings_text_128'), true);
   }
 
   for (const { action } of GAMEPAD_BUTTON_BINDING_DEFINITIONS) {

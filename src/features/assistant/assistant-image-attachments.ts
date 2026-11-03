@@ -3,6 +3,7 @@ import {
   type AiImageMimeType,
   isAiImageMimeType,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 
 function mimeTypeFromFile(file: File): AiImageMimeType | null {
   if (isAiImageMimeType(file.type)) return file.type;
@@ -25,10 +26,11 @@ function mimeTypeFromFile(file: File): AiImageMimeType | null {
 function readDataUrl(blob: Blob) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error('读取图片失败。'));
+    reader.onerror = () =>
+      reject(new Error(t('cm_assistant_image_attachments_error_1')));
     reader.onload = () => {
       if (typeof reader.result !== 'string') {
-        reject(new Error('读取图片失败。'));
+        reject(new Error(t('cm_assistant_image_attachments_error_2')));
         return;
       }
       resolve(reader.result);
@@ -42,12 +44,13 @@ export async function prepareAiImageAttachment(
 ): Promise<AiImageAttachment> {
   const mimeType = mimeTypeFromFile(file);
   if (!mimeType) {
-    throw new Error('仅支持 PNG、JPEG、WebP 和 GIF 图片。');
+    throw new Error(t('cm_assistant_image_attachments_error_3'));
   }
-  if (file.size <= 0) throw new Error('所选图片为空。');
+  if (file.size <= 0)
+    throw new Error(t('cm_assistant_image_attachments_error_4'));
   return {
     id: crypto.randomUUID(),
-    name: '参考图片',
+    name: t('cm_assistant_image_attachments_name_1'),
     mimeType,
     size: file.size,
     available: true,

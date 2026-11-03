@@ -11,6 +11,7 @@ import {
   type CardMedia,
   presetCardMedia,
 } from '../../lib/userscript-deck-media';
+import { t } from '../../localization/messages';
 import { MEDIA_RESOURCES_CARD_ID } from '../../media-resources/domain/types';
 import { MEDIA_SPEED_CARD_ID } from '../../media-speed/domain/types';
 import { PAGE_THEME_CARD_ID } from '../../page-theme/domain/types';
@@ -147,6 +148,6 @@ export function scriptPrimaryScope(card: InstalledUserscript) {
     card.manager.userIncludes[0] ??
     card.metadata.matches[0] ??
     card.metadata.includes[0] ??
-    '未声明匹配范围'
+    t('cm_presentation_text_1')
   );
 }

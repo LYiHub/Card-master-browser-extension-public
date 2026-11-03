@@ -1,6 +1,5 @@
 import { Eraser } from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-
 import { UiButton, UiNotice } from '../../components/ui/Ui';
 import {
   applyControllerSnapshot,
@@ -17,6 +16,8 @@ import {
   inputCoordinatorFor,
 } from '../../input/coordinator';
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 export const captureGamepadInspectionInput: InputScope['handle'] = () => true;
 export const GAMEPAD_INSPECTION_INPUT_SCOPE: InputScope = Object.freeze({
@@ -69,8 +70,20 @@ function percentage(value: number | undefined) {
 }
 
 const stickTelemetry = [
-  { label: '左摇杆', shortLabel: 'L3', indices: [0, 1] as const },
-  { label: '右摇杆', shortLabel: 'R3', indices: [2, 3] as const },
+  {
+    get label() {
+      return t('cm_gamepad_inspection_label_1');
+    },
+    shortLabel: 'L3',
+    indices: [0, 1] as const,
+  },
+  {
+    get label() {
+      return t('cm_gamepad_inspection_label_2');
+    },
+    shortLabel: 'R3',
+    indices: [2, 3] as const,
+  },
 ] as const;
 
 const triggerTelemetry = [
@@ -87,6 +100,8 @@ export function GamepadInspection({
   active: boolean;
   onExit: () => void;
 }) {
+  useLocale();
+
   const snapshot = useGamepadSnapshot();
   const captureRef = useRef<HTMLElement>(null);
   const artworkRef = useRef<HTMLDivElement>(null);
@@ -192,7 +207,7 @@ export function GamepadInspection({
     <section
       ref={captureRef}
       className={`gamepad-inspection-stage${visible ? ' is-visible' : ''}${active ? ' is-active' : ' is-preview'}`}
-      aria-label="手柄输入检查"
+      aria-label={t('cm_gamepad_inspection_aria_label_3')}
       aria-hidden={!visible}
       data-controller-kind={profile.kind}
     >
@@ -202,8 +217,8 @@ export function GamepadInspection({
             <button
               type="button"
               className="gamepad-test__clear"
-              title="清除验证记录"
-              aria-label="清除手柄验证记录"
+              title={t('cm_gamepad_inspection_title_4')}
+              aria-label={t('cm_gamepad_inspection_aria_label_5')}
               onClick={() => setTested(emptyTestedState())}
             >
               <Eraser size={15} aria-hidden="true" />
@@ -227,16 +242,19 @@ export function GamepadInspection({
                     }}
                   />
                 </span>
-                <small>峰值 {percentage(tested.buttonPeaks[index])}</small>
+                <small>
+                  {t('cm_gamepad_inspection_text_6')}
+                  {percentage(tested.buttonPeaks[index])}
+                </small>
               </div>
             ))}
 
             <div ref={artworkRef} className="gamepad-test__artwork" />
             {artworkError && (
-              <UiNotice tone="error" title="手柄图形载入失败">
+              <UiNotice tone="error" title={t('cm_gamepad_inspection_title_7')}>
                 <p>{artworkError}</p>
                 <UiButton onClick={() => setArtworkRetry((value) => value + 1)}>
-                  重新载入
+                  {t('cm_gamepad_inspection_text_8')}
                 </UiButton>
               </UiNotice>
             )}
@@ -265,7 +283,7 @@ export function GamepadInspection({
                       </span>
                     </div>
                     <small>
-                      峰值{' '}
+                      {t('cm_gamepad_inspection_text_9')}{' '}
                       {Math.max(
                         tested.axisPeaks[stick.indices[0]] ?? 0,
                         tested.axisPeaks[stick.indices[1]] ?? 0,
@@ -278,8 +296,8 @@ export function GamepadInspection({
 
             <footer className="gamepad-test__exit" aria-hidden={!active}>
               <div>
-                <strong>退出检查</strong>
-                <span>双摇杆大致向下并向内，保持片刻</span>
+                <strong>{t('cm_gamepad_inspection_text_10')}</strong>
+                <span>{t('cm_gamepad_inspection_text_11')}</span>
               </div>
               <span className="gamepad-test__exit-progress" aria-hidden="true">
                 <i
@@ -294,17 +312,17 @@ export function GamepadInspection({
               <span className={snapshot.connected ? 'is-connected' : undefined}>
                 <i className="gamepad-test__status-dot" aria-hidden="true" />
                 {snapshot.connected
-                  ? snapshot.id || '标准映射手柄'
-                  : '等待手柄输入'}
+                  ? snapshot.id || t('cm_gamepad_inspection_text_12')
+                  : t('cm_gamepad_inspection_text_13')}
               </span>
               <div className="gamepad-test__legend">
                 <span className="is-active">
                   <i aria-hidden="true" />
-                  正在触发
+                  {t('cm_gamepad_inspection_text_14')}
                 </span>
                 <span className="is-tested">
                   <i aria-hidden="true" />
-                  已验证
+                  {t('cm_gamepad_inspection_text_15')}
                 </span>
               </div>
             </div>

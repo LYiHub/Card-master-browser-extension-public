@@ -1,6 +1,5 @@
 import { Gamepad2, RotateCcw, Save } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-
 import {
   UiButton,
   UiDialog,
@@ -22,13 +21,30 @@ import {
 } from '../../gamepad-control/domain/settings';
 import { useGamepadSnapshot } from '../../gamepad-control/useGamepadSnapshot';
 import { extensionSpeechCapability } from '../../hosts/extension/speech-capability';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { GamepadMappingEditor } from './GamepadMappingEditor';
 import { GamepadResponseCurveEditor } from './GamepadResponseCurveEditor';
 
 const SETTINGS_TABS = [
-  { value: 'mapping', label: '映射' },
-  { value: 'feel', label: '手感' },
-  { value: 'global', label: '全局' },
+  {
+    value: 'mapping',
+    get label() {
+      return t('cm_gamepad_settings_dialog_label_1');
+    },
+  },
+  {
+    value: 'feel',
+    get label() {
+      return t('cm_gamepad_settings_dialog_label_2');
+    },
+  },
+  {
+    value: 'global',
+    get label() {
+      return t('cm_gamepad_settings_dialog_label_3');
+    },
+  },
 ] as const;
 
 type SettingsTab = (typeof SETTINGS_TABS)[number]['value'];
@@ -40,6 +56,8 @@ export function GamepadSettingsDialog({
   controller: GamepadControlController;
   onClose: () => void;
 }) {
+  useLocale();
+
   const snapshot = useGamepadSnapshot();
   const speechCapability = extensionSpeechCapability();
   const [settings, setSettings] = useState<GamepadControlSettings | null>(null);
@@ -79,7 +97,7 @@ export function GamepadSettingsDialog({
     setError(false);
     try {
       applySettings(await controller.saveSettings(settings));
-      setStatus('手柄控制设置已应用到所有页面。');
+      setStatus(t('cm_gamepad_settings_dialog_text_4'));
     } catch (failure) {
       setStatus(failure instanceof Error ? failure.message : String(failure));
       setError(true);
@@ -91,14 +109,21 @@ export function GamepadSettingsDialog({
   if (!settings) {
     return (
       <UiDialog
-        ariaLabel="手柄控制设置"
-        title="手柄控制"
+        ariaLabel={t('cm_gamepad_settings_dialog_aria_label_5')}
+        title={t('cm_gamepad_settings_dialog_title_6')}
         className="gamepad-control-dialog"
         onClose={onClose}
       >
-        <UiLoader large visible={busy} label="正在读取手柄控制设置" />
+        <UiLoader
+          large
+          visible={busy}
+          label={t('cm_gamepad_settings_dialog_label_7')}
+        />
         {!busy && (
-          <UiNotice tone="error" title="无法读取手柄控制设置">
+          <UiNotice
+            tone="error"
+            title={t('cm_gamepad_settings_dialog_title_8')}
+          >
             <p>{status}</p>
           </UiNotice>
         )}
@@ -108,15 +133,15 @@ export function GamepadSettingsDialog({
 
   return (
     <UiDialog
-      ariaLabel="手柄控制设置"
-      title="手柄控制"
+      ariaLabel={t('cm_gamepad_settings_dialog_aria_label_9')}
+      title={t('cm_gamepad_settings_dialog_title_10')}
       className="gamepad-control-dialog"
       status={{
         label: !settings.enabled
-          ? '全局停用'
+          ? t('cm_gamepad_settings_dialog_text_11')
           : snapshot.connected
-            ? '手柄已连接'
-            : '等待手柄',
+            ? t('cm_gamepad_settings_dialog_text_12')
+            : t('cm_gamepad_settings_dialog_text_13'),
         tone: !settings.enabled
           ? 'inactive'
           : snapshot.connected
@@ -126,7 +151,7 @@ export function GamepadSettingsDialog({
       onClose={onClose}
       navigation={
         <UiSegmentedControl
-          label="手柄控制设置"
+          label={t('cm_gamepad_settings_dialog_label_14')}
           value={tab}
           options={SETTINGS_TABS}
           contextNavigation
@@ -139,7 +164,7 @@ export function GamepadSettingsDialog({
             visible={busy}
             compact
             className="manager-settings-operation-loader"
-            label="正在同步手柄控制设置"
+            label={t('cm_gamepad_settings_dialog_label_15')}
           />
           {!busy && status && (
             <p className={error ? 'is-error' : ''}>{status}</p>
@@ -151,12 +176,12 @@ export function GamepadSettingsDialog({
                 ...defaultGamepadControlSettings(),
                 revision: settings.revision,
               });
-              setStatus('已载入默认参数，点击“应用设置”后生效。');
+              setStatus(t('cm_gamepad_settings_dialog_text_16'));
               setError(false);
             }}
           >
             <RotateCcw size={15} aria-hidden="true" />
-            恢复默认
+            {t('cm_gamepad_settings_dialog_text_17')}
           </UiButton>
           <UiButton
             variant="primary"
@@ -164,7 +189,7 @@ export function GamepadSettingsDialog({
             onClick={() => void save()}
           >
             <Save size={15} aria-hidden="true" />
-            应用设置
+            {t('cm_gamepad_settings_dialog_text_18')}
           </UiButton>
         </>
       }
@@ -173,12 +198,10 @@ export function GamepadSettingsDialog({
         {tab === 'mapping' ? (
           <>
             <UiNotice
-              title="三套输入，共用同一动作"
+              title={t('cm_gamepad_settings_dialog_title_19')}
               icon={<Gamepad2 size={20} aria-hidden="true" />}
             >
-              <p>
-                鼠标与键盘列用于说明对应关系，手柄列可以自由修改。网页上的手柄图形只在按键发生时显示当前功能，完整映射始终以这里为准。
-              </p>
+              <p>{t('cm_gamepad_settings_dialog_text_20')}</p>
             </UiNotice>
             <GamepadMappingEditor
               bindings={settings.bindings}
@@ -191,7 +214,9 @@ export function GamepadSettingsDialog({
                 )
               }
               onFeedback={(message) => {
-                setStatus(`${message} 点击“应用设置”后生效。`);
+                setStatus(
+                  t('cm_gamepad_settings_dialog_text_21', [String(message)]),
+                );
                 setError(false);
               }}
             />
@@ -205,22 +230,24 @@ export function GamepadSettingsDialog({
                 setSettings((current) =>
                   current ? { ...current, ...patch } : current,
                 );
-                setStatus('手感参数已调整，点击“应用设置”后生效。');
+                setStatus(t('cm_gamepad_settings_dialog_text_22'));
                 setError(false);
               }}
             />
             <section className="gamepad-control-settings__range-section">
               <header>
                 <strong className="gamepad-control-settings__range-title">
-                  满幅速度
+                  {t('cm_gamepad_settings_dialog_text_23')}
                 </strong>
                 <span className="gamepad-control-settings__range-description">
-                  决定摇杆推到底时的最高移动速度
+                  {t('cm_gamepad_settings_dialog_text_24')}
                 </span>
               </header>
               <div className="gamepad-control-settings__ranges">
                 <UiRange
-                  label={`光标速度：${settings.cursorSpeed}px/s`}
+                  label={t('cm_gamepad_settings_dialog_text_25', [
+                    String(settings.cursorSpeed),
+                  ])}
                   min={GAMEPAD_CURSOR_SPEED_RANGE.minimum}
                   max={GAMEPAD_CURSOR_SPEED_RANGE.maximum}
                   step={40}
@@ -237,7 +264,9 @@ export function GamepadSettingsDialog({
                   }
                 />
                 <UiRange
-                  label={`滚动速度：${settings.scrollSpeed}px/s`}
+                  label={t('cm_gamepad_settings_dialog_text_26', [
+                    String(settings.scrollSpeed),
+                  ])}
                   min={GAMEPAD_SCROLL_SPEED_RANGE.minimum}
                   max={GAMEPAD_SCROLL_SPEED_RANGE.maximum}
                   step={10}
@@ -258,15 +287,17 @@ export function GamepadSettingsDialog({
             <section className="gamepad-control-settings__range-section">
               <header>
                 <strong className="gamepad-control-settings__range-title">
-                  光标加速时间线
+                  {t('cm_gamepad_settings_dialog_text_27')}
                 </strong>
                 <span className="gamepad-control-settings__range-description">
-                  只控制光标从静止到目标速度的缓冲；滚动始终即时响应摇杆幅度
+                  {t('cm_gamepad_settings_dialog_text_28')}
                 </span>
               </header>
               <div className="gamepad-control-settings__ranges">
                 <UiRange
-                  label={`光标加速：${settings.cursorRampMs}ms`}
+                  label={t('cm_gamepad_settings_dialog_text_29', [
+                    String(settings.cursorRampMs),
+                  ])}
                   min={GAMEPAD_CURSOR_ACCELERATION_DURATION_RANGE.minimum}
                   max={GAMEPAD_CURSOR_ACCELERATION_DURATION_RANGE.maximum}
                   step={20}
@@ -287,15 +318,17 @@ export function GamepadSettingsDialog({
             <section className="gamepad-control-settings__range-section">
               <header>
                 <strong className="gamepad-control-settings__range-title">
-                  输入节奏
+                  {t('cm_gamepad_settings_dialog_text_30')}
                 </strong>
                 <span className="gamepad-control-settings__range-description">
-                  控制死区与方向导航的连续触发节奏
+                  {t('cm_gamepad_settings_dialog_text_31')}
                 </span>
               </header>
               <div className="gamepad-control-settings__ranges is-compact">
                 <UiRange
-                  label={`摇杆死区：${Math.round(settings.stickDeadZone * 100)}%`}
+                  label={t('cm_gamepad_settings_dialog_text_32', [
+                    String(Math.round(settings.stickDeadZone * 100)),
+                  ])}
                   min={0.05}
                   max={0.45}
                   step={0.01}
@@ -312,7 +345,9 @@ export function GamepadSettingsDialog({
                   }
                 />
                 <UiRange
-                  label={`方向首次重复：${settings.repeatDelayMs}ms`}
+                  label={t('cm_gamepad_settings_dialog_text_33', [
+                    String(settings.repeatDelayMs),
+                  ])}
                   min={160}
                   max={800}
                   step={10}
@@ -329,7 +364,9 @@ export function GamepadSettingsDialog({
                   }
                 />
                 <UiRange
-                  label={`方向连续重复：${settings.repeatIntervalMs}ms`}
+                  label={t('cm_gamepad_settings_dialog_text_34', [
+                    String(settings.repeatIntervalMs),
+                  ])}
                   min={45}
                   max={240}
                   step={5}
@@ -352,8 +389,8 @@ export function GamepadSettingsDialog({
           <div className="gamepad-control-settings__global">
             <div className="gamepad-control-settings__toggles">
               <UiToggle
-                label="启用手柄网页控制"
-                description="统一控制所有网页和扩展界面的手柄交互；关闭后可在这里重新启用。"
+                label={t('cm_gamepad_settings_dialog_label_35')}
+                description={t('cm_gamepad_settings_dialog_description_36')}
                 checked={settings.enabled}
                 disabled={busy}
                 onChange={(enabled) =>
@@ -363,8 +400,8 @@ export function GamepadSettingsDialog({
                 }
               />
               <UiToggle
-                label="显示手柄示意图"
-                description="在牌库入口旁显示手柄状态与近期操作；关闭后对所有网站生效。"
+                label={t('cm_gamepad_settings_dialog_label_37')}
+                description={t('cm_gamepad_settings_dialog_description_38')}
                 checked={settings.showControllerIndicator}
                 disabled={busy}
                 onChange={(showControllerIndicator) =>

@@ -1,9 +1,10 @@
 import { type CSSProperties, useLayoutEffect, useRef } from 'react';
-
 import type { AudioDirector } from '../../audio/AudioDirector';
 import { FORGE_AUDIO_DURATION } from '../../audio/cues';
 import { projectAssetUrl } from '../../lib/project-assets';
 import { userscriptCardMedia } from '../../lib/userscript-deck-media';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { gsap } from '../../motion/gsap';
 import {
   CARD_COLLECTION_CARD_DIAMETER,
@@ -38,8 +39,12 @@ export type CardCreationPreviewCard = {
 };
 
 const DEFAULT_PREVIEW_CARD: CardCreationPreviewCard = {
-  title: '新生秘术',
-  description: '智能体刚刚完成的脚本卡牌',
+  get title() {
+    return t('cm_card_creation_preview_title_1');
+  },
+  get description() {
+    return t('cm_card_creation_preview_description_2');
+  },
   media: { kind: 'image', imageUrl: PREVIEW_COVER_URL },
   accent: PREVIEW_MEDIA.accent,
 };
@@ -86,6 +91,8 @@ export function CardCreationPreview({
   audio: Pick<AudioDirector, 'play' | 'prepare'>;
   onComplete: (requestId: string) => void;
 }) {
+  useLocale();
+
   const layerRef = useRef<HTMLDivElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const flipperRef = useRef<HTMLDivElement | null>(null);
@@ -281,7 +288,7 @@ export function CardCreationPreview({
               finish="framed"
               media={card.media}
               edgeUrl={CARD_EDGE_URL}
-              stateLabel="新卡已激活"
+              stateLabel={t('cm_card_creation_preview_state_label_3')}
               stateTone="active"
               title={card.title}
               description={card.description}

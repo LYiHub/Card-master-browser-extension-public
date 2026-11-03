@@ -9,6 +9,8 @@ import type {
 } from '../../ai/domain/types';
 import { IMAGE_GENERATION_PROTOCOL_ADAPTERS } from '../../ai/infrastructure/image-generation-protocol-registry';
 import { UiLoader } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { CredentialField } from './AssistantSettingsPrimitives';
 
 export function ImageServiceSettings({
@@ -20,6 +22,8 @@ export function ImageServiceSettings({
   config: AiServicesConfigView | null;
   onConfigChange: (config: AiServicesConfigView) => void;
 }) {
+  useLocale();
+
   const [credentialSource, setCredentialSource] =
     useState<ImageServiceCredentialSource>('model-service');
   const [protocol, setProtocol] =
@@ -41,7 +45,11 @@ export function ImageServiceSettings({
   }, [config, dirty]);
 
   if (!services) {
-    return <p className="cm-assistant-settings-copy">请在扩展设置中配置。</p>;
+    return (
+      <p className="cm-assistant-settings-copy">
+        {t('cm_image_service_settings_text_1')}
+      </p>
+    );
   }
 
   const independent = credentialSource === 'independent';
@@ -69,7 +77,7 @@ export function ImageServiceSettings({
       .clearImageServiceCredential()
       .then((next) => {
         onConfigChange(next);
-        setStatus('图像服务密钥已清除。');
+        setStatus(t('cm_image_service_settings_text_2'));
       })
       .catch((failure) => setError(assistantUserFacingError(failure)))
       .finally(() => setBusy(false));
@@ -78,7 +86,9 @@ export function ImageServiceSettings({
   return (
     <div className="cm-assistant-service-settings">
       <label className="cm-assistant-service-field">
-        <span className="cm-assistant-service-field__label">接口协议</span>
+        <span className="cm-assistant-service-field__label">
+          {t('cm_image_service_settings_text_3')}
+        </span>
         <select
           className="cm-assistant-form-control"
           value={protocol}
@@ -120,7 +130,9 @@ export function ImageServiceSettings({
         {currentAdapter?.description}
       </p>
       <label className="cm-assistant-service-field">
-        <span className="cm-assistant-service-field__label">凭据来源</span>
+        <span className="cm-assistant-service-field__label">
+          {t('cm_image_service_settings_text_4')}
+        </span>
         <select
           className="cm-assistant-form-control"
           value={credentialSource}
@@ -133,34 +145,42 @@ export function ImageServiceSettings({
             )
           }
         >
-          <option value="model-service">沿用模型服务</option>
-          <option value="independent">独立图像服务</option>
+          <option value="model-service">
+            {t('cm_image_service_settings_text_5')}
+          </option>
+          <option value="independent">
+            {t('cm_image_service_settings_text_6')}
+          </option>
         </select>
       </label>
       {separateBaseUrl && (
         <>
           <label className="cm-assistant-service-field">
-            <span className="cm-assistant-service-field__label">API 地址</span>
+            <span className="cm-assistant-service-field__label">
+              {t('cm_image_service_settings_text_7')}
+            </span>
             <input
               className="cm-assistant-form-control"
               value={baseUrl}
               type="url"
-              placeholder="图像服务基础地址"
+              placeholder={t('cm_image_service_settings_placeholder_8')}
               disabled={busy}
               onChange={(event) => update(() => setBaseUrl(event.target.value))}
             />
           </label>
           {independent && (
             <CredentialField
-              label="API 密钥"
+              label={t('cm_image_service_settings_label_9')}
               value={apiKey}
               hasCredential={Boolean(
                 config?.imageService.hasCredential &&
                   config.imageService.protocol === protocol,
               )}
               busy={busy}
-              placeholder="输入图像服务 API 密钥"
-              clearSavedLabel="清除已保存图像服务密钥"
+              placeholder={t('cm_image_service_settings_placeholder_10')}
+              clearSavedLabel={t(
+                'cm_image_service_settings_clear_saved_label_11',
+              )}
               onChange={setApiKey}
               onClear={clearCredential}
             />
@@ -168,7 +188,9 @@ export function ImageServiceSettings({
         </>
       )}
       <label className="cm-assistant-service-field">
-        <span className="cm-assistant-service-field__label">生图模型</span>
+        <span className="cm-assistant-service-field__label">
+          {t('cm_image_service_settings_text_12')}
+        </span>
         <input
           className="cm-assistant-form-control"
           value={model}
@@ -182,17 +204,19 @@ export function ImageServiceSettings({
       </label>
       <p className="cm-assistant-settings-copy">
         {independent
-          ? `请求使用${currentAdapter?.label ?? protocol}的生成参数和响应格式。`
+          ? t('cm_image_service_settings_text_13', [
+              String(currentAdapter?.label ?? protocol),
+            ])
           : protocol === 'dashscope'
-            ? '沿用模型服务的 API 密钥，单独使用上方百炼图像 API 地址。'
-            : '沿用模型服务的 API 地址和密钥，只单独指定生图模型。'}
+            ? t('cm_image_service_settings_text_14')
+            : t('cm_image_service_settings_text_15')}
       </p>
       <div className="cm-assistant-service-settings__actions">
         <UiLoader
           visible={busy}
           compact
           className="cm-assistant-service-loader"
-          label="正在保存图像配置"
+          label={t('cm_image_service_settings_label_16')}
         />
         <button
           type="button"
@@ -219,13 +243,13 @@ export function ImageServiceSettings({
                 setDirty(false);
                 setApiKey('');
                 onConfigChange(next);
-                setStatus('图像服务配置已保存。');
+                setStatus(t('cm_image_service_settings_text_17'));
               })
               .catch((failure) => setError(assistantUserFacingError(failure)))
               .finally(() => setBusy(false));
           }}
         >
-          保存图像配置
+          {t('cm_image_service_settings_text_18')}
         </button>
       </div>
       {status && <p className="is-success">{status}</p>}

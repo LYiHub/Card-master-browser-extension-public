@@ -1,7 +1,8 @@
 import { type ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-
 import { projectAssetUrl } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { gsap } from '../../motion/gsap';
 
 const DEFAULT_TOP_ORNAMENT = projectAssetUrl(
@@ -44,7 +45,11 @@ export function AudioShortcutControl({
   activeIconUrl: string;
   onToggle: () => void;
 }) {
-  const label = muted ? '开启声音' : '静音';
+  useLocale();
+
+  const label = muted
+    ? t('cm_context_plaque_text_1')
+    : t('cm_context_plaque_text_2');
   return (
     <button
       type="button"
@@ -79,6 +84,8 @@ export function ContextPlaque({
   bottomOrnamentUrl?: string;
   shortcutAction?: ReactNode;
 }) {
+  useLocale();
+
   const Heading = headingLevel;
   const contentRef = useRef<HTMLDivElement | null>(null);
   const copyRef = useRef<HTMLDivElement | null>(null);

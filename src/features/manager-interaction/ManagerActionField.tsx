@@ -1,4 +1,6 @@
 import { type CSSProperties, useLayoutEffect, useRef, useState } from 'react';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 import { gsap } from '../../motion/gsap';
 import { actionArcHeight, actionFanLayout, centerOutSlotIndex } from './layout';
 import {
@@ -68,6 +70,8 @@ function ActionTarget<Action extends ManagerFieldAction>({
   onChooseAction,
   corner = false,
 }: ActionTargetProps<Action>) {
+  useLocale();
+
   const rootRef = useRef<HTMLButtonElement | null>(null);
   const badgeRef = useRef<HTMLSpanElement | null>(null);
   const copyRef = useRef<HTMLSpanElement | null>(null);
@@ -195,6 +199,8 @@ export function ManagerActionField<Action extends ManagerFieldAction>({
   onHoverAction,
   onChooseAction,
 }: ManagerActionFieldProps<Action>) {
+  useLocale();
+
   const rootRef = useRef<HTMLDivElement | null>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const renderedRef = useRef<ManagerActionScene<Action> | null>(scene);
@@ -333,7 +339,9 @@ export function ManagerActionField<Action extends ManagerFieldAction>({
                   '--action-baseline-offset': `${actionBaselineOffset}px`,
                 } as CSSProperties
               }
-              aria-label={`${renderedScene.title} 卡牌能力`}
+              aria-label={t('cm_manager_action_field_text_1', [
+                String(renderedScene.title),
+              ])}
             >
               {centralActions.map((action, index) => {
                 const slotIndex = centerOutSlotIndex(

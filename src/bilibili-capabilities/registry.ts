@@ -1,4 +1,5 @@
 import type { PresetCardVariant } from '../lib/userscript-deck-media';
+import { t } from '../localization/messages';
 import type {
   BilibiliCapabilityCard,
   BilibiliCapabilityCommand,
@@ -25,71 +26,121 @@ export type BilibiliCapabilityDefinition = {
 export const BILIBILI_CAPABILITIES: readonly BilibiliCapabilityDefinition[] = [
   {
     id: 'recommendation-control',
-    title: '流量探险家',
-    description: '保持登录状态，在纯净、探索、混合与原生身份间切换。',
+    get title() {
+      return t('cm_registry_title_1');
+    },
+    get description() {
+      return t('cm_registry_description_2');
+    },
     mediaId: '05-bilibili-recommendation',
     platforms: ['bilibili'],
-    inactiveLabel: '仅限首页',
+    get inactiveLabel() {
+      return t('cm_registry_inactive_label_3');
+    },
     commands: [
       {
         id: 'mode:pure',
-        label: '纯净',
-        description: '移除推荐请求中的登录身份，读取公共推荐流',
+        get label() {
+          return t('cm_registry_label_4');
+        },
+        get description() {
+          return t('cm_registry_description_5');
+        },
       },
       {
         id: 'mode:explore',
-        label: '探索',
-        description: '使用独立匿名指纹刷新推荐，主动离开既有兴趣画像',
+        get label() {
+          return t('cm_registry_label_6');
+        },
+        get description() {
+          return t('cm_registry_description_7');
+        },
       },
       {
         id: 'mode:mixed',
-        label: '混合',
-        description: '在个性推荐与匿名探索之间交替取样',
+        get label() {
+          return t('cm_registry_label_8');
+        },
+        get description() {
+          return t('cm_registry_description_9');
+        },
       },
       {
         id: 'mode:native',
-        label: '原生',
-        description: '恢复 B 站原生个性推荐请求',
+        get label() {
+          return t('cm_registry_label_10');
+        },
+        get description() {
+          return t('cm_registry_description_11');
+        },
       },
     ],
   },
   {
     id: 'danmaku-compression',
-    title: '合成大弹幕',
-    description: '合并相同或相似的重复弹幕，并保留代表文本和出现次数。',
+    get title() {
+      return t('cm_registry_title_12');
+    },
+    get description() {
+      return t('cm_registry_description_13');
+    },
     mediaId: '06-bilibili-danmaku',
     platforms: ['bilibili'],
-    inactiveLabel: '等待视频',
+    get inactiveLabel() {
+      return t('cm_registry_inactive_label_14');
+    },
     commands: [
       {
         id: 'reload',
-        label: '重新处理当前视频',
-        description: '使用当前参数重新载入并压缩本视频弹幕',
+        get label() {
+          return t('cm_registry_label_15');
+        },
+        get description() {
+          return t('cm_registry_description_16');
+        },
       },
       {
         id: 'restore',
-        label: '暂用原弹幕',
-        description: '仅让当前视频暂时使用原始弹幕，切换视频后自动恢复',
+        get label() {
+          return t('cm_registry_label_17');
+        },
+        get description() {
+          return t('cm_registry_description_18');
+        },
       },
     ],
   },
   {
     id: 'segment-skipping',
-    title: '绯红空降',
-    description: '按社区标注自动跳过当前视频的赞助、片头和片尾。',
+    get title() {
+      return t('cm_registry_title_19');
+    },
+    get description() {
+      return t('cm_registry_description_20');
+    },
     mediaId: '07-bilibili-segments',
     platforms: ['bilibili', 'youtube'],
-    inactiveLabel: '等待视频',
+    get inactiveLabel() {
+      return t('cm_registry_inactive_label_21');
+    },
     commands: [
       {
         id: 'toggle-capture',
-        label: '标记片段',
-        description: '在当前 B 站或 YouTube 视频开始、结束片段标记',
+        get label() {
+          return t('cm_registry_label_22');
+        },
+        get description() {
+          return t('cm_registry_description_23');
+        },
       },
       {
         id: 'refresh-segments',
-        label: '刷新片段',
-        description: '忽略本地缓存并重新读取当前平台的社区片段',
+        get label() {
+          return t('cm_registry_label_24');
+        },
+        get description() {
+          return t('cm_registry_description_25');
+        },
       },
     ],
   },

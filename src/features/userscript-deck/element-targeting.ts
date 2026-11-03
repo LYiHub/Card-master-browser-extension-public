@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { gsap } from '../../motion/gsap';
 import type { Point } from '../manager-interaction/layout';
 
@@ -77,19 +78,19 @@ function immediateElementHidingSelector(
 ) {
   const separator = rule.indexOf('##');
   if (separator <= 0) {
-    throw new Error('即时元素过滤规则缺少标准选择器分隔符。');
+    throw new Error(t('cm_element_targeting_error_1'));
   }
   const domain = rule.slice(0, separator);
   const selector = rule.slice(separator + 2).trim();
   if (!selector || new URL(pageUrl).hostname !== domain) {
-    throw new Error('即时元素过滤规则与当前页面不匹配。');
+    throw new Error(t('cm_element_targeting_error_2'));
   }
   try {
     if (!target.element.matches(selector)) {
-      throw new Error('生成的元素过滤选择器未命中当前元素。');
+      throw new Error(t('cm_element_targeting_error_3'));
     }
   } catch (error) {
-    throw new Error('无法在当前页面应用元素过滤选择器。', {
+    throw new Error(t('cm_element_targeting_error_4'), {
       cause: error,
     });
   }

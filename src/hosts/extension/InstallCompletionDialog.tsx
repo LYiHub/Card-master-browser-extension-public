@@ -1,7 +1,8 @@
 import { CheckCircle2 } from 'lucide-react';
 import { useRef } from 'react';
-
 import { UiButton, UiLayeredCompactDialog } from '../../components/ui/Ui';
+import { t } from '../../localization/messages';
+import { useLocale } from '../../localization/react';
 
 export function InstallCompletionDialog({
   open,
@@ -14,25 +15,29 @@ export function InstallCompletionDialog({
   onStay: () => void;
   onClosePage: () => void;
 }) {
+  useLocale();
+
   const closePageButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
     <UiLayeredCompactDialog
       open={open}
-      title="卡牌已收录"
-      ariaLabel="脚本安装完成"
+      title={t('cm_install_completion_dialog_title_1')}
+      ariaLabel={t('cm_install_completion_dialog_aria_label_2')}
       initialFocusRef={closePageButtonRef}
       onClose={onStay}
       onEnter={onClosePage}
       footer={
         <>
-          <UiButton onClick={onStay}>留在此页</UiButton>
+          <UiButton onClick={onStay}>
+            {t('cm_install_completion_dialog_text_3')}
+          </UiButton>
           <UiButton
             buttonRef={closePageButtonRef}
             variant="primary"
             onClick={onClosePage}
           >
-            关闭此页
+            {t('cm_install_completion_dialog_text_4')}
             <kbd>Enter</kbd>
           </UiButton>
         </>
@@ -42,10 +47,7 @@ export function InstallCompletionDialog({
         <CheckCircle2 size={34} aria-hidden="true" />
         <div>
           <strong>{title}</strong>
-          <p>
-            脚本完整源码已经保存。下次打开牌阵时，这张卡牌会按 metadata
-            自动匹配当前页面。
-          </p>
+          <p>{t('cm_install_completion_dialog_text_5')}</p>
         </div>
       </div>
     </UiLayeredCompactDialog>
