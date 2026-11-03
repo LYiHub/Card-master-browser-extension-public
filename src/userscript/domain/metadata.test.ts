@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { setLanguagePreference } from '../../localization/locale';
 
 import {
   parseUserscriptMetadata,
@@ -7,6 +8,8 @@ import {
   userscriptDisplayName,
   userscriptIdentity,
 } from './metadata';
+
+afterEach(() => setLanguagePreference('auto'));
 
 const source = `// ==UserScript==
 // @name        Example Script
@@ -83,7 +86,7 @@ describe('parseUserscriptMetadata', () => {
     expect(localized.metadata?.raw['x-project']).toEqual(['preserved']);
   });
 
-  it('uses the fixed Simplified Chinese, Traditional Chinese, default display order', () => {
+  it('uses the selected Chinese script with a default fallback and stable identity', () => {
     const parsed = parseUserscriptMetadata(
       source.replace(
         '// @namespace   tests',
@@ -101,6 +104,14 @@ describe('parseUserscriptMetadata', () => {
     if (!metadata) return;
     expect(userscriptDisplayName(metadata)).toBe('简体名称');
     expect(userscriptDisplayDescription(metadata)).toBe('简体说明');
+    const identity = userscriptIdentity(metadata);
+    const before = JSON.stringify(metadata);
+    setLanguagePreference('zh-TW');
+    expect(userscriptDisplayName(metadata)).toBe('繁體名稱');
+    expect(userscriptDisplayDescription(metadata)).toBe('繁體說明');
+    expect(userscriptIdentity(metadata)).toBe(identity);
+    expect(JSON.stringify(metadata)).toBe(before);
+    setLanguagePreference('zh-CN');
 
     const withoutSimplified = {
       ...metadata,

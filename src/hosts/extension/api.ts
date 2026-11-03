@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { initializeLanguagePreference } from '../../localization/preferences';
 import {
   extensionDiagnostics,
@@ -253,8 +254,9 @@ export type ExtensionUserscriptApi = ExtensionBackgroundApi & {
   >;
 };
 
-export const USER_SCRIPTS_API_UNAVAILABLE =
-  '请在扩展详情页开启“允许运行用户脚本”，然后重新加载扩展。Chrome 默认不开放该接口。';
+export function userscriptsApiUnavailableMessage() {
+  return t('cm_userscripts_api_unavailable');
+}
 
 export function extensionApiOrNull(): ExtensionApi | null {
   try {

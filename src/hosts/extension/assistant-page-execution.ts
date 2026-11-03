@@ -1,3 +1,5 @@
+import { t } from '../../localization/messages';
+
 const MAX_PAGE_EXPRESSION_LENGTH = 64 * 1024;
 const MAX_PAGE_EXECUTION_OUTPUT_LENGTH = 64 * 1024;
 
@@ -8,7 +10,9 @@ export function validateAssistantPageExpression(value: unknown) {
     value.length > MAX_PAGE_EXPRESSION_LENGTH
   ) {
     throw new Error(
-      `expression 必须是非空字符串，且不能超过 ${MAX_PAGE_EXPRESSION_LENGTH} 个字符。`,
+      t('cm_assistant_page_execution_error_1', [
+        String(MAX_PAGE_EXPRESSION_LENGTH),
+      ]),
     );
   }
   return value.trim();
@@ -33,8 +37,8 @@ export function assistantPageExecutionSource(expression: string) {
     if (typeof value === "bigint" || typeof value === "symbol") {
       return String(value);
     }
-    if (typeof value === "function") return "[函数]";
-    if (depth >= MAX_DEPTH) return "[达到最大深度]";
+    if (typeof value === "function") return ${JSON.stringify(t('cm_serializer_function'))};
+    if (depth >= MAX_DEPTH) return ${JSON.stringify(t('cm_serializer_max_depth'))};
     if (value instanceof Error) {
       return {
         _type: "Error",
@@ -46,7 +50,7 @@ export function assistantPageExecutionSource(expression: string) {
     if (value instanceof Date) return value.toISOString();
     if (value instanceof RegExp) return value.toString();
     if (typeof Promise !== "undefined" && value instanceof Promise) {
-      return "[Promise 对象]";
+      return ${JSON.stringify(t('cm_serializer_promise'))};
     }
     if (
       typeof Element !== "undefined" &&
@@ -109,14 +113,14 @@ export function assistantPageExecutionSource(expression: string) {
         .map((entry) => serialize(entry, depth + 1));
     }
     if (typeof value === "object") {
-      if (seen.has(value)) return "[循环引用]";
+      if (seen.has(value)) return ${JSON.stringify(t('cm_serializer_circular'))};
       seen.add(value);
       const result = {};
       for (const key of Object.keys(value).slice(0, MAX_OBJECT_KEYS)) {
         try {
           result[key] = serialize(value[key], depth + 1);
         } catch (error) {
-          result[key] = "[读取属性失败：" +
+          result[key] = ${JSON.stringify(t('cm_serializer_property_error'))} +
             (error instanceof Error ? error.message : String(error)) +
             "]";
         }
@@ -185,7 +189,9 @@ export function boundedAssistantPageExecutionOutput(result: unknown) {
   return JSON.stringify({
     success: false,
     truncated: true,
-    error: `页面执行结果超过 ${MAX_PAGE_EXECUTION_OUTPUT_LENGTH} 个字符。`,
+    error: t('cm_assistant_page_execution_error_2', [
+      String(MAX_PAGE_EXECUTION_OUTPUT_LENGTH),
+    ]),
     preview: output.slice(0, MAX_PAGE_EXECUTION_OUTPUT_LENGTH - 512),
   });
 }

@@ -13,7 +13,11 @@ function signature(record) {
   return [...new Set([...tokens, ...placeholders])].sort().join('\n');
 }
 
-export function validateCatalogs(catalogs) {
+export function validateCatalogs(
+  catalogs,
+  keyPattern = /^cm_[a-z0-9_]+$/,
+  allowEmptySource = false,
+) {
   const source = catalogs.zh_CN;
   const keys = Object.keys(source).sort();
   for (const locale of APP_LOCALES) {
@@ -23,16 +27,21 @@ export function validateCatalogs(catalogs) {
     }
     const names = new Set();
     for (const [key, record] of Object.entries(catalog)) {
-      if (!/^cm_[a-z0-9_]+$/.test(key) || names.has(key.toLowerCase())) {
+      if (!keyPattern.test(key) || names.has(key.toLowerCase())) {
         throw new Error(`Invalid localization key: ${locale}/${key}`);
       }
       names.add(key.toLowerCase());
-      if (typeof record?.message !== 'string' || !record.message.trim()) {
+      if (
+        typeof record?.message !== 'string' ||
+        (!record.message.trim() &&
+          !(allowEmptySource && source[key]?.message === ''))
+      ) {
         throw new Error(`Empty localization message: ${locale}/${key}`);
       }
       for (const [, name] of record.message.matchAll(
-        /\$([a-z_][a-z0-9_]*)\$/gi,
+        /\$\$|\$([a-z_][a-z0-9_]*)\$/gi,
       )) {
+        if (!name) continue;
         const placeholder = Object.entries(record.placeholders ?? {}).find(
           ([key]) => key.toLowerCase() === name.toLowerCase(),
         )?.[1];
@@ -45,6 +54,36 @@ export function validateCatalogs(catalogs) {
       }
     }
   }
+}
+
+const VENDOR_LOCALES = {
+  lumno: ['vendor/lumno/runtime', ''],
+  'cat-catch': ['vendor/cat-catch', ''],
+  youtube: ['vendor/youtube/sponsor', 'sponsor_youtube_'],
+  bilibili: ['vendor/bilibili/sponsor', 'sponsor_bilibili_'],
+};
+
+export async function readVendorCatalogs(root) {
+  const catalogs = {};
+  for (const [name, [source, prefix]] of Object.entries(VENDOR_LOCALES)) {
+    const pair = {
+      zh_CN: JSON.parse(
+        await readFile(
+          resolve(root, source, '_locales/zh_CN/messages.json'),
+          'utf8',
+        ),
+      ),
+      zh_TW: JSON.parse(
+        await readFile(
+          resolve(root, `src/locales/vendor/${name}/zh_TW/messages.json`),
+          'utf8',
+        ),
+      ),
+    };
+    validateCatalogs(pair, /^[a-z0-9_]+$/i, true);
+    catalogs[name] = { ...pair, prefix };
+  }
+  return catalogs;
 }
 
 export async function readCoreCatalogs(root) {
@@ -67,18 +106,22 @@ export async function readCoreCatalogs(root) {
 
 export async function mergeCoreLocales(root, output) {
   const catalogs = await readCoreCatalogs(root);
+  const vendors = await readVendorCatalogs(root);
   const source = JSON.parse(
     await readFile(resolve(output, '_locales/zh_CN/messages.json'), 'utf8'),
   );
   for (const locale of APP_LOCALES) {
     const path = resolve(output, `_locales/${locale}`);
     await mkdir(path, { recursive: true });
-    const existing = await readFile(resolve(path, 'messages.json'), 'utf8')
-      .then(JSON.parse)
-      .catch((error) => {
-        if (error.code === 'ENOENT') return source;
-        throw error;
-      });
+    const existing = { ...source };
+    if (locale === 'zh_TW') {
+      for (const vendor of Object.values(vendors)) {
+        for (const [key, record] of Object.entries(vendor.zh_TW)) {
+          const name = `${vendor.prefix}${key}`;
+          if (name in existing) existing[name] = record;
+        }
+      }
+    }
     for (const key of Object.keys(catalogs[locale])) {
       if (key in existing)
         throw new Error(`Duplicate localization key: ${locale}/${key}`);

@@ -232,7 +232,11 @@ function parseLibrary(serialized: string) {
   ) {
     throw new Error(
       t('cm_script_repository_error_4', [
-        String(record(value) ? String(value.version) : '未知'),
+        String(
+          record(value)
+            ? String(value.version)
+            : t('cm_script_repository_text_1'),
+        ),
       ]),
     );
   }

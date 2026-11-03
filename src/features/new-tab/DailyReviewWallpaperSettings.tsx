@@ -10,6 +10,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 import {
@@ -120,7 +121,7 @@ function stateLabel(state: DailyReviewWallpaperState | null) {
 
 function dateTime(timestamp: number | undefined) {
   if (!timestamp) return '';
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat(getLocale(), {
     dateStyle: 'medium',
     timeStyle: 'medium',
     hour12: false,
@@ -129,7 +130,7 @@ function dateTime(timestamp: number | undefined) {
 
 function time(timestamp: number | undefined) {
   if (!timestamp) return '';
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat(getLocale(), {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',

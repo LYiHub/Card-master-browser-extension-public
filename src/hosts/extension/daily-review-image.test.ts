@@ -107,7 +107,7 @@ describe('DailyReviewImageGenerator', () => {
   it('rejects English daily review prompts before contacting the image service', () => {
     expect(() =>
       buildDailyReviewImageRequest('A complete English wallpaper prompt.'),
-    ).toThrow('每日回顾提示词必须使用简体中文');
+    ).toThrow('每日回顾提示词必须使用中文');
   });
 
   it('uses dashscope adapter when protocol is dashscope', async () => {

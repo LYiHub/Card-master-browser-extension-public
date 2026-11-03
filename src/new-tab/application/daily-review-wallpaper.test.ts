@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { setLanguagePreference } from '../../localization/locale';
 
 import {
   buildDailyHistorySource,
@@ -16,7 +17,23 @@ import {
   sanitizeHistoryUrl,
 } from './daily-review-wallpaper';
 
+afterEach(() => setLanguagePreference('auto'));
+
 describe('daily history wallpaper', () => {
+  it('requests the selected script without changing history or user-authored plans', () => {
+    const history = { sourceDate: '2026-08-05', pages: [], timeline: [] };
+    const before = JSON.stringify(history);
+    setLanguagePreference('zh-TW');
+    const input = JSON.parse(buildDailyReviewModelInput(history));
+    expect(input.requirements.language).toContain('台灣繁體中文');
+    expect(input.history).toEqual(history);
+    const plan = {
+      summary: '手寫的回顧摘要。',
+      image_prompt: '一道明亮的光線穿過古老圖書館，書籍與地圖展現一天的探索。',
+    };
+    expect(parseDailyReviewWallpaperPlan(JSON.stringify(plan))).toEqual(plan);
+    expect(JSON.stringify(history)).toBe(before);
+  });
   it('removes credentials, query strings and fragments from history URLs', () => {
     expect(
       sanitizeHistoryUrl(
@@ -121,7 +138,7 @@ describe('daily history wallpaper', () => {
           image_prompt: 'A complete scene written only in English.',
         }),
       ),
-    ).toThrow('必须使用简体中文');
+    ).toThrow('必须使用中文');
     expect(
       dailyReviewPromptUsesChinese(
         '中文开头 followed by a complete English sentence here.',
@@ -134,7 +151,7 @@ describe('daily history wallpaper', () => {
           summary: 'A complete summary written in English.',
         }),
       ),
-    ).toThrow('摘要必须使用简体中文');
+    ).toThrow('摘要必须使用中文');
     expect(() =>
       parseDailyReviewWallpaperPlan(
         JSON.stringify({

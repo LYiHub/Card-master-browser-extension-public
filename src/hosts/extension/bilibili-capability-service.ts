@@ -25,8 +25,8 @@ import type { SponsorRuntimeStorageService } from './sponsor-runtime-storage';
 export const BILIBILI_RECOMMENDATION_RULE_ID = 8_700_001;
 const BILIBILI_MIXED_RULE_BASE = 8_710_000;
 const BILIBILI_MIXED_RULE_RANGE = 400_000;
-const SAFARI_RECOMMENDATION_UNAVAILABLE_REASON =
-  'Safari 不支持修改 B 站推荐请求身份，因此流量探险家不会出现在牌阵中，也无法启用。';
+const safariRecommendationUnavailableReason = () =>
+  t('cm_safari_recommendation_unavailable');
 
 export type BilibiliPageContext = {
   tabId: number;
@@ -256,7 +256,7 @@ function snapshots(
       available,
       ...(available
         ? {}
-        : { unavailableReason: SAFARI_RECOMMENDATION_UNAVAILABLE_REASON }),
+        : { unavailableReason: safariRecommendationUnavailableReason() }),
       enabled: capability.enabled,
       activeOnPage:
         bilibiliCapabilityAppliesToPage(id, url) &&

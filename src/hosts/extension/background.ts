@@ -1,4 +1,5 @@
 import { AdguardContentBlockingEngine } from '@content-blocking-engine';
+import catCatchSimplified from '../../../vendor/cat-catch/_locales/zh_CN/messages.json';
 import {
   type AudioSettings,
   DEFAULT_AUDIO_SETTINGS,
@@ -21,7 +22,9 @@ import {
   normalizeDeckEntrySettings,
 } from '../../features/userscript-deck/deck-entry';
 import { isExtensionStorageSpaceFailure } from '../../lib/extension-errors';
+import catCatchTraditional from '../../locales/vendor/cat-catch/zh_TW/messages.json';
 import { t } from '../../localization/messages';
+import { initializeLanguagePreference } from '../../localization/preferences';
 import {
   NEW_TAB_PREFERENCES_STORAGE_KEY,
   NewTabPreferencesRepository,
@@ -60,7 +63,7 @@ import { ExtensionAiServices } from './ai-services';
 import {
   extensionUserscriptApi,
   requireExtensionBackgroundApi,
-  USER_SCRIPTS_API_UNAVAILABLE,
+  userscriptsApiUnavailableMessage,
 } from './api';
 import { resolveAssistantPageAttachment } from './assistant-page-observer';
 import { parseAssistantPortName } from './assistant-protocol';
@@ -153,12 +156,24 @@ import {
   UserscriptLibraryCoordinator,
   userscriptBackgroundErrorResponse,
 } from './userscript-library-coordinator';
+import { localizedVendorMessages } from './vendor-messages';
 import {
   SPEECH_AUTHORIZATION_RULE_ID,
   VolcengineSpeechAuthorizationCoordinator,
 } from './volcengine-speech-session';
 
 const api = requireExtensionBackgroundApi();
+if (extensionTarget() !== 'safari') {
+  const messages = localizedVendorMessages(
+    { ...catCatchSimplified, catCatch: { message: '顺手牵羊' } },
+    catCatchTraditional,
+  );
+  (
+    globalThis as typeof globalThis & {
+      __cardMasterCatCatchI18n?: typeof messages;
+    }
+  ).__cardMasterCatCatchI18n = messages;
+}
 const newTabService = new ExtensionNewTabService(api);
 const lumnoNewTabCompatibility = new LumnoNewTabCompatibilityService(api);
 const gamepadControlService = new ExtensionGamepadControlService(api);
@@ -537,7 +552,7 @@ const assistantService = new ExtensionAssistantService(
       );
     },
     invokeRuntimeCommand: async (tabId, scriptId, commandId) => {
-      if (!runtimeBridge) throw new Error(USER_SCRIPTS_API_UNAVAILABLE);
+      if (!runtimeBridge) throw new Error(userscriptsApiUnavailableMessage());
       const result = await runtimeBridge.invoke(tabId, 0, scriptId, commandId);
       if (result.ok) return result.value;
       const { error } = result;
@@ -1079,6 +1094,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function initializeBackground() {
+  await initializeLanguagePreference(api);
   await runBackgroundInitializationPhase(t('cm_background_text_15'), () =>
     configureExtensionStorageAccess(api.storage),
   );

@@ -114,7 +114,7 @@ export function wallpaperSyncSettings(
   };
   return {
     key: 'wallpapers',
-    name: '自定义壁纸',
+    name: t('cm_wallpapers_name_1'),
     read: () => transaction(),
     validate: validateWallpapers,
     apply: async (value, expected) => {

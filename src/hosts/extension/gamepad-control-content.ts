@@ -340,11 +340,14 @@ function mountGamepadControl(api: GamepadExtensionApi): GamepadControlRuntime {
   );
   const panel = document.createElement('section');
   panel.className = 'gamepad-control-panel';
-  panel.setAttribute('aria-label', '手柄控制');
+  panel.setAttribute('aria-label', t('cm_gamepad_control_content_text_1'));
   const closeIndicator = document.createElement('button');
   closeIndicator.type = 'button';
   closeIndicator.className = 'gamepad-control-close';
-  closeIndicator.setAttribute('aria-label', '隐藏手柄示意图');
+  closeIndicator.setAttribute(
+    'aria-label',
+    t('cm_gamepad_control_content_text_2'),
+  );
   const artwork = document.createElement('div');
   artwork.className = 'gamepad-control-artwork';
   const activeActions = document.createElement('div');
@@ -1127,7 +1130,8 @@ function mountGamepadControl(api: GamepadExtensionApi): GamepadControlRuntime {
             context: bindingContext(),
           }).filter(
             (action) =>
-              speechCapability.available || action.label !== '按住说话',
+              speechCapability.available ||
+              action.label !== t('cm_bindings_text_93'),
           )
         : [];
     const now = performance.now();

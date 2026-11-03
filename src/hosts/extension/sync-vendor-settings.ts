@@ -128,7 +128,9 @@ export function vendorSyncSettings(
           );
         return {
           key: `sponsor-${runtimeId}`,
-          name: `${runtimeId === 'bilibili' ? 'B 站' : 'YouTube'}空降助手高级设置`,
+          name: t('cm_sync_vendor_settings_name_1', [
+            String(runtimeId === 'bilibili' ? 'B 站' : 'YouTube'),
+          ]),
           read,
           validate: (value) => validateVendor(value, SPONSOR_KEYS),
           apply: async (value, expected) => {

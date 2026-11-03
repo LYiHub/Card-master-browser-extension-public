@@ -1,0 +1,1910 @@
+{
+  "ext_name": {
+    "message": "Lumno | 聚焦搜尋&新分頁"
+  },
+  "ext_description": {
+    "message": "任意網頁一鍵喚起命令浮層，快速搜尋、直達網址、切換分頁，並增強新分頁體驗。"
+  },
+  "settings_tab_general": {
+    "message": "常規"
+  },
+  "settings_tab_appearance": {
+    "message": "外觀"
+  },
+  "settings_appearance_global_section_title": {
+    "message": "全域性"
+  },
+  "settings_webpage_focus_overlay_section_title": {
+    "message": "網頁聚焦搜尋浮層"
+  },
+  "newtab_theme_scope_label": {
+    "message": "深淺色作用範圍"
+  },
+  "newtab_theme_scope_global": {
+    "message": "全域性"
+  },
+  "newtab_theme_scope_home": {
+    "message": "新分頁"
+  },
+  "newtab_theme_scope_select_label": {
+    "message": "將深淺色修改作用於{scope}"
+  },
+  "newtab_theme_scope_help_label": {
+    "message": "深淺色作用範圍說明"
+  },
+  "newtab_theme_scope_help": {
+    "message": "「全域性」設定預設深淺模式。「新分頁」僅覆蓋新分頁；在其中選擇「跟隨全域性」即可繼承全域性設定。"
+  },
+  "newtab_theme_follow_global": {
+    "message": "跟隨「全域性」"
+  },
+  "newtab_search_width_title": {
+    "message": "搜尋框寬度"
+  },
+  "newtab_search_width_aria": {
+    "message": "調整新分頁搜尋框寬度"
+  },
+  "newtab_search_width_standard": {
+    "message": "標準"
+  },
+  "newtab_search_width_wide": {
+    "message": "寬屏"
+  },
+  "newtab_search_width_max": {
+    "message": "最大"
+  },
+  "newtab_more_settings": {
+    "message": "更多設定"
+  },
+  "settings_tab_shortcuts": {
+    "message": "搜尋源"
+  },
+  "settings_tab_blacklist": {
+    "message": "黑名單"
+  },
+  "settings_tab_labs": {
+    "message": "實驗室功能"
+  },
+  "settings_selection_quick_actions_title": {
+    "message": "劃詞快捷操作"
+  },
+  "settings_selection_quick_actions_desc": {
+    "message": "根據所選文字動態顯示 AI 操作，並在新分頁中開啟結果"
+  },
+  "settings_selection_quick_actions_provider_title": {
+    "message": "優先 Provider"
+  },
+  "settings_selection_quick_actions_group_title": {
+    "message": "在後臺查詢"
+  },
+  "settings_selection_quick_actions_group_desc": {
+    "message": "所有 AI 網頁皆歸入「AI 查詢」標籤組"
+  },
+  "selection_quick_action_ask": {
+    "message": "解答"
+  },
+  "selection_quick_action_translate": {
+    "message": "翻譯"
+  },
+  "selection_quick_action_explain": {
+    "message": "解釋"
+  },
+  "selection_quick_action_summarize": {
+    "message": "總結"
+  },
+  "selection_quick_action_search": {
+    "message": "調研"
+  },
+  "selection_quick_action_calculate": {
+    "message": "計算"
+  },
+  "selection_quick_action_open_menu": {
+    "message": "使用 Lumno 處理所選文字"
+  },
+  "selection_quick_action_more": {
+    "message": "更多操作"
+  },
+  "selection_quick_action_sending": {
+    "message": "正在後臺開啟…"
+  },
+  "selection_quick_action_failed": {
+    "message": "傳送失敗，請重試"
+  },
+  "settings_global_section_title": {
+    "message": "全域性設定"
+  },
+  "settings_feedback_support_section_title": {
+    "message": "反饋與支援"
+  },
+  "settings_feedback_support_wechat_action": {
+    "message": "加入反饋群"
+  },
+  "settings_feedback_support_discord_action": {
+    "message": "加入 Discord"
+  },
+  "settings_feedback_support_review_action": {
+    "message": "為 Lumno 評分"
+  },
+  "settings_feedback_support_github_issue_action": {
+    "message": "建立 Issue"
+  },
+  "settings_feedback_support_contact_author_action": {
+    "message": "聯絡作者"
+  },
+  "settings_onboarding_tutorial_action": {
+    "message": "使用教程"
+  },
+  "settings_language_title": {
+    "message": "語言"
+  },
+  "settings_language_desc": {
+    "message": "選擇介面顯示語言"
+  },
+  "settings_version_label": {
+    "message": "版本"
+  },
+  "settings_version_tooltip": {
+    "message": "檢視更新日誌"
+  },
+  "language_zh_cn": {
+    "message": "簡體中文"
+  },
+  "language_zh_tw": {
+    "message": "繁體中文"
+  },
+  "language_en": {
+    "message": "English"
+  },
+  "language_ja": {
+    "message": "日本語"
+  },
+  "language_system": {
+    "message": "跟隨瀏覽器語言"
+  },
+  "settings_recent_title": {
+    "message": "新分頁底部內容"
+  },
+  "settings_newtab_section_title": {
+    "message": "新分頁"
+  },
+  "settings_search_results_section_title": {
+    "message": "搜尋結果設定"
+  },
+  "settings_search_result_priority_title": {
+    "message": "搜尋結果首位優先順序"
+  },
+  "settings_search_result_sources_title": {
+    "message": "顯示結果型別"
+  },
+  "settings_overlay_open_tabs_default_visible_title": {
+    "message": "在網頁喚起時，預設展示所有已開啟分頁"
+  },
+  "settings_favicon_enhanced_fetch_title": {
+    "message": "增強圖示與主題色獲取"
+  },
+  "settings_favicon_enhanced_fetch_desc": {
+    "message": "若遇到本機網路訪問許可權提示，可關閉此功能。關閉後僅使用瀏覽器快取、Lumno 內建或通用圖示。"
+  },
+  "favicon_blacklist_section_desc": {
+    "message": "按網站排除"
+  },
+  "favicon_blacklist_add": {
+    "message": "新增排除規則"
+  },
+  "favicon_blacklist_removed_toast": {
+    "message": "已從圖示與主題色排除中移除"
+  },
+  "favicon_blacklist_clear": {
+    "message": "清空排除規則"
+  },
+  "search_result_priority_autocomplete": {
+    "message": "補全優先"
+  },
+  "search_result_priority_search": {
+    "message": "搜尋優先"
+  },
+  "settings_recent_desc": {
+    "message": "顯示最近/最常訪問站點"
+  },
+  "settings_recent_sites_title": {
+    "message": "站點卡片"
+  },
+  "settings_newtab_width_title": {
+    "message": "新分頁內容寬度"
+  },
+  "settings_bookmarks_title": {
+    "message": "書籤"
+  },
+  "settings_bookmark_folder_icons_visible_title": {
+    "message": "展示書籤資料夾內圖示"
+  },
+  "settings_document_pip_title": {
+    "message": "網頁剪裁"
+  },
+  "settings_document_pip_desc": {
+    "message": "把網頁裡的區域性內容單獨剪出來懸浮檢視，可用於參考、對照"
+  },
+  "document_pip_command_title": {
+    "message": "開啟網頁剪裁"
+  },
+  "document_pip_command_action": {
+    "message": "開始剪裁"
+  },
+  "settings_update_notice_title": {
+    "message": "更新提示"
+  },
+  "settings_update_notice_desc": {
+    "message": "更新到新版本時顯示新功能元件"
+  },
+  "settings_auto_pip_title": {
+    "message": "影片自動畫中畫"
+  },
+  "settings_auto_pip_desc": {
+    "message": "在網頁上播放影片時，若切換至其他分頁，則正在播放中的影片將以浮窗的形式播放"
+  },
+  "settings_pinned_tab_recovery_title": {
+    "message": "重啟後恢復置頂分頁"
+  },
+  "settings_pinned_tab_recovery_desc": {
+    "message": "記錄可恢復的置頂網頁分頁，在瀏覽器重啟後自動補回"
+  },
+  "document_pip_picker_hint": {
+    "message": "移動滑鼠選擇元素，點選開啟懸浮窗，滾輪切換父級，Esc 取消。"
+  },
+  "document_pip_picker_idle": {
+    "message": "將滑鼠移動到網頁可見區域開始選擇。"
+  },
+  "document_pip_picker_started": {
+    "message": "點選要懸浮的內容，滾輪可切換範圍，Esc 取消"
+  },
+  "document_pip_picker_cancelled": {
+    "message": "已退出內容選擇"
+  },
+  "document_pip_picker_closed": {
+    "message": "已關閉內容懸浮窗"
+  },
+  "document_pip_picker_guidance_default": {
+    "message": "目前選擇更適合內容懸浮。"
+  },
+  "document_pip_picker_guidance_leaf": {
+    "message": "目前是較小的葉子節點，如需更穩定可滾輪切到父級。"
+  },
+  "document_pip_picker_guidance_interactive": {
+    "message": "目前像互動按鈕組，如在 PiP 中點選異常，建議切到更大的有背景容器。"
+  },
+  "document_pip_picker_guidance_toolbar": {
+    "message": "目前像導航或工具欄區域，複雜選單在 PiP 中可能不完整，必要時請切到更外層容器。"
+  },
+  "document_pip_picker_unsupported": {
+    "message": "目前頁面暫不支援 Document PiP"
+  },
+  "document_pip_picker_conflict_video_pip": {
+    "message": "目前已有影片畫中畫，請先關閉後再進行網頁剪裁"
+  },
+  "document_pip_picker_invalid": {
+    "message": "這個區域暫時不能懸浮，請換一個更大的內容區域"
+  },
+  "document_pip_picker_open_failed": {
+    "message": "開啟內容懸浮窗失敗，請換一個區域再試"
+  },
+  "document_pip_picker_badge": {
+    "message": "已在懸浮窗開啟"
+  },
+  "document_pip_picker_button_reselect": {
+    "message": "重新選擇"
+  },
+  "document_pip_picker_button_return": {
+    "message": "返回原頁"
+  },
+  "document_pip_picker_button_close": {
+    "message": "關閉"
+  },
+  "settings_newtab_scope_desc": {
+    "message": "新分頁"
+  },
+  "settings_overlay_tab_priority_title": {
+    "message": "快速切換已開啟分頁"
+  },
+  "settings_overlay_tab_priority_desc": {
+    "message": "當輸入文字匹配到已開啟分頁時，首個候選項的快捷鍵動作"
+  },
+  "overlay_tab_priority_switch_first": {
+    "message": "按下 Enter 切換已開啟分頁"
+  },
+  "overlay_tab_priority_newtab_first": {
+    "message": "按下 Enter 用新分頁開啟"
+  },
+  "settings_shortcuts_title": {
+    "message": "喚起聚焦搜尋視窗"
+  },
+  "settings_shortcuts_browser_desc_prefix": {
+    "message": "需在"
+  },
+  "settings_shortcuts_browser_desc_path_extensions": {
+    "message": "「擴充套件程式」"
+  },
+  "settings_shortcuts_browser_desc_path_shortcuts": {
+    "message": "「鍵盤快捷鍵」"
+  },
+  "settings_shortcuts_browser_desc_suffix": {
+    "message": "修改快捷鍵"
+  },
+  "settings_shortcuts_dia_tag": {
+    "message": "在 Dia 中使用"
+  },
+  "settings_shortcuts_dia_tooltip": {
+    "message": "在 Dia 環境下，受瀏覽器限制，Lumno 的新分頁功能暫不可用，但聚焦搜尋功能仍可正常執行。\n\n若快捷鍵在 Dia 中不可用，請點選下方右側按鈕進入瀏覽器的快捷鍵設定頁面，將「Open command bar」從 In Dia 改成 Global"
+  },
+  "settings_shortcuts_section_title": {
+    "message": "快捷鍵設定"
+  },
+  "settings_shortcuts_desc": {
+    "message": "用於喚起 Lumno 搜尋框"
+  },
+  "overlay_close_other_tabs_tooltip": {
+    "message": "關閉其他分頁"
+  },
+  "settings_shortcuts_status": {
+    "message": "目前：{shortcut}"
+  },
+  "settings_shortcuts_unset": {
+    "message": "未設定"
+  },
+  "settings_shortcuts_action": {
+    "message": "前往快捷鍵設定"
+  },
+  "settings_shortcuts_browser_tooltip": {
+    "message": "在 Chromium 瀏覽器中，喚起浮層快捷鍵需要前往擴充套件快捷鍵頁面設定或修改。"
+  },
+  "settings_shortcuts_save": {
+    "message": "儲存快捷鍵"
+  },
+  "settings_shortcuts_reset": {
+    "message": "恢復預設"
+  },
+  "settings_shortcuts_record_placeholder": {
+    "message": "按下快捷鍵"
+  },
+  "settings_shortcuts_empty_state": {
+    "message": "無"
+  },
+  "settings_shortcuts_invalid": {
+    "message": "快捷鍵無效，請按組合鍵（如 Ctrl+K）"
+  },
+  "settings_restricted_title": {
+    "message": "在受限頁行為"
+  },
+  "settings_restricted_tooltip": {
+    "message": "受限頁（如 chrome://、擴充套件商店、部分 file:// 頁面）無法開啟聚焦搜尋；按下快捷鍵將按此處規則處理"
+  },
+  "restricted_action_default": {
+    "message": "前往 Lumno 新分頁"
+  },
+  "restricted_action_none": {
+    "message": "遵循瀏覽器設定"
+  },
+  "newtab_file_access_notice_title": {
+    "message": "由於瀏覽器限制，若要在本機檔案頁面（如 PDF、HTML）中喚起聚焦搜尋，請手動開啟“允許訪問檔案網址”"
+  },
+  "newtab_file_access_notice_body": {
+    "message": "目前未授予 file URL 訪問許可權。請在擴充套件詳情頁開啟“允許訪問檔案網址”，然後回到剛才的頁面再按一次快捷鍵。"
+  },
+  "newtab_file_access_notice_open_cta": {
+    "message": "前往開啟"
+  },
+  "newtab_file_access_notice_dismiss": {
+    "message": "稍後再說"
+  },
+  "newtab_file_access_notice_close": {
+    "message": "關閉提示"
+  },
+  "recent_count_4": {
+    "message": "顯示 1 行"
+  },
+  "recent_count_8": {
+    "message": "顯示 2 行"
+  },
+  "recent_count_off": {
+    "message": "不顯示"
+  },
+  "bookmark_count_off": {
+    "message": "不顯示"
+  },
+  "bookmark_count_4": {
+    "message": "顯示 1 行"
+  },
+  "bookmark_count_8": {
+    "message": "顯示 2 行"
+  },
+  "bookmark_count_16": {
+    "message": "顯示 4 行"
+  },
+  "bookmark_count_32": {
+    "message": "顯示 8 行"
+  },
+  "settings_bookmark_columns_title": {
+    "message": "書籤每行顯示"
+  },
+  "bookmark_columns_4": {
+    "message": "每行 4 個"
+  },
+  "bookmark_columns_6": {
+    "message": "每行 6 個"
+  },
+  "bookmark_columns_8": {
+    "message": "每行 8 個"
+  },
+  "newtab_width_standard": {
+    "message": "標準"
+  },
+  "newtab_width_wide": {
+    "message": "寬屏（推薦）"
+  },
+  "settings_overlay_size_title": {
+    "message": "尺寸"
+  },
+  "overlay_size_compact": {
+    "message": "小"
+  },
+  "overlay_size_standard": {
+    "message": "標準"
+  },
+  "overlay_size_large": {
+    "message": "大"
+  },
+  "settings_overlay_enter_animation_title": {
+    "message": "進入動畫"
+  },
+  "overlay_enter_animation_elastic": {
+    "message": "彈性"
+  },
+  "overlay_enter_animation_fade": {
+    "message": "淡入"
+  },
+  "recent_mode_latest": {
+    "message": "最近訪問"
+  },
+  "recent_mode_most": {
+    "message": "最常訪問"
+  },
+  "settings_toggle_on": {
+    "message": "開啟"
+  },
+  "settings_theme_title": {
+    "message": "深淺色模式"
+  },
+  "settings_theme_desc": {
+    "message": "跟隨系統或手動選擇主題"
+  },
+  "settings_theme_system": {
+    "message": "跟隨系統/網站"
+  },
+  "settings_theme_light": {
+    "message": "淺色"
+  },
+  "settings_theme_dark": {
+    "message": "深色"
+  },
+  "settings_newtab_wordmark_title": {
+    "message": "搜尋框上方內容"
+  },
+  "newtab_top_content_brand": {
+    "message": "品牌標識"
+  },
+  "newtab_top_content_time": {
+    "message": "時間"
+  },
+  "newtab_top_content_off": {
+    "message": "隱藏"
+  },
+  "settings_newtab_shortcuts_title": {
+    "message": "快捷方式"
+  },
+  "settings_newtab_shortcut_add_title": {
+    "message": "展示「+」"
+  },
+  "settings_newtab_shortcut_dock_magnification_title": {
+    "message": "仿 macOS Dock 程式塢縮放效果"
+  },
+  "settings_wallpaper_title": {
+    "message": "新分頁桌布"
+  },
+  "settings_wallpaper_desc": {
+    "message": "上傳本機圖片作為 newtab 背景"
+  },
+  "settings_wallpaper_upload": {
+    "message": "上傳圖片"
+  },
+  "settings_wallpaper_remove": {
+    "message": "移除"
+  },
+  "settings_wallpaper_fit_cover": {
+    "message": "填充"
+  },
+  "settings_wallpaper_fit_contain": {
+    "message": "完整顯示"
+  },
+  "settings_wallpaper_status_none": {
+    "message": "未上傳桌布"
+  },
+  "settings_wallpaper_status_ready": {
+    "message": "已上傳桌布"
+  },
+  "settings_wallpaper_status_local_only": {
+    "message": "已上傳桌布（僅此裝置）"
+  },
+  "settings_wallpaper_status_missing": {
+    "message": "桌布檔案缺失，請重新上傳"
+  },
+  "settings_wallpaper_status_processing": {
+    "message": "處理中..."
+  },
+  "settings_wallpaper_upload_done": {
+    "message": "桌布已更新"
+  },
+  "settings_wallpaper_remove_done": {
+    "message": "桌布已移除"
+  },
+  "settings_wallpaper_error_type": {
+    "message": "請上傳圖片檔案（JPG / PNG / WEBP）。"
+  },
+  "settings_wallpaper_error_oversize": {
+    "message": "圖片太大，請上傳 8MB 以內檔案。"
+  },
+  "settings_wallpaper_error_oversize_after_compress": {
+    "message": "圖片過大，請換一張更小的圖片。"
+  },
+  "settings_wallpaper_error_save": {
+    "message": "桌布儲存失敗，請重試"
+  },
+  "newtab_wallpaper_title": {
+    "message": "桌布"
+  },
+  "newtab_logo_title": {
+    "message": "品牌標識"
+  },
+  "newtab_favicon_title": {
+    "message": "新分頁 favicon"
+  },
+  "newtab_favicon_name_default": {
+    "message": "預設"
+  },
+  "newtab_favicon_name_alternate": {
+    "message": "備用"
+  },
+  "newtab_favicon_select_label": {
+    "message": "選擇 {name} favicon"
+  },
+  "newtab_favicon_save_error": {
+    "message": "favicon 儲存失敗"
+  },
+  "newtab_wallpaper_builtin_section": {
+    "message": "內建"
+  },
+  "newtab_wallpaper_local_section": {
+    "message": "本機"
+  },
+  "newtab_wallpaper_toggle_label": {
+    "message": "開啟或關閉桌布"
+  },
+  "newtab_wallpaper_select_label": {
+    "message": "選擇 {name}"
+  },
+  "newtab_wallpaper_add_local": {
+    "message": "新增本機桌布"
+  },
+  "newtab_wallpaper_mode_sync_title": {
+    "message": "深淺模式一致"
+  },
+  "newtab_wallpaper_mode_sync_toggle_label": {
+    "message": "深淺模式使用同一張桌布"
+  },
+  "newtab_wallpaper_mode_tabs_label": {
+    "message": "桌布深淺模式"
+  },
+  "newtab_wallpaper_light_mode_tab": {
+    "message": "淺色"
+  },
+  "newtab_wallpaper_dark_mode_tab": {
+    "message": "深色"
+  },
+  "newtab_wallpaper_mode_select_label": {
+    "message": "設定{mode}模式桌布"
+  },
+  "newtab_wallpaper_mode_hint_light": {
+    "message": "淺色模式桌布"
+  },
+  "newtab_wallpaper_mode_hint_dark": {
+    "message": "深色模式桌布"
+  },
+  "newtab_wallpaper_feature_hint_badge": {
+    "message": "新功能"
+  },
+  "newtab_wallpaper_feature_hint_text": {
+    "message": "新分頁現已支援更換桌布！"
+  },
+  "newtab_wallpaper_feature_hint_close": {
+    "message": "關閉桌布提示"
+  },
+  "newtab_ai_quick_jump_feature_hint_badge": {
+    "message": "新功能"
+  },
+  "newtab_ai_quick_jump_feature_hint_text": {
+    "message": "常用 AI 網站現已支援一鍵輸入並跳轉。試著輸入 “doubao” 並按下 Tab。"
+  },
+  "newtab_ai_quick_jump_feature_hint_link": {
+    "message": "支援列表"
+  },
+  "newtab_ai_quick_jump_feature_hint_close": {
+    "message": "關閉 AI 跳轉提示"
+  },
+  "newtab_tab_switcher_feature_hint_badge": {
+    "message": "新功能"
+  },
+  "newtab_tab_switcher_feature_hint_text": {
+    "message": "按 {shortcut} 開啟分頁切換器，直接在最近分頁之間快速跳轉。"
+  },
+  "newtab_tab_switcher_feature_hint_close": {
+    "message": "關閉分頁切換器提示"
+  },
+  "update_notice_badge": {
+    "message": "已更新至 {version}"
+  },
+  "update_notice_text_fallback": {
+    "message": "檢視本次更新"
+  },
+  "update_notice_link": {
+    "message": "更新日誌"
+  },
+  "update_notice_close": {
+    "message": "關閉更新提示"
+  },
+  "engagement_notice_badge": {
+    "message": "Lumno"
+  },
+  "engagement_notice_text": {
+    "message": "如果用得開心，誠邀"
+  },
+  "engagement_notice_connector": {
+    "message": "，或者"
+  },
+  "engagement_notice_trailing": {
+    "message": "和我們聊聊。"
+  },
+  "engagement_notice_review": {
+    "message": "滿分好評"
+  },
+  "engagement_notice_community": {
+    "message": "進群"
+  },
+  "engagement_notice_close": {
+    "message": "關閉評分和加群提示"
+  },
+  "newtab_bookmark_cascade_debug_enable": {
+    "message": "顯示書籤選單安全三角"
+  },
+  "newtab_bookmark_cascade_debug_disable": {
+    "message": "隱藏書籤選單安全三角"
+  },
+  "newtab_bookmark_cascade_debug_open_label": {
+    "message": "開啟"
+  },
+  "newtab_bookmark_cascade_debug_switch_label": {
+    "message": "切換"
+  },
+  "newtab_bookmark_cascade_debug_safe_label": {
+    "message": "保護"
+  },
+  "newtab_bookmark_cascade_debug_close_label": {
+    "message": "關閉"
+  },
+  "newtab_feedback_button_aria": {
+    "message": "反饋"
+  },
+  "newtab_feedback_menu_aria": {
+    "message": "反饋渠道"
+  },
+  "newtab_feedback_x_label": {
+    "message": "X"
+  },
+  "newtab_feedback_x_tooltip": {
+    "message": "透過 X 聯絡"
+  },
+  "newtab_feedback_github_issue_label": {
+    "message": "GitHub Issue"
+  },
+  "newtab_feedback_github_issue_tooltip": {
+    "message": "提交 GitHub Issue"
+  },
+  "newtab_feedback_chrome_review_label": {
+    "message": "Chrome 評分"
+  },
+  "newtab_feedback_chrome_review_tooltip": {
+    "message": "在 Chrome Web Store 評分"
+  },
+  "newtab_feedback_mail_label": {
+    "message": "郵箱"
+  },
+  "newtab_feedback_mail_tooltip": {
+    "message": "傳送郵件"
+  },
+  "newtab_feedback_wechat_label": {
+    "message": "微信"
+  },
+  "newtab_feedback_wechat_tooltip": {
+    "message": "加入微信群"
+  },
+  "newtab_feedback_wechat_panel_title": {
+    "message": "Bug 反饋 & 新功能提需"
+  },
+  "newtab_feedback_wechat_refresh_tooltip": {
+    "message": "重新整理二維碼"
+  },
+  "newtab_feedback_wechat_refresh_success": {
+    "message": "已拉取最新二維碼"
+  },
+  "newtab_feedback_wechat_refresh_error": {
+    "message": "重新整理失敗，請稍後重試"
+  },
+  "newtab_feedback_wechat_close_tooltip": {
+    "message": "關閉"
+  },
+  "newtab_feedback_discord_label": {
+    "message": "Discord"
+  },
+  "newtab_feedback_discord_tooltip": {
+    "message": "加入 Discord"
+  },
+  "newtab_feedback_wechat_qr_title": {
+    "message": "微信群二維碼"
+  },
+  "newtab_feedback_wechat_qr_alt": {
+    "message": "Lumno 微信群二維碼"
+  },
+  "newtab_feedback_mail_subject": {
+    "message": "Lumno 反饋"
+  },
+  "newtab_feedback_mail_source_label": {
+    "message": "來源"
+  },
+  "newtab_feedback_mail_version_label": {
+    "message": "Lumno 版本"
+  },
+  "newtab_feedback_mail_language_label": {
+    "message": "語言"
+  },
+  "newtab_feedback_mail_os_label": {
+    "message": "作業系統"
+  },
+  "newtab_feedback_mail_browser_label": {
+    "message": "瀏覽器"
+  },
+  "newtab_wallpaper_delete_local": {
+    "message": "刪除已匯入的桌布"
+  },
+  "newtab_wallpaper_custom_name": {
+    "message": "本機桌布"
+  },
+  "newtab_wallpaper_overlay_opacity": {
+    "message": "遮罩效果"
+  },
+  "newtab_wallpaper_overlay_transparent_tick": {
+    "message": "透明"
+  },
+  "newtab_wallpaper_overlay_default_tick": {
+    "message": "預設"
+  },
+  "newtab_wallpaper_overlay_cover_tick": {
+    "message": "覆蓋"
+  },
+  "newtab_wallpaper_effect_title": {
+    "message": "桌布濾鏡"
+  },
+  "newtab_wallpaper_effect_strength": {
+    "message": "取樣強度"
+  },
+  "newtab_wallpaper_effect_size": {
+    "message": "大小"
+  },
+  "newtab_wallpaper_effect_spacing": {
+    "message": "間距"
+  },
+  "newtab_wallpaper_effect_none": {
+    "message": "關閉"
+  },
+  "newtab_wallpaper_effect_grain": {
+    "message": "顆粒"
+  },
+  "newtab_wallpaper_effect_halftone": {
+    "message": "網點"
+  },
+  "newtab_wallpaper_effect_ascii": {
+    "message": "ASCII"
+  },
+  "newtab_wallpaper_effect_select_label": {
+    "message": "使用 {effect} 桌布濾鏡"
+  },
+  "newtab_wallpaper_save_error": {
+    "message": "桌布儲存失敗"
+  },
+  "newtab_wallpaper_import_done": {
+    "message": "桌布匯入成功"
+  },
+  "newtab_wallpaper_import_error": {
+    "message": "桌布匯入失敗"
+  },
+  "newtab_wallpaper_delete_done": {
+    "message": "刪除成功"
+  },
+  "newtab_wallpaper_delete_error": {
+    "message": "桌布刪除失敗"
+  },
+  "newtab_wallpaper_name_dark_linocut_topographic": {
+    "message": "夜色等高線"
+  },
+  "newtab_wallpaper_name_dark_monet_lily_nocturne": {
+    "message": "夜色睡蓮"
+  },
+  "newtab_wallpaper_name_dark_shanshui_moonlit": {
+    "message": "月夜山水"
+  },
+  "newtab_wallpaper_name_monet_coastal_white": {
+    "message": "莫奈海岸"
+  },
+  "newtab_wallpaper_name_white_3d_observatory": {
+    "message": "霧藍觀星臺"
+  },
+  "newtab_wallpaper_name_white_shanshui": {
+    "message": "山水晴光"
+  },
+  "shortcuts_duplicate_tag": {
+    "message": "與內建重複"
+  },
+  "shortcuts_duplicate_action": {
+    "message": "定位內建項"
+  },
+  "shortcuts_template_help": {
+    "message": "1.開啟你想新增的網站\n2.輸入任一搜尋詞，觸發搜尋\n3.將搜尋結果頁面 url 貼上在此處\n4.將關鍵詞替換為{query}"
+  },
+  "shortcuts_title": {
+    "message": "站內搜尋"
+  },
+  "shortcuts_desc": {
+    "message": "輸入關鍵詞後按 Tab 進入站內搜尋"
+  },
+  "shortcuts_group_custom": {
+    "message": "自訂"
+  },
+  "blacklist_section_title": {
+    "message": "搜尋與最近訪問黑名單"
+  },
+  "blacklist_section_desc": {
+    "message": "新增需要從搜尋結果和新分頁中隱藏的網址。"
+  },
+  "blacklist_group_custom": {
+    "message": "全域性禁用"
+  },
+  "blacklist_label_url": {
+    "message": "URL 規則"
+  },
+  "blacklist_label_domain": {
+    "message": "網站域名"
+  },
+  "blacklist_label_prefix": {
+    "message": "站點或路徑"
+  },
+  "blacklist_label_exact": {
+    "message": "完整 URL"
+  },
+  "blacklist_label_suffix": {
+    "message": "網站域名"
+  },
+  "blacklist_match_label": {
+    "message": "匹配方式"
+  },
+  "blacklist_match_exact": {
+    "message": "目前頁面"
+  },
+  "blacklist_match_prefix": {
+    "message": "目前站點路徑"
+  },
+  "blacklist_match_suffix": {
+    "message": "整個網站"
+  },
+  "blacklist_match_exact_tooltip": {
+    "message": "只遮蔽這一頁\n────────\n例如，填 x.com/home 後，只有這一頁不會出現，其他頁面不受影響"
+  },
+  "blacklist_match_prefix_tooltip": {
+    "message": "只遮蔽這個站點下這一路徑的頁面\n────────\n例如，填 baidu.com/search 後，baidu.com/search 和 baidu.com/search/1 不會出現，但 baidu.com/news 不受影響"
+  },
+  "blacklist_match_suffix_tooltip": {
+    "message": "遮蔽這個網站的所有頁面，也包括它的子網站\n────────\n例如，填 baidu.com 後，baidu.com/search 和 tieba.baidu.com 都不會出現"
+  },
+  "blacklist_preview_title": {
+    "message": "實際匹配預覽"
+  },
+  "blacklist_preview_match": {
+    "message": "會匹配"
+  },
+  "blacklist_preview_miss": {
+    "message": "不會匹配"
+  },
+  "blacklist_preview_www_note": {
+    "message": "已自動相容 www. 版本，例如 baidu.com 也會匹配 www.baidu.com"
+  },
+  "blacklist_placeholder_url": {
+    "message": "目前頁面填完整地址；整個網站填網站域名"
+  },
+  "blacklist_placeholder_domain": {
+    "message": "baidu.com"
+  },
+  "blacklist_placeholder_prefix": {
+    "message": "baidu.com 或 baidu.com/search"
+  },
+  "blacklist_placeholder_exact": {
+    "message": "x.com/home"
+  },
+  "blacklist_placeholder_suffix": {
+    "message": "baidu.com"
+  },
+  "blacklist_add": {
+    "message": "新增"
+  },
+  "blacklist_empty": {
+    "message": "暫未新增黑名單 URL"
+  },
+  "blacklist_error_url": {
+    "message": "請輸入站點域名或完整 URL"
+  },
+  "blacklist_error_match_mode": {
+    "message": "請至少選擇一種匹配方式"
+  },
+  "blacklist_error_suffix": {
+    "message": "請輸入網站域名"
+  },
+  "blacklist_error_domain": {
+    "message": "請輸入網站域名"
+  },
+  "blacklist_match_mode_prefix": {
+    "message": "匹配以該 URL 開頭的頁面"
+  },
+  "blacklist_match_unset": {
+    "message": "未設定匹配方式"
+  },
+  "blacklist_removed_toast": {
+    "message": "已從黑名單移除"
+  },
+  "shortcuts_group_builtin": {
+    "message": "內建"
+  },
+  "shortcuts_group_ai": {
+    "message": "AI"
+  },
+  "shortcuts_group_ai_desc": {
+    "message": "輸入關鍵詞，按下 Tab 並鍵入內容（Prompt）後，可跳轉至以下 AI 網站並自動填入（需先登入對應網站）"
+  },
+  "shortcuts_badge_custom": {
+    "message": "自訂"
+  },
+  "shortcuts_badge_builtin": {
+    "message": "內建"
+  },
+  "shortcuts_badge_ai": {
+    "message": "AI"
+  },
+  "shortcuts_label_key": {
+    "message": "觸發詞"
+  },
+  "shortcuts_label_name": {
+    "message": "名稱"
+  },
+  "shortcuts_label_template": {
+    "message": "搜尋連結"
+  },
+  "shortcuts_label_alias": {
+    "message": "別名"
+  },
+  "shortcuts_label_display_group": {
+    "message": "顯示位置"
+  },
+  "shortcuts_placeholder_required": {
+    "message": "必填，多個請用英文逗號分隔，如 jd,bili"
+  },
+  "shortcuts_placeholder_optional_default": {
+    "message": "選填，預設同觸發詞"
+  },
+  "shortcuts_placeholder_template": {
+    "message": "https://example.com/search?q={query}"
+  },
+  "shortcuts_placeholder_alias": {
+    "message": "選填，如 小破站、油管等"
+  },
+  "shortcuts_insert_query": {
+    "message": "插入查詢變數"
+  },
+  "shortcuts_add": {
+    "message": "新增自訂搜尋"
+  },
+  "shortcuts_save": {
+    "message": "儲存修改"
+  },
+  "shortcuts_cancel": {
+    "message": "取消"
+  },
+  "shortcuts_edit": {
+    "message": "編輯"
+  },
+  "shortcuts_remove": {
+    "message": "移除"
+  },
+  "shortcuts_empty_custom": {
+    "message": "暫未新增自訂搜尋"
+  },
+  "shortcuts_empty_builtin": {
+    "message": "暫無內建站內搜尋"
+  },
+  "shortcuts_empty_engines": {
+    "message": "暫無內建搜尋引擎"
+  },
+  "shortcuts_empty_ai": {
+    "message": "暫無內建 AI"
+  },
+  "toast_saved": {
+    "message": "已儲存"
+  },
+  "toast_removed": {
+    "message": "已移除"
+  },
+  "toast_error": {
+    "message": "操作失敗，請重試"
+  },
+  "toast_error_template": {
+    "message": "搜尋模板必須包含 {query}"
+  },
+  "toast_reset": {
+    "message": "已重置"
+  },
+  "shortcuts_reset_builtin": {
+    "message": "重置為初始列表"
+  },
+  "shortcuts_clear_custom": {
+    "message": "清空自訂"
+  },
+  "blacklist_clear": {
+    "message": "清空隱藏規則"
+  },
+  "toast_cleared": {
+    "message": "已清空"
+  },
+  "confirm_clear_custom": {
+    "message": "確認清空自訂搜尋？"
+  },
+  "confirm_clear_blacklist": {
+    "message": "確認清空隱藏規則？"
+  },
+  "confirm_clear_favicon_blacklist": {
+    "message": "確認清空排除規則？"
+  },
+  "confirm_reset_builtin": {
+    "message": "確認重置內建列表？"
+  },
+  "confirm_ok": {
+    "message": "確認"
+  },
+  "confirm_cancel": {
+    "message": "取消"
+  },
+  "confirm_remove_item": {
+    "message": "確認移除該項？"
+  },
+  "shortcuts_error_key": {
+    "message": "請填寫觸發詞"
+  },
+  "shortcuts_error_key_space": {
+    "message": "觸發詞不能包含空格"
+  },
+  "shortcuts_error_key_duplicate": {
+    "message": "該觸發詞已存在，請更換"
+  },
+  "search_placeholder": {
+    "message": "搜尋或輸入網址..."
+  },
+  "overlay_search_placeholder": {
+    "message": "搜尋或輸入網址，按 Tab 搜尋已開啟分頁"
+  },
+  "options_page_title": {
+    "message": "Lumno 設定"
+  },
+  "newtab_page_title": {
+    "message": "新分頁"
+  },
+  "recent_heading": {
+    "message": "最近訪問"
+  },
+  "recent_heading_latest": {
+    "message": "最近訪問"
+  },
+  "recent_heading_most": {
+    "message": "最常訪問"
+  },
+  "bookmarks_heading": {
+    "message": "書籤"
+  },
+  "display_mode_title": {
+    "message": "顯示模式"
+  },
+  "bookmark_view_mode_folder": {
+    "message": "多層資料夾檢視"
+  },
+  "bookmark_view_mode_list": {
+    "message": "多級列表檢視"
+  },
+  "bookmark_view_mode_top": {
+    "message": "頂部書籤欄"
+  },
+  "bookmark_topbar_surface_adaptive": {
+    "message": "自適應霧面"
+  },
+  "bookmark_topbar_surface_clear": {
+    "message": "通透玻璃"
+  },
+  "bookmark_topbar_surface_transparent": {
+    "message": "透明"
+  },
+  "bookmark_topbar_surface_custom": {
+    "message": "自訂顏色"
+  },
+  "bookmark_topbar_color_pick": {
+    "message": "背景取色"
+  },
+  "bookmark_topbar_color_reset": {
+    "message": "恢復自動配色"
+  },
+  "bookmark_topbar_color_picked": {
+    "message": "已取色"
+  },
+  "bookmark_topbar_color_reset_done": {
+    "message": "已恢復自動配色"
+  },
+  "bookmark_topbar_color_unsupported": {
+    "message": "目前瀏覽器不支援螢幕取色"
+  },
+  "bookmark_topbar_color_failed": {
+    "message": "取色失敗，請重試"
+  },
+  "bookmarks_empty_folder": {
+    "message": "暫無內容"
+  },
+  "bookmarks_page_prev": {
+    "message": "上一頁"
+  },
+  "bookmarks_page_next": {
+    "message": "下一頁"
+  },
+  "bookmarks_open_manager": {
+    "message": "開啟書籤管理頁"
+  },
+  "bookmarks_copy_url": {
+    "message": "複製連結"
+  },
+  "bookmarks_copy_url_success": {
+    "message": "已複製書籤連結"
+  },
+  "bookmarks_copy_url_failed": {
+    "message": "複製連結失敗，請重試"
+  },
+  "bookmarks_edit": {
+    "message": "編輯"
+  },
+  "bookmarks_edit_dialog_title": {
+    "message": "編輯書籤"
+  },
+  "bookmarks_edit_folder_dialog_title": {
+    "message": "編輯資料夾"
+  },
+  "bookmarks_name_placeholder": {
+    "message": "名稱"
+  },
+  "bookmarks_invalid_url": {
+    "message": "請輸入有效網址"
+  },
+  "bookmarks_updated": {
+    "message": "已更新書籤"
+  },
+  "bookmarks_folder_updated": {
+    "message": "已更新資料夾"
+  },
+  "bookmarks_update_failed": {
+    "message": "無法更新書籤"
+  },
+  "bookmarks_delete": {
+    "message": "刪除"
+  },
+  "bookmarks_context_menu_label": {
+    "message": "書籤操作"
+  },
+  "bookmarks_delete_undone": {
+    "message": "已撤回刪除 · {shortcut} 重新刪除"
+  },
+  "bookmarks_delete_redone": {
+    "message": "已恢復刪除 · {shortcut} 撤回"
+  },
+  "bookmarks_delete_failed": {
+    "message": "無法刪除書籤"
+  },
+  "bookmarks_move_success": {
+    "message": "已移動“{title}” · {shortcut} 撤回"
+  },
+  "bookmarks_move_undone": {
+    "message": "已撤回移動 · {shortcut} 恢復"
+  },
+  "bookmarks_move_redone": {
+    "message": "已恢復移動 · {shortcut} 撤回"
+  },
+  "bookmarks_move_failed": {
+    "message": "無法移動書籤"
+  },
+  "search_tag_history": {
+    "message": "歷史"
+  },
+  "search_remove_history": {
+    "message": "從歷史中移除"
+  },
+  "search_remove_history_tooltip": {
+    "message": "移除該歷史"
+  },
+  "search_remove_top_site_tooltip": {
+    "message": "移除該常用"
+  },
+  "search_copy_url_tooltip": {
+    "message": "複製連結"
+  },
+  "search_copy_url_success": {
+    "message": "已複製結果連結"
+  },
+  "search_copy_url_failed": {
+    "message": "複製結果連結失敗，請重試"
+  },
+  "search_tag_top_site": {
+    "message": "常用"
+  },
+  "search_tag_bookmark": {
+    "message": "書籤"
+  },
+  "search_tag_open_tab": {
+    "message": "已開啟"
+  },
+  "visit_label": {
+    "message": "訪問"
+  },
+  "action_open_new_tab": {
+    "message": "新開"
+  },
+  "action_open_background_new_tab": {
+    "message": "在後臺新開"
+  },
+  "action_open_background_tab": {
+    "message": "在後臺開啟"
+  },
+  "action_go_current_tab": {
+    "message": "前往"
+  },
+  "open_prefix": {
+    "message": "開啟 {title}"
+  },
+  "open_url": {
+    "message": "開啟 {url}"
+  },
+  "open_browser_url": {
+    "message": "開啟 {browser}：{url}"
+  },
+  "mode_badge": {
+    "message": "模式：{mode}"
+  },
+  "mode_badge_follow_system": {
+    "message": "模式：{mode}（跟隨系統）"
+  },
+  "mode_badge_follow_site": {
+    "message": "模式：{mode}（跟隨網站）"
+  },
+  "theme_label_dark": {
+    "message": "深色"
+  },
+  "theme_label_light": {
+    "message": "淺色"
+  },
+  "theme_label_system": {
+    "message": "跟隨系統"
+  },
+  "command_newtab": {
+    "message": "新建分頁"
+  },
+  "command_settings": {
+    "message": "開啟設定"
+  },
+  "command_show_search": {
+    "message": "喚起聚焦搜尋視窗"
+  },
+  "command_show_search_prefill": {
+    "message": "喚起搜尋並預填目前網頁連結"
+  },
+  "command_show_search_prefill_v": {
+    "message": "複製目前網頁連結"
+  },
+  "mode_switch_title": {
+    "message": "{name}：切換到{mode}模式"
+  },
+  "zen_badge_on": {
+    "message": "Zen：已開啟"
+  },
+  "zen_badge_off": {
+    "message": "Zen：已關閉"
+  },
+  "zen_enable_title": {
+    "message": "{name}：進入 Zen 模式"
+  },
+  "zen_disable_title": {
+    "message": "{name}：退出 Zen 模式"
+  },
+  "switch_to_tab": {
+    "message": "切換"
+  },
+  "untitled": {
+    "message": "無標題"
+  },
+  "site_search_default": {
+    "message": "站內"
+  },
+  "site_search_name_baidu": {
+    "message": "百度"
+  },
+  "site_search_name_metaso": {
+    "message": "秘塔 AI 搜尋"
+  },
+  "site_search_name_sogou": {
+    "message": "搜狗"
+  },
+  "site_search_name_shenma": {
+    "message": "神馬"
+  },
+  "site_search_name_weibo": {
+    "message": "微博"
+  },
+  "site_search_name_xiaohongshu": {
+    "message": "小紅書"
+  },
+  "site_search_name_douyin": {
+    "message": "抖音"
+  },
+  "site_search_name_jd": {
+    "message": "京東"
+  },
+  "site_search_name_chatgpt": {
+    "message": "ChatGPT"
+  },
+  "site_search_name_gemini": {
+    "message": "Gemini"
+  },
+  "site_search_name_doubao": {
+    "message": "豆包"
+  },
+  "site_search_name_qianwen": {
+    "message": "千問"
+  },
+  "site_search_name_yuanbao": {
+    "message": "元寶"
+  },
+  "site_search_name_minimax": {
+    "message": "MiniMax"
+  },
+  "site_search_name_deepseek": {
+    "message": "DeepSeek"
+  },
+  "site_search_name_kimi": {
+    "message": "Kimi"
+  },
+  "site_search_name_zhihu": {
+    "message": "知乎"
+  },
+  "site_search_name_douban": {
+    "message": "豆瓣"
+  },
+  "site_search_name_juejin": {
+    "message": "掘金"
+  },
+  "site_search_name_taobao": {
+    "message": "淘寶"
+  },
+  "site_search_name_tmall": {
+    "message": "天貓"
+  },
+  "site_search_name_wechat": {
+    "message": "微信公眾號"
+  },
+  "site_search_name_wikipedia": {
+    "message": "維基百科"
+  },
+  "search_in_site": {
+    "message": "在 {site} 中搜尋"
+  },
+  "search_in_site_query": {
+    "message": "在 {site} 中搜尋 \"{query}\""
+  },
+  "ask_ai_provider": {
+    "message": "向 {site} 提問"
+  },
+  "ask_ai_provider_query": {
+    "message": "向 {site} 提問 \"{query}\""
+  },
+  "site_search_tab_hint": {
+    "message": "使用 {site} 搜尋"
+  },
+  "search_query": {
+    "message": "搜尋 \"{query}\""
+  },
+  "search_in_site_ellipsis": {
+    "message": "在 {site} 中搜尋..."
+  },
+  "search_in_site_prefix": {
+    "message": "在 {site} 中搜尋｜"
+  },
+  "search_open_tabs_only_prefix": {
+    "message": "搜尋已開啟分頁｜"
+  },
+  "search_open_tabs_only_entry": {
+    "message": "搜尋已開啟分頁"
+  },
+  "action_search": {
+    "message": "搜尋"
+  },
+  "action_search_engine": {
+    "message": "在 {engine} 中搜尋"
+  },
+  "action_open_ai_web": {
+    "message": "開啟 {site} 網頁版"
+  },
+  "action_search_google": {
+    "message": "在 Google 中搜尋"
+  },
+  "action_switch": {
+    "message": "切換"
+  },
+  "action_open": {
+    "message": "開啟"
+  },
+  "overlay_empty_result": {
+    "message": "無匹配結果"
+  },
+  "local_search_tab_hint": {
+    "message": "僅搜尋{source}"
+  },
+  "search_scope_switcher_label": {
+    "message": "搜尋範圍：{scope}。選擇即可切換"
+  },
+  "search_scope_current": {
+    "message": "目前"
+  },
+  "search_scope_remove_confirmation": {
+    "message": "再按一次退格鍵，移除搜尋範圍"
+  },
+  "search_number_jump_release_hint": {
+    "message": "鬆開顯示數字"
+  },
+  "search_scope_menu_shortcut_hint": {
+    "message": "開啟面板"
+  },
+  "search_scope_menu_navigation_hint": {
+    "message": "移動"
+  },
+  "search_scope_menu_select_hint": {
+    "message": "切換"
+  },
+  "search_scope_menu_input_focus_hint": {
+    "message": "聚焦"
+  },
+  "search_scope_menu_filter_hint": {
+    "message": "點選面板，輸入拼音或英文快速篩選"
+  },
+  "search_scope_menu_filter_query": {
+    "message": "檢索：{query}"
+  },
+  "search_scope_panel_placeholder": {
+    "message": "搜尋特定站點內容..."
+  },
+  "search_scope_active_placeholder": {
+    "message": "搜尋特定內容，覆按 Tab 開啟範圍面板..."
+  },
+  "search_scope_group_engines": {
+    "message": "搜尋引擎"
+  },
+  "search_scope_group_local": {
+    "message": "瀏覽器內容"
+  },
+  "search_scope_group_ai": {
+    "message": "AI 搜尋"
+  },
+  "search_scope_group_sites": {
+    "message": "站內搜尋"
+  },
+  "overlay_empty_open_tabs": {
+    "message": "暫無標籤"
+  },
+  "site_icon_alt": {
+    "message": "站點"
+  },
+  "site_brand_wechat_official": {
+    "message": "微信公眾號"
+  },
+  "settings_sync_title": {
+    "message": "瀏覽器內建同步"
+  },
+  "settings_sync_section_title": {
+    "message": "同步方式"
+  },
+  "settings_sync_desc": {
+    "message": "設定透過目前瀏覽器的內建同步服務自動同步"
+  },
+  "sync_status_unavailable": {
+    "message": "同步不可用"
+  },
+  "sync_status_unavailable_hint": {
+    "message": "同步不可用：請檢查目前瀏覽器是否支援並已開啟內建同步。"
+  },
+  "sync_status_ready": {
+    "message": "自動同步已開啟"
+  },
+  "sync_status_done": {
+    "message": "同步完成"
+  },
+  "sync_status_failed": {
+    "message": "同步失敗"
+  },
+  "sync_status_failed_reason": {
+    "message": "同步失敗：{reason}"
+  },
+  "sync_action_now": {
+    "message": "手動同步"
+  },
+  "sync_action_export": {
+    "message": "匯出設定"
+  },
+  "sync_action_import": {
+    "message": "匯入設定"
+  },
+  "sync_tooltip_export": {
+    "message": "匯出設定"
+  },
+  "sync_tooltip_import": {
+    "message": "匯入設定"
+  },
+  "sync_tooltip_last_manual": {
+    "message": "最近匯入/手動同步 {time}"
+  },
+  "sync_tooltip_default": {
+    "message": "手動同步"
+  },
+  "sync_status_hint": {
+    "message": "Lumno 設定透過目前瀏覽器的內建同步服務自動同步，僅支援同一瀏覽器賬號下的裝置，不支援跨瀏覽器同步。"
+  },
+  "sync_export_done": {
+    "message": "已匯出設定"
+  },
+  "sync_import_done": {
+    "message": "匯入完成"
+  },
+  "sync_import_invalid": {
+    "message": "設定檔案無效"
+  },
+  "document_pip_picker_unsupported_policy": {
+    "message": "該網站透過站點策略禁用了畫中畫。"
+  },
+  "document_pip_picker_unsupported_iframe": {
+    "message": "Document Picture-in-Picture 僅支援在頂層頁面使用。"
+  },
+  "document_pip_picker_unsupported_insecure": {
+    "message": "Document Picture-in-Picture 僅支援 HTTPS 頁面。"
+  },
+  "document_pip_picker_open_failed_not_allowed": {
+    "message": "網站或瀏覽器阻止了開啟 Document Picture-in-Picture。"
+  },
+  "document_pip_picker_open_failed_not_supported": {
+    "message": "目前選擇的內容在此頁面中無法透過 Document Picture-in-Picture 開啟。"
+  },
+  "document_pip_picker_open_failed_invalid_state": {
+    "message": "已有懸浮視窗開啟，或頁面狀態已變化。請重試。"
+  },
+  "document_pip_picker_open_failed_security": {
+    "message": "瀏覽器基於安全策略阻止了該操作。"
+  },
+  "newtab_page_label": {
+    "message": "新分頁"
+  },
+  "settings_title": {
+    "message": "設定"
+  },
+  "extension_page_label": {
+    "message": "擴充套件頁面"
+  },
+  "settings_button_aria": {
+    "message": "設定"
+  },
+  "copy_page_url_failed_retry": {
+    "message": "複製失敗，請重試"
+  },
+  "copy_page_url_success": {
+    "message": "已複製目前頁面連結"
+  },
+  "copy_page_url_failed_permission": {
+    "message": "複製失敗，請檢查剪貼簿許可權"
+  },
+  "recent_pin_add": {
+    "message": "置頂"
+  },
+  "recent_pin_remove": {
+    "message": "取消置頂"
+  },
+  "recent_pin_limit": {
+    "message": "最多置頂 3 個"
+  },
+  "recent_pin_limit_toast": {
+    "message": "最多隻能置頂 3 個卡片"
+  },
+  "recent_dismiss_tooltip": {
+    "message": "移除"
+  },
+  "recent_dismiss_pinned_tooltip": {
+    "message": "取消置頂並移除"
+  },
+  "recent_dismiss_toast": {
+    "message": "已移除"
+  },
+  "recent_dismiss_pinned_toast": {
+    "message": "已取消置頂並移除"
+  },
+  "tab_switcher_title": {
+    "message": "最近分頁"
+  },
+  "tab_switcher_untitled": {
+    "message": "未命名"
+  },
+  "tab_switcher_favicon_alt": {
+    "message": "網站圖示"
+  },
+  "command_show_tab_switcher": {
+    "message": "開啟最近分頁切換器"
+  },
+  "shortcut_reference_title": {
+    "message": "快捷鍵列表"
+  },
+  "shortcut_reference_group_search": {
+    "message": "聚焦搜尋"
+  },
+  "shortcut_reference_group_page_link": {
+    "message": "頁面連結"
+  },
+  "shortcut_reference_group_tab_switcher": {
+    "message": "標籤切換器"
+  },
+  "shortcut_reference_group_web_clip": {
+    "message": "網頁剪裁"
+  },
+  "shortcut_reference_unset": {
+    "message": "未設定"
+  },
+  "shortcut_reference_show_search_title": {
+    "message": "喚起聚焦搜尋視窗"
+  },
+  "shortcut_reference_show_search_desc": {
+    "message": "在目前頁面開啟 Lumno"
+  },
+  "shortcut_reference_show_search_prefill_title": {
+    "message": "喚起搜尋並填入目前網頁連結"
+  },
+  "shortcut_reference_show_search_prefill_desc": {
+    "message": "開啟 Lumno，並把目前網頁連結放入輸入框"
+  },
+  "shortcut_reference_copy_url_title": {
+    "message": "複製目前網頁連結"
+  },
+  "shortcut_reference_copy_url_desc": {
+    "message": "不開啟 Lumno，直接複製目前頁面 URL"
+  },
+  "shortcut_reference_tab_switcher_title": {
+    "message": "開啟最近分頁切換器"
+  },
+  "shortcut_reference_tab_switcher_desc": {
+    "message": "開啟最近分頁切換器"
+  },
+  "shortcut_reference_search_input_history_title": {
+    "message": "切換上一條或下一條輸入"
+  },
+  "shortcut_reference_search_input_history_desc": {
+    "message": "在已提交的輸入歷史中向前或向後切換"
+  },
+  "shortcut_reference_search_navigate_title": {
+    "message": "上下移動候選項"
+  },
+  "shortcut_reference_search_navigate_desc": {
+    "message": "在聚焦搜尋和新分頁中移動目前候選項"
+  },
+  "shortcut_reference_search_number_jump_title": {
+    "message": "按編號跳轉搜尋結果"
+  },
+  "shortcut_reference_search_number_jump_desc": {
+    "message": "長按主修飾鍵並鬆開，再按 0–9 執行對應候選項"
+  },
+  "shortcut_reference_search_number_jump_shortcut": {
+    "message": "長按 {modifier} 0.4 秒，鬆開後按 0–9"
+  },
+  "shortcut_reference_search_confirm_title": {
+    "message": "執行目前候選項"
+  },
+  "shortcut_reference_search_confirm_desc": {
+    "message": "開啟、搜尋、切換分頁或執行命令"
+  },
+  "shortcut_reference_search_tab_mode_title": {
+    "message": "補全或進入搜尋模式"
+  },
+  "shortcut_reference_search_tab_mode_desc": {
+    "message": "補全候選，或進入站內搜尋/已開啟分頁搜尋"
+  },
+  "shortcut_reference_search_open_scope_menu_title": {
+    "message": "開啟搜尋範圍面板"
+  },
+  "shortcut_reference_search_open_scope_menu_desc": {
+    "message": "輸入框為空時連續按兩次 Tab；已選擇搜尋範圍時按一次 Tab"
+  },
+  "shortcut_reference_search_close_title": {
+    "message": "關閉或退出模式"
+  },
+  "shortcut_reference_search_close_desc": {
+    "message": "關閉聚焦搜尋，或退出站內搜尋/已開啟分頁搜尋"
+  },
+  "shortcut_reference_search_current_tab_title": {
+    "message": "在目前分頁開啟"
+  },
+  "shortcut_reference_search_current_tab_desc": {
+    "message": "把通常新開分頁的動作改為目前分頁開啟"
+  },
+  "shortcut_reference_search_switch_new_tab_title": {
+    "message": "已開啟分頁結果新開"
+  },
+  "shortcut_reference_search_switch_new_tab_desc": {
+    "message": "當結果匹配已開啟分頁時，在新分頁開啟它的 URL"
+  },
+  "shortcut_reference_tab_switcher_cycle_title": {
+    "message": "在標籤切換器中移動選擇"
+  },
+  "shortcut_reference_tab_switcher_cycle_desc": {
+    "message": "在標籤切換器中移動到上一個或下一個分頁"
+  },
+  "shortcut_reference_tab_switcher_confirm_title": {
+    "message": "切換到選中分頁"
+  },
+  "shortcut_reference_tab_switcher_confirm_desc": {
+    "message": "確認標籤切換器中選中的分頁"
+  },
+  "shortcut_reference_document_pip_parent_title": {
+    "message": "網頁剪裁：選擇外層元素"
+  },
+  "shortcut_reference_document_pip_parent_desc": {
+    "message": "選擇網頁剪裁目標時切到更大的父級元素"
+  },
+  "shortcut_reference_document_pip_child_title": {
+    "message": "網頁剪裁：選擇內層元素"
+  },
+  "shortcut_reference_document_pip_child_desc": {
+    "message": "選擇網頁剪裁目標時切到更小的子級元素"
+  },
+  "newtab_shortcuts_section_label": {
+    "message": "快捷方式"
+  },
+  "newtab_shortcuts_add": {
+    "message": "新增快捷方式"
+  },
+  "newtab_shortcuts_hide_add": {
+    "message": "隱藏"
+  },
+  "newtab_shortcuts_add_hidden": {
+    "message": "已隱藏「+」，可在設定 → 外觀 → 快捷方式 → 展示「+」中重新開啟"
+  },
+  "newtab_shortcuts_dialog_title": {
+    "message": "新增快捷方式"
+  },
+  "newtab_shortcuts_name_label": {
+    "message": "名稱"
+  },
+  "newtab_shortcuts_name_placeholder": {
+    "message": "Lumno"
+  },
+  "newtab_shortcuts_url_label": {
+    "message": "網址"
+  },
+  "newtab_shortcuts_url_placeholder": {
+    "message": "https://example.com"
+  },
+  "newtab_shortcuts_icon_label": {
+    "message": "圖示（可選）"
+  },
+  "newtab_shortcuts_icon_info_label": {
+    "message": "本機圖示說明"
+  },
+  "newtab_shortcuts_icon_info": {
+    "message": "支援 PNG、JPG、WebP；推薦使用 128×128 px 以上、透明背景的正方形圖示。僅儲存在本裝置。"
+  },
+  "newtab_shortcuts_icon_choose": {
+    "message": "選擇圖片"
+  },
+  "newtab_shortcuts_icon_replace": {
+    "message": "更換圖片"
+  },
+  "newtab_shortcuts_icon_remove": {
+    "message": "移除"
+  },
+  "newtab_shortcuts_icon_unsupported": {
+    "message": "請選擇 PNG、JPG 或 WebP 圖片"
+  },
+  "newtab_shortcuts_icon_dimensions_too_large": {
+    "message": "圖片尺寸不能超過 4096×4096 px"
+  },
+  "newtab_shortcuts_icon_invalid": {
+    "message": "無法使用該圖片，請選擇其他圖片"
+  },
+  "newtab_shortcuts_icon_storage_error": {
+    "message": "本機圖示儲存失敗，請嘗試其他圖片"
+  },
+  "newtab_shortcuts_cancel": {
+    "message": "取消"
+  },
+  "newtab_shortcuts_done": {
+    "message": "完成"
+  },
+  "newtab_shortcuts_save": {
+    "message": "儲存"
+  },
+  "newtab_shortcuts_invalid_url": {
+    "message": "請輸入有效的 http 或 https 網址"
+  },
+  "newtab_shortcuts_limit_reached": {
+    "message": "最多可新增 {count} 個快捷方式。"
+  },
+  "newtab_shortcuts_added": {
+    "message": "已新增快捷方式"
+  },
+  "newtab_shortcuts_edited": {
+    "message": "已更新快捷方式"
+  },
+  "newtab_shortcuts_removed": {
+    "message": "已移除快捷方式"
+  },
+  "newtab_shortcuts_edit_dialog_title": {
+    "message": "編輯快捷方式"
+  },
+  "newtab_shortcuts_context_menu_label": {
+    "message": "快捷方式操作"
+  },
+  "settings_tab_switcher_title": {
+    "message": "標籤切換器"
+  },
+  "settings_tab_switcher_desc": {
+    "message": "按 {shortcut} 快速切換最近分頁"
+  },
+  "slash_command_empty": {
+    "message": "無匹配命令"
+  },
+  "command_tabs_title": {
+    "message": "僅搜尋已開啟的分頁"
+  },
+  "command_tabs_action": {
+    "message": "搜尋分頁"
+  },
+  "command_copy_title": {
+    "message": "複製目前頁面連結"
+  },
+  "command_copy_action": {
+    "message": "複製連結"
+  },
+  "settings_tab_account": {
+    "message": "賬號與同步"
+  }
+}

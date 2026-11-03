@@ -1,3 +1,5 @@
+import { getLocale } from '../../localization/locale';
+import { t } from '../../localization/messages';
 import type {
   LocalizedUserscriptMetadata,
   MetadataDiagnostic,
@@ -117,7 +119,7 @@ function validateUrlEntry(
     diagnostics.push({
       severity: 'error',
       code: 'invalid-metadata-url',
-      message: `@${entry.key} 必须填写绝对 URL。`,
+      message: t('cm_metadata_message_1', [String(entry.key)]),
       line: entry.line,
     });
     return;
@@ -126,7 +128,10 @@ function validateUrlEntry(
   diagnostics.push({
     severity: 'error',
     code: 'unsupported-metadata-url-protocol',
-    message: `@${entry.key} 不支持 ${url.protocol} 协议。`,
+    message: t('cm_metadata_message_2', [
+      String(entry.key),
+      String(url.protocol),
+    ]),
     line: entry.line,
   });
 }
@@ -155,7 +160,7 @@ function validateConnectEntry(
   diagnostics.push({
     severity: 'error',
     code: 'invalid-connect',
-    message: `@${entry.key} 必须填写 *、self、主机名或通配主机名。`,
+    message: t('cm_metadata_message_3', [String(entry.key)]),
     line: entry.line,
   });
 }
@@ -175,7 +180,7 @@ function parseLocalizedMetadata(
       diagnostics.push({
         severity: 'warning',
         code: 'invalid-metadata-locale',
-        message: `@${entry.key} 使用了非标准语言标记。`,
+        message: t('cm_metadata_message_4', [String(entry.key)]),
         line: entry.line,
       });
     }
@@ -184,7 +189,7 @@ function parseLocalizedMetadata(
       diagnostics.push({
         severity: 'warning',
         code: 'duplicate-localized-metadata',
-        message: `@${entry.key} 被重复声明，将使用第一项。`,
+        message: t('cm_metadata_message_5', [String(entry.key)]),
         line: entry.line,
       });
       continue;
@@ -209,7 +214,9 @@ function parseResources(
       diagnostics.push({
         severity: 'error',
         code: 'invalid-resource',
-        message: `@resource 声明无效：${value || '（空）'}`,
+        message: t('cm_metadata_message_6', [
+          String(value || t('cm_metadata_text_1')),
+        ]),
         line: entry.line,
       });
       continue;
@@ -218,7 +225,7 @@ function parseResources(
       diagnostics.push({
         severity: 'error',
         code: 'duplicate-resource',
-        message: `@resource 名称“${name}”被重复声明。`,
+        message: t('cm_metadata_message_7', [String(name)]),
         line: entry.line,
       });
       continue;
@@ -241,7 +248,7 @@ function parseSandbox(
   diagnostics.push({
     severity: 'warning',
     code: 'unknown-sandbox',
-    message: `无法识别 @sandbox 值“${requested}”；该值会被保留，脚本将使用默认隔离环境。`,
+    message: t('cm_metadata_message_8', [String(requested)]),
     line: entriesFor(entries, 'sandbox')[0]?.line,
   });
   return undefined;
@@ -256,7 +263,7 @@ export function parseUserscriptMetadata(code: string): ParsedMetadata {
         {
           severity: 'error',
           code: 'html-source',
-          message: '需要用户脚本源码，但实际读取到了 HTML。',
+          message: t('cm_metadata_message_9'),
         },
       ],
       block: null,
@@ -271,7 +278,7 @@ export function parseUserscriptMetadata(code: string): ParsedMetadata {
         {
           severity: 'error',
           code: 'missing-metadata-block',
-          message: '缺少有效的 ==UserScript== 元数据块。',
+          message: t('cm_metadata_message_10'),
         },
       ],
       block: null,
@@ -292,7 +299,7 @@ export function parseUserscriptMetadata(code: string): ParsedMetadata {
         diagnostics.push({
           severity: 'error',
           code: 'malformed-metadata-line',
-          message: '用户脚本元数据声明格式错误。',
+          message: t('cm_metadata_message_11'),
           line: firstBlockContentLine + index,
         });
       }
@@ -319,7 +326,7 @@ export function parseUserscriptMetadata(code: string): ParsedMetadata {
       diagnostics.push({
         severity: 'warning',
         code: 'duplicate-singleton-metadata',
-        message: `@${duplicate.key} 被重复声明，将使用第一项。`,
+        message: t('cm_metadata_message_12', [String(duplicate.key)]),
         line: duplicate.line,
       });
     }
@@ -330,7 +337,7 @@ export function parseUserscriptMetadata(code: string): ParsedMetadata {
     diagnostics.push({
       severity: 'error',
       code: 'missing-name',
-      message: '@name 必须包含非空脚本名称。',
+      message: t('cm_metadata_message_13'),
       line: lineNumberAt(code, blockMatch.index),
     });
   }
@@ -343,7 +350,7 @@ export function parseUserscriptMetadata(code: string): ParsedMetadata {
     diagnostics.push({
       severity: 'error',
       code: 'unsupported-run-at',
-      message: `不支持 @run-at 值：${requestedRunAt}`,
+      message: t('cm_metadata_message_14', [String(requestedRunAt)]),
       line: entriesFor(entries, 'run-at')[0]?.line,
     });
   }
@@ -437,7 +444,7 @@ export function parseUserscriptMetadata(code: string): ParsedMetadata {
     diagnostics.push({
       severity: 'warning',
       code: 'missing-inclusion-rule',
-      message: '脚本没有声明 @match 或 @include 规则。',
+      message: t('cm_metadata_message_15'),
       line: lineNumberAt(code, blockMatch.index),
     });
   }
@@ -459,7 +466,9 @@ function preferredLocalizedMetadata(
   metadata: UserscriptMetadata,
   field: keyof LocalizedUserscriptMetadata,
 ) {
-  for (const locale of ['zh-cn', 'zh-tw'] as const) {
+  for (const locale of getLocale() === 'zh-TW'
+    ? ['zh-tw', 'zh-hant', 'zh-hk', 'zh-cn', 'zh']
+    : ['zh-cn', 'zh-hans', 'zh', 'zh-tw']) {
     const value = metadata.localized[locale]?.[field]?.trim();
     if (value) return value;
   }
@@ -480,6 +489,9 @@ export function stripUserscriptMetadata(code: string) {
 
 export function formatMetadataDiagnostic(diagnostic: MetadataDiagnostic) {
   return diagnostic.line
-    ? `第 ${diagnostic.line} 行：${diagnostic.message}`
+    ? t('cm_metadata_text_16', [
+        String(diagnostic.line),
+        String(diagnostic.message),
+      ])
     : diagnostic.message;
 }

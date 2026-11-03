@@ -26,7 +26,9 @@ describe('new tab document branding', () => {
     expect(runtime).toContain(
       "window.open(api.runtime.getURL('new-tab-settings.html'), '_blank')",
     );
-    expect(runtime).toContain("const NEW_TAB_TITLE = '新标签页';");
+    expect(runtime).toContain(
+      "const newTabTitle = () => t('cm_document_new_tab');",
+    );
     expect(runtime).toContain('const CARD_MASTER_LOGO_PATH');
     expect(runtime).toContain(LOGO_PATH);
   });

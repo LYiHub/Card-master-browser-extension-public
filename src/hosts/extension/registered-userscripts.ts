@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { UserscriptResourceBundle } from '../../userscript/application/resource-loader';
 import {
   createUserscriptMatchPlan,
@@ -894,12 +895,12 @@ ${eligibilityPrelude(plan)}
 ${bodyWait(script)}
   const __runtime = globalThis.browser?.runtime ?? globalThis.chrome?.runtime;
   if (!__runtime?.connect) {
-    throw new Error('用户脚本管理运行环境不可用。');
+    throw new Error(${JSON.stringify(t('cm_runtime_unavailable'))});
   }
   const __port = __runtime.connect({
     name: ${JSON.stringify(userScriptPortName(script.id, identity.capability))},
   });
-  const __connectionError = () => new Error('用户脚本管理连接已关闭。');
+  const __connectionError = () => new Error(${JSON.stringify(t('cm_runtime_connection_closed'))});
   const __send = (message) => {
     try {
       __port.postMessage(message);

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 export type NewTabSiteSearchProvider = {
   key: string;
   aliases: readonly string[];
@@ -11,14 +12,18 @@ export const NEW_TAB_SITE_SEARCH_PROVIDERS: readonly NewTabSiteSearchProvider[] 
     {
       key: 'bd',
       aliases: ['baidu', '百度'],
-      name: '百度',
+      get name() {
+        return t('cm_site_search_name_2');
+      },
       template: 'https://www.baidu.com/s?wd={query}',
       group: 'search-engine',
     },
     {
       key: 'bi',
       aliases: ['bing', '必应'],
-      name: '必应',
+      get name() {
+        return t('cm_site_search_name_4');
+      },
       template: 'https://www.bing.com/search?q={query}',
       group: 'search-engine',
     },
@@ -46,7 +51,9 @@ export const NEW_TAB_SITE_SEARCH_PROVIDERS: readonly NewTabSiteSearchProvider[] 
     {
       key: 'sg',
       aliases: ['sogou', '搜狗'],
-      name: '搜狗',
+      get name() {
+        return t('cm_site_search_name_7');
+      },
       template: 'https://www.sogou.com/web?query={query}',
       group: 'search-engine',
     },
@@ -60,7 +67,9 @@ export const NEW_TAB_SITE_SEARCH_PROVIDERS: readonly NewTabSiteSearchProvider[] 
     {
       key: 'bb',
       aliases: ['bilibili', 'bili', '哔哩哔哩', 'b站'],
-      name: '哔哩哔哩',
+      get name() {
+        return t('cm_site_search_name_10');
+      },
       template: 'https://search.bilibili.com/all?keyword={query}',
       group: 'website',
     },
@@ -109,84 +118,108 @@ export const NEW_TAB_SITE_SEARCH_PROVIDERS: readonly NewTabSiteSearchProvider[] 
     {
       key: 'maps',
       aliases: ['map', 'google maps', '地图'],
-      name: 'Google 地图',
+      get name() {
+        return t('cm_site_search_name_12');
+      },
       template: 'https://www.google.com/maps/search/?api=1&query={query}',
       group: 'website',
     },
     {
       key: 'zh',
       aliases: ['zhihu', '知乎'],
-      name: '知乎',
+      get name() {
+        return t('cm_site_search_name_14');
+      },
       template: 'https://www.zhihu.com/search?q={query}',
       group: 'website',
     },
     {
       key: 'db',
       aliases: ['douban', '豆瓣'],
-      name: '豆瓣',
+      get name() {
+        return t('cm_site_search_name_16');
+      },
       template: 'https://www.douban.com/search?q={query}',
       group: 'website',
     },
     {
       key: 'jj',
       aliases: ['juejin', '掘金'],
-      name: '掘金',
+      get name() {
+        return t('cm_site_search_name_18');
+      },
       template: 'https://juejin.cn/search?query={query}',
       group: 'website',
     },
     {
       key: 'tb',
       aliases: ['taobao', '淘宝'],
-      name: '淘宝',
+      get name() {
+        return t('cm_site_search_name_20');
+      },
       template: 'https://s.taobao.com/search?q={query}',
       group: 'website',
     },
     {
       key: 'tm',
       aliases: ['tmall', '天猫'],
-      name: '天猫',
+      get name() {
+        return t('cm_site_search_name_22');
+      },
       template: 'https://list.tmall.com/search_product.htm?q={query}',
       group: 'website',
     },
     {
       key: 'wx',
       aliases: ['weixin', 'wechat', '微信'],
-      name: '微信公众号',
+      get name() {
+        return t('cm_site_search_name_24');
+      },
       template: 'https://weixin.sogou.com/weixin?query={query}',
       group: 'website',
     },
     {
       key: 'wb',
       aliases: ['weibo', '微博'],
-      name: '微博',
+      get name() {
+        return t('cm_site_search_name_26');
+      },
       template: 'https://s.weibo.com/weibo?q={query}',
       group: 'website',
     },
     {
       key: 'xhs',
       aliases: ['xiaohongshu', '小红书'],
-      name: '小红书',
+      get name() {
+        return t('cm_site_search_name_28');
+      },
       template: 'https://www.xiaohongshu.com/search_result?keyword={query}',
       group: 'website',
     },
     {
       key: 'dy',
       aliases: ['douyin', '抖音'],
-      name: '抖音',
+      get name() {
+        return t('cm_site_search_name_30');
+      },
       template: 'https://www.douyin.com/search/{query}',
       group: 'website',
     },
     {
       key: 'jd',
       aliases: ['jd', 'jingdong', '京东'],
-      name: '京东',
+      get name() {
+        return t('cm_site_search_name_32');
+      },
       template: 'https://search.jd.com/Search?keyword={query}',
       group: 'website',
     },
     {
       key: 'wiki',
       aliases: ['wikipedia', '维基百科'],
-      name: '维基百科',
+      get name() {
+        return t('cm_site_search_name_34');
+      },
       template: 'https://zh.wikipedia.org/w/index.php?search={query}',
       group: 'website',
     },

@@ -2,6 +2,7 @@ import type { AiToolCall } from '../../ai/domain/types';
 import type { AiModelToolDefinition } from '../../ai/infrastructure/model-client';
 import type { DeckVisibility } from '../../features/userscript-deck/deck-entry';
 import { resolveSiteScope } from '../../lib/site-scope';
+import { getLocale } from '../../localization/locale';
 import { DAILY_REVIEW_PLANNING_RULES } from '../../new-tab/application/daily-review-wallpaper';
 import {
   CARD_ART_ASSISTANT_GUIDANCE,
@@ -83,7 +84,7 @@ export function buildAssistantInstructions(
     : `卡牌封面生成：
 - create_userscript 与图像服务完全独立。新卡会直接使用项目已有的预设封面，图像服务未配置也必须正常创建和注入脚本。
 - 生成自定义封面仍是标准创建流程，但当前图像服务未配置。创建完成后必须明确说明卡牌暂时保留预设封面，不得假装已经生成自定义封面。`;
-  return `你是 Card Master 智能体。必须始终使用简体中文回复用户，DOM、API 等专有术语可以保留原文。
+  return `你是 Card Master 智能体。默认使用${getLocale() === 'zh-TW' ? '台灣繁體中文' : '简体中文'}回复用户；用户明确指定其他语言时遵循用户要求。DOM、API 等专有术语可以保留原文。
 
 每日回顾壁纸：
 - 用户要求写摘要、画面描述或深度生图提示词时，直接给出可粘贴的摘要和画面描述，不要只给抽象气氛。

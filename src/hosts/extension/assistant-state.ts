@@ -41,7 +41,7 @@ export function createStoredAssistantConversation(
 ): StoredAssistantConversation {
   return {
     id,
-    title: DEFAULT_CONVERSATION_TITLE,
+    title: t('cm_assistant_new_conversation'),
     ...(model ? { model } : {}),
     createdAt: now,
     updatedAt: now,
@@ -430,7 +430,9 @@ export function titleAssistantConversation(
   message: string,
 ) {
   if (
-    conversation.title !== DEFAULT_CONVERSATION_TITLE ||
+    ![DEFAULT_CONVERSATION_TITLE, '新對話', '新會話'].includes(
+      conversation.title,
+    ) ||
     conversation.messages.length > 0
   ) {
     return;

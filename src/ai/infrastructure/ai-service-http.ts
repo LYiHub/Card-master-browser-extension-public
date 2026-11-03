@@ -204,7 +204,7 @@ export async function requestAiService(
     throw new AiServiceTransportError(
       t('cm_ai_service_http_text_3', [
         String(error instanceof Error ? error.message : String(error)),
-        String(debug ? `\n调试信息：${debug}` : ''),
+        String(debug ? t('cm_ai_service_http_text_2', [String(debug)]) : ''),
       ]),
       failed,
       { cause: error },
@@ -373,7 +373,7 @@ export async function consumeAiServiceSse(
     throw new AiServiceStreamError(
       t('cm_ai_service_http_text_5', [
         String(error instanceof Error ? error.message : String(error)),
-        String(debug ? `\n调试信息：${debug}` : ''),
+        String(debug ? t('cm_ai_service_http_text_4', [String(debug)]) : ''),
       ]),
       diagnostic,
       { cause: error },
@@ -470,7 +470,7 @@ export function aiServiceHttpError(
     t('cm_ai_service_http_text_7', [
       String(status),
       String(message),
-      String(debug ? `\n调试信息：${debug}` : ''),
+      String(debug ? t('cm_ai_service_http_text_8', [String(debug)]) : ''),
     ]),
     diagnostic,
   );

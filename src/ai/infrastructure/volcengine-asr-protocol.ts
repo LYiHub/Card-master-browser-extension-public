@@ -201,7 +201,9 @@ export async function parseVolcengineAsrResponse(
   if (messageType === SERVER_ERROR_RESPONSE) {
     throw new Error(
       responseMessage(payload) ??
-        t('cm_volcengine_asr_protocol_text_9', [String(code ?? '未知')]),
+        t('cm_volcengine_asr_protocol_text_9', [
+          String(code ?? t('cm_volcengine_asr_protocol_text_1')),
+        ]),
     );
   }
   if (messageType !== FULL_SERVER_RESPONSE) {

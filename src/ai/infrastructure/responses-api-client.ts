@@ -404,8 +404,10 @@ export class ResponsesApiClient implements AiModelClient {
               String(
                 failure?.message ||
                   (incompleteReason
-                    ? `响应未完成（${incompleteReason}）。`
-                    : '服务未返回具体原因。'),
+                    ? t('cm_responses_api_client_text_1', [
+                        String(incompleteReason),
+                      ])
+                    : t('cm_responses_api_client_text_2')),
               ),
             ]),
           );
@@ -418,7 +420,9 @@ export class ResponsesApiClient implements AiModelClient {
                   ? `（${event.error.code || event.error.type}）`
                   : '',
               ),
-              String(event.error?.message || '服务未返回具体原因。'),
+              String(
+                event.error?.message || t('cm_responses_api_client_text_3'),
+              ),
             ]),
           );
       }

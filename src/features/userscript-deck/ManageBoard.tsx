@@ -195,7 +195,9 @@ export function ManageBoard({
           if (configured) {
             setCoverNeedsConfiguration(false);
             setCoverError((current) =>
-              current?.startsWith('OpenAI 兼容图像服务尚未配置')
+              /^OpenAI (?:兼容图像服务尚未配置|相容(?:圖像|影象)服務尚未(?:設定|配置))/.test(
+                current ?? '',
+              )
                 ? null
                 : current,
             );

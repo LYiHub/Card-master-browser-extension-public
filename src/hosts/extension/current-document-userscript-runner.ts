@@ -1,4 +1,5 @@
 import type { AiScriptExecution } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import { matchInstalledUserscript } from '../../userscript/domain/matcher';
 import type { ExtensionUserscriptApi } from './api';
 import type { AssistantPageAttachment } from './assistant-page-observer';
@@ -48,8 +49,10 @@ export class CurrentDocumentUserscriptRunner {
         url: attachment.context.url,
         completedAt,
         error: script.manager.enabled
-          ? `脚本未匹配当前页面：${match.reason}`
-          : '脚本当前处于停用状态。',
+          ? t('cm_current_document_userscript_runner_text_1', [
+              String(match.reason),
+            ])
+          : t('cm_current_document_userscript_runner_text_2'),
       };
     }
     if (registrations.length === 0) {
@@ -57,7 +60,7 @@ export class CurrentDocumentUserscriptRunner {
         status: 'error',
         url: attachment.context.url,
         completedAt,
-        error: '注册系统没有生成可执行脚本。',
+        error: t('cm_current_document_userscript_runner_error_3'),
       };
     }
 
@@ -73,7 +76,11 @@ export class CurrentDocumentUserscriptRunner {
       for (const registration of registrations) {
         const [firstSource, ...remainingSources] = registration.js ?? [];
         if (!firstSource) {
-          throw new Error(`注册脚本 ${registration.id} 缺少执行源码。`);
+          throw new Error(
+            t('cm_current_document_userscript_runner_error_4', [
+              String(registration.id),
+            ]),
+          );
         }
         if (registration.allFrames && !allFrameDocumentIds) {
           allFrameDocumentIds =
@@ -129,7 +136,8 @@ export class CurrentDocumentUserscriptRunner {
             status: 'error',
             url: attachment.context.url,
             completedAt: Date.now(),
-            error: state.error || '脚本运行时报告了未知错误。',
+            error:
+              state.error || t('cm_current_document_userscript_runner_text_5'),
           };
         }
         await wait(RUNTIME_POLL_INTERVAL_MS);
@@ -138,7 +146,7 @@ export class CurrentDocumentUserscriptRunner {
         status: 'error',
         url: attachment.context.url,
         completedAt: Date.now(),
-        error: '脚本已注入，但运行时未在限定时间内报告完成状态。',
+        error: t('cm_current_document_userscript_runner_error_6'),
       };
     } catch (error) {
       return {
@@ -168,7 +176,7 @@ export class CurrentDocumentUserscriptRunner {
       ),
     ];
     if (!documentIds.includes(attachment.target.documentId)) {
-      throw new Error('页面已在即时注入前发生导航，已取消脚本执行。');
+      throw new Error(t('cm_current_document_userscript_runner_error_7'));
     }
     return documentIds;
   }

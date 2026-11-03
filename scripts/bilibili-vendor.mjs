@@ -584,6 +584,22 @@ export async function prepareSponsorVendorAssets(
       sponsorPath === 'runtime-adapter.js'
         ? rewritten.source
         : rewriteSponsorAssetAccess(rewritten.source, runtimeId);
+    if (
+      [
+        'js/popup.js',
+        'js/options.js',
+        'js/help.js',
+        'js/permissions.js',
+      ].includes(sponsorPath)
+    ) {
+      source = source.replaceAll(
+        'document.addEventListener("DOMContentLoaded",',
+        'globalThis.__cardMasterVendorDocumentReady(',
+      );
+    }
+    if (sponsorPath === 'js/content.js') {
+      source = `${sponsorRuntimeRoot(runtimeId)}.ready.then(() => {\n${source}\n});`;
+    }
     await writeFile(path, source);
   }
 

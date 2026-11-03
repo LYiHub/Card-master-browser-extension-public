@@ -16,7 +16,6 @@ import react from '@vitejs/plugin-react';
 import { parse } from 'acorn';
 import { transform as transformJavaScript } from 'esbuild';
 import { build } from 'vite';
-
 import {
   composeSponsorBackground,
   patchPakkuContentRuntime,
@@ -38,6 +37,7 @@ import {
   mergeCoreLocales,
   scopedLocalizationPlugin,
 } from './localization.mjs';
+import { prepareVendorPageLanguages } from './vendor-localization.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const localizationPlugin = await scopedLocalizationPlugin(root);
@@ -1224,6 +1224,7 @@ const chromiumSpeechBundleEntries = [
   ['src/hosts/extension/offscreen-audio.ts', 'offscreen-audio.js', 'iife'],
 ];
 const bundleEntries = [
+  ['src/hosts/extension/vendor-page.ts', 'vendor-page.js', 'iife'],
   ['src/hosts/extension/content.ts', 'content.js', 'iife'],
   ['src/hosts/extension/adguard-content.ts', 'adguard-content.js', 'iife'],
   ['src/hosts/extension/adguard-runtime.ts', 'adguard-runtime.js', 'es'],
@@ -1391,6 +1392,7 @@ await Promise.all([
   validateSingleLocaleRoot(resolve(output, 'vendor/youtube/sponsor/_locales')),
   ...(extensionTarget === 'safari' ? [] : [validateLumnoRuntime()]),
 ]);
+await prepareVendorPageLanguages(output);
 {
   let backgroundSource = await readFile(
     resolve(output, 'background.js'),

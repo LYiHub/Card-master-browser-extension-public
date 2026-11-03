@@ -13,6 +13,7 @@ import type {
   ContentBlockingSettingsView,
   ContentBlockingSubscriptionView,
 } from '../../content-blocking/domain/types';
+import { getLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 
@@ -83,7 +84,7 @@ type RunOperation = (
 
 function formattedTime(value?: number) {
   if (!value) return t('cm_content_blocking_filter_lists_panel_text_9');
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat(getLocale(), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(value);

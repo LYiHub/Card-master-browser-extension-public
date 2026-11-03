@@ -1,3 +1,4 @@
+import { getLocale } from '../localization/locale';
 import { t } from '../localization/messages';
 import { mergeEntries } from './merge';
 import {
@@ -143,7 +144,7 @@ export function resolveVersions(
         label: t('cm_versions_label_6', [
           String(record.deviceId.slice(0, 6)),
           String(
-            new Date(record.at).toLocaleString('zh-CN', { hour12: false }),
+            new Date(record.at).toLocaleString(getLocale(), { hour12: false }),
           ),
         ]),
       });

@@ -1,4 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
+import { setLanguagePreference } from '../../localization/locale';
+
+afterEach(() => setLanguagePreference('auto'));
+
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { AiToolCall } from '../../ai/domain/types';
 import { DEFAULT_USERSCRIPT_PRESENTATION } from '../../userscript/application/presentation';
@@ -72,10 +76,18 @@ function context(
 }
 
 describe('卡牌大师智能体工具', () => {
+  it('follows the selected language without changing tool protocol names', () => {
+    setLanguagePreference('zh-TW');
+    const instructions = buildAssistantInstructions();
+    expect(instructions).toContain('台灣繁體中文');
+    expect(instructions).toContain('用户明确指定其他语言时遵循用户要求');
+    expect(instructions).not.toContain('必须始终使用简体中文');
+    expect(instructions).toContain('create_userscript');
+  });
   it('使用简体中文说明即时执行语义', () => {
     const instructions = buildAssistantInstructions(INITIAL_USERSCRIPTS);
 
-    expect(instructions).toContain('必须始终使用简体中文');
+    expect(instructions).toContain('默认使用简体中文');
     expect(instructions).toContain('每日回顾壁纸');
     expect(instructions).toContain('点名当天所有主要浏览主题');
     expect(instructions).toContain('能一眼认出的具体道具');

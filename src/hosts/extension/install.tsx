@@ -8,6 +8,7 @@ import {
 import { MotionIconSwap } from '../../components/ui/MotionIconSwap';
 import { UiIconButton } from '../../components/ui/Ui';
 import { bundledCardMediaForVideo } from '../../lib/userscript-deck-media';
+import { initializeExtensionDocument } from '../../localization/document';
 import { t } from '../../localization/messages';
 import { useLocale, useLocalizedMemo } from '../../localization/react';
 import { DEFAULT_USERSCRIPT_MEDIA } from '../../userscript/application/presentation';
@@ -447,4 +448,6 @@ function InstallerPage() {
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Missing Userscript installer mount point.');
-createRoot(root).render(<InstallerPage />);
+void initializeExtensionDocument(api, () => t('cm_document_install'))
+  .then(() => createRoot(root).render(<InstallerPage />))
+  .catch(console.error);

@@ -13,6 +13,7 @@ import {
   type PinyinDictionary,
 } from '../../gamepad-control/pinyin';
 import type { NavigationDirection } from '../../input/intents';
+import { t } from '../../localization/messages';
 import {
   type EditableTextTarget,
   editableTextTarget,
@@ -43,7 +44,9 @@ export const DEFAULT_GAMEPAD_KEYBOARD_SHORTCUTS: GamepadKeyboardShortcuts =
     enter: 'R2',
     selectAll: 'L3',
     space: 'X / □',
-    speech: '触摸板',
+    get speech() {
+      return t('cm_gamepad_screen_keyboard_speech_1');
+    },
   });
 
 export type GamepadKeyboardSpeechStatus =
@@ -118,7 +121,7 @@ function numberRow(shortcuts: GamepadKeyboardShortcuts) {
     characterKey('=', '+'),
     {
       label: 'delete',
-      name: '退格',
+      name: t('cm_gamepad_screen_keyboard_name_2'),
       action: 'backspace' as const,
       shortcut: shortcuts.backspace,
       special: true,
@@ -133,14 +136,18 @@ function bottomRow(
 ): readonly GamepadKeyboardKey[] {
   return [
     {
-      label: inputMode === 'chinese' ? '中' : 'EN',
-      name: inputMode === 'chinese' ? '切换到英文输入' : '切换到中文拼音输入',
+      label:
+        inputMode === 'chinese' ? t('cm_gamepad_screen_keyboard_text_3') : 'EN',
+      name:
+        inputMode === 'chinese'
+          ? t('cm_gamepad_screen_keyboard_text_4')
+          : t('cm_gamepad_screen_keyboard_text_5'),
       action: 'toggle-language',
       special: true,
     },
     {
       label: 'ctrl',
-      name: '全选文本',
+      name: t('cm_gamepad_screen_keyboard_name_6'),
       action: 'select-all',
       shortcut: shortcuts.selectAll,
       special: true,
@@ -152,14 +159,14 @@ function bottomRow(
     },
     {
       label: '⌘',
-      name: '上一个候选词',
+      name: t('cm_gamepad_screen_keyboard_name_7'),
       action: 'candidate-previous',
       shortcut: shortcuts.candidatePrevious,
       special: true,
     },
     {
       label: '',
-      name: '空格',
+      name: t('cm_gamepad_screen_keyboard_name_8'),
       action: 'space',
       shortcut: shortcuts.space,
       special: true,
@@ -167,7 +174,7 @@ function bottomRow(
     },
     {
       label: '⌘',
-      name: '下一个候选词',
+      name: t('cm_gamepad_screen_keyboard_name_9'),
       action: 'candidate-next',
       shortcut: shortcuts.candidateNext,
       special: true,
@@ -207,7 +214,7 @@ export function gamepadKeyboardRows(
     [
       {
         label: 'caps lock',
-        name: '大写锁定',
+        name: t('cm_gamepad_screen_keyboard_name_10'),
         action: 'caps-lock',
         special: true,
         units: 2,
@@ -217,7 +224,7 @@ export function gamepadKeyboardRows(
       characterKey("'", '"'),
       {
         label: 'return',
-        name: '确认',
+        name: t('cm_gamepad_screen_keyboard_name_11'),
         action: 'enter',
         shortcut: shortcuts.enter,
         special: true,
@@ -227,7 +234,7 @@ export function gamepadKeyboardRows(
     [
       {
         label: 'shift',
-        name: 'Shift 锁定',
+        name: t('cm_gamepad_screen_keyboard_name_12'),
         action: 'shift',
         special: true,
         units: 2.5,
@@ -238,7 +245,7 @@ export function gamepadKeyboardRows(
       characterKey('/', '?'),
       {
         label: 'shift',
-        name: 'Shift 锁定',
+        name: t('cm_gamepad_screen_keyboard_name_13'),
         action: 'shift',
         special: true,
         units: 2.5,
@@ -332,11 +339,17 @@ export class GamepadScreenKeyboard {
     this.notice.className = 'gamepad-control-notice';
     this.element = pageDocument.createElement('section');
     this.element.className = 'gamepad-keyboard';
-    this.element.setAttribute('aria-label', '手柄屏幕键盘');
+    this.element.setAttribute(
+      'aria-label',
+      t('cm_gamepad_screen_keyboard_text_14'),
+    );
 
     this.candidateBar = pageDocument.createElement('div');
     this.candidateBar.className = 'gamepad-keyboard__candidate-bar';
-    this.candidateBar.setAttribute('aria-label', '候选词与语音输入');
+    this.candidateBar.setAttribute(
+      'aria-label',
+      t('cm_gamepad_screen_keyboard_text_15'),
+    );
     this.candidateList = pageDocument.createElement('div');
     this.candidateList.className = 'gamepad-keyboard__candidate-list';
     this.speechButton = pageDocument.createElement('button');
@@ -361,7 +374,10 @@ export class GamepadScreenKeyboard {
     if (this.speechControl) {
       this.candidateBar.append(this.speechButton);
     } else {
-      this.candidateBar.setAttribute('aria-label', '候选词');
+      this.candidateBar.setAttribute(
+        'aria-label',
+        t('cm_gamepad_screen_keyboard_text_16'),
+      );
       this.speechButton.disabled = true;
     }
     this.renderSpeechButton();
@@ -675,7 +691,7 @@ export class GamepadScreenKeyboard {
     const target = this.resolveEditableTarget();
     if (!target) {
       this.pageDocument.defaultView?.clearTimeout(this.noticeTimer);
-      this.notice.textContent = '先选择网页中的输入框';
+      this.notice.textContent = t('cm_gamepad_screen_keyboard_text_17');
       this.notice.classList.add('is-visible');
       this.noticeTimer =
         this.pageDocument.defaultView?.setTimeout(
@@ -854,7 +870,9 @@ export class GamepadScreenKeyboard {
         const button = this.createKeyButton(
           {
             label: `${index < 9 ? `${index + 1} ` : ''}${candidate.word}`,
-            name: `候选词 ${candidate.word}`,
+            name: t('cm_gamepad_screen_keyboard_name_18', [
+              String(candidate.word),
+            ]),
             action: 'candidate',
             candidate,
           },
@@ -870,8 +888,8 @@ export class GamepadScreenKeyboard {
         this.candidateList.append(
           this.createKeyButton(
             {
-              label: '更多',
-              name: '展开更多候选词',
+              label: t('cm_gamepad_screen_keyboard_label_19'),
+              name: t('cm_gamepad_screen_keyboard_name_20'),
               action: 'candidate-expand',
               special: true,
             },
@@ -888,10 +906,12 @@ export class GamepadScreenKeyboard {
       message.className = 'gamepad-keyboard__candidate-message';
       message.textContent =
         this.pinyinStatus === 'loading'
-          ? '正在载入候选词'
+          ? t('cm_gamepad_screen_keyboard_text_21')
           : this.pinyinStatus === 'error'
-            ? '候选词库载入失败'
-            : `暂无候选词，按空格输入 ${this.pinyinInput}`;
+            ? t('cm_gamepad_screen_keyboard_text_22')
+            : t('cm_gamepad_screen_keyboard_text_23', [
+                String(this.pinyinInput),
+              ]);
       this.candidateList.append(message);
     }
     const speechColumn =
@@ -1024,24 +1044,35 @@ export class GamepadScreenKeyboard {
     const active = gamepadKeyboardSpeechActive(this.speechStatus);
     const label =
       this.speechStatus === 'connecting'
-        ? '连接中'
+        ? t('cm_gamepad_screen_keyboard_text_24')
         : this.speechStatus === 'listening'
-          ? '松开完成'
+          ? t('cm_gamepad_screen_keyboard_text_25')
           : this.speechStatus === 'stopping'
-            ? '识别中'
+            ? t('cm_gamepad_screen_keyboard_text_26')
             : this.speechStatus === 'error'
-              ? '重试语音'
-              : '语音';
+              ? t('cm_gamepad_screen_keyboard_text_27')
+              : t('cm_gamepad_screen_keyboard_text_28');
     this.speechButton.dataset.status = this.speechStatus;
     this.speechButton.classList.toggle('is-active', active);
     this.speechButton.setAttribute('aria-pressed', String(active));
     this.speechLabel.textContent = label;
-    this.speechShortcut.textContent = `长按 ${this.shortcuts.speech}`;
+    this.speechShortcut.textContent = t('cm_gamepad_screen_keyboard_text_29', [
+      String(this.shortcuts.speech),
+    ]);
     this.speechButton.setAttribute(
       'aria-label',
-      `${active ? '结束' : '开始'}语音输入，长按 ${this.shortcuts.speech}`,
+      t('cm_gamepad_screen_keyboard_text_30', [
+        String(
+          active
+            ? t('cm_gamepad_screen_keyboard_text_1')
+            : t('cm_gamepad_screen_keyboard_text_2'),
+        ),
+        String(this.shortcuts.speech),
+      ]),
     );
-    this.speechButton.title = active ? '结束语音输入' : '开始语音输入';
+    this.speechButton.title = active
+      ? t('cm_gamepad_screen_keyboard_text_31')
+      : t('cm_gamepad_screen_keyboard_text_32');
   }
 
   private toggleSpeechInput() {

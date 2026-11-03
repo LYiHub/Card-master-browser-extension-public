@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { RegisteredUserScript } from './api';
 
 type SafariScriptingApi = Pick<typeof chrome.scripting, 'executeScript'>;
@@ -24,7 +25,9 @@ export async function executeSafariUserscriptRegistration(
   for (const source of registration.js ?? []) {
     const code = 'code' in source ? source.code : undefined;
     if (typeof code !== 'string') {
-      throw new Error(`Safari 脚本 ${registration.id} 缺少可执行源码。`);
+      throw new Error(
+        t('cm_safari_userscript_executor_error_1', [String(registration.id)]),
+      );
     }
     await scripting.executeScript({
       target,

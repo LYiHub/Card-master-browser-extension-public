@@ -4,12 +4,14 @@ import {
   readMicrophonePermissionState,
 } from '../../ai/infrastructure/microphone-permission';
 import cursorThemeStyles from '../../components/ui/theme.css?inline';
+import { initializeExtensionDocument } from '../../localization/document';
 import { t } from '../../localization/messages';
 import { requireExtensionApi } from './api';
 import { CARD_MASTER_DEFAULT_ICON_PATH } from './extension-branding';
 import { microphoneSettingsUrl } from './platform';
 
-const styles = `
+async function bootstrap() {
+  const styles = `
   :root {
     --permission-canvas: var(--app-ui-canvas);
     --permission-grid: color-mix(in srgb, var(--app-ui-accent) 5%, transparent);
@@ -163,91 +165,96 @@ const styles = `
   }
 `;
 
-const style = document.createElement('style');
-style.textContent = `${cursorThemeStyles}\n${styles}`;
-document.head.append(style);
-document.documentElement.classList.add('app-ui-theme');
+  const style = document.createElement('style');
+  style.textContent = `${cursorThemeStyles}\n${styles}`;
+  document.head.append(style);
+  document.documentElement.classList.add('app-ui-theme');
 
-const api = requireExtensionApi();
+  const api = requireExtensionApi();
+  await initializeExtensionDocument(api, () => t('cm_document_microphone'));
 
-const rootElement = document.getElementById('microphone-permission-root');
-if (!rootElement) throw new Error(t('cm_microphone_permission_error_1'));
-const root = rootElement;
+  const rootElement = document.getElementById('microphone-permission-root');
+  if (!rootElement) throw new Error(t('cm_microphone_permission_error_1'));
+  const root = rootElement;
 
-root.innerHTML = t('cm_microphone_permission_text_7', [
-  String(CARD_MASTER_DEFAULT_ICON_PATH),
-]);
+  root.innerHTML = t('cm_microphone_permission_text_7', [
+    String(CARD_MASTER_DEFAULT_ICON_PATH),
+  ]);
 
-function element<T extends Element>(selector: string) {
-  const target = root.querySelector<T>(selector);
-  if (!target)
-    throw new Error(t('cm_microphone_permission_error_8', [String(selector)]));
-  return target;
-}
-
-const status = element<HTMLElement>('.permission-status');
-const statusValue = element<HTMLElement>('.permission-status strong');
-const message = element<HTMLElement>('.permission-message');
-const requestButton = element<HTMLButtonElement>('[data-action="request"]');
-const closeButton = element<HTMLButtonElement>('[data-action="close"]');
-const settingsButton = element<HTMLButtonElement>(
-  '[data-action="browser-settings"]',
-);
-
-function renderState(state: MicrophonePermissionState) {
-  status.dataset.state = state;
-  statusValue.textContent =
-    state === 'granted'
-      ? t('cm_microphone_permission_text_9')
-      : state === 'denied'
-        ? t('cm_microphone_permission_text_10')
-        : state === 'prompt'
-          ? t('cm_microphone_permission_text_11')
-          : t('cm_microphone_permission_text_12');
-  requestButton.textContent =
-    state === 'granted'
-      ? t('cm_microphone_permission_text_13')
-      : t('cm_microphone_permission_text_14');
-  closeButton.hidden = state !== 'granted';
-}
-
-async function refresh() {
-  renderState(await readMicrophonePermissionState());
-}
-
-requestButton.addEventListener('click', () => {
-  requestButton.disabled = true;
-  message.classList.remove('is-error');
-  message.textContent = t('cm_microphone_permission_text_15');
-  void navigator.mediaDevices
-    .getUserMedia({ audio: true })
-    .then(async (stream) => {
-      for (const track of stream.getTracks()) track.stop();
-      await refresh();
-      message.textContent = t('cm_microphone_permission_text_16');
-    })
-    .catch((error) => {
-      message.classList.add('is-error');
-      message.textContent = t('cm_microphone_permission_text_17', [
-        String(microphonePermissionErrorMessage(error)),
-      ]);
-      void refresh();
-    })
-    .finally(() => {
-      requestButton.disabled = false;
-    });
-});
-
-settingsButton.addEventListener('click', () => {
-  const url = microphoneSettingsUrl();
-  if (!url) {
-    message.classList.add('is-error');
-    message.textContent = t('cm_microphone_permission_text_18');
-    return;
+  function element<T extends Element>(selector: string) {
+    const target = root.querySelector<T>(selector);
+    if (!target)
+      throw new Error(
+        t('cm_microphone_permission_error_8', [String(selector)]),
+      );
+    return target;
   }
-  void api.tabs?.create({ url });
-});
 
-closeButton.addEventListener('click', () => window.close());
+  const status = element<HTMLElement>('.permission-status');
+  const statusValue = element<HTMLElement>('.permission-status strong');
+  const message = element<HTMLElement>('.permission-message');
+  const requestButton = element<HTMLButtonElement>('[data-action="request"]');
+  const closeButton = element<HTMLButtonElement>('[data-action="close"]');
+  const settingsButton = element<HTMLButtonElement>(
+    '[data-action="browser-settings"]',
+  );
 
-void refresh();
+  function renderState(state: MicrophonePermissionState) {
+    status.dataset.state = state;
+    statusValue.textContent =
+      state === 'granted'
+        ? t('cm_microphone_permission_text_9')
+        : state === 'denied'
+          ? t('cm_microphone_permission_text_10')
+          : state === 'prompt'
+            ? t('cm_microphone_permission_text_11')
+            : t('cm_microphone_permission_text_12');
+    requestButton.textContent =
+      state === 'granted'
+        ? t('cm_microphone_permission_text_13')
+        : t('cm_microphone_permission_text_14');
+    closeButton.hidden = state !== 'granted';
+  }
+
+  async function refresh() {
+    renderState(await readMicrophonePermissionState());
+  }
+
+  requestButton.addEventListener('click', () => {
+    requestButton.disabled = true;
+    message.classList.remove('is-error');
+    message.textContent = t('cm_microphone_permission_text_15');
+    void navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(async (stream) => {
+        for (const track of stream.getTracks()) track.stop();
+        await refresh();
+        message.textContent = t('cm_microphone_permission_text_16');
+      })
+      .catch((error) => {
+        message.classList.add('is-error');
+        message.textContent = t('cm_microphone_permission_text_17', [
+          String(microphonePermissionErrorMessage(error)),
+        ]);
+        void refresh();
+      })
+      .finally(() => {
+        requestButton.disabled = false;
+      });
+  });
+
+  settingsButton.addEventListener('click', () => {
+    const url = microphoneSettingsUrl();
+    if (!url) {
+      message.classList.add('is-error');
+      message.textContent = t('cm_microphone_permission_text_18');
+      return;
+    }
+    void api.tabs?.create({ url });
+  });
+
+  closeButton.addEventListener('click', () => window.close());
+
+  void refresh();
+}
+void bootstrap().catch(console.error);

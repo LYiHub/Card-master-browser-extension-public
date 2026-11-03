@@ -37,6 +37,7 @@ import {
   releaseDocumentScrollLock,
 } from '../../lib/document-scroll-lock';
 import { rewriteProjectAssetUrls } from '../../lib/project-assets';
+import { getLocale, subscribeLanguage } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 import type { MediaResourcesSnapshotListener } from '../../media-resources/domain/types';
@@ -111,6 +112,11 @@ function mountGlobalLibraryHost(generation: string) {
     new AudioDirector(new ExtensionAudioSettingsRepository(api));
   const hostElement = document.createElement('div');
   hostElement.id = GLOBAL_LIBRARY_HOST_ID;
+  const updateLanguage = () => {
+    hostElement.lang = getLocale();
+  };
+  updateLanguage();
+  const removeLanguageListener = subscribeLanguage(updateLanguage);
   hostElement.setAttribute(GLOBAL_LIBRARY_ALIVE_ATTRIBUTE, '');
   hostElement.setAttribute(GLOBAL_LIBRARY_GENERATION_ATTRIBUTE, generation);
   hostElement.style.cssText = `all: initial !important; position: fixed !important; z-index: ${GLOBAL_LIBRARY_Z_INDEX} !important; inset: 0 !important;`;
@@ -139,6 +145,7 @@ function mountGlobalLibraryHost(generation: string) {
     mediaResources.dispose();
     bilibiliCapabilities.dispose();
     stopLocationObserver();
+    removeLanguageListener();
     root.unmount();
     if (!sharedAudioDirector) libraryAudioDirector.destroy();
     releaseDocumentScrollLock(document, GLOBAL_LIBRARY_HOST_ID);

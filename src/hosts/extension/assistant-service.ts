@@ -93,14 +93,26 @@ type AssistantGreasyForkClient = Pick<GreasyForkClient, 'search' | 'download'>;
 function pageContextText(context: AssistantInitialTabContext, message: string) {
   const { page, target } = context;
   return t('cm_assistant_service_text_1', [
-    String(target.title || '（无标题）'),
-    String(target.url || '（无）'),
-    String(target.active ? '当前可见' : '未激活'),
-    String(target.available ? '可用' : '不可用'),
-    String(context.error ? `说明：${context.error}` : ''),
-    String(page?.language || '（未知）'),
-    String(page?.selectedText || '（无）'),
-    String(page?.visibleText || '（当前没有可用页面快照）'),
+    String(target.title || t('cm_assistant_service_text_3')),
+    String(target.url || t('cm_assistant_service_text_4')),
+    String(
+      target.active
+        ? t('cm_assistant_service_text_5')
+        : t('cm_assistant_service_text_6'),
+    ),
+    String(
+      target.available
+        ? t('cm_assistant_service_text_7')
+        : t('cm_assistant_service_text_8'),
+    ),
+    String(
+      context.error
+        ? t('cm_assistant_service_text_9', [String(context.error)])
+        : '',
+    ),
+    String(page?.language || t('cm_assistant_service_text_10')),
+    String(page?.selectedText || t('cm_assistant_service_text_11')),
+    String(page?.visibleText || t('cm_assistant_service_text_12')),
     String(message),
   ]);
 }

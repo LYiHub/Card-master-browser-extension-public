@@ -18,6 +18,7 @@ import { isAssistantSurfaceNavigationMessage } from '../../ai/domain/types';
 import uiStyles from '../../components/ui/ui.css?inline';
 import { AiConversationWorkbench } from '../../features/assistant/AiConversationWorkbench';
 import workbenchStyles from '../../features/assistant/ai-conversation-workbench.css?inline';
+import { initializeExtensionDocument } from '../../localization/document';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 import motionStyles from '../../motion/transitions.css?inline';
@@ -391,6 +392,7 @@ window.addEventListener('pagehide', disposeAssistantSurface, { once: true });
 
 async function bootstrap() {
   const api = requireExtensionApi();
+  await initializeExtensionDocument(api, () => t('cm_document_assistant'));
   recordSurfaceMountMetrics();
   const tabId = await resolveTabId(api);
   if (disposed) return;

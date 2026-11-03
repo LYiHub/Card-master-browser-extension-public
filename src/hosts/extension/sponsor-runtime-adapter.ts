@@ -37,6 +37,7 @@ type SponsorStorageHost = (
 ) => Promise<unknown>;
 
 type SponsorRuntimeScope = {
+  ready: Promise<void>;
   storage: {
     local: chrome.storage.StorageArea;
     sync: chrome.storage.StorageArea;
@@ -63,6 +64,10 @@ type SponsorRuntimeScope = {
 };
 
 type RuntimeOptions = {
+  messages?: {
+    ready: Promise<void>;
+    getMessage: typeof chrome.i18n.getMessage;
+  };
   runtimeId: SponsorRuntimeId;
   assetRoot: string;
   localePrefix: string;
@@ -554,10 +559,12 @@ export function installSponsorRuntimeAdapter(options: RuntimeOptions) {
   const getMessage: typeof chrome.i18n.getMessage = (name, substitutions) => {
     if (!active) return name;
     try {
-      return nativeI18n.getMessage(
-        `${options.localePrefix}${name}`,
-        substitutions,
-      );
+      return options.messages
+        ? options.messages.getMessage(name, substitutions)
+        : nativeI18n.getMessage(
+            `${options.localePrefix}${name}`,
+            substitutions,
+          );
     } catch (error) {
       if (!notifyExtensionContextInvalidated(error)) throw error;
       return name;
@@ -566,6 +573,7 @@ export function installSponsorRuntimeAdapter(options: RuntimeOptions) {
 
   scope.__cardMasterSponsorRuntimes ??= {};
   scope.__cardMasterSponsorRuntimes[options.runtimeId] = {
+    ready: options.messages?.ready ?? Promise.resolve(),
     storage: {
       local: storageArea('local'),
       sync: storageArea('sync'),

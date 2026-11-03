@@ -5,6 +5,7 @@ import {
   GLOBAL_LIBRARY_HOST_ID,
   GLOBAL_LIBRARY_OPEN_EVENT,
 } from '../../features/global-library/lifecycle';
+import { initializeExtensionDocument } from '../../localization/document';
 import { t } from '../../localization/messages';
 import { gsap } from '../../motion/gsap';
 import {
@@ -64,8 +65,8 @@ import {
   signalInjectedGlobalLibraryHost,
 } from './global-library-host';
 
-const NEW_TAB_TITLE = '新标签页';
-const CARD_MASTER_BRAND_NAME = '卡牌大师';
+const newTabTitle = () => t('cm_document_new_tab');
+const cardMasterBrandName = () => t('cm_extension_name');
 const CARD_MASTER_LOGO_PATH =
   'project-assets/userscript-deck/visual/action-icons/card-master-logo.png';
 const DOCUMENT_ICON_ATTRIBUTE = 'data-card-master-new-tab-icon';
@@ -92,7 +93,7 @@ function cardMasterLogoUrl(api: ExtensionApi) {
 }
 
 function applyDocumentBranding(document: Document, logoUrl: string) {
-  if (document.title !== NEW_TAB_TITLE) document.title = NEW_TAB_TITLE;
+  if (document.title !== newTabTitle()) document.title = newTabTitle();
   const relations = ['icon', 'shortcut icon'] as const;
   document.head
     .querySelectorAll<HTMLLinkElement>(
@@ -164,8 +165,8 @@ function applyEmbeddedWordmark(document: Document, logoUrl: string) {
   const wordmark = document.querySelector<HTMLElement>(
     `#${EMBEDDED_WORDMARK_ID} > .x-nt-wordmark-brand`,
   );
-  if (wordmark?.getAttribute('aria-label') !== CARD_MASTER_BRAND_NAME) {
-    wordmark?.setAttribute('aria-label', CARD_MASTER_BRAND_NAME);
+  if (wordmark?.getAttribute('aria-label') !== cardMasterBrandName()) {
+    wordmark?.setAttribute('aria-label', cardMasterBrandName());
   }
   if (wordmark && wordmark.tabIndex !== -1) wordmark.tabIndex = -1;
 }
@@ -196,7 +197,7 @@ function replaceVisibleUpstreamBranding(document: Document) {
       if (!value || !/lumno/iu.test(value)) continue;
       element.setAttribute(
         attribute,
-        value.replace(/lumno/giu, CARD_MASTER_BRAND_NAME),
+        value.replace(/lumno/giu, cardMasterBrandName()),
       );
     }
   }
@@ -213,7 +214,7 @@ function replaceVisibleUpstreamBranding(document: Document) {
     ) {
       node.textContent = (node.textContent ?? '').replace(
         /lumno/giu,
-        CARD_MASTER_BRAND_NAME,
+        cardMasterBrandName(),
       );
     }
     node = walker.nextNode();
@@ -383,7 +384,7 @@ function createWallpaperSourceControl(
 
     tabs = document.createElement('div');
     tabs.className = 'x-nt-wallpaper-tabs cm-new-tab-wallpaper-source__tabs';
-    tabs.setAttribute('aria-label', '壁纸来源');
+    tabs.setAttribute('aria-label', t('cm_new_tab_entry_text_11'));
     tabs.setAttribute('role', 'tablist');
     const tabsIndicator = document.createElement('span');
     tabsIndicator.className =
@@ -428,7 +429,7 @@ function createWallpaperSourceControl(
     settingsLink.href = settingsUrl;
     settingsLink.rel = 'noreferrer';
     settingsLink.target = '_blank';
-    settingsLink.setAttribute('aria-label', '前往完整壁纸设置');
+    settingsLink.setAttribute('aria-label', t('cm_new_tab_entry_text_26'));
     const settingsLinkText = document.createElement('span');
     settingsLinkText.textContent = t('cm_new_tab_entry_text_6');
     const settingsLinkIcon = document.createElement('span');
@@ -585,7 +586,7 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   element.dataset.promptVisible = 'true';
   element.dataset.visible = 'false';
   element.inert = true;
-  element.setAttribute('aria-label', '每日浏览回顾');
+  element.setAttribute('aria-label', t('cm_new_tab_entry_text_27'));
   element.setAttribute('aria-hidden', 'true');
 
   const details = document.createElement('details');
@@ -615,13 +616,13 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   copyPromptButton.type = 'button';
   copyPromptButton.disabled = true;
   copyPromptButton.title = t('cm_new_tab_entry_text_15');
-  copyPromptButton.setAttribute('aria-label', '复制完整生成提示词');
+  copyPromptButton.setAttribute('aria-label', t('cm_new_tab_entry_text_28'));
   const copyPromptIcon = remixIcon(document, 'ri-file-copy-line');
   copyPromptButton.append(copyPromptIcon);
   promptHeader.append(promptLabel, copyPromptButton);
   const prompt = document.createElement('div');
   prompt.className = `${NEW_TAB_DAILY_REVIEW_SURFACE_CLASS}__prompt`;
-  prompt.setAttribute('aria-label', '完整生成提示词');
+  prompt.setAttribute('aria-label', t('cm_new_tab_entry_text_29'));
   let promptValue = '';
   let copyFeedbackTimer = 0;
   const renderPrompt = (value: string) => {
@@ -642,7 +643,7 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   };
   const restoreCopyButton = () => {
     copyPromptButton.title = t('cm_new_tab_entry_text_16');
-    copyPromptButton.setAttribute('aria-label', '复制完整生成提示词');
+    copyPromptButton.setAttribute('aria-label', t('cm_new_tab_entry_text_30'));
     copyPromptIcon.className = 'ri-icon ri-size-16 ri-file-copy-line';
   };
   copyPromptButton.addEventListener('click', (event) => {
@@ -655,7 +656,10 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
           document.defaultView?.clearTimeout(copyFeedbackTimer);
         }
         copyPromptButton.title = t('cm_new_tab_entry_text_17');
-        copyPromptButton.setAttribute('aria-label', '提示词已复制');
+        copyPromptButton.setAttribute(
+          'aria-label',
+          t('cm_new_tab_entry_text_31'),
+        );
         copyPromptIcon.className = 'ri-icon ri-size-16 ri-check-line';
         copyFeedbackTimer =
           document.defaultView?.setTimeout(() => {
@@ -739,7 +743,7 @@ function createPhotoFrameStage(document: Document): PhotoFrameStage {
   element.dataset.active = 'false';
   element.dataset.mode = 'off';
   element.setAttribute('aria-hidden', 'true');
-  element.setAttribute('aria-label', '电子相框');
+  element.setAttribute('aria-label', t('cm_new_tab_entry_text_32'));
 
   const hint = document.createElement('p');
   hint.className = `${NEW_TAB_PHOTO_FRAME_STAGE_CLASS}__hint`;
@@ -748,7 +752,7 @@ function createPhotoFrameStage(document: Document): PhotoFrameStage {
   const navigation = document.createElement('nav');
   navigation.className = `${NEW_TAB_PHOTO_FRAME_STAGE_CLASS}__navigation`;
   navigation.dataset.visible = 'false';
-  navigation.setAttribute('aria-label', '切换每日回顾壁纸');
+  navigation.setAttribute('aria-label', t('cm_new_tab_entry_text_33'));
 
   const navigationButton = (className: string, label: string, icon: string) => {
     const button = document.createElement('button');
@@ -2488,13 +2492,15 @@ brandingObserver.observe(document.head, {
 void installExtensionPageHost(api).catch((error) => {
   reportExtensionFailure('new-tab-entry', 'page-host-install-failed', error);
 });
-void openConfiguredNewTab(api).catch((error) => {
-  reportExtensionFailure('new-tab-entry', 'destination-read-failed', error);
-  const frame = document.getElementById('card-master-new-tab-frame');
-  if (frame instanceof HTMLIFrameElement) {
-    frame.src = api.runtime.getURL('src/newtab/newtab.html');
-  }
-});
+void initializeExtensionDocument(api, newTabTitle)
+  .then(() => openConfiguredNewTab(api))
+  .catch((error) => {
+    reportExtensionFailure('new-tab-entry', 'destination-read-failed', error);
+    const frame = document.getElementById('card-master-new-tab-frame');
+    if (frame instanceof HTMLIFrameElement) {
+      frame.src = api.runtime.getURL('src/newtab/newtab.html');
+    }
+  });
 
 window.setTimeout(() => {
   const host = document.getElementById('card-master-host');

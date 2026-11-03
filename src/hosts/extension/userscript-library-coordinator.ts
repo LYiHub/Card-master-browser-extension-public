@@ -17,7 +17,7 @@ import type {
 import { userscriptPlatformCompatibilityDiagnostics } from '../../userscript/runtime/platform-compatibility';
 import {
   type ExtensionBackgroundApi,
-  USER_SCRIPTS_API_UNAVAILABLE,
+  userscriptsApiUnavailableMessage,
 } from './api';
 import { extensionContentHostUrl } from './content-host-url';
 import { extensionDiagnostics } from './diagnostics';
@@ -368,7 +368,7 @@ export class UserscriptLibraryCoordinator {
       }
       case 'userscript-install-confirm': {
         if (!nativeUserscriptsAvailable) {
-          throw new Error(USER_SCRIPTS_API_UNAVAILABLE);
+          throw new Error(userscriptsApiUnavailableMessage());
         }
         const sourceUrl = normalizeExtensionSourceUrl(message.sourceUrl);
         const committed = await repository.transact((current) => {
@@ -486,7 +486,7 @@ export class UserscriptLibraryCoordinator {
       }
       case 'main-world-runtime': {
         if (!synchronizer || !runtimeBridge) {
-          throw new Error(USER_SCRIPTS_API_UNAVAILABLE);
+          throw new Error(userscriptsApiUnavailableMessage());
         }
         await synchronizer.ensureReady();
         const tabId = sender.tab?.id;
@@ -598,7 +598,7 @@ export class UserscriptLibraryCoordinator {
       }
       case 'get-runtime-state': {
         if (!synchronizer || !runtimeBridge) {
-          return { error: USER_SCRIPTS_API_UNAVAILABLE };
+          return { error: userscriptsApiUnavailableMessage() };
         }
         await synchronizer.ensureReady();
         const registrationError = synchronizer.getError(message.scriptId);
@@ -616,7 +616,8 @@ export class UserscriptLibraryCoordinator {
         return state ? { state } : {};
       }
       case 'invoke-command': {
-        if (!runtimeBridge) return { error: USER_SCRIPTS_API_UNAVAILABLE };
+        if (!runtimeBridge)
+          return { error: userscriptsApiUnavailableMessage() };
         const tabId = sender.tab?.id;
         if (typeof tabId !== 'number') {
           return { error: 'Command invocation is missing a tab identity.' };

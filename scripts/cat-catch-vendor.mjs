@@ -70,12 +70,21 @@ export async function prepareCatCatchRuntime(sourceRoot, outputRoot) {
   );
   for (const script of CAT_CATCH_PAGE_SCRIPTS) {
     const destination = resolve(outputRoot, script);
-    const source = await readFile(destination, 'utf8');
+    let source = await readFile(destination, 'utf8');
+    if (script === 'js/options.js') {
+      source = source.replace(
+        "window.addEventListener('load', adjustSidebarPosition)",
+        "document.readyState === 'complete' ? adjustSidebarPosition() : window.addEventListener('load', adjustSidebarPosition)",
+      );
+    }
     await writeFile(
       destination,
       source.replaceAll('chrome.', 'globalThis.__cardMasterCatCatchChrome.'),
     );
   }
+  const adapterPath = resolve(outputRoot, 'js/card-master-adapter.js');
+  const adapterSource = await readFile(adapterPath, 'utf8');
+  await writeFile(adapterPath, localizeCatCatchAdapter(adapterSource));
   for (const page of CAT_CATCH_PAGES) {
     const destination = resolve(outputRoot, page);
     await mkdir(dirname(destination), { recursive: true });
@@ -86,7 +95,7 @@ export async function prepareCatCatchRuntime(sourceRoot, outputRoot) {
     );
     if (page === 'popup.html') {
       html = html
-        .replace('<title>catCatch</title>', '<title>顺手牵羊</title>')
+        .replace('<title>catCatch</title>', '<title>catCatch</title>')
         .replace(
           '</body>',
           '  <script src="js/card-master-popup-frame.js"></script>\n</body>',
@@ -113,13 +122,17 @@ export async function composeCatCatchBackground(
   platformBackground,
   sourceRoot,
 ) {
-  const adapter = await readFile(
-    resolve(sourceRoot, 'js/card-master-adapter.js'),
-    'utf8',
+  const adapter = localizeCatCatchAdapter(
+    await readFile(resolve(sourceRoot, 'js/card-master-adapter.js'), 'utf8'),
   );
   const scripts = await Promise.all(
     CAT_CATCH_BACKGROUND_SCRIPTS.map(async (file) => {
       const source = await readFile(resolve(sourceRoot, file), 'utf8');
+      if (file === 'js/init.js')
+        return source.replace(
+          /name: i18n\.(\w+), off: i18n\.(\w+)/g,
+          'get name() { return i18n.$1; }, get off() { return i18n.$2; }',
+        );
       if (file !== 'js/background.js') return source;
       const enumReference =
         'Object.values(chrome.declarativeNetRequest.ResourceType)';
@@ -187,4 +200,20 @@ globalThis.__cardMasterCatCatchBridge = {
 globalThis.__cardMasterCatCatchReady?.();
 })();
 `;
+}
+
+function localizeCatCatchAdapter(source) {
+  const needle =
+    "if (property === 'storage') return cardMasterCatCatchStorage;";
+  if (!source.includes(needle))
+    throw new Error('Cat Catch adapter localization target is missing.');
+  return source
+    .replace(
+      "name: '顺手牵羊',",
+      "name: globalThis.__cardMasterCatCatchI18n?.getMessage('catCatch') ?? globalThis.__cardMasterVendorI18n?.getMessage('catCatch') ?? '顺手牵羊',",
+    )
+    .replace(
+      needle,
+      `if (property === 'i18n') return globalThis.__cardMasterVendorI18n ?? globalThis.__cardMasterCatCatchI18n ?? target.i18n;\n        ${needle}`,
+    );
 }

@@ -20,7 +20,7 @@ function singleLine(
     throw new Error(
       t('cm_metadata_editor_error_1', [
         String(label),
-        String(required ? '不能为空，且' : ''),
+        String(required ? t('cm_metadata_editor_text_1') : ''),
         String(maxLength),
       ]),
     );

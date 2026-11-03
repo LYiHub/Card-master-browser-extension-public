@@ -86,7 +86,7 @@ export class SyncProjection {
       scripts.map((script) => [syncScriptKey(script), scriptEntry(script)]),
     );
     entries['settings:script-order'] = {
-      name: '脚本排序',
+      name: t('cm_projection_name_1'),
       value: scripts.map(syncScriptKey),
     };
     for (const [index, adapter] of this.portable.entries()) {

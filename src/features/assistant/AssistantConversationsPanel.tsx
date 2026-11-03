@@ -6,6 +6,7 @@ import type {
   AiConversationSummary,
 } from '../../ai/domain/types';
 import { aiConversationText } from '../../ai/domain/types';
+import { getLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 import { MoreMenu } from './AssistantConversationMenus';
@@ -23,7 +24,7 @@ function relativeTime(timestamp: number) {
     return t('cm_assistant_conversations_panel_text_3', [
       String(Math.floor(elapsed / 3_600_000)),
     ]);
-  return new Date(timestamp).toLocaleDateString('zh-CN');
+  return new Date(timestamp).toLocaleDateString(getLocale());
 }
 
 function conversationPreview(message: AiConversationMessage | undefined) {

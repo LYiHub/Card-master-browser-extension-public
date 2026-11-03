@@ -38,6 +38,7 @@ import type {
 } from '../../data-management/domain/types';
 import { detectBrowserEnvironment } from '../../hosts/extension/browser-detection';
 import { extensionTarget } from '../../hosts/extension/platform';
+import { getLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 import type {
@@ -413,7 +414,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
             {snapshot?.lastSyncedAt ? (
               <p>
                 {t('cm_settings_board_text_55')}
-                {new Date(snapshot.lastSyncedAt).toLocaleString('zh-CN', {
+                {new Date(snapshot.lastSyncedAt).toLocaleString(getLocale(), {
                   hour12: false,
                 })}
               </p>
@@ -548,7 +549,7 @@ function SyncSettings({ controller }: { controller: SyncController }) {
                   }
                 >
                   {t('cm_settings_board_text_78')}{' '}
-                  {new Date(version.at).toLocaleString('zh-CN', {
+                  {new Date(version.at).toLocaleString(getLocale(), {
                     hour12: false,
                   })}
                 </UiButton>
@@ -1156,9 +1157,12 @@ export function SettingsBoard({
                 {lastUpdateCheckAt > 0
                   ? t('cm_settings_board_text_127', [
                       String(
-                        new Date(lastUpdateCheckAt).toLocaleString('zh-CN', {
-                          hour12: false,
-                        }),
+                        new Date(lastUpdateCheckAt).toLocaleString(
+                          getLocale(),
+                          {
+                            hour12: false,
+                          },
+                        ),
                       ),
                     ])
                   : t('cm_settings_board_text_128')}

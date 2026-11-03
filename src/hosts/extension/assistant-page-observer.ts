@@ -1,8 +1,9 @@
 import type { AiPageContext } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import {
   type ExtensionBackgroundApi,
   extensionUserscriptApi,
-  USER_SCRIPTS_API_UNAVAILABLE,
+  userscriptsApiUnavailableMessage,
 } from './api';
 import {
   assistantPageExecutionSource,
@@ -62,14 +63,14 @@ export async function resolveAssistantPageAttachment(
 ): Promise<AssistantPageAttachment> {
   const tab = await api.tabs.get(tabId);
   if (!tab.url || !/^https?:|^file:|^ftp:/i.test(tab.url)) {
-    throw new Error('当前标签页不是可观察的网页。');
+    throw new Error(t('cm_assistant_page_observer_error_1'));
   }
   const [injection] = await api.scripting.executeScript({
     target: { tabId, frameIds: [0] },
     func: assistantPageContextProbe,
   });
   if (!injection?.documentId || !injection.result) {
-    throw new Error('无法绑定当前标签页的顶层文档。');
+    throw new Error(t('cm_assistant_page_observer_error_2'));
   }
   return {
     context: injection.result,
@@ -82,6 +83,11 @@ export async function resolveAssistantPageAttachment(
 }
 
 type PageProbeRequest = {
+  messages: {
+    missingSelector: string;
+    unsafeFragment: string;
+    tooLarge: string;
+  };
   name: Exclude<AssistantPageToolName, 'execute_page' | 'reload_page'>;
   args: Record<string, unknown>;
 };
@@ -138,7 +144,7 @@ async function waitForReloadedPage(
       // The replacement document is not ready for inspection yet.
     }
   }
-  throw new Error('刷新后等待页面稳定超过 15 秒。');
+  throw new Error(t('cm_assistant_page_observer_error_3'));
 }
 
 function isPageToolName(value: string): value is AssistantPageToolName {
@@ -152,7 +158,7 @@ function requiredString(
 ) {
   const value = args[name];
   if (typeof value !== 'string' || !value.trim() || value.length > maxLength) {
-    throw new Error(`${name} 必须是长度有效的非空字符串。`);
+    throw new Error(t('cm_assistant_page_observer_error_4', [String(name)]));
   }
   return value.trim();
 }
@@ -165,7 +171,7 @@ function requiredLimit(args: Record<string, unknown>, maximum: number) {
     value < 1 ||
     value > maximum
   ) {
-    throw new Error(`limit 必须是 1 到 ${maximum} 之间的整数。`);
+    throw new Error(t('cm_assistant_page_observer_error_5', [String(maximum)]));
   }
   return value;
 }
@@ -536,13 +542,17 @@ function assistantPageProbe(request: PageProbeRequest) {
       const maxCharacters = Number(request.args.max_characters);
       const result = scan(selector, 1);
       const element = result.matches[0];
-      if (!element) throw new Error(`没有元素匹配选择器：${selector}`);
+      if (!element)
+        throw new Error(request.messages.missingSelector + selector);
       if (element.matches('script, style, noscript, iframe, object, embed')) {
-        throw new Error('不能将可执行元素或嵌入式文档作为 DOM 片段返回。');
+        throw new Error(request.messages.unsafeFragment);
       }
       if (fragmentSize(element) > MAX_FRAGMENT_ELEMENTS) {
         throw new Error(
-          `所选 DOM 片段超过 ${MAX_FRAGMENT_ELEMENTS} 个元素，请使用更精确的选择器。`,
+          request.messages.tooLarge.replace(
+            '{limit}',
+            String(MAX_FRAGMENT_ELEMENTS),
+          ),
         );
       }
       const html = sanitizeClone(element.cloneNode(true) as Element).outerHTML;
@@ -561,7 +571,8 @@ function assistantPageProbe(request: PageProbeRequest) {
       const selector = String(request.args.selector ?? '');
       const result = scan(selector, 1);
       const element = result.matches[0];
-      if (!element) throw new Error(`没有元素匹配选择器：${selector}`);
+      if (!element)
+        throw new Error(request.messages.missingSelector + selector);
       const style = getComputedStyle(element);
       const styleNames = [
         'display',
@@ -652,12 +663,12 @@ export class ExtensionAssistantPageObserver
     args: Record<string, unknown>,
   ): Promise<AssistantPageToolResult> {
     if (!isPageToolName(name)) {
-      throw new Error(`不支持的页面工具：${name}`);
+      throw new Error(t('cm_assistant_page_observer_error_6', [String(name)]));
     }
     if (name === 'execute_page') {
       const expression = validateAssistantPageExpression(args.expression);
       const userscriptApi = extensionUserscriptApi(this.api);
-      if (!userscriptApi) throw new Error(USER_SCRIPTS_API_UNAVAILABLE);
+      if (!userscriptApi) throw new Error(userscriptsApiUnavailableMessage());
       const [injection] = await userscriptApi.userScripts.execute({
         target: {
           tabId: this.target.tabId,
@@ -667,7 +678,7 @@ export class ExtensionAssistantPageObserver
         injectImmediately: true,
       });
       if (!injection || injection.result === undefined) {
-        throw new Error('当前页面没有返回执行结果，页面可能已经跳转或失效。');
+        throw new Error(t('cm_assistant_page_observer_error_7'));
       }
       return {
         output: boundedAssistantPageExecutionOutput(injection.result),
@@ -716,7 +727,7 @@ export class ExtensionAssistantPageObserver
           maximum < 1_000 ||
           maximum > 32_000
         ) {
-          throw new Error('max_characters 必须是 1000 到 32000 之间的整数。');
+          throw new Error(t('cm_assistant_page_observer_error_8'));
         }
         break;
       }
@@ -732,10 +743,20 @@ export class ExtensionAssistantPageObserver
       },
       world: 'ISOLATED',
       func: assistantPageProbe,
-      args: [{ name, args }],
+      args: [
+        {
+          name,
+          args,
+          messages: {
+            missingSelector: t('cm_page_missing_selector'),
+            unsafeFragment: t('cm_page_unsafe_fragment'),
+            tooLarge: t('cm_page_fragment_too_large'),
+          },
+        },
+      ],
     });
     if (!injection || injection.result === undefined) {
-      throw new Error('当前页面没有返回观察结果，页面可能已经跳转或失效。');
+      throw new Error(t('cm_assistant_page_observer_error_9'));
     }
     const output = JSON.stringify(injection.result);
     return { output };

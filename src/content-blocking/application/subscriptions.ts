@@ -149,7 +149,7 @@ export class ContentBlockingSubscriptionFetcher {
           await readResponseTextWithinLimit(
             response,
             MAX_SUBSCRIPTION_BYTES,
-            '规则订阅超过 8 MB 安全上限。',
+            t('cm_subscriptions_error_8'),
           ),
         ),
       };

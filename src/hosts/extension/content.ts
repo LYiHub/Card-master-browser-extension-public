@@ -30,6 +30,7 @@ import {
   type DeckEntryDragSession,
   updateDeckEntryDragSession,
 } from '../../features/userscript-deck/deck-entry-position';
+import { getLocale, subscribeLanguage } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { mediaSpeedWheelVisible } from '../../media-speed/domain/types';
 import {
@@ -388,7 +389,12 @@ function mountBootstrap(
   entry.style.visibility = 'hidden';
   entry.dataset.coreState = 'hidden';
   entry.setAttribute('aria-busy', 'true');
-  entry.setAttribute('aria-label', '展开当前页面的卡牌');
+  const updateLanguage = () => {
+    host.lang = getLocale();
+    entry.setAttribute('aria-label', t('cm_entry_expand'));
+  };
+  updateLanguage();
+  disposers.push(subscribeLanguage(updateLanguage));
   const logo = document.createElement('img');
   logo.className = 'logo';
   logo.src = api.runtime.getURL(CARD_MASTER_LOGO_PATH);
