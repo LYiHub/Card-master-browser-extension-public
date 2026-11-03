@@ -10814,16 +10814,6 @@
     "message": "设备权限页面缺少挂载节点。",
     "description": "src/hosts/extension/microphone-permission.ts；error"
   },
-  "cm_microphone_permission_text_7": {
-    "message": "\n  <main class=\"permission-panel\">\n    <header class=\"permission-brand\">\n      <img\n        src=\"$VALUE_1$\"\n        alt=\"\"\n      />\n      <div>\n        <p>卡牌大师智能体 · 设备权限</p>\n        <h1>允许使用麦克风</h1>\n      </div>\n    </header>\n    <p class=\"permission-copy\">\n      浏览器需要先在普通扩展页面中记录一次麦克风授权，之后卡牌大师智能体\n      才能进行语音输入。\n    </p>\n    <div class=\"permission-status\" data-state=\"unavailable\">\n      <span>当前权限</span>\n      <strong>正在检测</strong>\n    </div>\n    <div class=\"permission-actions\">\n      <button type=\"button\" data-action=\"browser-settings\">\n        浏览器麦克风设置\n      </button>\n      <button type=\"button\" data-action=\"close\" hidden>完成并关闭</button>\n      <button type=\"button\" class=\"primary\" data-action=\"request\">\n        允许麦克风\n      </button>\n    </div>\n    <p class=\"permission-message\" role=\"status\"></p>\n  </main>\n",
-    "description": "src/hosts/extension/microphone-permission.ts；text; VALUE_1: CARD_MASTER_DEFAULT_ICON_PATH",
-    "placeholders": {
-      "VALUE_1": {
-        "content": "$1",
-        "example": "CARD_MASTER_DEFAULT_ICON_PATH"
-      }
-    }
-  },
   "cm_microphone_permission_error_8": {
     "message": "设备权限页面缺少元素：$VALUE_1$",
     "description": "src/hosts/extension/microphone-permission.ts；error; VALUE_1: selector",
@@ -13850,5 +13840,26 @@
   "cm_metadata_text_1": {
     "message": "（空）",
     "description": "src/userscript/domain/metadata.ts；text"
+  },
+  "cm_microphone_permission_brand": {
+    "message": "卡牌大师智能体 · 设备权限"
+  },
+  "cm_microphone_permission_heading": {
+    "message": "允许使用麦克风"
+  },
+  "cm_microphone_permission_description": {
+    "message": "浏览器需要先在普通扩展页面中记录一次麦克风授权，之后卡牌大师智能体才能进行语音输入。"
+  },
+  "cm_microphone_permission_status_label": {
+    "message": "当前权限"
+  },
+  "cm_microphone_permission_settings": {
+    "message": "浏览器麦克风设置"
+  },
+  "cm_microphone_permission_close": {
+    "message": "完成并关闭"
+  },
+  "cm_microphone_permission_checking": {
+    "message": "正在检测"
   }
 }

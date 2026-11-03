@@ -6,6 +6,7 @@ import {
   GLOBAL_LIBRARY_OPEN_EVENT,
 } from '../../features/global-library/lifecycle';
 import { initializeExtensionDocument } from '../../localization/document';
+import { getLocale, subscribeLanguage } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { gsap } from '../../motion/gsap';
 import {
@@ -268,6 +269,7 @@ function ensureStyle(document: Document, id: string, stylesheet: string) {
 }
 
 type WallpaperSourceControl = {
+  refreshLanguage(): void;
   dispose(): void;
   update(
     source: NewTabWallpaperSource,
@@ -294,6 +296,7 @@ function createWallpaperSourceControl(
   let imageDataUrl = '';
   let buttons: HTMLButtonElement[] = [];
   let disposed = false;
+  let refreshStaticLanguage = () => {};
 
   const render = () => {
     if (!section || !root || !tabs || !defaultPanel || !dailyReviewPanel) {
@@ -446,6 +449,17 @@ function createWallpaperSourceControl(
 
     body.insertBefore(defaultPanel, effectControl);
     body.insertBefore(dailyReviewPanel, effectControl);
+    refreshStaticLanguage = () => {
+      if (root) root.lang = getLocale();
+      label.textContent = t('cm_new_tab_entry_text_2');
+      tabs?.setAttribute('aria-label', t('cm_new_tab_entry_text_11'));
+      buttons[0].textContent = t('cm_new_tab_entry_text_3');
+      buttons[1].textContent = t('cm_new_tab_entry_text_4');
+      dailyReviewTitle.textContent = t('cm_new_tab_entry_text_5');
+      settingsLink.setAttribute('aria-label', t('cm_new_tab_entry_text_26'));
+      settingsLinkText.textContent = t('cm_new_tab_entry_text_6');
+    };
+    refreshStaticLanguage();
     render();
     return true;
   };
@@ -458,6 +472,10 @@ function createWallpaperSourceControl(
   });
 
   return {
+    refreshLanguage() {
+      refreshStaticLanguage();
+      render();
+    },
     dispose() {
       disposed = true;
       observer.disconnect();
@@ -498,6 +516,7 @@ type DailyReviewContent = {
 };
 
 type DailyReviewSurface = {
+  refreshLanguage(): void;
   details: HTMLDetailsElement;
   element: HTMLElement;
   fullscreenButton: HTMLButtonElement;
@@ -507,6 +526,7 @@ type DailyReviewSurface = {
 };
 
 type PhotoFrameStage = {
+  refreshLanguage(): void;
   element: HTMLElement;
   latestButton: HTMLButtonElement;
   navigation: HTMLElement;
@@ -624,6 +644,9 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   prompt.className = `${NEW_TAB_DAILY_REVIEW_SURFACE_CLASS}__prompt`;
   prompt.setAttribute('aria-label', t('cm_new_tab_entry_text_29'));
   let promptValue = '';
+  let currentContent: DailyReviewContent | null = null;
+  let photoFrameActive = false;
+  let copyFeedback: 'copy' | 'success' | 'error' = 'copy';
   let copyFeedbackTimer = 0;
   const renderPrompt = (value: string) => {
     promptValue = value;
@@ -641,10 +664,23 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
     );
     copyPromptButton.disabled = !promptValue;
   };
+  const renderCopyButton = () => {
+    const label =
+      copyFeedback === 'success'
+        ? t('cm_new_tab_entry_text_17')
+        : copyFeedback === 'error'
+          ? t('cm_new_tab_entry_text_18')
+          : t('cm_new_tab_entry_text_16');
+    copyPromptButton.title = label;
+    copyPromptButton.setAttribute('aria-label', label);
+    copyPromptIcon.className =
+      copyFeedback === 'success'
+        ? 'ri-icon ri-size-16 ri-check-line'
+        : 'ri-icon ri-size-16 ri-file-copy-line';
+  };
   const restoreCopyButton = () => {
-    copyPromptButton.title = t('cm_new_tab_entry_text_16');
-    copyPromptButton.setAttribute('aria-label', t('cm_new_tab_entry_text_30'));
-    copyPromptIcon.className = 'ri-icon ri-size-16 ri-file-copy-line';
+    copyFeedback = 'copy';
+    renderCopyButton();
   };
   copyPromptButton.addEventListener('click', (event) => {
     event.preventDefault();
@@ -655,12 +691,8 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
         if (copyFeedbackTimer) {
           document.defaultView?.clearTimeout(copyFeedbackTimer);
         }
-        copyPromptButton.title = t('cm_new_tab_entry_text_17');
-        copyPromptButton.setAttribute(
-          'aria-label',
-          t('cm_new_tab_entry_text_31'),
-        );
-        copyPromptIcon.className = 'ri-icon ri-size-16 ri-check-line';
+        copyFeedback = 'success';
+        renderCopyButton();
         copyFeedbackTimer =
           document.defaultView?.setTimeout(() => {
             copyFeedbackTimer = 0;
@@ -668,7 +700,8 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
           }, 1_400) ?? 0;
       },
       (error) => {
-        copyPromptButton.title = t('cm_new_tab_entry_text_18');
+        copyFeedback = 'error';
+        renderCopyButton();
         reportExtensionFailure(
           'new-tab-entry',
           'daily-review-prompt-copy-failed',
@@ -684,6 +717,7 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   fullscreenButton.type = 'button';
   const fullscreenIcon = remixIcon(document, 'ri-fullscreen-line');
   const setPhotoFrameActive = (active: boolean) => {
+    photoFrameActive = active;
     const presentation = photoFrameFullscreenButtonPresentation(active);
     fullscreenButton.title = presentation.label;
     fullscreenButton.setAttribute('aria-label', presentation.label);
@@ -695,7 +729,26 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   element.append(details, fullscreenButton);
   document.body.append(element);
 
+  const refreshLanguage = () => {
+    element.lang = getLocale();
+    element.setAttribute('aria-label', t('cm_new_tab_entry_text_27'));
+    promptLabel.textContent = t('cm_new_tab_entry_text_14');
+    prompt.setAttribute('aria-label', t('cm_new_tab_entry_text_29'));
+    syncDetailsState();
+    renderCopyButton();
+    setPhotoFrameActive(photoFrameActive);
+    if (currentContent) {
+      title.textContent = reviewContentTitle(currentContent);
+      if (!currentContent.summary)
+        excerpt.textContent =
+          currentContent.status === 'generating'
+            ? t('cm_new_tab_entry_text_19')
+            : t('cm_new_tab_entry_text_20');
+    }
+  };
+  refreshLanguage();
   return {
+    refreshLanguage,
     details,
     element,
     fullscreenButton,
@@ -704,6 +757,7 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
     },
     setPhotoFrameActive,
     update(content) {
+      currentContent = content;
       if (!content) {
         details.open = false;
         details.hidden = false;
@@ -785,7 +839,25 @@ function createPhotoFrameStage(document: Document): PhotoFrameStage {
 
   element.append(hint);
   document.body.append(element, navigation);
+  const refreshLanguage = () => {
+    element.lang = getLocale();
+    navigation.lang = getLocale();
+    element.setAttribute('aria-label', t('cm_new_tab_entry_text_32'));
+    hint.textContent = t('cm_new_tab_entry_text_21');
+    navigation.setAttribute('aria-label', t('cm_new_tab_entry_text_33'));
+    for (const [button, label] of [
+      [previousButton, t('cm_new_tab_entry_text_22')],
+      [nextButton, t('cm_new_tab_entry_text_23')],
+      [latestButton, t('cm_new_tab_entry_text_24')],
+    ] as const) {
+      button.title = label;
+      button.setAttribute('aria-label', label);
+    }
+    latestLabel.textContent = t('cm_new_tab_entry_text_25');
+  };
+  refreshLanguage();
   return {
+    refreshLanguage,
     element,
     latestButton,
     navigation,
@@ -2156,6 +2228,16 @@ function installPhotoFrameIdleMode(
       window.removeEventListener('blur', onWindowBlur);
       window.removeEventListener('focus', onWindowFocus);
     });
+
+    cleanups.push(
+      subscribeLanguage(() => {
+        wallpaperSourceControl?.refreshLanguage();
+        updateWallpaperSourceControl();
+        stage.refreshLanguage();
+        reviewSurface.refreshLanguage();
+        applyEmbeddedWordmark(embeddedDocument, cardMasterLogoUrl(api));
+      }),
+    );
 
     const wallpaperObserver = new MutationObserver(() => {
       if (applyWallpaperLayout(embeddedDocument, wallpaperLayout)) return;

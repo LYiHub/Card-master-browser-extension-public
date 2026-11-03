@@ -771,7 +771,7 @@
     "description": "src/features/assistant/AssistantSettingsPrimitives.tsx；text"
   },
   "cm_assistant_settings_primitives_text_11": {
-    "message": "處理麥克風許可權",
+    "message": "處理麥克風權限",
     "description": "src/features/assistant/AssistantSettingsPrimitives.tsx；text"
   },
   "cm_image_service_settings_text_1": {
@@ -1029,7 +1029,7 @@
     "description": "src/features/assistant/SpeechRecognitionSettings.tsx；text"
   },
   "cm_speech_recognition_settings_text_13": {
-    "message": "麥克風許可權",
+    "message": "麥克風權限",
     "description": "src/features/assistant/SpeechRecognitionSettings.tsx；text"
   },
   "cm_speech_recognition_settings_text_14": {
@@ -1045,7 +1045,7 @@
     "description": "src/features/assistant/SpeechRecognitionSettings.tsx；text"
   },
   "cm_speech_recognition_settings_text_17": {
-    "message": "授予許可權",
+    "message": "授予權限",
     "description": "src/features/assistant/SpeechRecognitionSettings.tsx；text"
   },
   "cm_speech_recognition_settings_text_18": {
@@ -2275,7 +2275,7 @@
     "description": "src/features/new-tab/DailyReviewWallpaperSettings.tsx；text"
   },
   "cm_daily_review_wallpaper_settings_text_38": {
-    "message": "根據歷史生成需要歷史記錄許可權和規劃模型服務。",
+    "message": "根據歷史生成需要歷史記錄權限和規劃模型服務。",
     "description": "src/features/new-tab/DailyReviewWallpaperSettings.tsx；text"
   },
   "cm_daily_review_wallpaper_settings_text_39": {
@@ -2351,7 +2351,7 @@
     "description": "src/features/new-tab/DailyReviewWallpaperSettings.tsx；text"
   },
   "cm_daily_review_wallpaper_settings_text_57": {
-    "message": "需要歷史記錄許可權和規劃模型服務",
+    "message": "需要歷史記錄權限和規劃模型服務",
     "description": "src/features/new-tab/DailyReviewWallpaperSettings.tsx；text"
   },
   "cm_daily_review_wallpaper_settings_aria_label_58": {
@@ -4509,7 +4509,7 @@
     "description": "src/features/userscript-deck/ManageBoard.tsx；text"
   },
   "cm_manage_board_label_17": {
-    "message": "執行許可權未開啟",
+    "message": "執行權限未開啟",
     "description": "src/features/userscript-deck/ManageBoard.tsx；label"
   },
   "cm_manage_board_label_18": {
@@ -4547,7 +4547,7 @@
     "description": "src/features/userscript-deck/ManageBoard.tsx；text"
   },
   "cm_manage_board_status_25": {
-    "message": "執行許可權未開啟",
+    "message": "執行權限未開啟",
     "description": "src/features/userscript-deck/ManageBoard.tsx；status"
   },
   "cm_manage_board_title_26": {
@@ -4767,7 +4767,7 @@
     "description": "src/features/userscript-deck/ManageBoard.tsx；title"
   },
   "cm_manage_board_title_80": {
-    "message": "許可權",
+    "message": "權限",
     "description": "src/features/userscript-deck/ManageBoard.tsx；title"
   },
   "cm_manage_board_title_81": {
@@ -6639,7 +6639,7 @@
     "description": "src/features/userscript-deck/actions.ts；label"
   },
   "cm_actions_description_78": {
-    "message": "設定原始碼、匹配範圍、許可權和更新選項",
+    "message": "設定原始碼、匹配範圍、權限和更新選項",
     "description": "src/features/userscript-deck/actions.ts；description"
   },
   "cm_actions_text_79": {
@@ -7131,7 +7131,7 @@
     "description": "src/features/userscript-deck/useScriptEditorActions.ts；text"
   },
   "cm_userscript_state_presentation_label_1": {
-    "message": "許可權未開啟",
+    "message": "權限未開啟",
     "description": "src/features/userscript-deck/userscript-state-presentation.ts；label"
   },
   "cm_userscript_state_presentation_title_2": {
@@ -7817,7 +7817,7 @@
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_status_8": {
-    "message": "正在檢查執行許可權",
+    "message": "正在檢查執行權限",
     "description": "src/hosts/extension/InstallDecision.tsx；status"
   },
   "cm_install_decision_title_9": {
@@ -7825,11 +7825,11 @@
     "description": "src/hosts/extension/InstallDecision.tsx；title"
   },
   "cm_install_decision_description_10": {
-    "message": "許可權檢查完成前不會寫入或啟動這張卡牌。",
+    "message": "權限檢查完成前不會寫入或啟動這張卡牌。",
     "description": "src/hosts/extension/InstallDecision.tsx；description"
   },
   "cm_install_decision_status_11": {
-    "message": "執行許可權未開啟",
+    "message": "執行權限未開啟",
     "description": "src/hosts/extension/InstallDecision.tsx；status"
   },
   "cm_install_decision_title_12": {
@@ -7847,11 +7847,11 @@
     }
   },
   "cm_install_decision_text_14": {
-    "message": "正在確認腳本執行許可權",
+    "message": "正在確認腳本執行權限",
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_15": {
-    "message": "需要先開啟腳本執行許可權",
+    "message": "需要先開啟腳本執行權限",
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_16": {
@@ -7881,11 +7881,11 @@
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_21": {
-    "message": "瀏覽器許可權狀態確認後即可繼續。",
+    "message": "瀏覽器權限狀態確認後即可繼續。",
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_22": {
-    "message": "未開啟該許可權時，安裝後的腳本無法在頁面中執行。",
+    "message": "未開啟該權限時，安裝後的腳本無法在頁面中執行。",
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_23": {
@@ -7893,7 +7893,7 @@
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_24": {
-    "message": "安裝前仍可檢視頁面範圍、許可權和完整原始碼。",
+    "message": "安裝前仍可檢視頁面範圍、權限和完整原始碼。",
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_25": {
@@ -7929,7 +7929,7 @@
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_33": {
-    "message": "正在檢查許可權",
+    "message": "正在檢查權限",
     "description": "src/hosts/extension/InstallDecision.tsx；text"
   },
   "cm_install_decision_text_34": {
@@ -7977,7 +7977,7 @@
     "description": "src/hosts/extension/InstallInspectionDialog.tsx；text"
   },
   "cm_install_inspection_dialog_text_9": {
-    "message": "腳本許可權",
+    "message": "腳本權限",
     "description": "src/hosts/extension/InstallInspectionDialog.tsx；text"
   },
   "cm_install_inspection_dialog_text_10": {
@@ -8071,11 +8071,11 @@
     "description": "src/hosts/extension/install.tsx；message"
   },
   "cm_install_text_7": {
-    "message": "無需額外許可權",
+    "message": "無需額外權限",
     "description": "src/hosts/extension/install.tsx；text"
   },
   "cm_install_text_8": {
-    "message": "$VALUE_1$ 項腳本許可權",
+    "message": "$VALUE_1$ 項腳本權限",
     "description": "src/hosts/extension/install.tsx；text; VALUE_1: grants.length",
     "placeholders": {
       "VALUE_1": {
@@ -8093,7 +8093,7 @@
     "description": "src/hosts/extension/install.tsx；text"
   },
   "cm_install_text_11": {
-    "message": "腳本執行許可權未開啟",
+    "message": "腳本執行權限未開啟",
     "description": "src/hosts/extension/install.tsx；text"
   },
   "cm_install_text_12": {
@@ -8463,7 +8463,7 @@
     "description": "src/ai/domain/assistant-presentation.ts；text"
   },
   "cm_assistant_presentation_text_8": {
-    "message": "目前操作缺少必要許可權，請在設定中處理後重試。",
+    "message": "目前操作缺少必要權限，請在設定中處理後重試。",
     "description": "src/ai/domain/assistant-presentation.ts；text"
   },
   "cm_assistant_presentation_text_9": {
@@ -8547,27 +8547,27 @@
     "description": "src/ai/domain/assistant-readiness.ts；detail"
   },
   "cm_assistant_readiness_title_17": {
-    "message": "麥克風許可權已被阻止",
+    "message": "麥克風權限已被阻止",
     "description": "src/ai/domain/assistant-readiness.ts；title"
   },
   "cm_assistant_readiness_detail_18": {
-    "message": "需要在裝置許可權頁面或瀏覽器設定中重新允許。",
+    "message": "需要在裝置權限頁面或瀏覽器設定中重新允許。",
     "description": "src/ai/domain/assistant-readiness.ts；detail"
   },
   "cm_assistant_readiness_title_19": {
-    "message": "麥克風許可權尚未授予",
+    "message": "麥克風權限尚未授予",
     "description": "src/ai/domain/assistant-readiness.ts；title"
   },
   "cm_assistant_readiness_detail_20": {
-    "message": "需要先在裝置許可權頁面完成一次瀏覽器授權。",
+    "message": "需要先在裝置權限頁面完成一次瀏覽器授權。",
     "description": "src/ai/domain/assistant-readiness.ts；detail"
   },
   "cm_assistant_readiness_title_21": {
-    "message": "暫時無法讀取麥克風許可權狀態",
+    "message": "暫時無法讀取麥克風權限狀態",
     "description": "src/ai/domain/assistant-readiness.ts；title"
   },
   "cm_assistant_readiness_detail_22": {
-    "message": "可以開啟裝置許可權頁面進行檢測和授權。",
+    "message": "可以開啟裝置權限頁面進行檢測和授權。",
     "description": "src/ai/domain/assistant-readiness.ts；detail"
   },
   "cm_ai_service_http_text_1": {
@@ -8707,7 +8707,7 @@
     }
   },
   "cm_microphone_permission_text_1": {
-    "message": "麥克風許可權未獲允許。請先開啟裝置許可權頁面完成授權。",
+    "message": "麥克風權限未獲允許。請先開啟裝置權限頁面完成授權。",
     "description": "src/ai/infrastructure/microphone-permission.ts；text"
   },
   "cm_microphone_permission_text_2": {
@@ -8727,7 +8727,7 @@
     "description": "src/ai/infrastructure/microphone-permission.ts；text"
   },
   "cm_microphone_permission_text_6": {
-    "message": "麥克風許可權未獲允許。請先開啟裝置許可權頁面完成授權。",
+    "message": "麥克風權限未獲允許。請先開啟裝置權限頁面完成授權。",
     "description": "src/ai/infrastructure/microphone-permission.ts；text"
   },
   "cm_model_client_error_1": {
@@ -10811,21 +10811,11 @@
     "description": "src/hosts/extension/media-speed.ts；error"
   },
   "cm_microphone_permission_error_1": {
-    "message": "裝置許可權頁面缺少掛載節點。",
+    "message": "裝置權限頁面缺少掛載節點。",
     "description": "src/hosts/extension/microphone-permission.ts；error"
   },
-  "cm_microphone_permission_text_7": {
-    "message": "\n  <main class=\"permission-panel\">\n    <header class=\"permission-brand\">\n      <img\n        src=\"$VALUE_1$\"\n        alt=\"\"\n      />\n      <div>\n        <p>卡牌大師AI 助理 · 裝置許可權</p>\n        <h1>允許使用麥克風</h1>\n      </div>\n    </header>\n    <p class=\"permission-copy\">\n      瀏覽器需要先在普通擴充功能頁面中記錄一次麥克風授權，之後卡牌大師AI 助理\n      才能進行語音輸入。\n    </p>\n    <div class=\"permission-status\" data-state=\"unavailable\">\n      <span>目前許可權</span>\n      <strong>正在檢測</strong>\n    </div>\n    <div class=\"permission-actions\">\n      <button type=\"button\" data-action=\"browser-settings\">\n        瀏覽器麥克風設定\n      </button>\n      <button type=\"button\" data-action=\"close\" hidden>完成並關閉</button>\n      <button type=\"button\" class=\"primary\" data-action=\"request\">\n        允許麥克風\n      </button>\n    </div>\n    <p class=\"permission-message\" role=\"status\"></p>\n  </main>\n",
-    "description": "src/hosts/extension/microphone-permission.ts；text; VALUE_1: CARD_MASTER_DEFAULT_ICON_PATH",
-    "placeholders": {
-      "VALUE_1": {
-        "content": "$1",
-        "example": "CARD_MASTER_DEFAULT_ICON_PATH"
-      }
-    }
-  },
   "cm_microphone_permission_error_8": {
-    "message": "裝置許可權頁面缺少元素：$VALUE_1$",
+    "message": "裝置權限頁面缺少元素：$VALUE_1$",
     "description": "src/hosts/extension/microphone-permission.ts；error; VALUE_1: selector",
     "placeholders": {
       "VALUE_1": {
@@ -10877,7 +10867,7 @@
     }
   },
   "cm_microphone_permission_text_18": {
-    "message": "請在瀏覽器的網站許可權與系統隱私設定中允許麥克風訪問。",
+    "message": "請在瀏覽器的網站權限與系統隱私設定中允許麥克風訪問。",
     "description": "src/hosts/extension/microphone-permission.ts；text"
   },
   "cm_new_tab_background_router_text_1": {
@@ -11667,11 +11657,11 @@
     "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
   },
   "cm_userscript_permission_message_1": {
-    "message": "Firefox 已授予使用者腳本許可權，但執行 API 尚未就緒。請重新載入擴充功能。",
+    "message": "Firefox 已授予使用者腳本權限，但執行 API 尚未就緒。請重新載入擴充功能。",
     "description": "src/hosts/extension/userscript-permission.ts；message"
   },
   "cm_userscript_permission_message_2": {
-    "message": "Firefox 需要先授權使用者腳本執行許可權。",
+    "message": "Firefox 需要先授權使用者腳本執行權限。",
     "description": "src/hosts/extension/userscript-permission.ts；message"
   },
   "cm_userscript_permission_message_3": {
@@ -11679,11 +11669,11 @@
     "description": "src/hosts/extension/userscript-permission.ts；message"
   },
   "cm_userscript_permission_error_4": {
-    "message": "目前瀏覽器不支援在擴充功能內申請使用者腳本許可權。",
+    "message": "目前瀏覽器不支援在擴充功能內申請使用者腳本權限。",
     "description": "src/hosts/extension/userscript-permission.ts；error"
   },
   "cm_userscript_permission_error_5": {
-    "message": "Firefox 沒有授予使用者腳本執行許可權。",
+    "message": "Firefox 沒有授予使用者腳本執行權限。",
     "description": "src/hosts/extension/userscript-permission.ts；error"
   },
   "cm_userscript_settings_error_1": {
@@ -11803,7 +11793,7 @@
     "description": "src/sync/dav-listing.ts；error"
   },
   "cm_dav_listing_error_2": {
-    "message": "目錄中的檔案屬性不可讀，已停止同步，請檢查讀取許可權。",
+    "message": "目錄中的檔案屬性不可讀，已停止同步，請檢查讀取權限。",
     "description": "src/sync/dav-listing.ts；error"
   },
   "cm_model_error_1": {
@@ -12065,7 +12055,7 @@
     }
   },
   "cm_webdav_error_8": {
-    "message": "$VALUE_1$被拒絕（HTTP $VALUE_2$），請檢查賬號、應用密碼和目錄許可權。",
+    "message": "$VALUE_1$被拒絕（HTTP $VALUE_2$），請檢查賬號、應用密碼和目錄權限。",
     "description": "src/sync/webdav.ts；error; VALUE_1: label; VALUE_2: response.status",
     "placeholders": {
       "VALUE_1": {
@@ -12205,7 +12195,7 @@
     "description": "src/sync/webdav.ts；text"
   },
   "cm_webdav_error_34": {
-    "message": "PROPFIND 未列出剛寫入的測試檔案，請檢查目錄許可權、列表完整性及代理快取。",
+    "message": "PROPFIND 未列出剛寫入的測試檔案，請檢查目錄權限、列表完整性及代理快取。",
     "description": "src/sync/webdav.ts；error"
   },
   "cm_webdav_text_35": {
@@ -13850,5 +13840,26 @@
   "cm_metadata_text_1": {
     "message": "（空）",
     "description": "src/userscript/domain/metadata.ts；text"
+  },
+  "cm_microphone_permission_brand": {
+    "message": "卡牌大師 AI 助理 · 裝置權限"
+  },
+  "cm_microphone_permission_heading": {
+    "message": "允許使用麥克風"
+  },
+  "cm_microphone_permission_description": {
+    "message": "瀏覽器需要先在一般擴充功能頁面中記錄一次麥克風授權，卡牌大師 AI 助理才能使用語音輸入。"
+  },
+  "cm_microphone_permission_status_label": {
+    "message": "目前權限"
+  },
+  "cm_microphone_permission_settings": {
+    "message": "瀏覽器麥克風設定"
+  },
+  "cm_microphone_permission_close": {
+    "message": "完成並關閉"
+  },
+  "cm_microphone_permission_checking": {
+    "message": "正在檢查"
   }
 }
