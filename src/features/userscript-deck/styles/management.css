@@ -38,7 +38,9 @@
 
 .manager-section-heading > strong {
   color: var(--app-ui-ink);
-  font: 800 17px / 1.25 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 17px / 1.25
+    var(--app-ui-font-display);
 }
 
 .manager-section-heading > p {
@@ -207,7 +209,9 @@
 
 .manager-update-status > span {
   color: var(--app-ui-success);
-  font: 800 14px / 1.2 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 14px / 1.2
+    var(--app-ui-font-display);
 }
 
 .manager-update-status > p {
@@ -348,7 +352,9 @@
   display: block;
   margin-bottom: 9px;
   color: var(--app-ui-success);
-  font: 800 13px / 1.25 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 13px / 1.25
+    var(--app-ui-font-display);
 }
 
 .manager-metadata-group__values {

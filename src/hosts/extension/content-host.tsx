@@ -13,6 +13,7 @@ import { UserscriptDeckOverlay } from '../../features/userscript-deck/Userscript
 import { disposeInputCoordinator } from '../../input/coordinator';
 import { releaseDocumentScrollLock } from '../../lib/document-scroll-lock';
 import { rewriteProjectAssetUrls } from '../../lib/project-assets';
+import { getLocale, subscribeLanguage } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 import { UserscriptUpdateService } from '../../userscript/application/update-service';
@@ -242,6 +243,11 @@ export function mountExtensionDeck(
   try {
     const hostElement = document.createElement('div');
     hostElement.id = HOST_ID;
+    const updateLanguage = () => {
+      hostElement.lang = getLocale();
+    };
+    updateLanguage();
+    cleanupScope.add(subscribeLanguage(updateLanguage));
     hostElement.dataset.cardMasterBuildTarget =
       __EXTENSION_BUILD_TARGET_MARKER__;
     hostElement.style.visibility = 'hidden';

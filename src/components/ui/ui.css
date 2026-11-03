@@ -449,7 +449,7 @@
   color: #e2dccf;
   font-family: var(--app-ui-font-display);
   font-size: clamp(17px, 5.8cqi, 22px);
-  font-weight: 800;
+  font-weight: var(--app-ui-font-display-strong-weight, 800);
   line-height: 1.16;
   text-align: center;
   text-shadow: 0 2px 5px #000;
@@ -510,7 +510,9 @@
 .app-ui-dialog__heading strong {
   overflow-wrap: anywhere;
   color: var(--app-ui-ink);
-  font: 800 36px / 1.12 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 36px / 1.12
+    var(--app-ui-font-display);
 }
 
 .app-ui-dialog__header-actions {
@@ -1105,7 +1107,9 @@
 
 .app-ui-field__label {
   color: var(--app-ui-ink);
-  font: 800 14px / 1.2 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 14px / 1.2
+    var(--app-ui-font-display);
 }
 
 .app-ui-field__control {

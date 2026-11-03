@@ -465,7 +465,7 @@ input {
   color: var(--app-ui-ink);
   font-family: var(--app-ui-font-display);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: var(--app-ui-font-display-strong-weight, 800);
   line-height: 1.25;
 }
 

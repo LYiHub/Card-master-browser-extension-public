@@ -432,7 +432,7 @@
   margin: 1em 0 0.48em;
   color: var(--cm-assistant-text-primary);
   font-family: var(--cm-assistant-font-display);
-  font-weight: 760;
+  font-weight: var(--app-ui-font-display-heading-weight, 760);
   line-height: 1.28;
 }
 
@@ -777,7 +777,7 @@
   color: var(--cm-create-tool-title);
   font-family: var(--cm-assistant-font-display);
   font-size: 17px;
-  font-weight: 800;
+  font-weight: var(--app-ui-font-display-strong-weight, 800);
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;

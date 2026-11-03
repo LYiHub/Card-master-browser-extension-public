@@ -30,7 +30,9 @@
 .userscript-source-panel__header > strong {
   min-width: 0;
   color: #f0dfb5;
-  font: 800 15px / 1.3 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 15px / 1.3
+    var(--app-ui-font-display);
   overflow-wrap: anywhere;
 }
 

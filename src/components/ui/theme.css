@@ -17,6 +17,8 @@
   --app-ui-font-body:
     system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  --app-ui-font-display-strong-weight: 800;
+  --app-ui-font-display-heading-weight: 760;
   --app-ui-font-display: "Cinzel", "Songti SC", STSong, SimSun, serif;
   --app-ui-font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
@@ -109,4 +111,10 @@
     [aria-disabled="true"]
   ) {
   cursor: var(--app-ui-cursor-disabled);
+}
+
+/* Songti SC Black has limited Traditional glyph coverage; use its complete Bold face. */
+.app-ui-theme:lang(zh-TW) {
+  --app-ui-font-display-strong-weight: 700;
+  --app-ui-font-display-heading-weight: 700;
 }

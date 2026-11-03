@@ -186,7 +186,9 @@
 
 .install-card-identity strong {
   color: #f2dfaa;
-  font: 800 22px / 1.1 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 22px / 1.1
+    var(--app-ui-font-display);
 }
 
 .install-card-identity small {

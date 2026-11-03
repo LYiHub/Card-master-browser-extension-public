@@ -170,7 +170,9 @@
   margin: 0;
   overflow-wrap: anywhere;
   color: #f2e5c3;
-  font: 700 var(--context-plaque-title-size) / 1.08 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800)
+    var(--context-plaque-title-size) / 1.08 var(--app-ui-font-display);
   letter-spacing: 0;
   text-shadow: 0 3px 8px #000;
   transition: color var(--app-motion-duration-medium)
@@ -249,7 +251,7 @@
   color: #dfbf75;
   font-family: inherit;
   font-size: inherit;
-  font-weight: 800;
+  font-weight: var(--app-ui-font-display-strong-weight, 800);
   line-height: inherit;
   text-align: center;
 }

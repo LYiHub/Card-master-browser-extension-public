@@ -212,7 +212,7 @@ function actionAudioCues(kind: ManagerActionKind): readonly AudioCue[] {
 }
 
 export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
-  useLocale();
+  const { locale } = useLocale();
 
   const audio = useAudioDirector();
   const { runtimeContext } = host;
@@ -1157,6 +1157,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
 
   return (
     <main
+      lang={locale}
       className={`app-ui-theme userscript-deck host-extension mode-${mode} input-${inputModality}${dealActive ? ' is-dealing' : ''}${castingAction ? ' is-casting' : ''}${pageElementInteraction ? ' has-page-element-target' : ''}${creationPreview ? ' is-card-creation-preview' : ''}${pendingImportCelebration ? ' is-library-import-pending' : ''}${importCelebration ? ' is-library-import-celebration' : ''}${globalLibraryPresentation !== 'idle' ? ` is-global-library-${globalLibraryPresentation}` : ''}${globalLibrarySettingsRequest?.status === 'open' ? ' is-global-library-card-settings' : ''}`}
       style={
         {

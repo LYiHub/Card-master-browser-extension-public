@@ -732,7 +732,7 @@
   .manager-media-speed-radial__option.is-selected
   .manager-media-speed-radial__plate {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: var(--app-ui-font-display-strong-weight, 800);
 }
 
 .manager-media-speed-radial__plate.manager-action-plate::before {
@@ -868,7 +868,7 @@
       0 0 9px color-mix(in srgb, var(--media-speed-color) 52%, transparent)
     );
   font-size: 13px;
-  font-weight: 800;
+  font-weight: var(--app-ui-font-display-strong-weight, 800);
 }
 
 .manager-media-speed-radial.is-expanded

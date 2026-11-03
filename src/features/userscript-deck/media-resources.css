@@ -38,7 +38,9 @@
 
 .manager-media-resources__settings-section header strong {
   color: var(--app-ui-ink);
-  font: 800 16px / 1.25 var(--app-ui-font-display);
+  font:
+    var(--app-ui-font-display-strong-weight, 800) 16px / 1.25
+    var(--app-ui-font-display);
 }
 
 @container app-ui-dialog-body (max-width: 32rem) {
