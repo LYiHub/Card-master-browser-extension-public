@@ -74,7 +74,7 @@
 
 | 平台 | 产物 | 加载方式 |
 | --- | --- | --- |
-| Chromium（Chrome、Edge、Brave、Arc 等） | `card-master-chromium.zip` | 解压 → 加载未打包扩展 |
+| Chromium（Chrome、Edge、Arc 等） | `card-master-chromium.zip` | 解压 → 加载未打包扩展 |
 | Chromium（保留浏览器新标签页） | `card-master-chromium-browser-new-tab.zip` | 解压 → 加载未打包扩展 |
 | Firefox | `card-master-firefox.zip` | 解压 → 临时载入附加组件 |
 | Firefox（保留浏览器新标签页） | `card-master-firefox-browser-new-tab.zip` | 解压 → 临时载入附加组件 |
