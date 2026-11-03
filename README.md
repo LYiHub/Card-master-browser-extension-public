@@ -15,7 +15,7 @@
 
   <p>
     <a href="https://github.com/LYiHub/Card-master-browser-extension-public/releases/latest">
-      <img src="https://img.shields.io/badge/version-0.3.2-7c3aed?style=flat-square" alt="版本 0.3.2" />
+      <img src="https://img.shields.io/badge/version-0.3.3-7c3aed?style=flat-square" alt="版本 0.3.3" />
     </a>
     <a href="./LICENSE">
       <img src="https://img.shields.io/badge/license-GPL--3.0--only-22c55e?style=flat-square" alt="GPL-3.0-only" />
@@ -74,23 +74,31 @@
 
 | 平台 | 产物 | 加载方式 |
 | --- | --- | --- |
-| Chromium（Chrome、Edge、Brave、Arc 等） | `card-master-v*-chromium.zip` | 解压 → 加载未打包扩展 |
-| Chromium（保留浏览器新标签页） | `card-master-v*-chromium-browser-new-tab.zip` | 解压 → 加载未打包扩展 |
-| Firefox | `card-master-v*-firefox.zip` | 解压 → 临时载入附加组件 |
-| Firefox（保留浏览器新标签页） | `card-master-v*-firefox-browser-new-tab.zip` | 解压 → 临时载入附加组件 |
+| Chromium（Chrome、Edge、Brave、Arc 等） | `card-master-chromium.zip` | 解压 → 加载未打包扩展 |
+| Chromium（保留浏览器新标签页） | `card-master-chromium-browser-new-tab.zip` | 解压 → 加载未打包扩展 |
+| Firefox | `card-master-firefox.zip` | 解压 → 临时载入附加组件 |
+| Firefox（保留浏览器新标签页） | `card-master-firefox-browser-new-tab.zip` | 解压 → 临时载入附加组件 |
 | macOS Safari | 暂不提供下载 | 等待苹果公证完成，进展见 [Issue #2](https://github.com/LYiHub/Card-master-browser-extension-public/issues/2) |
+
+### 更新已有安装
+
+**请勿卸载现有扩展。** 将新版文件完整覆盖到原安装目录（直接包含 `manifest.json` 的那个文件夹），在扩展管理页点击“重新加载”，再刷新网页及新标签页。
+
+保留原来的**完整路径**，不要清除扩展存储或改到新目录重新加载；只有文件夹名字相同、位置不同，仍不能保证读取原数据。发布包从 v0.3.3 起使用固定名称，版本仍可在 Release 和扩展详情中查看；固定包名不会自动更新扩展。
+
+建议更新前在设置中导出牌库留存。当前牌库导出包含用户脚本及其管理信息、封面，**不包含 API 配置及全部系统设置**，不能作为卸载重装前的完整备份。
 
 ### 保留浏览器原生新标签页
 
 请选择文件名带 `browser-new-tab` 的包。它与同平台标准版仅在 `manifest.json` 的新标签页接管声明上不同，不接管浏览器新标签页，普通网页的卡牌、脚本与 AI 功能照常使用。浏览器原生页面受浏览器权限限制，不显示网页牌阵；如果还有其他新标签页扩展接管，需要在浏览器中另行调整。
 
-已安装卡牌大师时，将对应包完整解压并覆盖到**原安装目录**（其中直接包含 `manifest.json`），在扩展管理页重新加载，再新建标签页。不要卸载扩展、清除存储或改到新目录重新安装，以免丢失原扩展身份对应的数据。切回标准版也使用同样的方法，原有牌库、API 配置和自定义网址设置会保留。
+标准版与保留浏览器新标签页版之间切换，也按上面的原目录覆盖方式更新，保留原有牌库、API 配置和自定义网址设置。
 
 设置中的“使用卡牌大师页面”只用于清空标准版的自定义网址；恢复浏览器原生页需要切换上述安装包。保留浏览器新标签页版仍可从扩展设置的“打开卡牌大师页面”入口手动打开卡牌大师页面。
 
 ### Chromium
 
-1. 解压 `card-master-v*-chromium.zip`。
+1. 首次安装时解压 `card-master-chromium.zip`，放在不会随手删除或移动的固定目录。
 2. 打开扩展管理页（Chrome 为 `chrome://extensions`，其他 Chromium 浏览器路径类似）。
 3. 打开右上角「开发者模式」。
 4. 「加载未打包的扩展程序」→ 选中解压后的文件夹。

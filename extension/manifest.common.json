@@ -1,7 +1,7 @@
 {
   "name": "__MSG_cm_extension_name__",
   "short_name": "__MSG_cm_extension_name__",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "__MSG_cm_extension_description__",
   "default_locale": "zh_CN",
   "host_permissions": ["<all_urls>"],

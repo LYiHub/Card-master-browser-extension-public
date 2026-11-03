@@ -35,7 +35,7 @@ for (const target of targets) {
 await mkdir(output, { recursive: true });
 const checksums = [];
 for (const target of targets) {
-  const name = `card-master-v${version}-${target}.zip`;
+  const name = `card-master-${target}.zip`;
   const path = resolve(output, name);
   await archiveExtension(resolve(root, 'extension-dist', target), path);
   const hash = createHash('sha256');

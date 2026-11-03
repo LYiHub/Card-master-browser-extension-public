@@ -8,11 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { archiveExtension } from './archive-extension.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const version = JSON.parse(
-  await readFile(resolve(root, 'package.json'), 'utf8'),
-).version;
 const releaseOutput = resolve(root, 'release-dist');
-const zipName = `card-master-v${version}-chromium.zip`;
+const zipName = 'card-master-chromium.zip';
 const destination = resolve(releaseOutput, zipName);
 const checksumsPath = resolve(releaseOutput, 'SHA256SUMS.txt');
 

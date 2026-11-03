@@ -13,7 +13,7 @@ describe('跨浏览器扩展清单', () => {
   it('保持统一的产品身份与能力描述', () => {
     expect(commonManifest.name).toBe('__MSG_cm_extension_name__');
     expect(commonManifest.short_name).toBe('__MSG_cm_extension_name__');
-    expect(commonManifest.version).toBe('0.3.2');
+    expect(commonManifest.version).toBe('0.3.3');
     expect(commonManifest.description).toBe('__MSG_cm_extension_description__');
     expect(commonManifest.default_locale).toBe('zh_CN');
     expect(commonManifest.chrome_url_overrides).toEqual({

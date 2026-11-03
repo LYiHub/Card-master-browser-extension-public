@@ -31,7 +31,7 @@ import {
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const releaseOutput = resolve(root, 'release-dist');
-const releasePrefix = `card-master-v${SAFARI_VERSION}`;
+const releasePrefix = 'card-master';
 const releaseArguments = new Set(process.argv.slice(2));
 const allowUnnotarizedSafari = releaseArguments.delete(
   '--allow-unnotarized-safari',
