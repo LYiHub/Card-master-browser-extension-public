@@ -5,6 +5,7 @@ import type {
 } from '../../ai/domain/types';
 import { isAiImageMimeType } from '../../ai/domain/types';
 import type { AiModelMessage } from '../../ai/infrastructure/model-client';
+import { t } from '../../localization/messages';
 
 export const AI_CONVERSATION_STORAGE_KEY = 'card-master.ai-conversations.v1';
 
@@ -220,7 +221,7 @@ function restoreConversation(
       }
       segment.call.status = 'error';
       segment.call.result = JSON.stringify({
-        error: '工具执行因扩展后台重启而中断，最终状态无法确认。',
+        error: t('cm_assistant_state_error_1'),
       });
       segment.call.completedAt = Date.now();
       segment.call.durationMs = Math.max(
@@ -231,7 +232,7 @@ function restoreConversation(
     }
     if (message.status !== 'streaming') continue;
     message.status = 'error';
-    message.error = '上一次 AI 请求因扩展后台重启而中断。';
+    message.error = t('cm_assistant_state_text_2');
   }
   if (conversation.input.length === 0) compactAssistantInput(conversation);
   return conversation;
@@ -280,7 +281,7 @@ export function activeAssistantConversation(state: StoredAssistantState) {
     (candidate) => candidate.id === state.activeConversationId,
   );
   if (!conversation) {
-    throw new Error('当前 AI 会话不存在。');
+    throw new Error(t('cm_assistant_state_error_3'));
   }
   return conversation;
 }
@@ -361,9 +362,11 @@ function userHistoryContent(
     (segment) => segment.type === 'image' && !segment.attachment.available,
   ).length;
   if (expiredImageCount === 0) return content;
-  return `${content}${
-    content ? '\n\n' : ''
-  }<expired_image_attachments>${expiredImageCount} 张图片需要重新附加</expired_image_attachments>`;
+  return t('cm_assistant_state_text_4', [
+    String(content),
+    String(content ? '\n\n' : ''),
+    String(expiredImageCount),
+  ]);
 }
 
 export function compactAssistantInput(

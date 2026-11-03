@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 export type NewTabWallpaperTone = 'light' | 'dark';
 
 export type NewTabLocalWallpaper = {
@@ -31,7 +32,7 @@ function createStore() {
       LumnoNewtabWallpaperLocalStore?: LumnoLocalWallpaperApi;
     }
   ).LumnoNewtabWallpaperLocalStore;
-  if (!api) throw new Error('本地壁纸存储组件尚未加载。');
+  if (!api) throw new Error(t('cm_local_wallpaper_error_1'));
   return api.createWallpaperLocalStore({
     documentObj: document,
     windowObj: window,
@@ -49,7 +50,7 @@ export class NewTabLocalWallpaperRepository {
     const record = await this.store.buildRecordFromFile(file);
     await this.store.write(record);
     const normalized = this.store.normalizeRecord(record);
-    if (!normalized) throw new Error('本地壁纸记录无效。');
+    if (!normalized) throw new Error(t('cm_local_wallpaper_error_2'));
     return normalized;
   }
 }

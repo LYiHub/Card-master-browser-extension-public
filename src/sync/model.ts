@@ -1,3 +1,4 @@
+import { t } from '../localization/messages';
 export const SYNC_STORAGE_KEY = 'card-master.sync.v3';
 export const SYNC_OWNER_KEY = 'card-master.sync.new-tab-owner';
 export const SYNC_MAX_SNAPSHOT_BYTES = 64 * 1024 * 1024;
@@ -175,13 +176,13 @@ export function validateEntries(value: unknown): asserts value is SyncEntries {
             entry.value !== null)),
     )
   ) {
-    throw new Error('同步内容格式无效，本机数据未被替换。');
+    throw new Error(t('cm_model_error_1'));
   }
   if (
     new TextEncoder().encode(JSON.stringify(value)).length >
     SYNC_MAX_SNAPSHOT_BYTES
   ) {
-    throw new Error('同步内容超过 64 MB，已保留本机数据并暂停同步。');
+    throw new Error(t('cm_model_error_2'));
   }
 }
 
@@ -194,7 +195,7 @@ export function validateVersion(item: unknown): asserts item is SyncVersion {
     !Number.isFinite(item.at) ||
     item.at < 0
   )
-    throw new Error('同步版本记录无效。');
+    throw new Error(t('cm_model_error_3'));
   validateEntries(item.entries);
 }
 
@@ -219,9 +220,7 @@ export function validateRecord(value: unknown): asserts value is SyncRecord {
     new Set(value.parents).size !== value.parents.length ||
     value.parents.includes(value.id)
   ) {
-    throw new Error(
-      '远端同步格式不受支持，请将所有设备更新到相同版本后使用新的同步目录。',
-    );
+    throw new Error(t('cm_model_error_4'));
   }
   validateEntries(value.changes);
 }
@@ -243,13 +242,13 @@ export function validateConnection(value: unknown): SyncConnection {
     !value.password ||
     value.password.length > 4096
   ) {
-    throw new Error('请填写 WebDAV 目录地址、账号和应用密码。');
+    throw new Error(t('cm_model_error_5'));
   }
   let url: URL;
   try {
     url = new URL(value.url.trim());
   } catch {
-    throw new Error('WebDAV 地址无效。');
+    throw new Error(t('cm_model_error_6'));
   }
   if (
     url.protocol !== 'https:' ||
@@ -258,9 +257,7 @@ export function validateConnection(value: unknown): SyncConnection {
     url.search ||
     url.hash
   ) {
-    throw new Error(
-      '请使用 HTTPS 目录地址，将账号与应用密码填写在各自的输入框中。',
-    );
+    throw new Error(t('cm_model_error_7'));
   }
   url.pathname = `${url.pathname.replace(/\/+$/, '')}/`;
   return {

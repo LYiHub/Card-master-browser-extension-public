@@ -1,4 +1,5 @@
 import { isExtensionPageLifecycleInterrupted } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
 
 export type ExtensionMessageDeliveryReport = {
   attempted: number;
@@ -16,7 +17,7 @@ function withTimeout(delivery: Promise<unknown>, timeoutMs: number) {
       () =>
         reject(
           new ExtensionMessageDeliveryTimeoutError(
-            '扩展消息接收端未在限定时间内结束响应。',
+            t('cm_extension_message_delivery_text_1'),
           ),
         ),
       timeoutMs,

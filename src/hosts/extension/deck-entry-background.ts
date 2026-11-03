@@ -24,6 +24,7 @@ import {
   withStewardSessionHidden,
 } from '../../features/userscript-deck/deck-entry';
 import { isExtensionStorageSpaceFailure } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
 import { DECK_STEWARD_CARD_ID } from '../../system-cards/domain/catalog';
 import type { ExtensionApi, ExtensionMessageListener } from './api';
 import { extensionDiagnostics, extensionErrorMessage } from './diagnostics';
@@ -147,7 +148,7 @@ async function openShortcutSettings(api: DeckEntryBackgroundApi) {
   }
   const url = extensionShortcutSettingsUrl(api.runtime.id, DECK_TOGGLE_COMMAND);
   if (!url) {
-    throw new Error('请在浏览器的扩展设置中修改键盘快捷键。');
+    throw new Error(t('cm_deck_entry_background_error_1'));
   }
   await api.tabs.create({
     active: true,

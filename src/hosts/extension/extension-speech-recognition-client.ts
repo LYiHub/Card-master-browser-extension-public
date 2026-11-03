@@ -3,6 +3,7 @@ import type {
   AiSpeechRecognitionListener,
   AiSpeechRecognitionState,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import {
   SPEECH_RECOGNITION_PORT,
   type SpeechRecognitionCommand,
@@ -78,13 +79,15 @@ export class ExtensionSpeechRecognitionClient
     this.publish({
       status: 'error',
       text: this.state.text,
-      error: '语音识别扩展通道已经断开。',
+      error: t('cm_extension_speech_recognition_client_error_1'),
     });
   };
 
   private post(command: SpeechRecognitionCommand) {
     if (this.disposed) {
-      return Promise.reject(new Error('语音识别控制器已释放。'));
+      return Promise.reject(
+        new Error(t('cm_extension_speech_recognition_client_error_2')),
+      );
     }
     try {
       this.port.postMessage(command);

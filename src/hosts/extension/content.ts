@@ -30,6 +30,7 @@ import {
   type DeckEntryDragSession,
   updateDeckEntryDragSession,
 } from '../../features/userscript-deck/deck-entry-position';
+import { t } from '../../localization/messages';
 import { mediaSpeedWheelVisible } from '../../media-speed/domain/types';
 import {
   type ExtensionApi,
@@ -313,7 +314,7 @@ function mountBootstrap(
     const instance = createExtensionPageAudioDirector(api);
     if (disposed) {
       instance.dispose();
-      return Promise.reject(new Error('页面音频宿主已卸载。'));
+      return Promise.reject(new Error(t('cm_content_error_1')));
     }
     audio = instance;
     return Promise.resolve(instance.director);

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   DailyReviewWallpaperPlan,
   DailyReviewWallpaperReadiness,
@@ -19,11 +20,11 @@ function snapshotResponse(value: unknown) {
     throw new Error(value.error);
   }
   if (!record(value) || !record(value.snapshot)) {
-    throw new Error('扩展没有返回有效的每日回顾状态。');
+    throw new Error(t('cm_daily_review_wallpaper_settings_error_1'));
   }
   const snapshot = value.snapshot as Partial<DailyReviewWallpaperSnapshot>;
   if (!Array.isArray(snapshot.history)) {
-    throw new Error('扩展没有返回有效的每日回顾历史。');
+    throw new Error(t('cm_daily_review_wallpaper_settings_error_2'));
   }
   return snapshot as DailyReviewWallpaperSnapshot;
 }
@@ -33,7 +34,7 @@ function generateResponse(value: unknown) {
     throw new Error(value.error);
   }
   if (!record(value) || typeof value.started !== 'boolean') {
-    throw new Error('扩展没有确认每日回顾生成请求。');
+    throw new Error(t('cm_daily_review_wallpaper_settings_error_3'));
   }
   return { started: value.started };
 }
@@ -43,12 +44,12 @@ function readinessResponse(value: unknown): DailyReviewWallpaperReadiness {
     throw new Error(value.error);
   }
   if (!record(value) || !record(value.config)) {
-    throw new Error('扩展没有返回有效的 AI 服务配置状态。');
+    throw new Error(t('cm_daily_review_wallpaper_settings_error_4'));
   }
   const modelService = value.config.modelService;
   const imageService = value.config.imageService;
   if (!record(modelService) || !record(imageService)) {
-    throw new Error('扩展返回的 AI 服务配置状态不完整。');
+    throw new Error(t('cm_daily_review_wallpaper_settings_error_5'));
   }
   return {
     modelServiceConfigured: modelService.hasCredential === true,

@@ -1,5 +1,6 @@
 import type { SpeechServiceProbe } from '../../ai/domain/types';
 import type { AudioPlaybackOutcome } from '../../audio/AudioDirector';
+import { t } from '../../localization/messages';
 import type { ExtensionAiServices } from './ai-services';
 import type { ExtensionBackgroundApi, ExtensionPort } from './api';
 import {
@@ -114,7 +115,7 @@ export class OffscreenAudioCoordinator {
           channel: GAMEPAD_SPEECH_CHANNEL,
           type: 'speech-capture-error',
           captureId: active.captureId,
-          error: '扩展麦克风采集服务已经断开。',
+          error: t('cm_offscreen_audio_coordinator_error_1'),
         });
       }
       const recognition = this.activeSpeechRecognition;
@@ -123,14 +124,14 @@ export class OffscreenAudioCoordinator {
         this.finishSpeechProbe(recognition, {
           ok: false,
           durationMs: performance.now() - (recognition.probe?.startedAt ?? 0),
-          error: '扩展语音识别服务已经断开。',
+          error: t('cm_offscreen_audio_coordinator_error_2'),
         });
         this.safePost(recognition.client, {
           type: 'state',
           state: {
             status: 'error',
             text: '',
-            error: '扩展语音识别服务已经断开。',
+            error: t('cm_offscreen_audio_coordinator_error_3'),
           },
         } satisfies SpeechRecognitionEvent);
         void this.releaseSpeechAuthorization(recognition);
@@ -204,7 +205,7 @@ export class OffscreenAudioCoordinator {
             resolve({
               ok: false,
               durationMs: performance.now() - startedAt,
-              error: '已有语音识别会话正在运行，请结束后再测试。',
+              error: t('cm_offscreen_audio_coordinator_error_4'),
             });
             return;
           }
@@ -212,7 +213,7 @@ export class OffscreenAudioCoordinator {
             resolve({
               ok: false,
               durationMs: performance.now() - startedAt,
-              error: '当前浏览器不支持扩展后台语音识别。',
+              error: t('cm_offscreen_audio_coordinator_error_5'),
             });
             return;
           }
@@ -235,7 +236,7 @@ export class OffscreenAudioCoordinator {
                 resolve({
                   ok: false,
                   durationMs: performance.now() - startedAt,
-                  error: '语音识别连接测试超时。',
+                  error: t('cm_offscreen_audio_coordinator_error_6'),
                 });
               }, SPEECH_RECOGNITION_TEST_TIMEOUT_MS),
             },
@@ -386,7 +387,7 @@ export class OffscreenAudioCoordinator {
         active &&
         (active.client !== client || active.captureId !== command.captureId)
       ) {
-        throw new Error('已有页面正在使用麦克风语音输入。');
+        throw new Error(t('cm_offscreen_audio_coordinator_error_7'));
       }
       this.activeSpeechCapture = {
         captureId: command.captureId,
@@ -405,7 +406,7 @@ export class OffscreenAudioCoordinator {
       active.client !== client ||
       active.captureId !== command.captureId
     ) {
-      throw new Error('麦克风采集会话已经失效。');
+      throw new Error(t('cm_offscreen_audio_coordinator_error_8'));
     }
     this.postSpeech({
       ...command,
@@ -426,10 +427,10 @@ export class OffscreenAudioCoordinator {
     authorization: VolcengineSpeechAuthorizationCoordinator,
   ) {
     if (this.activeSpeechRecognition) {
-      throw new Error('已有语音识别会话正在运行。');
+      throw new Error(t('cm_offscreen_audio_coordinator_error_9'));
     }
     if (!this.supported()) {
-      throw new Error('当前浏览器不支持扩展后台语音识别。');
+      throw new Error(t('cm_offscreen_audio_coordinator_error_10'));
     }
     await this.ensureDocument();
     const access = await authorization.open(apiKey);
@@ -461,7 +462,7 @@ export class OffscreenAudioCoordinator {
   ) {
     const active = this.activeSpeechRecognition;
     if (!active || active.client !== client) {
-      throw new Error('语音识别会话已经失效。');
+      throw new Error(t('cm_offscreen_audio_coordinator_error_11'));
     }
     this.postSpeechRecognition({
       ...command,
@@ -502,7 +503,7 @@ export class OffscreenAudioCoordinator {
       this.finishSpeechProbe(active, {
         ok: false,
         durationMs: performance.now() - active.probe.startedAt,
-        error: event.state.error || '语音识别连接在完成测试前意外结束。',
+        error: event.state.error || t('cm_offscreen_audio_coordinator_text_12'),
       });
     }
   }

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   AiServicesConfig,
   ImageServiceConfig,
@@ -50,9 +51,7 @@ export function isHttpHeaderSafeCredential(value: string) {
 export function normalizeHttpHeaderCredential(value: string, label: string) {
   const credential = value.trim();
   if (!isHttpHeaderSafeCredential(credential)) {
-    throw new Error(
-      `${label}包含请求头不支持的字符。请只输入密钥本身，不要附带中文说明、全角标点、空格或换行。`,
-    );
+    throw new Error(t('cm_ai_services_schema_error_1', [String(label)]));
   }
   return credential;
 }

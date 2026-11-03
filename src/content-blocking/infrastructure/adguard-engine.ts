@@ -6,6 +6,7 @@ import {
   MessageType,
   TsWebExtension,
 } from '@adguard/tswebextension/mv3';
+import { t } from '../../localization/messages';
 import type { ContentBlockingEngine } from '../application/service';
 import type {
   ContentBlockingEngineReport,
@@ -73,8 +74,9 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
   private initializeStorage() {
     if (this.storageInitialized) return Promise.resolve();
     if (!this.storageInitialization) {
-      const operation = runAdguardEnginePhase('存储初始化', () =>
-        this.engine.initStorage(),
+      const operation = runAdguardEnginePhase(
+        t('cm_adguard_engine_text_1'),
+        () => this.engine.initStorage(),
       ).then(() => {
         this.storageInitialized = true;
       });
@@ -114,10 +116,12 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
       TsWebExtension.setLocalScriptRules(localScriptRules);
     }
     await this.initializeStorage();
-    await runAdguardEnginePhase('规则门控准备', () =>
+    await runAdguardEnginePhase(t('cm_adguard_engine_text_2'), () =>
       this.ruleGate.prepare(state.rulesEnabled),
     );
-    const phase = this.started ? '规则重新配置' : '首次规则配置';
+    const phase = this.started
+      ? t('cm_adguard_engine_text_3')
+      : t('cm_adguard_engine_text_4');
     const { result, revision } = await runAdguardEnginePhase(phase, () =>
       this.ruleGate.runManagedConfiguration(async () => {
         const configuration = this.configuration(state);
@@ -128,7 +132,7 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
       }),
     );
     this.report = engineReport(this.engine, result, state, revision);
-    await runAdguardEnginePhase('规则门控同步', () =>
+    await runAdguardEnginePhase(t('cm_adguard_engine_text_5'), () =>
       this.ruleGate.synchronize(state.rulesEnabled),
     );
     return this.report;
@@ -136,26 +140,26 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
 
   async configure(state: ContentBlockingState) {
     const { result, revision } = await runAdguardEnginePhase(
-      '规则重新配置',
+      t('cm_adguard_engine_text_6'),
       () =>
         this.ruleGate.runManagedConfiguration(() =>
           this.engine.configure(this.configuration(state)),
         ),
     );
     this.report = engineReport(this.engine, result, state, revision);
-    await runAdguardEnginePhase('规则门控同步', () =>
+    await runAdguardEnginePhase(t('cm_adguard_engine_text_7'), () =>
       this.ruleGate.synchronize(state.rulesEnabled),
     );
     return this.report;
   }
 
   async setRulesEnabled(rulesEnabled: boolean) {
-    await runAdguardEnginePhase('规则启停', () =>
+    await runAdguardEnginePhase(t('cm_adguard_engine_text_8'), () =>
       this.ruleGate.setRulesEnabled(rulesEnabled),
     );
     this.report = {
       ...this.report,
-      revision: await runAdguardEnginePhase('规则版本保存', () =>
+      revision: await runAdguardEnginePhase(t('cm_adguard_engine_text_9'), () =>
         this.ruleGate.allocateRevision(),
       ),
     };
@@ -193,11 +197,13 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
         return Promise.resolve(false);
       }
     }
-    const response = await runAdguardEnginePhase('页面规则查询', () =>
-      this.messageHandler(
-        normalizeAdguardMessage(message, MESSAGE_HANDLER_NAME) as never,
-        sender as never,
-      ),
+    const response = await runAdguardEnginePhase(
+      t('cm_adguard_engine_text_10'),
+      () =>
+        this.messageHandler(
+          normalizeAdguardMessage(message, MESSAGE_HANDLER_NAME) as never,
+          sender as never,
+        ),
     );
     if (
       message &&

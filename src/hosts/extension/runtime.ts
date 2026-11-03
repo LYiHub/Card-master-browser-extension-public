@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   UserscriptRuntime,
   UserscriptRuntimeListener,
@@ -196,7 +197,7 @@ export class ExtensionUserscriptRuntime implements UserscriptRuntime {
         error: undefined,
         pendingRefresh: true,
       });
-      throw new Error('当前脚本实例未运行，请刷新页面后重试。');
+      throw new Error(t('cm_runtime_error_1'));
     }
     if (current && response.code === 'command-not-registered') {
       this.setState(scriptId, {
@@ -205,7 +206,7 @@ export class ExtensionUserscriptRuntime implements UserscriptRuntime {
           (command) => command.id !== commandId,
         ),
       });
-      throw new Error('该脚本指令已失效，牌阵状态已经刷新。');
+      throw new Error(t('cm_runtime_error_2'));
     }
     throw new Error(response.error);
   }

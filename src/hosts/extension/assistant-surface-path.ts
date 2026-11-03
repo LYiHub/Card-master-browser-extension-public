@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 export const ASSISTANT_SURFACE_PATH = 'assistant.html';
 const ASSISTANT_SURFACE_LIFECYCLE_PORT_PREFIX =
   'card-master:assistant-surface:';
@@ -8,7 +9,7 @@ function validTabId(tabId: number) {
 
 export function assistantSurfacePath(tabId: number) {
   if (!validTabId(tabId)) {
-    throw new Error('卡牌大师智能体缺少有效的标签页身份。');
+    throw new Error(t('cm_assistant_surface_path_error_1'));
   }
   return `${ASSISTANT_SURFACE_PATH}?tabId=${tabId}`;
 }
@@ -22,7 +23,7 @@ export function assistantSurfaceTabId(search: string) {
 
 export function assistantSurfaceLifecyclePortName(tabId: number) {
   if (!validTabId(tabId)) {
-    throw new Error('卡牌大师智能体缺少有效的标签页身份。');
+    throw new Error(t('cm_assistant_surface_path_error_2'));
   }
   return `${ASSISTANT_SURFACE_LIFECYCLE_PORT_PREFIX}${tabId}`;
 }

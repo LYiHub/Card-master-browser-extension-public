@@ -5,12 +5,13 @@ import type {
   AssistantTabTargetState,
 } from '../../ai/domain/types';
 import { isAiImageMimeType } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 
 const AI_ASSISTANT_PORT_PREFIX = 'card-master:assistant:';
 
 export function assistantPortName(tabId: number) {
   if (!Number.isSafeInteger(tabId) || tabId < 0) {
-    throw new Error('AI 会话缺少有效的标签页身份。');
+    throw new Error(t('cm_assistant_protocol_error_1'));
   }
   return `${AI_ASSISTANT_PORT_PREFIX}${tabId}`;
 }

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 import { extensionDiagnostics } from './diagnostics';
 
@@ -56,7 +57,7 @@ export class DeckActionBadgeController {
       extensionDiagnostics.warn(
         'deck-action-badge',
         'refresh-incomplete',
-        new Error('部分标签页的激活卡牌数量未能刷新。'),
+        new Error(t('cm_deck_action_badge_error_1')),
         { failedDeliveries: failures.length },
       );
     }

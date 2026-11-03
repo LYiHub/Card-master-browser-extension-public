@@ -1,3 +1,4 @@
+import { t } from '../localization/messages';
 import {
   hydrateScript,
   isStoredScript,
@@ -29,7 +30,7 @@ export class SyncLocalChanged extends Error {}
 
 export function assertUnchanged(current: unknown, expected: unknown) {
   if (!equal(current, expected))
-    throw new SyncLocalChanged('本机配置刚发生变化。');
+    throw new SyncLocalChanged(t('cm_projection_text_1'));
 }
 
 export function syncScriptKey(script: InstalledUserscript) {
@@ -52,12 +53,12 @@ function decodeScript(
   key: string,
   id = 'sync-validation',
 ): InstalledUserscript {
-  if (!record(entry.value)) throw new Error('同步脚本格式无效。');
+  if (!record(entry.value)) throw new Error(t('cm_projection_error_2'));
   const script = { ...entry.value, id };
-  if (!isStoredScript(script)) throw new Error('同步脚本配置不完整。');
+  if (!isStoredScript(script)) throw new Error(t('cm_projection_error_3'));
   const hydrated = hydrateScript(script);
   if (syncScriptKey(hydrated) !== key)
-    throw new Error('同步脚本的身份与源码不一致。');
+    throw new Error(t('cm_projection_error_4'));
   return hydrated;
 }
 
@@ -112,14 +113,13 @@ export class SyncProjection {
           ) ||
           new Set(entry.value).size !== entry.value.length
         ) {
-          throw new Error('同步的脚本排序无效。');
+          throw new Error(t('cm_projection_error_5'));
         }
       } else {
         const adapter = this.portable.find(
           (item) => key === `settings:${item.key}`,
         );
-        if (!adapter || !entry)
-          throw new Error('同步包含无法识别的配置，请更新所有设备后重试。');
+        if (!adapter || !entry) throw new Error(t('cm_projection_error_6'));
         adapter.validate(entry.value);
       }
     }

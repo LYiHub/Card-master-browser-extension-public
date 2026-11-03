@@ -23,6 +23,7 @@ import {
   removeDynamicTheme,
 } from '../../../vendor/darkreader/src/inject/dynamic-theme/index';
 import { isURLInList } from '../../../vendor/darkreader/src/utils/url';
+import { t } from '../../localization/messages';
 import {
   type PageThemeTransitionTiming,
   pageThemeTransitionMode,
@@ -547,7 +548,7 @@ function installFetchAdapter() {
     });
     if (response.error) throw new Error(response.error);
     if (typeof response.data !== 'string') {
-      throw new Error('暗夜降临没有收到页面样式资源。');
+      throw new Error(t('cm_theme_runtime_error_1'));
     }
     return response.data;
   };

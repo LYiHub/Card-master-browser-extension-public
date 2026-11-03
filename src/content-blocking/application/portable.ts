@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   CONTENT_BLOCKER_FIRST_CUSTOM_FILTER_ID,
   type ContentBlockingState,
@@ -24,7 +25,7 @@ export function parsePortableContentBlocking(
     !('subscriptions' in value) ||
     !Array.isArray(value.subscriptions)
   ) {
-    throw new Error('内容拦截同步配置无效。');
+    throw new Error(t('cm_portable_error_1'));
   }
   const subscriptions = value.subscriptions.map(
     (entry: unknown, index: number) => {
@@ -33,7 +34,7 @@ export function parsePortableContentBlocking(
         typeof entry !== 'object' ||
         Object.keys(entry).sort().join(',') !== 'enabled,name,url'
       )
-        throw new Error('过滤订阅配置无效。');
+        throw new Error(t('cm_portable_error_2'));
       return {
         ...entry,
         id: `sync-${index}`,
@@ -50,6 +51,6 @@ export function parsePortableContentBlocking(
     new Set(state.subscriptions.map((item) => item.url)).size !==
       state.subscriptions.length
   )
-    throw new Error('内容拦截同步配置无效。');
+    throw new Error(t('cm_portable_error_3'));
   return state;
 }

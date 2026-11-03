@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   isMediaManifestInspection,
   isMediaResourcesSnapshot,
@@ -27,7 +28,7 @@ type MediaResourcesResponse = {
 function responseSnapshot(response: MediaResourcesResponse) {
   if (response.error) throw new Error(response.error);
   if (!isMediaResourcesSnapshot(response.snapshot)) {
-    throw new Error('扩展没有返回有效的媒体资源状态。');
+    throw new Error(t('cm_media_resources_error_1'));
   }
   return response.snapshot;
 }
@@ -131,7 +132,7 @@ export class ExtensionMediaResourcesController
       type: 'media-resources-settings-open',
     });
     if (response.error) throw new Error(response.error);
-    if (!response.ok) throw new Error('扩展未能打开顺手牵羊设置。');
+    if (!response.ok) throw new Error(t('cm_media_resources_error_2'));
   }
 
   async setPresentationSettings(presentation: {
@@ -180,7 +181,7 @@ export class ExtensionMediaResourcesController
       },
     );
     if (response.error) throw new Error(response.error);
-    if (!response.ok) throw new Error('扩展没有确认媒体资源下载请求。');
+    if (!response.ok) throw new Error(t('cm_media_resources_error_3'));
   }
 
   async inspect(resourceId: string, tabId: number) {
@@ -195,7 +196,7 @@ export class ExtensionMediaResourcesController
     );
     if (response.error) throw new Error(response.error);
     if (!isMediaManifestInspection(response.inspection)) {
-      throw new Error('扩展没有返回有效的播放清单分析结果。');
+      throw new Error(t('cm_media_resources_error_4'));
     }
     return response.inspection;
   }
@@ -211,7 +212,7 @@ export class ExtensionMediaResourcesController
       },
     );
     if (response.error) throw new Error(response.error);
-    if (!response.ok) throw new Error('扩展没有确认 Aria2 下载请求。');
+    if (!response.ok) throw new Error(t('cm_media_resources_error_5'));
   }
 
   subscribe(listener: MediaResourcesSnapshotListener) {

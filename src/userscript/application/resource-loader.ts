@@ -1,5 +1,6 @@
 import { hostFetch, invokeFetch } from '../../lib/host-fetch';
 import { readResponseBytesWithinLimit } from '../../lib/response-text';
+import { t } from '../../localization/messages';
 import type { InstalledUserscript } from '../domain/types';
 import type { UserscriptFetch } from './update-service';
 
@@ -25,14 +26,14 @@ function resourceUrl(value: string, base?: string) {
   try {
     url = new URL(value, base);
   } catch {
-    throw new Error(`用户脚本资源地址无效：${value}`);
+    throw new Error(t('cm_resource_loader_error_1', [String(value)]));
   }
   if (
     url.protocol !== 'http:' &&
     url.protocol !== 'https:' &&
     url.protocol !== 'data:'
   ) {
-    throw new Error(`不支持此用户脚本资源地址：${value}`);
+    throw new Error(t('cm_resource_loader_error_2', [String(value)]));
   }
   return url.href;
 }
@@ -93,7 +94,7 @@ export class UserscriptResourceLoader {
       0,
     );
     if (totalBytes > MAX_RESOURCE_BUNDLE_BYTES) {
-      throw new Error('用户脚本资源包超过 24 MB 安全限制。');
+      throw new Error(t('cm_resource_loader_error_3'));
     }
     const requires = requireAssets.map((asset) => asset.text);
     const resources = Object.fromEntries(
@@ -128,13 +129,16 @@ export class UserscriptResourceLoader {
       .then(async (response) => {
         if (!response.ok) {
           throw new Error(
-            `用户脚本资源请求失败：HTTP ${response.status} ${url}`,
+            t('cm_resource_loader_error_4', [
+              String(response.status),
+              String(url),
+            ]),
           );
         }
         const bytes = await readResponseBytesWithinLimit(
           response,
           MAX_RESOURCE_BYTES,
-          '用户脚本资源超过 8 MB 安全限制。',
+          t('cm_resource_loader_text_5'),
         );
         const contentType =
           response.headers.get('content-type')?.split(';')[0] ||
@@ -148,7 +152,7 @@ export class UserscriptResourceLoader {
       })
       .catch((error) => {
         if (controller.signal.aborted) {
-          throw new Error(`用户脚本资源请求超时：${url}`, {
+          throw new Error(t('cm_resource_loader_error_6', [String(url)]), {
             cause: error,
           });
         }

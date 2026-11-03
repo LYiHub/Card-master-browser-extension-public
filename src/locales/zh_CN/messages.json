@@ -8423,5 +8423,4479 @@
   "cm_install_text_9": {
     "message": "未声明",
     "description": "src/hosts/extension/install.tsx；text"
+  },
+  "cm_ai_services_schema_error_1": {
+    "message": "$VALUE_1$包含请求头不支持的字符。请只输入密钥本身，不要附带中文说明、全角标点、空格或换行。",
+    "description": "src/ai/domain/ai-services-schema.ts；error; VALUE_1: label",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "label"
+      }
+    }
+  },
+  "cm_assistant_presentation_text_1": {
+    "message": "当前页面",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_2": {
+    "message": "当前页面",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_3": {
+    "message": "当前页面",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_4": {
+    "message": "所选页面已关闭，请重新选择页面。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_5": {
+    "message": "当前没有可操作的页面。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_6": {
+    "message": "模型服务额度不足，请检查服务账户后重试。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_7": {
+    "message": "模型服务配置无效，请在设置中检查后重试。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_8": {
+    "message": "当前操作缺少必要权限，请在设置中处理后重试。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_9": {
+    "message": "语音输入暂时不可用，请检查设置后重试。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_10": {
+    "message": "当前页面无法继续操作，请重新选择页面后重试。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_11": {
+    "message": "智能体暂时无法连接，请稍后重试。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_presentation_text_12": {
+    "message": "本次操作未能完成，请稍后重试。",
+    "description": "src/ai/domain/assistant-presentation.ts；text"
+  },
+  "cm_assistant_readiness_title_1": {
+    "message": "服务配置不可用",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_text_2": {
+    "message": "当前页面无法读取或保存模型、图像生成与语音识别配置。",
+    "description": "src/ai/domain/assistant-readiness.ts；text"
+  },
+  "cm_assistant_readiness_text_3": {
+    "message": "当前页面无法读取或保存模型与图像生成配置。",
+    "description": "src/ai/domain/assistant-readiness.ts；text"
+  },
+  "cm_assistant_readiness_title_4": {
+    "message": "配置读取失败",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_title_5": {
+    "message": "模型服务 API 密钥尚未配置",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_text_6": {
+    "message": "无法发送对话请求、执行智能体任务或生成卡牌封面。",
+    "description": "src/ai/domain/assistant-readiness.ts；text"
+  },
+  "cm_assistant_readiness_text_7": {
+    "message": "无法发送对话请求或执行智能体任务。",
+    "description": "src/ai/domain/assistant-readiness.ts；text"
+  },
+  "cm_assistant_readiness_title_8": {
+    "message": "图像服务 API 密钥尚未配置",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_detail_9": {
+    "message": "无法生成或更新脚本卡牌封面。",
+    "description": "src/ai/domain/assistant-readiness.ts；detail"
+  },
+  "cm_assistant_readiness_title_10": {
+    "message": "语音识别 API 密钥尚未配置",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_detail_11": {
+    "message": "无法连接火山引擎流式语音识别服务。",
+    "description": "src/ai/domain/assistant-readiness.ts；detail"
+  },
+  "cm_assistant_readiness_title_12": {
+    "message": "语音识别控制器不可用",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_detail_13": {
+    "message": "当前宿主无法建立语音识别会话。",
+    "description": "src/ai/domain/assistant-readiness.ts；detail"
+  },
+  "cm_assistant_readiness_title_14": {
+    "message": "最近一次语音输入失败",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_title_15": {
+    "message": "浏览器不支持麦克风采集",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_detail_16": {
+    "message": "当前环境没有可用的 getUserMedia 接口。",
+    "description": "src/ai/domain/assistant-readiness.ts；detail"
+  },
+  "cm_assistant_readiness_title_17": {
+    "message": "麦克风权限已被阻止",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_detail_18": {
+    "message": "需要在设备权限页面或浏览器设置中重新允许。",
+    "description": "src/ai/domain/assistant-readiness.ts；detail"
+  },
+  "cm_assistant_readiness_title_19": {
+    "message": "麦克风权限尚未授予",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_detail_20": {
+    "message": "需要先在设备权限页面完成一次浏览器授权。",
+    "description": "src/ai/domain/assistant-readiness.ts；detail"
+  },
+  "cm_assistant_readiness_title_21": {
+    "message": "暂时无法读取麦克风权限状态",
+    "description": "src/ai/domain/assistant-readiness.ts；title"
+  },
+  "cm_assistant_readiness_detail_22": {
+    "message": "可以打开设备权限页面进行检测和授权。",
+    "description": "src/ai/domain/assistant-readiness.ts；detail"
+  },
+  "cm_ai_service_http_text_1": {
+    "message": "AI 服务 API 密钥",
+    "description": "src/ai/infrastructure/ai-service-http.ts；text"
+  },
+  "cm_ai_service_http_error_2": {
+    "message": "AI 服务 API 密钥尚未配置。",
+    "description": "src/ai/infrastructure/ai-service-http.ts；error"
+  },
+  "cm_ai_service_http_text_3": {
+    "message": "AI 服务连接失败：$VALUE_1$$VALUE_2$",
+    "description": "src/ai/infrastructure/ai-service-http.ts；text; VALUE_1: error instanceof Error ? error.message : String(error); VALUE_2: debug ? `\\n调试信息：${debug}` : ''",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "error instanceof Error ? error.message : String(error)"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "debug ? `\\n调试信息：${debug}` : ''"
+      }
+    }
+  },
+  "cm_ai_service_http_error_4": {
+    "message": "AI 服务没有返回可读取的事件流。",
+    "description": "src/ai/infrastructure/ai-service-http.ts；error"
+  },
+  "cm_ai_service_http_text_5": {
+    "message": "AI 服务事件流中断：$VALUE_1$$VALUE_2$",
+    "description": "src/ai/infrastructure/ai-service-http.ts；text; VALUE_1: error instanceof Error ? error.message : String(error); VALUE_2: debug ? `\\n调试信息：${debug}` : ''",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "error instanceof Error ? error.message : String(error)"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "debug ? `\\n调试信息：${debug}` : ''"
+      }
+    }
+  },
+  "cm_ai_service_http_text_6": {
+    "message": "AI 服务返回了空错误响应。",
+    "description": "src/ai/infrastructure/ai-service-http.ts；text"
+  },
+  "cm_ai_service_http_text_7": {
+    "message": "AI 服务请求失败（HTTP $VALUE_1$）：$VALUE_2$$VALUE_3$",
+    "description": "src/ai/infrastructure/ai-service-http.ts；text; VALUE_1: status; VALUE_2: message; VALUE_3: debug ? `\\n调试信息：${debug}` : ''",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "status"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "message"
+      },
+      "VALUE_3": {
+        "content": "$3",
+        "example": "debug ? `\\n调试信息：${debug}` : ''"
+      }
+    }
+  },
+  "cm_chat_completions_client_error_1": {
+    "message": "Chat Completions 事件流结束时缺少完成标记。",
+    "description": "src/ai/infrastructure/chat-completions-client.ts；error"
+  },
+  "cm_chat_completions_client_error_2": {
+    "message": "Chat Completions 返回了缺少 ID 的工具调用。",
+    "description": "src/ai/infrastructure/chat-completions-client.ts；error"
+  },
+  "cm_chat_completions_client_error_3": {
+    "message": "Chat Completions 返回了缺少名称的工具调用：$VALUE_1$",
+    "description": "src/ai/infrastructure/chat-completions-client.ts；error; VALUE_1: call.id",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "call.id"
+      }
+    }
+  },
+  "cm_chat_completions_client_error_4": {
+    "message": "Chat Completions 为 $VALUE_1$ 返回了无效的 JSON 参数。",
+    "description": "src/ai/infrastructure/chat-completions-client.ts；error; VALUE_1: call.name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "call.name"
+      }
+    }
+  },
+  "cm_chat_completions_client_error_5": {
+    "message": "Chat Completions 返回了重复的工具调用 ID。",
+    "description": "src/ai/infrastructure/chat-completions-client.ts；error"
+  },
+  "cm_chat_completions_client_error_6": {
+    "message": "Chat Completions 响应中没有最终正文。",
+    "description": "src/ai/infrastructure/chat-completions-client.ts；error"
+  },
+  "cm_dashscope_images_adapter_error_1": {
+    "message": "百炼图像尺寸格式无效：$VALUE_1$",
+    "description": "src/ai/infrastructure/dashscope-images-adapter.ts；error; VALUE_1: value",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "value"
+      }
+    }
+  },
+  "cm_dashscope_images_adapter_error_2": {
+    "message": "百炼图像尺寸超出支持范围：$VALUE_1$",
+    "description": "src/ai/infrastructure/dashscope-images-adapter.ts；error; VALUE_1: value",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "value"
+      }
+    }
+  },
+  "cm_dashscope_images_adapter_label_3": {
+    "message": "阿里云百炼（DashScope）",
+    "description": "src/ai/infrastructure/dashscope-images-adapter.ts；label"
+  },
+  "cm_dashscope_images_adapter_description_4": {
+    "message": "使用阿里云百炼同步图像生成接口，返回临时图片 URL（24 小时有效）。",
+    "description": "src/ai/infrastructure/dashscope-images-adapter.ts；description"
+  },
+  "cm_image_generation_protocol_registry_error_1": {
+    "message": "不支持的图像生成协议：$VALUE_1$",
+    "description": "src/ai/infrastructure/image-generation-protocol-registry.ts；error; VALUE_1: protocol",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "protocol"
+      }
+    }
+  },
+  "cm_microphone_permission_text_1": {
+    "message": "麦克风权限未获允许。请先打开设备权限页面完成授权。",
+    "description": "src/ai/infrastructure/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_2": {
+    "message": "没有找到可用的麦克风。",
+    "description": "src/ai/infrastructure/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_3": {
+    "message": "麦克风暂时无法使用，可能正被其他应用占用。",
+    "description": "src/ai/infrastructure/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_4": {
+    "message": "麦克风连接被中断，请重新尝试。",
+    "description": "src/ai/infrastructure/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_5": {
+    "message": "浏览器阻止了当前扩展访问麦克风。",
+    "description": "src/ai/infrastructure/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_6": {
+    "message": "麦克风权限未获允许。请先打开设备权限页面完成授权。",
+    "description": "src/ai/infrastructure/microphone-permission.ts；text"
+  },
+  "cm_model_client_error_1": {
+    "message": "AI 服务返回了缺少 ID 的工具调用。",
+    "description": "src/ai/infrastructure/model-client.ts；error"
+  },
+  "cm_model_client_error_2": {
+    "message": "AI 服务返回了缺少名称的工具调用：$VALUE_1$",
+    "description": "src/ai/infrastructure/model-client.ts；error; VALUE_1: call.id",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "call.id"
+      }
+    }
+  },
+  "cm_model_client_error_3": {
+    "message": "AI 服务返回了重复的工具调用 ID：$VALUE_1$",
+    "description": "src/ai/infrastructure/model-client.ts；error; VALUE_1: call.id",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "call.id"
+      }
+    }
+  },
+  "cm_model_client_error_4": {
+    "message": "工具结果无法匹配对应调用：$VALUE_1$",
+    "description": "src/ai/infrastructure/model-client.ts；error; VALUE_1: result.toolCallId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "result.toolCallId"
+      }
+    }
+  },
+  "cm_model_client_error_5": {
+    "message": "工具结果重复：$VALUE_1$",
+    "description": "src/ai/infrastructure/model-client.ts；error; VALUE_1: result.toolCallId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "result.toolCallId"
+      }
+    }
+  },
+  "cm_model_client_error_6": {
+    "message": "缺少以下工具调用的结果：$VALUE_1$",
+    "description": "src/ai/infrastructure/model-client.ts；error; VALUE_1: missing.join(', ')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "missing.join(', ')"
+      }
+    }
+  },
+  "cm_model_client_error_7": {
+    "message": "缺少工具调用结果：$VALUE_1$",
+    "description": "src/ai/infrastructure/model-client.ts；error; VALUE_1: call.id",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "call.id"
+      }
+    }
+  },
+  "cm_openai_images_adapter_description_1": {
+    "message": "使用 OpenAI 图片生成接口格式（/images/generations），返回 b64 或 URL。",
+    "description": "src/ai/infrastructure/openai-images-adapter.ts；description"
+  },
+  "cm_responses_api_client_error_1": {
+    "message": "AI 服务返回了非 JSON 数据（HTTP $VALUE_1$）。请确认基础地址指向 /v1 等 API 根路径。",
+    "description": "src/ai/infrastructure/responses-api-client.ts；error; VALUE_1: status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "status"
+      }
+    }
+  },
+  "cm_responses_api_client_error_2": {
+    "message": "AI 服务在完整响应中返回了不完整的工具调用。",
+    "description": "src/ai/infrastructure/responses-api-client.ts；error"
+  },
+  "cm_responses_api_client_error_3": {
+    "message": "AI 服务返回了重复的工具调用 ID。",
+    "description": "src/ai/infrastructure/responses-api-client.ts；error"
+  },
+  "cm_responses_api_client_error_4": {
+    "message": "AI 服务请求失败$VALUE_1$：$VALUE_2$",
+    "description": "src/ai/infrastructure/responses-api-client.ts；error; VALUE_1: code ? `（${code}）` : ''; VALUE_2: failure?.message ||\n              (incompleteReason\n                ? `响应未完成（${incompleteReason}）。`\n                : '服务未返回具体原因。')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "code ? `（${code}）` : ''"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "failure?.message ||\n              (incompleteReason\n                ? `响应未完成（${incompleteReason}）。`\n                : '服务未返回具体原因。')"
+      }
+    }
+  },
+  "cm_responses_api_client_error_5": {
+    "message": "AI 服务事件流失败$VALUE_1$：$VALUE_2$",
+    "description": "src/ai/infrastructure/responses-api-client.ts；error; VALUE_1: event.error?.code || event.error?.type\n                ? `（${event.error.code || event.error.type}）`\n                : ''; VALUE_2: event.error?.message || '服务未返回具体原因。'",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "event.error?.code || event.error?.type\n                ? `（${event.error.code || event.error.type}）`\n                : ''"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "event.error?.message || '服务未返回具体原因。'"
+      }
+    }
+  },
+  "cm_responses_api_client_error_6": {
+    "message": "AI 服务事件流结束时没有完整响应。",
+    "description": "src/ai/infrastructure/responses-api-client.ts；error"
+  },
+  "cm_responses_api_client_error_7": {
+    "message": "AI 服务响应中没有正文。",
+    "description": "src/ai/infrastructure/responses-api-client.ts；error"
+  },
+  "cm_speech_audio_capture_error_1": {
+    "message": "当前页面无法加载语音采集工作线程。",
+    "description": "src/ai/infrastructure/speech-audio-capture.ts；error"
+  },
+  "cm_speech_audio_capture_error_2": {
+    "message": "语音采集工作线程未能及时完成尾帧发送。",
+    "description": "src/ai/infrastructure/speech-audio-capture.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_1": {
+    "message": "语音识别服务返回了不完整的数据帧。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_2": {
+    "message": "语音识别服务返回了不支持的协议版本。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_3": {
+    "message": "语音识别响应缺少序列号。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_4": {
+    "message": "语音识别响应缺少事件编号。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_5": {
+    "message": "语音识别错误帧缺少状态码。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_6": {
+    "message": "语音识别响应缺少数据长度。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_7": {
+    "message": "语音识别响应的数据长度不正确。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_error_8": {
+    "message": "语音识别服务使用了不支持的压缩方式。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；error"
+  },
+  "cm_volcengine_asr_protocol_text_9": {
+    "message": "语音识别服务返回错误码 $VALUE_1$。",
+    "description": "src/ai/infrastructure/volcengine-asr-protocol.ts；text; VALUE_1: code ?? '未知'",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "code ?? '未知'"
+      }
+    }
+  },
+  "cm_media_element_audio_player_error_1": {
+    "message": "音效资源无法播放。",
+    "description": "src/audio/MediaElementAudioPlayer.ts；error"
+  },
+  "cm_portable_error_1": {
+    "message": "内容拦截同步配置无效。",
+    "description": "src/content-blocking/application/portable.ts；error"
+  },
+  "cm_portable_error_2": {
+    "message": "过滤订阅配置无效。",
+    "description": "src/content-blocking/application/portable.ts；error"
+  },
+  "cm_portable_error_3": {
+    "message": "内容拦截同步配置无效。",
+    "description": "src/content-blocking/application/portable.ts；error"
+  },
+  "cm_repository_text_1": {
+    "message": "过滤列表正文缓存缺失，请手动刷新该订阅后重新启用。",
+    "description": "src/content-blocking/application/repository.ts；text"
+  },
+  "cm_service_error_1": {
+    "message": "无效的白名单域名：$VALUE_1$",
+    "description": "src/content-blocking/application/service.ts；error; VALUE_1: value",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "value"
+      }
+    }
+  },
+  "cm_service_error_2": {
+    "message": "元素过滤规则缺少有效的站点域名。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_3": {
+    "message": "元素过滤规则包含无效的站点域名。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_4": {
+    "message": "过滤规则无法完整应用：$VALUE_1$",
+    "description": "src/content-blocking/application/service.ts；error; VALUE_1: fatalErrors.join(' ')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "fatalErrors.join(' ')"
+      }
+    }
+  },
+  "cm_service_error_5": {
+    "message": "元素过滤规则批次必须包含 1 到 128 条规则。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_6": {
+    "message": "元素过滤会话标识无效。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_7": {
+    "message": "元素过滤规则必须是单条非空规则。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_8": {
+    "message": "同一次元素过滤会话只能处理一个站点。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_9": {
+    "message": "元素过滤会话不能跨站点继续。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_10": {
+    "message": "当前没有可恢复的元素拦截批次。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_11": {
+    "message": "当前页面没有可配置的站点域名。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_12": {
+    "message": "找不到需要更新的内置过滤列表。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_13": {
+    "message": "每次可以导入 1 到 16 个过滤列表地址。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_14": {
+    "message": "这些过滤列表已经全部导入。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_15": {
+    "message": "$VALUE_1$ 没有返回可安装内容。",
+    "description": "src/content-blocking/application/service.ts；error; VALUE_1: base.url",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "base.url"
+      }
+    }
+  },
+  "cm_service_error_16": {
+    "message": "找不到需要删除的规则订阅。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_17": {
+    "message": "找不到需要更新的规则订阅。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_18": {
+    "message": "找不到需要刷新的规则订阅。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_19": {
+    "message": "找不到需要刷新的规则订阅。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_20": {
+    "message": "过滤列表刷新没有返回结果。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_21": {
+    "message": "新过滤订阅未返回内容。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_22": {
+    "message": "内容拦截配置不是有效的 JSON。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_23": {
+    "message": "内容拦截配置格式或版本不受支持。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_error_24": {
+    "message": "内容拦截配置内容无效。",
+    "description": "src/content-blocking/application/service.ts；error"
+  },
+  "cm_service_text_25": {
+    "message": "内容拦截后台更新失败：$VALUE_1$",
+    "description": "src/content-blocking/application/service.ts；text; VALUE_1: errorMessage(error)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "errorMessage(error)"
+      }
+    }
+  },
+  "cm_service_text_26": {
+    "message": "内容拦截配置失败，且无法恢复上一状态：$VALUE_1$",
+    "description": "src/content-blocking/application/service.ts；text; VALUE_1: errorMessage(\n            rollbackError,\n          )",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "errorMessage(\n            rollbackError,\n          )"
+      }
+    }
+  },
+  "cm_service_text_27": {
+    "message": "内容拦截规则已保存，但引擎更新失败：$VALUE_1$",
+    "description": "src/content-blocking/application/service.ts；text; VALUE_1: errorMessage(\n        error,\n      )",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "errorMessage(\n        error,\n      )"
+      }
+    }
+  },
+  "cm_service_text_28": {
+    "message": "内容拦截配置失败，且无法恢复上一状态：$VALUE_1$",
+    "description": "src/content-blocking/application/service.ts；text; VALUE_1: errorMessage(\n          rollbackError,\n        )",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "errorMessage(\n          rollbackError,\n        )"
+      }
+    }
+  },
+  "cm_service_text_29": {
+    "message": "内容拦截规则状态切换失败，且无法恢复上一状态：$VALUE_1$",
+    "description": "src/content-blocking/application/service.ts；text; VALUE_1: errorMessage(\n          rollbackError,\n        )",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "errorMessage(\n          rollbackError,\n        )"
+      }
+    }
+  },
+  "cm_service_text_30": {
+    "message": "内容拦截服务尚未初始化。",
+    "description": "src/content-blocking/application/service.ts；text"
+  },
+  "cm_service_text_31": {
+    "message": "内容拦截引擎当前不可用。",
+    "description": "src/content-blocking/application/service.ts；text"
+  },
+  "cm_subscriptions_error_1": {
+    "message": "规则订阅地址不是有效 URL。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_subscriptions_error_2": {
+    "message": "规则订阅必须使用 HTTPS；仅本机调试允许 HTTP。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_subscriptions_error_3": {
+    "message": "规则订阅地址不能包含登录凭据。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_subscriptions_error_4": {
+    "message": "规则订阅超过 8 MB 安全上限。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_subscriptions_error_5": {
+    "message": "规则订阅超过 60,000 条规则上限。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_subscriptions_error_6": {
+    "message": "规则订阅下载超时。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_subscriptions_error_7": {
+    "message": "规则订阅下载失败：HTTP $VALUE_1$。",
+    "description": "src/content-blocking/application/subscriptions.ts；error; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_subscriptions_error_8": {
+    "message": "规则订阅超过 8 MB 安全上限。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_subscriptions_error_9": {
+    "message": "规则订阅下载超时。",
+    "description": "src/content-blocking/application/subscriptions.ts；error"
+  },
+  "cm_adguard_engine_error_error_1": {
+    "message": "AdGuard $VALUE_1$失败：$VALUE_2$",
+    "description": "src/content-blocking/infrastructure/adguard-engine-error.ts；error; VALUE_1: phase; VALUE_2: extensionErrorMessage(error)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "phase"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "extensionErrorMessage(error)"
+      }
+    }
+  },
+  "cm_adguard_engine_text_1": {
+    "message": "存储初始化",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_2": {
+    "message": "规则门控准备",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_3": {
+    "message": "规则重新配置",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_4": {
+    "message": "首次规则配置",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_5": {
+    "message": "规则门控同步",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_6": {
+    "message": "规则重新配置",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_7": {
+    "message": "规则门控同步",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_8": {
+    "message": "规则启停",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_9": {
+    "message": "规则版本保存",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_engine_text_10": {
+    "message": "页面规则查询",
+    "description": "src/content-blocking/infrastructure/adguard-engine.ts；text"
+  },
+  "cm_adguard_firefox_configuration_error_1": {
+    "message": "Firefox 内置过滤器 $VALUE_1$ 尚未加载。",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-configuration.ts；error; VALUE_1: filterId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "filterId"
+      }
+    }
+  },
+  "cm_adguard_firefox_engine_error_1": {
+    "message": "Firefox 扩展资源 API 不可用。",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；error"
+  },
+  "cm_adguard_firefox_engine_error_2": {
+    "message": "无法读取扩展资源 $VALUE_1$：HTTP $VALUE_2$",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；error; VALUE_1: path; VALUE_2: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "path"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_adguard_firefox_engine_text_3": {
+    "message": "存储初始化",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；text"
+  },
+  "cm_adguard_firefox_engine_error_4": {
+    "message": "Firefox 内置过滤器 $VALUE_1$ 资源无效。",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；error; VALUE_1: filterId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "filterId"
+      }
+    }
+  },
+  "cm_adguard_firefox_engine_text_5": {
+    "message": "首次规则配置",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；text"
+  },
+  "cm_adguard_firefox_engine_text_6": {
+    "message": "规则重新配置",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；text"
+  },
+  "cm_adguard_firefox_engine_text_7": {
+    "message": "规则启停",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；text"
+  },
+  "cm_adguard_firefox_engine_error_8": {
+    "message": "Firefox 内容拦截请求失败：$VALUE_1$",
+    "description": "src/content-blocking/infrastructure/adguard-firefox-engine.ts；error; VALUE_1: extensionErrorMessage(error)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "extensionErrorMessage(error)"
+      }
+    }
+  },
+  "cm_element_hiding_rule_error_1": {
+    "message": "无法为该页面元素生成稳定的过滤选择器。",
+    "description": "src/content-blocking/infrastructure/element-hiding-rule.ts；error"
+  },
+  "cm_element_hiding_rule_error_2": {
+    "message": "当前页面协议不支持持久化元素过滤规则。",
+    "description": "src/content-blocking/infrastructure/element-hiding-rule.ts；error"
+  },
+  "cm_element_hiding_rule_error_3": {
+    "message": "当前页面缺少可用于过滤规则的域名。",
+    "description": "src/content-blocking/infrastructure/element-hiding-rule.ts；error"
+  },
+  "cm_webextension_rule_gate_error_1": {
+    "message": "内容拦截样式缓存缺失：$VALUE_1$",
+    "description": "src/content-blocking/infrastructure/webextension-rule-gate.ts；error; VALUE_1: candidate.cssKey",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "candidate.cssKey"
+      }
+    }
+  },
+  "cm_webextension_rule_gate_error_2": {
+    "message": "内容拦截样式缺少 CSS 正文。",
+    "description": "src/content-blocking/infrastructure/webextension-rule-gate.ts；error"
+  },
+  "cm_service_preferences_1": {
+    "message": "已恢复界面、牌阵入口、脚本运行和声音偏好。",
+    "description": "src/data-management/application/service.ts；preferences"
+  },
+  "cm_service__assistant_conversations__2": {
+    "message": "已清空所有智能体会话，并创建一个新的空白会话。",
+    "description": "src/data-management/application/service.ts；'assistant-conversations'"
+  },
+  "cm_service__assistant_config__3": {
+    "message": "已清除智能体、图像生成和语音识别的完整配置。",
+    "description": "src/data-management/application/service.ts；'assistant-config'"
+  },
+  "cm_service__assistant_pins__4": {
+    "message": "已清除智能体全部会话的置顶状态。",
+    "description": "src/data-management/application/service.ts；'assistant-pins'"
+  },
+  "cm_service__content_blocking__5": {
+    "message": "已恢复内容拦截的默认过滤列表与规则设置。",
+    "description": "src/data-management/application/service.ts；'content-blocking'"
+  },
+  "cm_service__page_theme__6": {
+    "message": "已恢复暗夜降临的默认设置与站点范围。",
+    "description": "src/data-management/application/service.ts；'page-theme'"
+  },
+  "cm_service__media_speed__7": {
+    "message": "已恢复媒体倍速的默认档位、站点范围和轮盘设置。",
+    "description": "src/data-management/application/service.ts；'media-speed'"
+  },
+  "cm_service__media_resources__8": {
+    "message": "已清空媒体资源记录并恢复默认发现状态。",
+    "description": "src/data-management/application/service.ts；'media-resources'"
+  },
+  "cm_service__gamepad_control__9": {
+    "message": "已恢复手柄控制的默认映射、摇杆职责、控制手感和站点范围。",
+    "description": "src/data-management/application/service.ts；'gamepad-control'"
+  },
+  "cm_service__bilibili_capabilities__10": {
+    "message": "已恢复流量探险家、合成大弹幕与绯红空降的默认状态。",
+    "description": "src/data-management/application/service.ts；'bilibili-capabilities'"
+  },
+  "cm_service_diagnostics_11": {
+    "message": "已清除脚本运行时诊断数据。",
+    "description": "src/data-management/application/service.ts；diagnostics"
+  },
+  "cm_service_text_12": {
+    "message": "已恢复为全新安装状态。",
+    "description": "src/data-management/application/service.ts；text"
+  },
+  "cm_service_text_13": {
+    "message": "已完成其余清理，但有 $VALUE_1$ 项失败：$VALUE_2$",
+    "description": "src/data-management/application/service.ts；text; VALUE_1: failed.length; VALUE_2: failed\n              .map((step) => step.message)\n              .join('；')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "failed.length"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "failed\n              .map((step) => step.message)\n              .join('；')"
+      }
+    }
+  },
+  "cm_service_text_14": {
+    "message": "已删除 $VALUE_1$ 个脚本及其脚本数据。",
+    "description": "src/data-management/application/service.ts；text; VALUE_1: scriptsRemoved",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "scriptsRemoved"
+      }
+    }
+  },
+  "cm_service_text_15": {
+    "message": "当前没有可删除的脚本。",
+    "description": "src/data-management/application/service.ts；text"
+  },
+  "cm_service_text_16": {
+    "message": "已清除 $VALUE_1$ 份脚本 GM 数据。",
+    "description": "src/data-management/application/service.ts；text; VALUE_1: scriptValuesCleared",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "scriptValuesCleared"
+      }
+    }
+  },
+  "cm_service_text_17": {
+    "message": "当前没有可清除的脚本 GM 数据。",
+    "description": "src/data-management/application/service.ts；text"
+  },
+  "cm_controller_artwork_error_1": {
+    "message": "无法载入手柄可视化素材：$VALUE_1$",
+    "description": "src/gamepad-control/controller-artwork.ts；error; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_controller_artwork_error_2": {
+    "message": "手柄可视化素材不是有效的 SVG。",
+    "description": "src/gamepad-control/controller-artwork.ts；error"
+  },
+  "cm_response_curve_label_1": {
+    "message": "精准",
+    "description": "src/gamepad-control/domain/response-curve.ts；label"
+  },
+  "cm_response_curve_description_2": {
+    "message": "光标缓启动，滚动保持低速精确",
+    "description": "src/gamepad-control/domain/response-curve.ts；description"
+  },
+  "cm_response_curve_label_3": {
+    "message": "均衡",
+    "description": "src/gamepad-control/domain/response-curve.ts；label"
+  },
+  "cm_response_curve_description_4": {
+    "message": "光标平顺加速，滚动即时响应",
+    "description": "src/gamepad-control/domain/response-curve.ts；description"
+  },
+  "cm_response_curve_label_5": {
+    "message": "疾驰",
+    "description": "src/gamepad-control/domain/response-curve.ts；label"
+  },
+  "cm_response_curve_description_6": {
+    "message": "光标快速响应，滚动保持较高上限",
+    "description": "src/gamepad-control/domain/response-curve.ts；description"
+  },
+  "cm_pointer_timeline_label_1": {
+    "message": "透明度",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_label_2": {
+    "message": "缩放",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_label_3": {
+    "message": "旋转",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_label_4": {
+    "message": "亮度",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_label_5": {
+    "message": "位移进度",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_label_6": {
+    "message": "准星出现",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_7": {
+    "message": "从较大尺寸快速收紧，轻微回弹后稳定在目标位置。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_pointer_timeline_label_8": {
+    "message": "准星定位脉冲",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_9": {
+    "message": "长时间未操作后重新移动时，用外环帮助快速找回准星。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_pointer_timeline_label_10": {
+    "message": "准星点击回弹",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_11": {
+    "message": "确认点击时先压缩，再超过原尺寸，最后回到稳定状态。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_pointer_timeline_label_12": {
+    "message": "准星消失",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_13": {
+    "message": "虚拟鼠标交还给真实指针或其他界面时柔和收束。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_pointer_timeline_label_14": {
+    "message": "目标框出现",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_15": {
+    "message": "命中可选元素时先快速收紧，再轻微扩张并稳定。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_pointer_timeline_label_16": {
+    "message": "目标框切换",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_17": {
+    "message": "准星跨越到新元素时，目标框连续移动并短暂增强亮度。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_pointer_timeline_label_18": {
+    "message": "目标框跟随",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_19": {
+    "message": "页面滚动或尺寸变化时，目标框以较短时间跟随同一元素。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_pointer_timeline_label_20": {
+    "message": "目标框消失",
+    "description": "src/gamepad-control/pointer-timeline.ts；label"
+  },
+  "cm_pointer_timeline_description_21": {
+    "message": "失去目标或离开页面控制时降低亮度并轻微缩小。",
+    "description": "src/gamepad-control/pointer-timeline.ts；description"
+  },
+  "cm_adguard_content_error_1": {
+    "message": "内容拦截后台请求“$VALUE_1$”失败：$VALUE_2$",
+    "description": "src/hosts/extension/adguard-content.ts；error; VALUE_1: requestType; VALUE_2: extensionErrorMessage(\n        (response as BackgroundResponse).error,\n      )",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "requestType"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "extensionErrorMessage(\n        (response as BackgroundResponse).error,\n      )"
+      }
+    }
+  },
+  "cm_ai_background_router_text_1": {
+    "message": "每日回顾生成失败",
+    "description": "src/hosts/extension/ai-background-router.ts；text"
+  },
+  "cm_ai_background_router_error_2": {
+    "message": "OpenAI 兼容图像服务尚未配置，请在卡牌大师智能体的设置中配置图像生成。",
+    "description": "src/hosts/extension/ai-background-router.ts；error"
+  },
+  "cm_ai_services_config_text_1": {
+    "message": "模型服务 API 密钥",
+    "description": "src/hosts/extension/ai-services-config.ts；text"
+  },
+  "cm_ai_services_config_error_2": {
+    "message": "请填写有效的模型服务地址、协议和模型名称。",
+    "description": "src/hosts/extension/ai-services-config.ts；error"
+  },
+  "cm_ai_services_config_text_3": {
+    "message": "模型服务 API 密钥",
+    "description": "src/hosts/extension/ai-services-config.ts；text"
+  },
+  "cm_ai_services_config_text_4": {
+    "message": "图像服务 API 密钥",
+    "description": "src/hosts/extension/ai-services-config.ts；text"
+  },
+  "cm_ai_services_config_error_5": {
+    "message": "请填写有效的图像服务配置。",
+    "description": "src/hosts/extension/ai-services-config.ts；error"
+  },
+  "cm_ai_services_config_text_6": {
+    "message": "图像服务 API 密钥",
+    "description": "src/hosts/extension/ai-services-config.ts；text"
+  },
+  "cm_ai_services_config_text_7": {
+    "message": "语音识别 API 密钥",
+    "description": "src/hosts/extension/ai-services-config.ts；text"
+  },
+  "cm_ai_services_config_error_8": {
+    "message": "语音识别 API 密钥格式无效。",
+    "description": "src/hosts/extension/ai-services-config.ts；error"
+  },
+  "cm_ai_services_config_text_9": {
+    "message": "语音识别 API 密钥",
+    "description": "src/hosts/extension/ai-services-config.ts；text"
+  },
+  "cm_ai_services_controller_error_1": {
+    "message": "扩展返回了无效的连接探测结果。",
+    "description": "src/hosts/extension/ai-services-controller.ts；error"
+  },
+  "cm_ai_services_controller_error_2": {
+    "message": "扩展返回了无效的语音连接探测结果。",
+    "description": "src/hosts/extension/ai-services-controller.ts；error"
+  },
+  "cm_ai_services_controller_error_3": {
+    "message": "扩展返回了无效的服务配置。",
+    "description": "src/hosts/extension/ai-services-controller.ts；error"
+  },
+  "cm_ai_services_error_1": {
+    "message": "请填写模型服务的 API 密钥。",
+    "description": "src/hosts/extension/ai-services.ts；error"
+  },
+  "cm_ai_services_error_2": {
+    "message": "模型服务尚未配置，请在卡牌大师智能体的设置中保存密钥。",
+    "description": "src/hosts/extension/ai-services.ts；error"
+  },
+  "cm_ai_services_error_3": {
+    "message": "语音识别尚未配置，请在卡牌大师智能体的设置中填写语音识别 API 密钥。",
+    "description": "src/hosts/extension/ai-services.ts；error"
+  },
+  "cm_assistant_protocol_error_1": {
+    "message": "AI 会话缺少有效的标签页身份。",
+    "description": "src/hosts/extension/assistant-protocol.ts；error"
+  },
+  "cm_assistant_script_changes_error_1": {
+    "message": "脚本修改必须至少包含一项编辑。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error"
+  },
+  "cm_assistant_script_changes_error_2": {
+    "message": "第 $VALUE_1$ 项脚本修改缺少旧文本。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: number",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "number"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_3": {
+    "message": "第 $VALUE_1$ 项脚本修改没有产生变化。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: number",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "number"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_4": {
+    "message": "第 $VALUE_1$ 项脚本修改不能替换完整源码。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: number",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "number"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_5": {
+    "message": "第 $VALUE_1$ 项脚本修改找不到指定的旧文本。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: number",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "number"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_6": {
+    "message": "第 $VALUE_1$ 项脚本修改匹配到多处，请提供更多上下文使旧文本唯一。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: number",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "number"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_7": {
+    "message": "找不到要修改的用户脚本：$VALUE_1$",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: change.targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "change.targetScriptId"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_8": {
+    "message": "找不到要删除的用户脚本：$VALUE_1$",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: change.targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "change.targetScriptId"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_9": {
+    "message": "找不到要设置的用户脚本：$VALUE_1$",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: change.targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "change.targetScriptId"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_10": {
+    "message": "找不到要设置的用户脚本：$VALUE_1$",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: change.targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "change.targetScriptId"
+      }
+    }
+  },
+  "cm_assistant_script_changes_error_11": {
+    "message": "卡牌封面必须是格式与体积有效的 WebP Data URL。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error"
+  },
+  "cm_assistant_script_changes_error_12": {
+    "message": "卡牌边框颜色必须是有效的六位十六进制颜色。",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error"
+  },
+  "cm_assistant_script_changes_error_13": {
+    "message": "找不到要设置封面的用户脚本：$VALUE_1$",
+    "description": "src/hosts/extension/assistant-script-changes.ts；error; VALUE_1: change.targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "change.targetScriptId"
+      }
+    }
+  },
+  "cm_assistant_service_text_1": {
+    "message": "<browser_target>\n标题：$VALUE_1$\nURL：$VALUE_2$\n活动状态：$VALUE_3$\n可用状态：$VALUE_4$\n$VALUE_5$\n</browser_target>\n\n<page_context>\n语言：$VALUE_6$\n选中文字：$VALUE_7$\n可见文本快照：\n$VALUE_8$\n</page_context>\n\n<user_message>\n$VALUE_9$\n</user_message>",
+    "description": "src/hosts/extension/assistant-service.ts；text; VALUE_1: target.title || '（无标题）'; VALUE_2: target.url || '（无）'; VALUE_3: target.active ? '当前可见' : '未激活'; VALUE_4: target.available ? '可用' : '不可用'; VALUE_5: context.error ? `说明：${context.error}` : ''; VALUE_6: page?.language || '（未知）'; VALUE_7: page?.selectedText || '（无）'; VALUE_8: page?.visibleText || '（当前没有可用页面快照）'; VALUE_9: message",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "target.title || '（无标题）'"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "target.url || '（无）'"
+      },
+      "VALUE_3": {
+        "content": "$3",
+        "example": "target.active ? '当前可见' : '未激活'"
+      },
+      "VALUE_4": {
+        "content": "$4",
+        "example": "target.available ? '可用' : '不可用'"
+      },
+      "VALUE_5": {
+        "content": "$5",
+        "example": "context.error ? `说明：${context.error}` : ''"
+      },
+      "VALUE_6": {
+        "content": "$6",
+        "example": "page?.language || '（未知）'"
+      },
+      "VALUE_7": {
+        "content": "$7",
+        "example": "page?.selectedText || '（无）'"
+      },
+      "VALUE_8": {
+        "content": "$8",
+        "example": "page?.visibleText || '（当前没有可用页面快照）'"
+      },
+      "VALUE_9": {
+        "content": "$9",
+        "example": "message"
+      }
+    }
+  },
+  "cm_assistant_service_text_2": {
+    "message": "AI 会话请求格式无效。",
+    "description": "src/hosts/extension/assistant-service.ts；text"
+  },
+  "cm_assistant_service_error_3": {
+    "message": "卡牌大师智能体正在处理另一条请求，暂时无法创建会话。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_4": {
+    "message": "生成进行中，暂时无法切换会话。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_5": {
+    "message": "要切换的会话不存在。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_6": {
+    "message": "要重命名的会话不存在。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_7": {
+    "message": "会话名称不能为空。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_8": {
+    "message": "生成进行中，暂时无法删除当前会话。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_9": {
+    "message": "AI 会话集合不能为空。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_10": {
+    "message": "找不到目标用户脚本：$VALUE_1$",
+    "description": "src/hosts/extension/assistant-service.ts；error; VALUE_1: change.targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "change.targetScriptId"
+      }
+    }
+  },
+  "cm_assistant_service_error_11": {
+    "message": "脚本源码已经发生变化。请重新读取最新脚本后再执行修改。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_12": {
+    "message": "删除操作返回了无效的脚本结果。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_13": {
+    "message": "创建脚本没有返回有效的脚本结果。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_14": {
+    "message": "当前宿主没有提供卡牌封面生成服务。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_15": {
+    "message": "找不到用户脚本：$VALUE_1$",
+    "description": "src/hosts/extension/assistant-service.ts；error; VALUE_1: targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "targetScriptId"
+      }
+    }
+  },
+  "cm_assistant_service_error_16": {
+    "message": "脚本源码已经发生变化。请重新读取最新脚本后再生成封面。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_error_17": {
+    "message": "卡牌大师智能体正在处理另一条请求，请稍后再试。",
+    "description": "src/hosts/extension/assistant-service.ts；error"
+  },
+  "cm_assistant_service_content_18": {
+    "message": "本次生成已取消。",
+    "description": "src/hosts/extension/assistant-service.ts；content"
+  },
+  "cm_assistant_service_text_19": {
+    "message": "$VALUE_1$会话持久化失败：$VALUE_2$",
+    "description": "src/hosts/extension/assistant-service.ts；text; VALUE_1: assistantMessage.error ? `${assistantMessage.error} ` : ''; VALUE_2: errorMessage(persistError)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "assistantMessage.error ? `${assistantMessage.error} ` : ''"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "errorMessage(persistError)"
+      }
+    }
+  },
+  "cm_assistant_state_error_1": {
+    "message": "工具执行因扩展后台重启而中断，最终状态无法确认。",
+    "description": "src/hosts/extension/assistant-state.ts；error"
+  },
+  "cm_assistant_state_text_2": {
+    "message": "上一次 AI 请求因扩展后台重启而中断。",
+    "description": "src/hosts/extension/assistant-state.ts；text"
+  },
+  "cm_assistant_state_error_3": {
+    "message": "当前 AI 会话不存在。",
+    "description": "src/hosts/extension/assistant-state.ts；error"
+  },
+  "cm_assistant_state_text_4": {
+    "message": "$VALUE_1$$VALUE_2$<expired_image_attachments>$VALUE_3$ 张图片需要重新附加</expired_image_attachments>",
+    "description": "src/hosts/extension/assistant-state.ts；text; VALUE_1: content; VALUE_2: content ? '\\n\\n' : ''; VALUE_3: expiredImageCount",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "content"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "content ? '\\n\\n' : ''"
+      },
+      "VALUE_3": {
+        "content": "$3",
+        "example": "expiredImageCount"
+      }
+    }
+  },
+  "cm_assistant_surface_background_text_1": {
+    "message": "Firefox 只允许从浏览器扩展界面打开原生侧边栏。请点击工具栏中的 卡牌大师图标，或从 Firefox 侧边栏列表打开“卡牌大师智能体”。",
+    "description": "src/hosts/extension/assistant-surface-background.ts；text"
+  },
+  "cm_assistant_surface_client_error_1": {
+    "message": "扩展未能打开卡牌大师智能体。",
+    "description": "src/hosts/extension/assistant-surface-client.ts；error"
+  },
+  "cm_assistant_surface_path_error_1": {
+    "message": "卡牌大师智能体缺少有效的标签页身份。",
+    "description": "src/hosts/extension/assistant-surface-path.ts；error"
+  },
+  "cm_assistant_surface_path_error_2": {
+    "message": "卡牌大师智能体缺少有效的标签页身份。",
+    "description": "src/hosts/extension/assistant-surface-path.ts；error"
+  },
+  "cm_assistant_tab_session_text_1": {
+    "message": "当前没有选定可操作的页面。请先选择目标页面。",
+    "description": "src/hosts/extension/assistant-tab-session.ts；text"
+  },
+  "cm_assistant_tab_session_text_2": {
+    "message": "所选页面已关闭或不可访问。请重新选择目标页面。",
+    "description": "src/hosts/extension/assistant-tab-session.ts；text"
+  },
+  "cm_assistant_tab_session_error_3": {
+    "message": "当前没有选定可操作的页面。请先选择目标页面。",
+    "description": "src/hosts/extension/assistant-tab-session.ts；error"
+  },
+  "cm_assistant_tab_session_error_4": {
+    "message": "所选页面无法识别。",
+    "description": "src/hosts/extension/assistant-tab-session.ts；error"
+  },
+  "cm_assistant_tab_session_error_5": {
+    "message": "所选页面无法识别。",
+    "description": "src/hosts/extension/assistant-tab-session.ts；error"
+  },
+  "cm_assistant_tab_session_error_6": {
+    "message": "所选页面无法识别。",
+    "description": "src/hosts/extension/assistant-tab-session.ts；error"
+  },
+  "cm_assistant_tab_session_error_7": {
+    "message": "所选页面已关闭或不可访问。请重新选择目标页面。",
+    "description": "src/hosts/extension/assistant-tab-session.ts；error"
+  },
+  "cm_assistant_error_1": {
+    "message": "AI 会话后台未在限定时间内返回状态。",
+    "description": "src/hosts/extension/assistant.ts；error"
+  },
+  "cm_assistant_error_2": {
+    "message": "AI 会话控制器已释放。",
+    "description": "src/hosts/extension/assistant.ts；error"
+  },
+  "cm_assistant_error_3": {
+    "message": "AI 会话控制器已释放。",
+    "description": "src/hosts/extension/assistant.ts；error"
+  },
+  "cm_assistant_text_4": {
+    "message": "AI 请求因扩展后台重新加载或连接中断而停止。",
+    "description": "src/hosts/extension/assistant.ts；text"
+  },
+  "cm_assistant_error_5": {
+    "message": "扩展未能建立语音识别鉴权会话。",
+    "description": "src/hosts/extension/assistant.ts；error"
+  },
+  "cm_assistant_error_6": {
+    "message": "AI 会话请求无法发送到扩展后台。",
+    "description": "src/hosts/extension/assistant.ts；error"
+  },
+  "cm_assistant_error_7": {
+    "message": "AI 会话后台未确认请求。",
+    "description": "src/hosts/extension/assistant.ts；error"
+  },
+  "cm_background_lifecycle_text_1": {
+    "message": "后台定时任务 $VALUE_1$ 失败",
+    "description": "src/hosts/extension/background-lifecycle.ts；text; VALUE_1: alarm.name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "alarm.name"
+      }
+    }
+  },
+  "cm_background_lifecycle_text_2": {
+    "message": "安装初始化失败",
+    "description": "src/hosts/extension/background-lifecycle.ts；text"
+  },
+  "cm_background_lifecycle_text_3": {
+    "message": "启动初始化失败",
+    "description": "src/hosts/extension/background-lifecycle.ts；text"
+  },
+  "cm_background_lifecycle_text_4": {
+    "message": "后台初始化失败",
+    "description": "src/hosts/extension/background-lifecycle.ts；text"
+  },
+  "cm_background_text_1": {
+    "message": "部分页面没有接收自定义规则更新。",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_error_2": {
+    "message": "Edge 当前进程仍拒绝写入旧扩展存储。内容拦截规则所有权已转入独立缓存；请完全退出并重新打开 Edge，以完成旧数据库清理。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_text_3": {
+    "message": "每日回顾启用后生成失败",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_error_4": {
+    "message": "Firefox 工具栏操作缺少当前标签页身份。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_error_5": {
+    "message": "当前页面没有正在运行的脚本实例。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_error_6": {
+    "message": "该脚本指令已经失效，请重新读取运行时状态。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_error_7": {
+    "message": "当前标签页没有可用地址。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_error_8": {
+    "message": "后台初始化阶段“$VALUE_1$”失败：$VALUE_2$",
+    "description": "src/hosts/extension/background.ts；error; VALUE_1: phase; VALUE_2: errorMessage(error)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "phase"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "errorMessage(error)"
+      }
+    }
+  },
+  "cm_background_error_9": {
+    "message": "声音设置无效。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_text_10": {
+    "message": "部分页面没有接收声音设置更新。",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_11": {
+    "message": "部分页面没有接收内容拦截状态更新。",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_error_12": {
+    "message": "卡牌大师智能体请求缺少当前标签页身份。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_error_13": {
+    "message": "同步请求缺少有效的扩展身份。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_error_14": {
+    "message": "同步连接尚未断开，请重试后再重置本机数据。",
+    "description": "src/hosts/extension/background.ts；error"
+  },
+  "cm_background_text_15": {
+    "message": "配置扩展存储访问",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_16": {
+    "message": "恢复内容拦截规则所有权",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_17": {
+    "message": "启动脚本安装拦截",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_18": {
+    "message": "同步预装脚本",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_19": {
+    "message": "平台能力初始化失败",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_20": {
+    "message": "同步用户脚本运行时",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_21": {
+    "message": "读取页面光影设置",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_22": {
+    "message": "读取媒体倍速设置",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_23": {
+    "message": "读取媒体资源设置",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_24": {
+    "message": "读取手柄设置",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_25": {
+    "message": "安排脚本更新检查",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_background_text_26": {
+    "message": "刷新工具栏卡牌数量",
+    "description": "src/hosts/extension/background.ts；text"
+  },
+  "cm_bilibili_capabilities_error_1": {
+    "message": "扩展没有返回有效的平台能力状态。",
+    "description": "src/hosts/extension/bilibili-capabilities.ts；error"
+  },
+  "cm_bilibili_capabilities_error_2": {
+    "message": "扩展没有返回有效的平台能力设置。",
+    "description": "src/hosts/extension/bilibili-capabilities.ts；error"
+  },
+  "cm_bilibili_capability_service_text_1": {
+    "message": "Safari 暂不支持",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_text_2": {
+    "message": "已停用",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_pure_3": {
+    "message": "纯净",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；pure"
+  },
+  "cm_bilibili_capability_service_explore_4": {
+    "message": "探索",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；explore"
+  },
+  "cm_bilibili_capability_service_mixed_5": {
+    "message": "混合",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；mixed"
+  },
+  "cm_bilibili_capability_service_native_6": {
+    "message": "原生",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；native"
+  },
+  "cm_bilibili_capability_service_text_7": {
+    "message": "本视频原弹幕",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_text_8": {
+    "message": "阈值 $VALUE_1$",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text; VALUE_1: state.capabilities['danmaku-compression'].settings.threshold",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "state.capabilities['danmaku-compression'].settings.threshold"
+      }
+    }
+  },
+  "cm_bilibili_capability_service_text_9": {
+    "message": "自动跳过",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_text_10": {
+    "message": "按策略",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_text_11": {
+    "message": "已启用",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_label_12": {
+    "message": "推荐身份",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；label"
+  },
+  "cm_bilibili_capability_service_label_13": {
+    "message": "合并窗口",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；label"
+  },
+  "cm_bilibili_capability_service_label_14": {
+    "message": "工作线程",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；label"
+  },
+  "cm_bilibili_capability_service_label_15": {
+    "message": "当前视频",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；label"
+  },
+  "cm_bilibili_capability_service_text_16": {
+    "message": "原始弹幕",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_text_17": {
+    "message": "合成大弹幕",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_label_18": {
+    "message": "当前平台",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；label"
+  },
+  "cm_bilibili_capability_service_text_19": {
+    "message": "等待视频页面",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_label_20": {
+    "message": "赞助片段",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；label"
+  },
+  "cm_bilibili_capability_service_label_21": {
+    "message": "跳过提示",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；label"
+  },
+  "cm_bilibili_capability_service_text_22": {
+    "message": "显示",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_text_23": {
+    "message": "隐藏",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；text"
+  },
+  "cm_bilibili_capability_service_error_24": {
+    "message": "$VALUE_1$，请先从卡牌右上角启用。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error; VALUE_1: stateLabel(id, state)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "stateLabel(id, state)"
+      }
+    }
+  },
+  "cm_bilibili_capability_service_error_25": {
+    "message": "当前浏览器未开放 B 站 Cookie 读取能力。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_26": {
+    "message": "当前浏览器未开放 B 站 Cookie 管理能力。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_27": {
+    "message": "Safari 暂不支持切换 B 站推荐身份。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_28": {
+    "message": "Safari 暂不支持切换 B 站推荐身份。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_29": {
+    "message": "流量探险家收到了无效模式。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_30": {
+    "message": "Safari 暂不支持切换 B 站推荐身份。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_31": {
+    "message": "混合推荐切换未返回状态。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_32": {
+    "message": "流量探险家收到了无效指令。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_33": {
+    "message": "当前页面没有可临时恢复原弹幕的视频。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_34": {
+    "message": "合成大弹幕收到了无效指令。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_35": {
+    "message": "绯红空降收到了无效指令。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_36": {
+    "message": "当前页面没有可操作的 B 站或 YouTube 视频。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_bilibili_capability_service_error_37": {
+    "message": "pakku 请求缺少 URL。",
+    "description": "src/hosts/extension/bilibili-capability-service.ts；error"
+  },
+  "cm_browser_detection_display_name_1": {
+    "message": "Arc 浏览器",
+    "description": "src/hosts/extension/browser-detection.ts；displayName"
+  },
+  "cm_browser_detection_status_notice_2": {
+    "message": "已检测到当前运行于 Arc 浏览器。由于 Arc 采用自身专属侧栏架构，不提供 Chromium 扩展原生侧边栏显示容器，卡牌大师已自动为你启用「独立弹出窗口模式」，无需手动配置。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_status_notice_3": {
+    "message": "已检测到当前运行于 Microsoft Edge。原生侧边栏功能完备，推荐使用原生侧边栏；你也可按需切换为独立弹出窗口。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_display_name_4": {
+    "message": "Brave 浏览器",
+    "description": "src/hosts/extension/browser-detection.ts；displayName"
+  },
+  "cm_browser_detection_status_notice_5": {
+    "message": "已检测到当前运行于 Brave 浏览器。原生侧边栏功能完备，你可在原生侧边栏与独立弹出窗口间自由切换。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_display_name_6": {
+    "message": "Opera 浏览器",
+    "description": "src/hosts/extension/browser-detection.ts；displayName"
+  },
+  "cm_browser_detection_status_notice_7": {
+    "message": "已检测到当前运行于 Opera 浏览器。支持侧栏展示与独立窗口模式。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_display_name_8": {
+    "message": "Vivaldi 浏览器",
+    "description": "src/hosts/extension/browser-detection.ts；displayName"
+  },
+  "cm_browser_detection_status_notice_9": {
+    "message": "已检测到当前运行于 Vivaldi 浏览器。支持侧栏面板与独立窗口模式。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_display_name_10": {
+    "message": "Firefox 浏览器",
+    "description": "src/hosts/extension/browser-detection.ts；displayName"
+  },
+  "cm_browser_detection_status_notice_11": {
+    "message": "已检测到当前运行于 Firefox。默认使用 Firefox 原生侧边栏，也可随时切换为独立窗口模式。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_display_name_12": {
+    "message": "Safari 浏览器",
+    "description": "src/hosts/extension/browser-detection.ts；displayName"
+  },
+  "cm_browser_detection_status_notice_13": {
+    "message": "已检测到当前运行于 Safari。已默认启用独立弹出窗口模式。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_status_notice_14": {
+    "message": "已检测到当前运行于 Google Chrome。原生侧边栏功能完备，推荐使用原生侧边栏获得无缝嵌入体验；你也可自由切换为独立窗口。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_browser_detection_display_name_15": {
+    "message": "Chromium 内核浏览器",
+    "description": "src/hosts/extension/browser-detection.ts；displayName"
+  },
+  "cm_browser_detection_status_notice_16": {
+    "message": "当前运行于 Chromium 内核浏览器。默认使用原生侧栏，可随时切换为独立窗口模式。",
+    "description": "src/hosts/extension/browser-detection.ts；statusNotice"
+  },
+  "cm_content_blocking_text_1": {
+    "message": "内容拦截引擎返回了错误状态。",
+    "description": "src/hosts/extension/content-blocking.ts；text"
+  },
+  "cm_content_blocking_error_2": {
+    "message": "内容拦截控制器已释放。",
+    "description": "src/hosts/extension/content-blocking.ts；error"
+  },
+  "cm_content_blocking_error_3": {
+    "message": "元素过滤批次缺少会话标识。",
+    "description": "src/hosts/extension/content-blocking.ts；error"
+  },
+  "cm_content_error_1": {
+    "message": "页面音频宿主已卸载。",
+    "description": "src/hosts/extension/content.ts；error"
+  },
+  "cm_daily_review_image_error_1": {
+    "message": "每日回顾图像服务返回了空图片。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_2": {
+    "message": "每日回顾图像服务返回了无效的 Base64 图片。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_3": {
+    "message": "每日回顾图像服务返回了无法识别的图片格式。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_text_4": {
+    "message": "每日回顾生成失败：$VALUE_1$。",
+    "description": "src/hosts/extension/daily-review-image.ts；text; VALUE_1: detail",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "detail"
+      }
+    }
+  },
+  "cm_daily_review_image_text_5": {
+    "message": "每日回顾生成失败：HTTP $VALUE_1$。",
+    "description": "src/hosts/extension/daily-review-image.ts；text; VALUE_1: status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "status"
+      }
+    }
+  },
+  "cm_daily_review_image_error_6": {
+    "message": "每日回顾提示词不能为空。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_7": {
+    "message": "每日回顾提示词必须使用简体中文。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_text_8": {
+    "message": "每日回顾正在沿用模型服务，请先配置模型服务 API 密钥，或改用独立图像服务。",
+    "description": "src/hosts/extension/daily-review-image.ts；text"
+  },
+  "cm_daily_review_image_text_9": {
+    "message": "每日回顾图像服务尚未配置，请填写独立图像服务的 API 密钥。",
+    "description": "src/hosts/extension/daily-review-image.ts；text"
+  },
+  "cm_daily_review_image_error_10": {
+    "message": "每日回顾图像服务返回了无效 JSON。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_11": {
+    "message": "每日回顾图像服务没有返回图片。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_12": {
+    "message": "每日回顾图像服务返回了不安全的图片地址。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_13": {
+    "message": "下载每日回顾失败：HTTP $VALUE_1$。",
+    "description": "src/hosts/extension/daily-review-image.ts；error; VALUE_1: imageResponse.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "imageResponse.status"
+      }
+    }
+  },
+  "cm_daily_review_image_error_14": {
+    "message": "每日回顾下载被重定向到了不安全的地址。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_15": {
+    "message": "每日回顾生成结果不是可识别的图片。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_16": {
+    "message": "每日回顾生成结果既没有图像数据，也没有图片地址。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_image_error_17": {
+    "message": "每日回顾图像服务返回了空图片。",
+    "description": "src/hosts/extension/daily-review-image.ts；error"
+  },
+  "cm_daily_review_wallpaper_settings_error_1": {
+    "message": "扩展没有返回有效的每日回顾状态。",
+    "description": "src/hosts/extension/daily-review-wallpaper-settings.ts；error"
+  },
+  "cm_daily_review_wallpaper_settings_error_2": {
+    "message": "扩展没有返回有效的每日回顾历史。",
+    "description": "src/hosts/extension/daily-review-wallpaper-settings.ts；error"
+  },
+  "cm_daily_review_wallpaper_settings_error_3": {
+    "message": "扩展没有确认每日回顾生成请求。",
+    "description": "src/hosts/extension/daily-review-wallpaper-settings.ts；error"
+  },
+  "cm_daily_review_wallpaper_settings_error_4": {
+    "message": "扩展没有返回有效的 AI 服务配置状态。",
+    "description": "src/hosts/extension/daily-review-wallpaper-settings.ts；error"
+  },
+  "cm_daily_review_wallpaper_settings_error_5": {
+    "message": "扩展返回的 AI 服务配置状态不完整。",
+    "description": "src/hosts/extension/daily-review-wallpaper-settings.ts；error"
+  },
+  "cm_daily_review_wallpaper_storage_error_1": {
+    "message": "每日回顾数据库无法打开。",
+    "description": "src/hosts/extension/daily-review-wallpaper-storage.ts；error"
+  },
+  "cm_daily_review_wallpaper_storage_error_2": {
+    "message": "每日回顾读取失败。",
+    "description": "src/hosts/extension/daily-review-wallpaper-storage.ts；error"
+  },
+  "cm_daily_review_wallpaper_storage_error_3": {
+    "message": "每日回顾读取已中止。",
+    "description": "src/hosts/extension/daily-review-wallpaper-storage.ts；error"
+  },
+  "cm_daily_review_wallpaper_storage_error_4": {
+    "message": "每日回顾清理已中止。",
+    "description": "src/hosts/extension/daily-review-wallpaper-storage.ts；error"
+  },
+  "cm_daily_review_wallpaper_storage_error_5": {
+    "message": "每日回顾清理失败。",
+    "description": "src/hosts/extension/daily-review-wallpaper-storage.ts；error"
+  },
+  "cm_daily_review_wallpaper_storage_error_6": {
+    "message": "每日回顾写入已中止。",
+    "description": "src/hosts/extension/daily-review-wallpaper-storage.ts；error"
+  },
+  "cm_daily_review_wallpaper_storage_error_7": {
+    "message": "每日回顾写入失败。",
+    "description": "src/hosts/extension/daily-review-wallpaper-storage.ts；error"
+  },
+  "cm_data_management_error_1": {
+    "message": "数据管理操作没有返回结果。",
+    "description": "src/hosts/extension/data-management.ts；error"
+  },
+  "cm_deck_action_badge_error_1": {
+    "message": "部分标签页的激活卡牌数量未能刷新。",
+    "description": "src/hosts/extension/deck-action-badge.ts；error"
+  },
+  "cm_deck_entry_background_error_1": {
+    "message": "请在浏览器的扩展设置中修改键盘快捷键。",
+    "description": "src/hosts/extension/deck-entry-background.ts；error"
+  },
+  "cm_extension_message_delivery_text_1": {
+    "message": "扩展消息接收端未在限定时间内结束响应。",
+    "description": "src/hosts/extension/extension-message-delivery.ts；text"
+  },
+  "cm_extension_speech_recognition_client_error_1": {
+    "message": "语音识别扩展通道已经断开。",
+    "description": "src/hosts/extension/extension-speech-recognition-client.ts；error"
+  },
+  "cm_extension_speech_recognition_client_error_2": {
+    "message": "语音识别控制器已释放。",
+    "description": "src/hosts/extension/extension-speech-recognition-client.ts；error"
+  },
+  "cm_extension_speech_recognition_error_1": {
+    "message": "语音识别控制器已释放。",
+    "description": "src/hosts/extension/extension-speech-recognition.ts；error"
+  },
+  "cm_extension_speech_recognition_error_2": {
+    "message": "已有语音输入会话正在运行。",
+    "description": "src/hosts/extension/extension-speech-recognition.ts；error"
+  },
+  "cm_extension_speech_recognition_error_3": {
+    "message": "语音输入会话已经失效。",
+    "description": "src/hosts/extension/extension-speech-recognition.ts；error"
+  },
+  "cm_gamepad_browser_command_error_1": {
+    "message": "手柄浏览器命令缺少当前标签页身份。",
+    "description": "src/hosts/extension/gamepad-browser-command.ts；error"
+  },
+  "cm_gamepad_control_content_error_1": {
+    "message": "拼音词库载入失败：$VALUE_1$ $VALUE_2$",
+    "description": "src/hosts/extension/gamepad-control-content.ts；error; VALUE_1: response.status; VALUE_2: response.statusText",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "response.statusText"
+      }
+    }
+  },
+  "cm_gamepad_control_content_error_2": {
+    "message": "拼音词库格式无效。",
+    "description": "src/hosts/extension/gamepad-control-content.ts；error"
+  },
+  "cm_gamepad_control_content_text_3": {
+    "message": "正在连接语音",
+    "description": "src/hosts/extension/gamepad-control-content.ts；text"
+  },
+  "cm_gamepad_control_content_text_4": {
+    "message": "正在聆听",
+    "description": "src/hosts/extension/gamepad-control-content.ts；text"
+  },
+  "cm_gamepad_control_content_text_5": {
+    "message": "正在识别",
+    "description": "src/hosts/extension/gamepad-control-content.ts；text"
+  },
+  "cm_gamepad_control_content_text_6": {
+    "message": "已写入输入框",
+    "description": "src/hosts/extension/gamepad-control-content.ts；text"
+  },
+  "cm_gamepad_control_content_text_7": {
+    "message": "未识别到文本",
+    "description": "src/hosts/extension/gamepad-control-content.ts；text"
+  },
+  "cm_gamepad_control_content_text_8": {
+    "message": "语音输入失败",
+    "description": "src/hosts/extension/gamepad-control-content.ts；text"
+  },
+  "cm_gamepad_control_content_error_9": {
+    "message": "扩展未能打开语音识别设置。",
+    "description": "src/hosts/extension/gamepad-control-content.ts；error"
+  },
+  "cm_gamepad_control_content_text_10": {
+    "message": "手柄示意图设置保存失败。",
+    "description": "src/hosts/extension/gamepad-control-content.ts；text"
+  },
+  "cm_gamepad_control_service_error_1": {
+    "message": "手柄控制设置格式无效。",
+    "description": "src/hosts/extension/gamepad-control-service.ts；error"
+  },
+  "cm_gamepad_control_settings_error_1": {
+    "message": "扩展没有返回有效的手柄控制设置。",
+    "description": "src/hosts/extension/gamepad-control-settings.ts；error"
+  },
+  "cm_gamepad_control_settings_error_2": {
+    "message": "扩展没有返回有效的手柄控制设置。",
+    "description": "src/hosts/extension/gamepad-control-settings.ts；error"
+  },
+  "cm_gamepad_push_to_talk_error_1": {
+    "message": "先选择网页中的输入框，再按住说话。",
+    "description": "src/hosts/extension/gamepad-push-to-talk.ts；error"
+  },
+  "cm_gamepad_push_to_talk_error_2": {
+    "message": "语音识别连接过慢，音频缓冲已满。",
+    "description": "src/hosts/extension/gamepad-push-to-talk.ts；error"
+  },
+  "cm_gamepad_push_to_talk_error_3": {
+    "message": "语音识别未能及时返回最终结果。",
+    "description": "src/hosts/extension/gamepad-push-to-talk.ts；error"
+  },
+  "cm_gamepad_push_to_talk_text_4": {
+    "message": "语音识别失败。",
+    "description": "src/hosts/extension/gamepad-push-to-talk.ts；text"
+  },
+  "cm_greasyfork_client_error_1": {
+    "message": "Greasy Fork 没有返回可安装的脚本地址。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_2": {
+    "message": "Greasy Fork 返回了无效的脚本地址。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_3": {
+    "message": "Greasy Fork 返回的脚本地址不属于官方更新源。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_4": {
+    "message": "Greasy Fork 请求失败：HTTP $VALUE_1$",
+    "description": "src/hosts/extension/greasyfork-client.ts；error; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_greasyfork_client_error_5": {
+    "message": "Greasy Fork 请求超时。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_text_6": {
+    "message": "Greasy Fork API 响应超过安全上限。",
+    "description": "src/hosts/extension/greasyfork-client.ts；text"
+  },
+  "cm_greasyfork_client_error_7": {
+    "message": "Greasy Fork API 请求被重定向到非官方来源。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_8": {
+    "message": "Greasy Fork 返回了无效 JSON。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_9": {
+    "message": "search_greasyfork_scripts 需要有效的网站域名或网址。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_10": {
+    "message": "search_greasyfork_scripts 需要有效的网站域名或网址。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_11": {
+    "message": "Greasy Fork 站点搜索只支持无凭据、无端口的 HTTP 网站。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_12": {
+    "message": "search_greasyfork_scripts 需要有效的公开网站域名。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_13": {
+    "message": "search_greasyfork_scripts 需要有效的 site、query、sort 和 page。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_14": {
+    "message": "Greasy Fork 返回了无法识别的搜索结果。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_15": {
+    "message": "install_greasyfork_script 需要有效的 script_id。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_error_16": {
+    "message": "Greasy Fork 没有返回匹配的脚本详情。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_greasyfork_client_text_17": {
+    "message": "Greasy Fork 脚本源码超过 4 MB 安全上限。",
+    "description": "src/hosts/extension/greasyfork-client.ts；text"
+  },
+  "cm_greasyfork_client_error_18": {
+    "message": "Greasy Fork 返回了空脚本源码。",
+    "description": "src/hosts/extension/greasyfork-client.ts；error"
+  },
+  "cm_image_card_cover_error_1": {
+    "message": "卡牌封面提示词不能为空。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_image_card_cover_error_2": {
+    "message": "卡牌封面视觉概念必须使用英文描述。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_image_card_cover_text_3": {
+    "message": "卡牌封面生成失败：$VALUE_1$。",
+    "description": "src/hosts/extension/image-card-cover.ts；text; VALUE_1: detail",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "detail"
+      }
+    }
+  },
+  "cm_image_card_cover_text_4": {
+    "message": "卡牌封面生成失败：HTTP $VALUE_1$。",
+    "description": "src/hosts/extension/image-card-cover.ts；text; VALUE_1: status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "status"
+      }
+    }
+  },
+  "cm_image_card_cover_text_5": {
+    "message": "图像生成正在沿用模型服务，请先配置模型服务 API 密钥，或改用独立图像服务。",
+    "description": "src/hosts/extension/image-card-cover.ts；text"
+  },
+  "cm_image_card_cover_text_6": {
+    "message": "图像服务尚未配置，请填写独立图像服务的 API 密钥。",
+    "description": "src/hosts/extension/image-card-cover.ts；text"
+  },
+  "cm_image_card_cover_error_7": {
+    "message": "图像服务返回了无效 JSON。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_image_card_cover_error_8": {
+    "message": "图像服务没有返回图片。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_image_card_cover_error_9": {
+    "message": "图像服务返回了不安全的图片地址。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_image_card_cover_error_10": {
+    "message": "下载卡牌封面失败：HTTP $VALUE_1$。",
+    "description": "src/hosts/extension/image-card-cover.ts；error; VALUE_1: imageResponse.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "imageResponse.status"
+      }
+    }
+  },
+  "cm_image_card_cover_error_11": {
+    "message": "卡牌封面下载被重定向到了不安全的地址。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_image_card_cover_error_12": {
+    "message": "图像生成结果既没有图像数据，也没有图片地址。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_image_card_cover_error_13": {
+    "message": "卡牌封面生成结果不是图片。",
+    "description": "src/hosts/extension/image-card-cover.ts；error"
+  },
+  "cm_installer_error_1": {
+    "message": "安装入口只接受标准 .user.js 地址。",
+    "description": "src/hosts/extension/installer.ts；error"
+  },
+  "cm_installer_error_2": {
+    "message": "安装页面缺少 .user.js 来源地址。",
+    "description": "src/hosts/extension/installer.ts；error"
+  },
+  "cm_installer_error_3": {
+    "message": "扩展没有返回有效的脚本安装预览。",
+    "description": "src/hosts/extension/installer.ts；error"
+  },
+  "cm_installer_error_4": {
+    "message": "扩展没有返回有效的脚本安装结果。",
+    "description": "src/hosts/extension/installer.ts；error"
+  },
+  "cm_lumno_new_tab_compat_text_1": {
+    "message": "来源：搜索建议",
+    "description": "src/hosts/extension/lumno-new-tab-compat.ts；text"
+  },
+  "cm_media_resources_service_error_1": {
+    "message": "顺手牵羊设置格式无效。",
+    "description": "src/hosts/extension/media-resources-service.ts；error"
+  },
+  "cm_media_resources_service_error_2": {
+    "message": "当前页面已经没有这项媒体资源。",
+    "description": "src/hosts/extension/media-resources-service.ts；error"
+  },
+  "cm_media_resources_service_error_3": {
+    "message": "当前浏览器没有提供扩展下载接口。",
+    "description": "src/hosts/extension/media-resources-service.ts；error"
+  },
+  "cm_media_resources_service_error_4": {
+    "message": "播放清单请使用顺手牵羊原版解析器。",
+    "description": "src/hosts/extension/media-resources-service.ts；error"
+  },
+  "cm_media_resources_service_error_5": {
+    "message": "Aria2 请求失败：HTTP $VALUE_1$。",
+    "description": "src/hosts/extension/media-resources-service.ts；error; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_media_resources_error_1": {
+    "message": "扩展没有返回有效的媒体资源状态。",
+    "description": "src/hosts/extension/media-resources.ts；error"
+  },
+  "cm_media_resources_error_2": {
+    "message": "扩展未能打开顺手牵羊设置。",
+    "description": "src/hosts/extension/media-resources.ts；error"
+  },
+  "cm_media_resources_error_3": {
+    "message": "扩展没有确认媒体资源下载请求。",
+    "description": "src/hosts/extension/media-resources.ts；error"
+  },
+  "cm_media_resources_error_4": {
+    "message": "扩展没有返回有效的播放清单分析结果。",
+    "description": "src/hosts/extension/media-resources.ts；error"
+  },
+  "cm_media_resources_error_5": {
+    "message": "扩展没有确认 Aria2 下载请求。",
+    "description": "src/hosts/extension/media-resources.ts；error"
+  },
+  "cm_media_speed_content_error_1": {
+    "message": "扩展返回了无效的媒体倍速状态。",
+    "description": "src/hosts/extension/media-speed-content.ts；error"
+  },
+  "cm_media_speed_service_text_1": {
+    "message": "后台广播倍速设置失败",
+    "description": "src/hosts/extension/media-speed-service.ts；text"
+  },
+  "cm_media_speed_service_error_2": {
+    "message": "媒体倍速设置格式无效。",
+    "description": "src/hosts/extension/media-speed-service.ts；error"
+  },
+  "cm_media_speed_service_error_3": {
+    "message": "媒体倍速收到了无效的倍速档位。",
+    "description": "src/hosts/extension/media-speed-service.ts；error"
+  },
+  "cm_media_speed_service_text_4": {
+    "message": "后台发送聚合快照失败",
+    "description": "src/hosts/extension/media-speed-service.ts；text"
+  },
+  "cm_media_speed_error_1": {
+    "message": "扩展返回了无效的媒体倍速状态。",
+    "description": "src/hosts/extension/media-speed.ts；error"
+  },
+  "cm_media_speed_error_2": {
+    "message": "扩展没有返回媒体倍速页面状态。",
+    "description": "src/hosts/extension/media-speed.ts；error"
+  },
+  "cm_media_speed_error_3": {
+    "message": "媒体倍速设置保存失败。",
+    "description": "src/hosts/extension/media-speed.ts；error"
+  },
+  "cm_microphone_permission_error_1": {
+    "message": "设备权限页面缺少挂载节点。",
+    "description": "src/hosts/extension/microphone-permission.ts；error"
+  },
+  "cm_microphone_permission_text_7": {
+    "message": "\n  <main class=\"permission-panel\">\n    <header class=\"permission-brand\">\n      <img\n        src=\"$VALUE_1$\"\n        alt=\"\"\n      />\n      <div>\n        <p>卡牌大师智能体 · 设备权限</p>\n        <h1>允许使用麦克风</h1>\n      </div>\n    </header>\n    <p class=\"permission-copy\">\n      浏览器需要先在普通扩展页面中记录一次麦克风授权，之后卡牌大师智能体\n      才能进行语音输入。\n    </p>\n    <div class=\"permission-status\" data-state=\"unavailable\">\n      <span>当前权限</span>\n      <strong>正在检测</strong>\n    </div>\n    <div class=\"permission-actions\">\n      <button type=\"button\" data-action=\"browser-settings\">\n        浏览器麦克风设置\n      </button>\n      <button type=\"button\" data-action=\"close\" hidden>完成并关闭</button>\n      <button type=\"button\" class=\"primary\" data-action=\"request\">\n        允许麦克风\n      </button>\n    </div>\n    <p class=\"permission-message\" role=\"status\"></p>\n  </main>\n",
+    "description": "src/hosts/extension/microphone-permission.ts；text; VALUE_1: CARD_MASTER_DEFAULT_ICON_PATH",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "CARD_MASTER_DEFAULT_ICON_PATH"
+      }
+    }
+  },
+  "cm_microphone_permission_error_8": {
+    "message": "设备权限页面缺少元素：$VALUE_1$",
+    "description": "src/hosts/extension/microphone-permission.ts；error; VALUE_1: selector",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "selector"
+      }
+    }
+  },
+  "cm_microphone_permission_text_9": {
+    "message": "已允许",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_10": {
+    "message": "已阻止",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_11": {
+    "message": "等待授权",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_12": {
+    "message": "无法检测",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_13": {
+    "message": "重新检测麦克风",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_14": {
+    "message": "允许麦克风",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_15": {
+    "message": "正在请求浏览器授权…",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_16": {
+    "message": "麦克风授权成功，现在可以返回卡牌大师智能体使用语音输入。",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_microphone_permission_text_17": {
+    "message": "$VALUE_1$ 如果浏览器没有弹出询问，请检查浏览器及系统的麦克风设置。",
+    "description": "src/hosts/extension/microphone-permission.ts；text; VALUE_1: microphonePermissionErrorMessage(error)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "microphonePermissionErrorMessage(error)"
+      }
+    }
+  },
+  "cm_microphone_permission_text_18": {
+    "message": "请在浏览器的网站权限与系统隐私设置中允许麦克风访问。",
+    "description": "src/hosts/extension/microphone-permission.ts；text"
+  },
+  "cm_new_tab_background_router_text_1": {
+    "message": "新标签页后台请求失败",
+    "description": "src/hosts/extension/new-tab-background-router.ts；text"
+  },
+  "cm_new_tab_background_router_text_2": {
+    "message": "每日回顾状态读取失败",
+    "description": "src/hosts/extension/new-tab-background-router.ts；text"
+  },
+  "cm_new_tab_background_router_text_3": {
+    "message": "每日回顾手动生成失败",
+    "description": "src/hosts/extension/new-tab-background-router.ts；text"
+  },
+  "cm_new_tab_background_router_text_4": {
+    "message": "新标签页后台请求失败",
+    "description": "src/hosts/extension/new-tab-background-router.ts；text"
+  },
+  "cm_new_tab_entry_text_1": {
+    "message": "预设或本地图片",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_2": {
+    "message": "壁纸来源",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_3": {
+    "message": "默认壁纸",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_4": {
+    "message": "AI 壁纸",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_5": {
+    "message": "AI 每日回顾壁纸",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_6": {
+    "message": "前往完整壁纸设置",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_7": {
+    "message": "$VALUE_1$ 回顾",
+    "description": "src/hosts/extension/new-tab-entry.ts；text; VALUE_1: sourceDate",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "sourceDate"
+      }
+    }
+  },
+  "cm_new_tab_entry_text_8": {
+    "message": "$VALUE_1$月$VALUE_2$日回顾",
+    "description": "src/hosts/extension/new-tab-entry.ts；text; VALUE_1: Number(match[2]); VALUE_2: Number(match[3])",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "Number(match[2])"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "Number(match[3])"
+      }
+    }
+  },
+  "cm_new_tab_entry_text_9": {
+    "message": "正在生成新回顾 · 当前展示$VALUE_1$",
+    "description": "src/hosts/extension/new-tab-entry.ts；text; VALUE_1: reviewDateLabel(content.sourceDate)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "reviewDateLabel(content.sourceDate)"
+      }
+    }
+  },
+  "cm_new_tab_entry_text_10": {
+    "message": "正在生成每日回顾",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_error_11": {
+    "message": "浏览器未完成提示词复制。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_text_12": {
+    "message": "收起每日回顾",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_13": {
+    "message": "展开每日回顾",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_14": {
+    "message": "生成提示词",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_15": {
+    "message": "复制完整生成提示词",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_16": {
+    "message": "复制完整生成提示词",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_17": {
+    "message": "已复制",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_18": {
+    "message": "复制失败",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_19": {
+    "message": "正在整理新的每日回顾",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_20": {
+    "message": "每日回顾已生成",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_21": {
+    "message": "移动鼠标或按键即可返回",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_22": {
+    "message": "查看前一天",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_23": {
+    "message": "查看后一天",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_24": {
+    "message": "回到最新回顾",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_25": {
+    "message": "回到最新",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_error_26": {
+    "message": "每日回顾选择结果超出了可用壁纸范围。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_27": {
+    "message": "每日回顾已完成，但对应的壁纸图片记录不存在。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_28": {
+    "message": "每日回顾图片与浏览历史日期不一致。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_29": {
+    "message": "每日回顾图片无法转换为新标签页壁纸。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_30": {
+    "message": "切换后的每日回顾壁纸没有完成加载。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_31": {
+    "message": "AI 壁纸尚未准备好，不能进入电子相框。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_32": {
+    "message": "壁纸已标记为启用，但页面没有可供电子相框使用的图片。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_33": {
+    "message": "电子相框无法读取当前壁纸图片。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_text_34": {
+    "message": "预设或本地图片",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_35": {
+    "message": "每日回顾已就绪",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_36": {
+    "message": "正在生成，暂用默认壁纸",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_text_37": {
+    "message": "等待生成，暂用默认壁纸",
+    "description": "src/hosts/extension/new-tab-entry.ts；text"
+  },
+  "cm_new_tab_entry_error_38": {
+    "message": "新标签页缺少内置页面挂载节点。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_39": {
+    "message": "全局牌库资源加载失败。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_entry_error_40": {
+    "message": "新标签页未能挂载牌库入口。",
+    "description": "src/hosts/extension/new-tab-entry.ts；error"
+  },
+  "cm_new_tab_service_error_1": {
+    "message": "新标签页拒绝打开不受支持的网址协议。",
+    "description": "src/hosts/extension/new-tab-service.ts；error"
+  },
+  "cm_new_tab_service_text_2": {
+    "message": "当前浏览器未提供历史记录读取能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_3": {
+    "message": "当前浏览器未提供历史记录删除能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_4": {
+    "message": "当前浏览器未提供书签读取能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_5": {
+    "message": "当前浏览器未提供书签编辑能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_6": {
+    "message": "当前浏览器未提供书签编辑能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_7": {
+    "message": "当前浏览器未提供书签移动能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_8": {
+    "message": "当前浏览器未提供书签删除能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_9": {
+    "message": "当前浏览器未提供书签管理能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_10": {
+    "message": "Safari 未提供可由扩展直接打开的书签管理页面。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_error_11": {
+    "message": "浏览器书签管理页面无法打开。",
+    "description": "src/hosts/extension/new-tab-service.ts；error"
+  },
+  "cm_new_tab_service_text_12": {
+    "message": "当前浏览器未提供常用网站读取能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_13": {
+    "message": "当前浏览器未提供标签页读取能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_14": {
+    "message": "当前浏览器未提供标签页切换能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_15": {
+    "message": "当前浏览器未提供默认搜索引擎调用能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_16": {
+    "message": "浏览器默认搜索接口不能在后台新标签页中打开结果。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_17": {
+    "message": "当前浏览器不能在后台新标签页中调用默认搜索引擎。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_18": {
+    "message": "当前浏览器未提供 Chromium favicon 页面能力。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_text_19": {
+    "message": "浏览器内部页面不提供可由扩展加载的网站图标。",
+    "description": "src/hosts/extension/new-tab-service.ts；text"
+  },
+  "cm_new_tab_service_error_20": {
+    "message": "每日回顾请求必须由专用后台服务处理。",
+    "description": "src/hosts/extension/new-tab-service.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_1": {
+    "message": "扩展麦克风采集服务已经断开。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_2": {
+    "message": "扩展语音识别服务已经断开。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_3": {
+    "message": "扩展语音识别服务已经断开。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_4": {
+    "message": "已有语音识别会话正在运行，请结束后再测试。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_5": {
+    "message": "当前浏览器不支持扩展后台语音识别。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_6": {
+    "message": "语音识别连接测试超时。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_7": {
+    "message": "已有页面正在使用麦克风语音输入。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_8": {
+    "message": "麦克风采集会话已经失效。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_9": {
+    "message": "已有语音识别会话正在运行。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_10": {
+    "message": "当前浏览器不支持扩展后台语音识别。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_error_11": {
+    "message": "语音识别会话已经失效。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；error"
+  },
+  "cm_offscreen_audio_coordinator_text_12": {
+    "message": "语音识别连接在完成测试前意外结束。",
+    "description": "src/hosts/extension/offscreen-audio-coordinator.ts；text"
+  },
+  "cm_offscreen_audio_error_1": {
+    "message": "语音识别会话已经失效。",
+    "description": "src/hosts/extension/offscreen-audio.ts；error"
+  },
+  "cm_offscreen_audio_error_2": {
+    "message": "麦克风采集会话已经失效。",
+    "description": "src/hosts/extension/offscreen-audio.ts；error"
+  },
+  "cm_offscreen_audio_error_3": {
+    "message": "麦克风采集会话已经失效。",
+    "description": "src/hosts/extension/offscreen-audio.ts；error"
+  },
+  "cm_offscreen_speech_capture_error_1": {
+    "message": "麦克风采集未能及时结束。",
+    "description": "src/hosts/extension/offscreen-speech-capture.ts；error"
+  },
+  "cm_offscreen_speech_capture_error_2": {
+    "message": "扩展麦克风采集服务连接超时。",
+    "description": "src/hosts/extension/offscreen-speech-capture.ts；error"
+  },
+  "cm_offscreen_speech_capture_text_3": {
+    "message": "当前浏览器不支持扩展离屏麦克风采集。",
+    "description": "src/hosts/extension/offscreen-speech-capture.ts；text"
+  },
+  "cm_offscreen_speech_capture_error_4": {
+    "message": "扩展麦克风采集服务已经断开。",
+    "description": "src/hosts/extension/offscreen-speech-capture.ts；error"
+  },
+  "cm_offscreen_speech_capture_error_5": {
+    "message": "扩展麦克风采集服务已经断开。",
+    "description": "src/hosts/extension/offscreen-speech-capture.ts；error"
+  },
+  "cm_page_capability_background_router_error_1": {
+    "message": "暗夜降临无法确定当前站点。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_2": {
+    "message": "暗夜降临页面状态报告缺少顶层页面身份。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_3": {
+    "message": "暗夜降临资源请求缺少页面来源。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_4": {
+    "message": "媒体倍速无法确定当前页面。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_5": {
+    "message": "媒体倍速无法确定当前页面。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_6": {
+    "message": "媒体倍速无法确定媒体所在页面。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_7": {
+    "message": "媒体资源发现无法确定当前页面。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_8": {
+    "message": "媒体资源发现无法确定当前页面。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_9": {
+    "message": "媒体资源发现无法读取目标页面地址。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_10": {
+    "message": "媒体资源下载请求缺少当前标签页身份。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_11": {
+    "message": "播放清单分析请求缺少当前标签页身份。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_12": {
+    "message": "缓存捕捉无法确定当前标签页。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_capability_background_router_error_13": {
+    "message": "扩展能力请求缺少当前页面身份。",
+    "description": "src/hosts/extension/page-capability-background-router.ts；error"
+  },
+  "cm_page_theme_service_error_1": {
+    "message": "暗夜降临只允许读取 HTTP(S) 样式资源。",
+    "description": "src/hosts/extension/page-theme-service.ts；error"
+  },
+  "cm_page_theme_service_error_2": {
+    "message": "暗夜降临拒绝了超过 8 MiB 的页面样式资源。",
+    "description": "src/hosts/extension/page-theme-service.ts；error"
+  },
+  "cm_page_theme_service_error_3": {
+    "message": "暗夜降临读取的页面样式资源超过 8 MiB。",
+    "description": "src/hosts/extension/page-theme-service.ts；error"
+  },
+  "cm_page_theme_service_error_4": {
+    "message": "暗夜降临不读取包含凭据的资源地址。",
+    "description": "src/hosts/extension/page-theme-service.ts；error"
+  },
+  "cm_page_theme_service_error_5": {
+    "message": "页面样式资源读取失败：HTTP $VALUE_1$。",
+    "description": "src/hosts/extension/page-theme-service.ts；error; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_page_theme_service_error_6": {
+    "message": "暗夜降临读取页面样式资源超时。",
+    "description": "src/hosts/extension/page-theme-service.ts；error"
+  },
+  "cm_page_theme_service_error_7": {
+    "message": "暗夜降临设置格式无效。",
+    "description": "src/hosts/extension/page-theme-service.ts；error"
+  },
+  "cm_page_theme_error_1": {
+    "message": "扩展返回了无效的暗夜降临设置。",
+    "description": "src/hosts/extension/page-theme.ts；error"
+  },
+  "cm_registration_sync_error_1": {
+    "message": "已提交的脚本未进入注册系统。",
+    "description": "src/hosts/extension/registration-sync.ts；error"
+  },
+  "cm_repository_error_1": {
+    "message": "扩展返回了无效的用户脚本仓库。",
+    "description": "src/hosts/extension/repository.ts；error"
+  },
+  "cm_repository_error_2": {
+    "message": "扩展返回了无效的用户脚本变更结果。",
+    "description": "src/hosts/extension/repository.ts；error"
+  },
+  "cm_runtime_bridge_message_1": {
+    "message": "用户脚本请求上下文不可用。",
+    "description": "src/hosts/extension/runtime-bridge.ts；message"
+  },
+  "cm_runtime_bridge_error_2": {
+    "message": "用户脚本 AI 请求无效或未获授权。",
+    "description": "src/hosts/extension/runtime-bridge.ts；error"
+  },
+  "cm_runtime_bridge_error_3": {
+    "message": "这个用户脚本已有两个正在进行的 AI 请求。",
+    "description": "src/hosts/extension/runtime-bridge.ts；error"
+  },
+  "cm_runtime_bridge_error_4": {
+    "message": "用户脚本能力未获授权：$VALUE_1$",
+    "description": "src/hosts/extension/runtime-bridge.ts；error; VALUE_1: capability",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "capability"
+      }
+    }
+  },
+  "cm_runtime_bridge_error_5": {
+    "message": "用户脚本页面上下文不可用。",
+    "description": "src/hosts/extension/runtime-bridge.ts；error"
+  },
+  "cm_runtime_error_1": {
+    "message": "当前脚本实例未运行，请刷新页面后重试。",
+    "description": "src/hosts/extension/runtime.ts；error"
+  },
+  "cm_runtime_error_2": {
+    "message": "该脚本指令已失效，牌阵状态已经刷新。",
+    "description": "src/hosts/extension/runtime.ts；error"
+  },
+  "cm_safari_userscript_runtime_error_1": {
+    "message": "Safari 扩展运行时不可用。",
+    "description": "src/hosts/extension/safari-userscript-runtime.ts；error"
+  },
+  "cm_source_fetch_error_1": {
+    "message": "脚本来源不是有效 URL。",
+    "description": "src/hosts/extension/source-fetch.ts；error"
+  },
+  "cm_source_fetch_error_2": {
+    "message": "不支持 $VALUE_1$ 脚本来源。",
+    "description": "src/hosts/extension/source-fetch.ts；error; VALUE_1: url.protocol",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "url.protocol"
+      }
+    }
+  },
+  "cm_source_fetch_error_3": {
+    "message": "脚本来源不能包含登录凭据。",
+    "description": "src/hosts/extension/source-fetch.ts；error"
+  },
+  "cm_source_fetch_error_4": {
+    "message": "脚本源码下载超时。",
+    "description": "src/hosts/extension/source-fetch.ts；error"
+  },
+  "cm_source_fetch_error_5": {
+    "message": "脚本源码超过 4 MB 安全上限。",
+    "description": "src/hosts/extension/source-fetch.ts；error"
+  },
+  "cm_source_fetch_text_6": {
+    "message": "脚本源码超过 4 MB 安全上限。",
+    "description": "src/hosts/extension/source-fetch.ts；text"
+  },
+  "cm_source_fetch_error_7": {
+    "message": "脚本源码下载超时。",
+    "description": "src/hosts/extension/source-fetch.ts；error"
+  },
+  "cm_speech_capability_title_1": {
+    "message": "$VALUE_1$ 暂不支持语音输入",
+    "description": "src/hosts/extension/speech-capability.ts；title; VALUE_1: browser",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "browser"
+      }
+    }
+  },
+  "cm_speech_capability_message_2": {
+    "message": "请使用 Chrome、Edge 等 Chromium 浏览器。",
+    "description": "src/hosts/extension/speech-capability.ts；message"
+  },
+  "cm_sync_controller_error_1": {
+    "message": "同步服务未返回有效状态。",
+    "description": "src/hosts/extension/sync-controller.ts；error"
+  },
+  "cm_sync_settings_error_1": {
+    "message": "AI 同步配置包含无效或敏感字段。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_error_2": {
+    "message": "AI 同步配置无效。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_error_3": {
+    "message": "$VALUE_1$包含未知字段或无效值。",
+    "description": "src/hosts/extension/sync-settings.ts；error; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_sync_settings_text_4": {
+    "message": "牌库入口、显示与隐藏设置",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_text_5": {
+    "message": "新标签页全部偏好与自定义图标",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_text_6": {
+    "message": "暗夜降临",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_error_7": {
+    "message": "主题设置无效。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_text_8": {
+    "message": "媒体倍速与站点档位",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_error_9": {
+    "message": "倍速设置无效。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_text_10": {
+    "message": "手柄映射与控制参数",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_error_11": {
+    "message": "手柄设置无效。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_text_12": {
+    "message": "顺手牵羊",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_error_13": {
+    "message": "媒体资源设置无效。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_text_14": {
+    "message": "B 站与视频增强",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_text_15": {
+    "message": "内容拦截、规则、白名单与订阅",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_text_16": {
+    "message": "声音偏好",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_error_17": {
+    "message": "声音设置无效。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_text_18": {
+    "message": "脚本更新与运行偏好",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_settings_error_19": {
+    "message": "脚本运行设置无效。",
+    "description": "src/hosts/extension/sync-settings.ts；error"
+  },
+  "cm_sync_settings_text_20": {
+    "message": "AI 服务地址、协议与模型",
+    "description": "src/hosts/extension/sync-settings.ts；text"
+  },
+  "cm_sync_vendor_settings_error_1": {
+    "message": "上游配置包含未知或敏感字段。",
+    "description": "src/hosts/extension/sync-vendor-settings.ts；error"
+  },
+  "cm_sync_vendor_settings_error_2": {
+    "message": "媒体捕捉规则格式无效。",
+    "description": "src/hosts/extension/sync-vendor-settings.ts；error"
+  },
+  "cm_sync_vendor_settings_text_3": {
+    "message": "新标签页组件外观与快捷方式",
+    "description": "src/hosts/extension/sync-vendor-settings.ts；text"
+  },
+  "cm_sync_vendor_settings_text_4": {
+    "message": "新标签页书签顶部外观",
+    "description": "src/hosts/extension/sync-vendor-settings.ts；text"
+  },
+  "cm_sync_vendor_settings_text_5": {
+    "message": "顺手牵羊高级设置",
+    "description": "src/hosts/extension/sync-vendor-settings.ts；text"
+  },
+  "cm_sync_vendor_settings_text_6": {
+    "message": "顺手牵羊预览偏好",
+    "description": "src/hosts/extension/sync-vendor-settings.ts；text"
+  },
+  "cm_theme_content_error_1": {
+    "message": "扩展返回了无效的暗夜降临设置。",
+    "description": "src/hosts/extension/theme-content.ts；error"
+  },
+  "cm_theme_runtime_error_1": {
+    "message": "暗夜降临没有收到页面样式资源。",
+    "description": "src/hosts/extension/theme-runtime.ts；error"
+  },
+  "cm_userscript_activation_coordinator_error_1": {
+    "message": "当前文档执行器不可用。",
+    "description": "src/hosts/extension/userscript-activation-coordinator.ts；error"
+  },
+  "cm_userscript_activation_coordinator_text_2": {
+    "message": "脚本即时执行失败。",
+    "description": "src/hosts/extension/userscript-activation-coordinator.ts；text"
+  },
+  "cm_userscript_capability_service_text_1": {
+    "message": "卡牌大师",
+    "description": "src/hosts/extension/userscript-capability-service.ts；text"
+  },
+  "cm_userscript_capability_service_error_2": {
+    "message": "当前浏览器不支持创建隐私窗口。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_3": {
+    "message": "当前浏览器不支持脚本通知。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_4": {
+    "message": "当前浏览器不支持脚本通知。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_5": {
+    "message": "当前浏览器不支持脚本下载。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_6": {
+    "message": "当前浏览器不支持脚本下载。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_7": {
+    "message": "当前浏览器不支持脚本 Cookie 操作。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_8": {
+    "message": "当前浏览器不支持脚本 Cookie 操作。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_9": {
+    "message": "当前浏览器不支持脚本 Cookie 操作。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_capability_service_error_10": {
+    "message": "当前浏览器不支持脚本网络请求监听。",
+    "description": "src/hosts/extension/userscript-capability-service.ts；error"
+  },
+  "cm_userscript_cover_error_1": {
+    "message": "扩展没有返回有效的脚本卡牌封面。",
+    "description": "src/hosts/extension/userscript-cover.ts；error"
+  },
+  "cm_userscript_cover_error_2": {
+    "message": "扩展没有返回图像服务配置状态。",
+    "description": "src/hosts/extension/userscript-cover.ts；error"
+  },
+  "cm_userscript_library_coordinator_text_1": {
+    "message": "脚本未通过兼容性预检。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；text"
+  },
+  "cm_userscript_library_coordinator_error_2": {
+    "message": "脚本源码下载失败：HTTP $VALUE_1$。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error; VALUE_1: download.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "download.status"
+      }
+    }
+  },
+  "cm_userscript_library_coordinator_error_3": {
+    "message": "部分页面没有接收用户脚本牌库更新。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_library_coordinator_error_4": {
+    "message": "用户脚本运行时协调没有返回结果。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_library_coordinator_text_5": {
+    "message": "用户脚本仓库收尾失败。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；text"
+  },
+  "cm_userscript_library_coordinator_text_6": {
+    "message": "用户脚本仓库收尾失败",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；text"
+  },
+  "cm_userscript_library_coordinator_text_7": {
+    "message": "用户脚本仓库收尾失败。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；text"
+  },
+  "cm_userscript_library_coordinator_error_8": {
+    "message": "脚本安装请求缺少当前标签页身份。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_library_coordinator_text_9": {
+    "message": "用户脚本牌库排序广播失败",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；text"
+  },
+  "cm_userscript_library_coordinator_error_10": {
+    "message": "全局脚本牌库请求缺少当前标签页身份。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_library_coordinator_error_11": {
+    "message": "站点脚本检索请求缺少当前页面地址。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_library_coordinator_error_12": {
+    "message": "Safari 用户脚本运行时不可用。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_library_coordinator_error_13": {
+    "message": "Safari 用户脚本请求缺少页面身份。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_library_coordinator_error_14": {
+    "message": "部分 Safari 用户脚本未能注入。",
+    "description": "src/hosts/extension/userscript-library-coordinator.ts；error"
+  },
+  "cm_userscript_permission_message_1": {
+    "message": "Firefox 已授予用户脚本权限，但执行 API 尚未就绪。请重新加载扩展。",
+    "description": "src/hosts/extension/userscript-permission.ts；message"
+  },
+  "cm_userscript_permission_message_2": {
+    "message": "Firefox 需要先授权用户脚本执行权限。",
+    "description": "src/hosts/extension/userscript-permission.ts；message"
+  },
+  "cm_userscript_permission_message_3": {
+    "message": "请在扩展详情页开启“允许运行用户脚本”，然后重新加载扩展。Chrome 默认关闭这项开关。",
+    "description": "src/hosts/extension/userscript-permission.ts；message"
+  },
+  "cm_userscript_permission_error_4": {
+    "message": "当前浏览器不支持在扩展内申请用户脚本权限。",
+    "description": "src/hosts/extension/userscript-permission.ts；error"
+  },
+  "cm_userscript_permission_error_5": {
+    "message": "Firefox 没有授予用户脚本执行权限。",
+    "description": "src/hosts/extension/userscript-permission.ts；error"
+  },
+  "cm_userscript_settings_error_1": {
+    "message": "扩展没有返回有效的脚本设置。",
+    "description": "src/hosts/extension/userscript-settings.ts；error"
+  },
+  "cm_volcengine_speech_session_error_1": {
+    "message": "语音识别鉴权规则未能写入浏览器。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_2": {
+    "message": "已有语音识别鉴权会话正在运行。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_3": {
+    "message": "语音识别会话已经建立。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_4": {
+    "message": "语音识别服务地址配置无效。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_5": {
+    "message": "无法连接字节跳动语音识别服务。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_6": {
+    "message": "语音识别连接在返回最终结果前中断。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_7": {
+    "message": "语音识别连接发生网络错误。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_8": {
+    "message": "语音识别会话尚未开始。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_error_9": {
+    "message": "语音识别连接已经关闭。",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；error"
+  },
+  "cm_volcengine_speech_session_text_10": {
+    "message": "语音输入已关闭",
+    "description": "src/hosts/extension/volcengine-speech-session.ts；text"
+  },
+  "cm_types_error_1": {
+    "message": "媒体倍速无法确定当前站点。",
+    "description": "src/media-speed/domain/types.ts；error"
+  },
+  "cm_types_error_2": {
+    "message": "媒体倍速无法确定当前站点。",
+    "description": "src/media-speed/domain/types.ts；error"
+  },
+  "cm_types_error_3": {
+    "message": "媒体倍速无法确定当前站点。",
+    "description": "src/media-speed/domain/types.ts；error"
+  },
+  "cm_local_wallpaper_error_1": {
+    "message": "本地壁纸存储组件尚未加载。",
+    "description": "src/new-tab/application/local-wallpaper.ts；error"
+  },
+  "cm_local_wallpaper_error_2": {
+    "message": "本地壁纸记录无效。",
+    "description": "src/new-tab/application/local-wallpaper.ts；error"
+  },
+  "cm_photo_frame_runtime_label_1": {
+    "message": "退出电子相框",
+    "description": "src/new-tab/application/photo-frame-runtime.ts；label"
+  },
+  "cm_photo_frame_runtime_label_2": {
+    "message": "进入电子相框",
+    "description": "src/new-tab/application/photo-frame-runtime.ts；label"
+  },
+  "cm_preferences_error_1": {
+    "message": "请输入有效的网址。",
+    "description": "src/new-tab/application/preferences.ts；error"
+  },
+  "cm_preferences_error_2": {
+    "message": "指定页面仅支持 http 或 https 网址。",
+    "description": "src/new-tab/application/preferences.ts；error"
+  },
+  "cm_wallpapers_label_1": {
+    "message": "深色版画地形",
+    "description": "src/new-tab/application/wallpapers.ts；label"
+  },
+  "cm_wallpapers_label_2": {
+    "message": "深色睡莲夜曲",
+    "description": "src/new-tab/application/wallpapers.ts；label"
+  },
+  "cm_wallpapers_label_3": {
+    "message": "深色月下山水",
+    "description": "src/new-tab/application/wallpapers.ts；label"
+  },
+  "cm_wallpapers_label_4": {
+    "message": "莫奈海岸",
+    "description": "src/new-tab/application/wallpapers.ts；label"
+  },
+  "cm_wallpapers_label_5": {
+    "message": "白色立体天文台",
+    "description": "src/new-tab/application/wallpapers.ts；label"
+  },
+  "cm_wallpapers_label_6": {
+    "message": "白色山水",
+    "description": "src/new-tab/application/wallpapers.ts；label"
+  },
+  "cm_dark_reader_settings_error_1": {
+    "message": "Dark Reader 配置缺少有效的主题设置。",
+    "description": "src/page-theme/domain/dark-reader-settings.ts；error"
+  },
+  "cm_dark_reader_settings_error_2": {
+    "message": "导入文件不是有效的 Dark Reader 设置。",
+    "description": "src/page-theme/domain/dark-reader-settings.ts；error"
+  },
+  "cm_dav_listing_error_1": {
+    "message": "目录响应不是完整的 WebDAV 列表，请检查服务地址与反向代理配置。",
+    "description": "src/sync/dav-listing.ts；error"
+  },
+  "cm_dav_listing_error_2": {
+    "message": "目录中的文件属性不可读，已停止同步，请检查读取权限。",
+    "description": "src/sync/dav-listing.ts；error"
+  },
+  "cm_model_error_1": {
+    "message": "同步内容格式无效，本机数据未被替换。",
+    "description": "src/sync/model.ts；error"
+  },
+  "cm_model_error_2": {
+    "message": "同步内容超过 64 MB，已保留本机数据并暂停同步。",
+    "description": "src/sync/model.ts；error"
+  },
+  "cm_model_error_3": {
+    "message": "同步版本记录无效。",
+    "description": "src/sync/model.ts；error"
+  },
+  "cm_model_error_4": {
+    "message": "远端同步格式不受支持，请将所有设备更新到相同版本后使用新的同步目录。",
+    "description": "src/sync/model.ts；error"
+  },
+  "cm_model_error_5": {
+    "message": "请填写 WebDAV 目录地址、账号和应用密码。",
+    "description": "src/sync/model.ts；error"
+  },
+  "cm_model_error_6": {
+    "message": "WebDAV 地址无效。",
+    "description": "src/sync/model.ts；error"
+  },
+  "cm_model_error_7": {
+    "message": "请使用 HTTPS 目录地址，将账号与应用密码填写在各自的输入框中。",
+    "description": "src/sync/model.ts；error"
+  },
+  "cm_projection_text_1": {
+    "message": "本机配置刚发生变化。",
+    "description": "src/sync/projection.ts；text"
+  },
+  "cm_projection_error_2": {
+    "message": "同步脚本格式无效。",
+    "description": "src/sync/projection.ts；error"
+  },
+  "cm_projection_error_3": {
+    "message": "同步脚本配置不完整。",
+    "description": "src/sync/projection.ts；error"
+  },
+  "cm_projection_error_4": {
+    "message": "同步脚本的身份与源码不一致。",
+    "description": "src/sync/projection.ts；error"
+  },
+  "cm_projection_error_5": {
+    "message": "同步的脚本排序无效。",
+    "description": "src/sync/projection.ts；error"
+  },
+  "cm_projection_error_6": {
+    "message": "同步包含无法识别的配置，请更新所有设备后重试。",
+    "description": "src/sync/projection.ts；error"
+  },
+  "cm_service_message_1": {
+    "message": "连接后自动同步全部脚本与插件配置。",
+    "description": "src/sync/service.ts；message"
+  },
+  "cm_service_text_2": {
+    "message": "[媒体内容 $VALUE_1$ KB]",
+    "description": "src/sync/service.ts；text; VALUE_1: (value.length / 1024).toFixed(1)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "(value.length / 1024).toFixed(1)"
+      }
+    }
+  },
+  "cm_service_text_3": {
+    "message": "$VALUE_1$\n（预览已截断，完整内容仍保留在同步版本中）",
+    "description": "src/sync/service.ts；text; VALUE_1: text.slice(0, 8000)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "text.slice(0, 8000)"
+      }
+    }
+  },
+  "cm_service_error_25": {
+    "message": "同步版本列表记录无效。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_error_26": {
+    "message": "同步冲突记录无效。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_error_27": {
+    "message": "本机同步记录损坏，已停止同步。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_error_28": {
+    "message": "同步预览记录损坏。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_error_29": {
+    "message": "同步提交记录损坏。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_text_32": {
+    "message": "正在同步…",
+    "description": "src/sync/service.ts；text"
+  },
+  "cm_service_text_33": {
+    "message": "请确认恢复内容，当前数据将保留一份历史。",
+    "description": "src/sync/service.ts；text"
+  },
+  "cm_service_text_34": {
+    "message": "请查看合并结果后确认同步。",
+    "description": "src/sync/service.ts；text"
+  },
+  "cm_service_error_35": {
+    "message": "缺少待完成的同步记录。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_text_36": {
+    "message": "本机有新的修改，已保留并等待下一次同步。",
+    "description": "src/sync/service.ts；text"
+  },
+  "cm_service_text_37": {
+    "message": "已同步当前可见版本，其他设备的新修改将在下次检查时合并。",
+    "description": "src/sync/service.ts；text"
+  },
+  "cm_service_error_38": {
+    "message": "同步空间已达到 4096 个版本，请保留目录备份后使用新的同步目录。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_message_39": {
+    "message": "同步提交待完成。",
+    "description": "src/sync/service.ts；message"
+  },
+  "cm_service_message_40": {
+    "message": "已断开同步，本机数据和历史均保留。",
+    "description": "src/sync/service.ts；message"
+  },
+  "cm_service_message_41": {
+    "message": "已取消预览，本机数据未更改。",
+    "description": "src/sync/service.ts；message"
+  },
+  "cm_service_error_42": {
+    "message": "预览已过期，请重新读取。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_error_43": {
+    "message": "请选择每项冲突要保留的版本。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_error_44": {
+    "message": "请先连接同步空间。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_error_45": {
+    "message": "找不到该历史版本。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_message_46": {
+    "message": "已同步当前可见版本。",
+    "description": "src/sync/service.ts；message"
+  },
+  "cm_service_error_47": {
+    "message": "同步操作格式无效。",
+    "description": "src/sync/service.ts；error"
+  },
+  "cm_service_text_48": {
+    "message": "同步失败，本机数据已保留。",
+    "description": "src/sync/service.ts；text"
+  },
+  "cm_versions_error_1": {
+    "message": "版本内容校验失败，已保留本机数据。",
+    "description": "src/sync/versions.ts；error"
+  },
+  "cm_versions_error_2": {
+    "message": "同步版本超过 4096 个，已暂停读取。请保留目录备份后使用新的同步目录。",
+    "description": "src/sync/versions.ts；error"
+  },
+  "cm_versions_error_3": {
+    "message": "同步目录存在重复版本。",
+    "description": "src/sync/versions.ts；error"
+  },
+  "cm_versions_error_4": {
+    "message": "同步历史缺少父版本，请检查目录和代理缓存后重试。",
+    "description": "src/sync/versions.ts；error"
+  },
+  "cm_versions_error_5": {
+    "message": "同步历史包含循环引用。",
+    "description": "src/sync/versions.ts；error"
+  },
+  "cm_versions_label_6": {
+    "message": "设备 $VALUE_1$ · $VALUE_2$",
+    "description": "src/sync/versions.ts；label; VALUE_1: record.deviceId.slice(0, 6); VALUE_2: new Date(record.at).toLocaleString('zh-CN', { hour12: false })",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "record.deviceId.slice(0, 6)"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "new Date(record.at).toLocaleString('zh-CN', { hour12: false })"
+      }
+    }
+  },
+  "cm_wallpapers_error_1": {
+    "message": "自定义壁纸格式无效。",
+    "description": "src/sync/wallpapers.ts；error"
+  },
+  "cm_wallpapers_error_2": {
+    "message": "自定义壁纸包含重复标识。",
+    "description": "src/sync/wallpapers.ts；error"
+  },
+  "cm_wallpapers_error_3": {
+    "message": "壁纸存储正在升级，请关闭旧设置页后重试。",
+    "description": "src/sync/wallpapers.ts；error"
+  },
+  "cm_wallpapers_text_4": {
+    "message": "本机壁纸刚发生变化。",
+    "description": "src/sync/wallpapers.ts；text"
+  },
+  "cm_wallpapers_error_5": {
+    "message": "壁纸存储操作失败。",
+    "description": "src/sync/wallpapers.ts；error"
+  },
+  "cm_webdav_get_1": {
+    "message": "读取文件",
+    "description": "src/sync/webdav.ts；GET"
+  },
+  "cm_webdav_put_2": {
+    "message": "写入文件",
+    "description": "src/sync/webdav.ts；PUT"
+  },
+  "cm_webdav_mkcol_3": {
+    "message": "创建目录",
+    "description": "src/sync/webdav.ts；MKCOL"
+  },
+  "cm_webdav_propfind_4": {
+    "message": "列举目录",
+    "description": "src/sync/webdav.ts；PROPFIND"
+  },
+  "cm_webdav_delete_5": {
+    "message": "清理测试文件",
+    "description": "src/sync/webdav.ts；DELETE"
+  },
+  "cm_webdav_text_6": {
+    "message": "$VALUE_1$：请求未完成。",
+    "description": "src/sync/webdav.ts；text; VALUE_1: label",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "label"
+      }
+    }
+  },
+  "cm_webdav_error_7": {
+    "message": "$VALUE_1$失败：请检查网络、HTTPS 证书和最终目录地址；本机数据已保留。",
+    "description": "src/sync/webdav.ts；error; VALUE_1: label",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "label"
+      }
+    }
+  },
+  "cm_webdav_error_8": {
+    "message": "$VALUE_1$被拒绝（HTTP $VALUE_2$），请检查账号、应用密码和目录权限。",
+    "description": "src/sync/webdav.ts；error; VALUE_1: label; VALUE_2: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "label"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_webdav_text_9": {
+    "message": "父目录不存在，请先在 WebDAV 中创建父目录。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_text_10": {
+    "message": "请检查服务端及反向代理是否允许该请求方法。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_error_11": {
+    "message": "$VALUE_1$失败（HTTP $VALUE_2$）。$VALUE_3$",
+    "description": "src/sync/webdav.ts；error; VALUE_1: label; VALUE_2: response.status; VALUE_3: hint",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "label"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "response.status"
+      },
+      "VALUE_3": {
+        "content": "$3",
+        "example": "hint"
+      }
+    }
+  },
+  "cm_webdav_error_12": {
+    "message": "列举目录失败：返回 HTTP $VALUE_1$，期望 WebDAV 207。请检查最终目录地址和 PROPFIND 支持。",
+    "description": "src/sync/webdav.ts；error; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_webdav_text_13": {
+    "message": "目录列表超过 8 MB，已暂停同步。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_error_14": {
+    "message": "同步版本标识无效。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_15": {
+    "message": "同步历史文件暂不可读或已被删除，请检查目录及代理缓存后重试。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_text_16": {
+    "message": "单个同步版本超过 65 MB，已停止读取。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_error_17": {
+    "message": "同步版本尚未完整写入或已损坏，请稍后重试。本机数据已保留。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_18": {
+    "message": "版本文件名与内容不一致。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_19": {
+    "message": "同步空间已达到 4096 个版本，请保留目录备份后使用新的同步目录。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_20": {
+    "message": "同步历史缺少已发布的版本，请检查目录及代理缓存后重试。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_21": {
+    "message": "同步历史超过 257 MB，已暂停同步，请保留备份后使用新的同步目录。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_text_22": {
+    "message": "已有版本内容过大。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_text_23": {
+    "message": "正在重新写入未完整保存的相同版本。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_error_24": {
+    "message": "版本目录不存在，请重新连接同步空间。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_25": {
+    "message": "版本写入后读回内容不一致，未标记为同步成功。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_26": {
+    "message": "版本发布标记未能保存，本机数据已保留，稍后会重试。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_text_27": {
+    "message": "实际同步目录：$VALUE_1$",
+    "description": "src/sync/webdav.ts；text; VALUE_1: this.directory",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "this.directory"
+      }
+    }
+  },
+  "cm_webdav_error_28": {
+    "message": "同步目录无法创建，请先确认填写的父目录存在。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_error_29": {
+    "message": "同步目录不可写。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_text_30": {
+    "message": "测试文件返回内容过大。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_error_31": {
+    "message": "测试文件读回失败或内容不一致，请检查代理缓存和 WebDAV 服务。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_text_32": {
+    "message": "服务返回 ETag；独立版本同步无需条件写入。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_text_33": {
+    "message": "服务未返回 ETag；独立版本同步无需 ETag／If-Match。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_error_34": {
+    "message": "PROPFIND 未列出刚写入的测试文件，请检查目录权限、列表完整性及代理缓存。",
+    "description": "src/sync/webdav.ts；error"
+  },
+  "cm_webdav_text_35": {
+    "message": "目录读写与文件可见性检查通过。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_webdav_text_36": {
+    "message": "测试文件清理未完成，可在 WebDAV 目录手动删除 probe 文件。",
+    "description": "src/sync/webdav.ts；text"
+  },
+  "cm_card_accent_error_1": {
+    "message": "卡牌封面取色需要有效的 RGBA 像素。",
+    "description": "src/userscript/application/card-accent.ts；error"
+  },
+  "cm_card_accent_error_2": {
+    "message": "浏览器无法创建卡牌封面取色画布。",
+    "description": "src/userscript/application/card-accent.ts；error"
+  },
+  "cm_card_accent_error_3": {
+    "message": "卡牌封面无法读取，不能计算边框颜色。",
+    "description": "src/userscript/application/card-accent.ts；error"
+  },
+  "cm_card_accent_error_4": {
+    "message": "当前浏览器无法解码卡牌封面颜色。",
+    "description": "src/userscript/application/card-accent.ts；error"
+  },
+  "cm_card_accent_error_5": {
+    "message": "卡牌封面解码失败。",
+    "description": "src/userscript/application/card-accent.ts；error"
+  },
+  "cm_card_cover_text_1": {
+    "message": "OpenAI 兼容图像服务尚未配置，请在卡牌大师智能体的设置中完成图像生成配置。",
+    "description": "src/userscript/application/card-cover.ts；text"
+  },
+  "cm_card_cover_error_2": {
+    "message": "封面媒体没有有效的画面尺寸。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_card_cover_error_3": {
+    "message": "浏览器无法创建卡牌封面绘图上下文。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_card_cover_error_4": {
+    "message": "封面转换失败，生成结果无效或超过 $VALUE_1$ MB。",
+    "description": "src/userscript/application/card-cover.ts；error; VALUE_1: Math.floor(\n        MAX_USERSCRIPT_COVER_IMAGE_DATA_URL_LENGTH / 1024 / 1024,\n      )",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "Math.floor(\n        MAX_USERSCRIPT_COVER_IMAGE_DATA_URL_LENGTH / 1024 / 1024,\n      )"
+      }
+    }
+  },
+  "cm_card_cover_error_5": {
+    "message": "封面文件必须是图片。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_card_cover_error_6": {
+    "message": "封面图片不能超过 20 MB。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_card_cover_error_7": {
+    "message": "当前浏览器无法读取这个封面视频，请换用浏览器可播放的视频格式。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_card_cover_error_8": {
+    "message": "封面文件必须是图片或视频。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_card_cover_error_9": {
+    "message": "封面视频不能超过 20 MB。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_card_cover_error_10": {
+    "message": "封面视频编码失败或文件过大。",
+    "description": "src/userscript/application/card-cover.ts；error"
+  },
+  "cm_install_service_message_1": {
+    "message": "已经存在同名同命名空间的脚本“$VALUE_1$”，请读取该脚本后执行更新。",
+    "description": "src/userscript/application/install-service.ts；message; VALUE_1: existing.metadata.name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "existing.metadata.name"
+      }
+    }
+  },
+  "cm_install_service_error_2": {
+    "message": "找不到要更新的用户脚本：$VALUE_1$",
+    "description": "src/userscript/application/install-service.ts；error; VALUE_1: targetScriptId",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "targetScriptId"
+      }
+    }
+  },
+  "cm_install_service_message_3": {
+    "message": "脚本身份已经属于“$VALUE_1$”。",
+    "description": "src/userscript/application/install-service.ts；message; VALUE_1: conflict.metadata.name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "conflict.metadata.name"
+      }
+    }
+  },
+  "cm_javascript_syntax_message_1": {
+    "message": "用户脚本语法错误：$VALUE_1$",
+    "description": "src/userscript/application/javascript-syntax.ts；message; VALUE_1: message",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "message"
+      }
+    }
+  },
+  "cm_library_transfer_text_1": {
+    "message": "导入文件：$VALUE_1$",
+    "description": "src/userscript/application/library-transfer.ts；text; VALUE_1: fileName",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "fileName"
+      }
+    }
+  },
+  "cm_library_transfer_text_2": {
+    "message": "结果：$VALUE_1$ 张新增，$VALUE_2$ 张重复跳过，$VALUE_3$ 张未导入",
+    "description": "src/userscript/application/library-transfer.ts；text; VALUE_1: result.installed; VALUE_2: result.skipped.length; VALUE_3: result.rejected.length",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "result.installed"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "result.skipped.length"
+      },
+      "VALUE_3": {
+        "content": "$3",
+        "example": "result.rejected.length"
+      }
+    }
+  },
+  "cm_library_transfer_text_3": {
+    "message": "重复跳过：",
+    "description": "src/userscript/application/library-transfer.ts；text"
+  },
+  "cm_library_transfer_text_4": {
+    "message": "未导入：",
+    "description": "src/userscript/application/library-transfer.ts；text"
+  },
+  "cm_library_transfer_error_5": {
+    "message": "归档中没有找到可导入的用户脚本。",
+    "description": "src/userscript/application/library-transfer.ts；error"
+  },
+  "cm_library_transfer_text_6": {
+    "message": "本机已存在同一 @namespace 与 @name 的脚本，已保留本机卡牌。",
+    "description": "src/userscript/application/library-transfer.ts；text"
+  },
+  "cm_library_transfer_text_7": {
+    "message": "归档中存在重复脚本，已保留首次出现的条目。",
+    "description": "src/userscript/application/library-transfer.ts；text"
+  },
+  "cm_metadata_editor_error_1": {
+    "message": "$VALUE_1$$VALUE_2$不能超过 $VALUE_3$ 个字符。",
+    "description": "src/userscript/application/metadata-editor.ts；error; VALUE_1: label; VALUE_2: required ? '不能为空，且' : ''; VALUE_3: maxLength",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "label"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "required ? '不能为空，且' : ''"
+      },
+      "VALUE_3": {
+        "content": "$3",
+        "example": "maxLength"
+      }
+    }
+  },
+  "cm_metadata_editor_error_2": {
+    "message": "$VALUE_1$不能包含换行。",
+    "description": "src/userscript/application/metadata-editor.ts；error; VALUE_1: label",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "label"
+      }
+    }
+  },
+  "cm_metadata_editor_error_3": {
+    "message": "用户脚本元数据块缺少结束标记。",
+    "description": "src/userscript/application/metadata-editor.ts；error"
+  },
+  "cm_metadata_editor_error_4": {
+    "message": "无法定位用户脚本元数据块。",
+    "description": "src/userscript/application/metadata-editor.ts；error"
+  },
+  "cm_metadata_editor_text_5": {
+    "message": "脚本名称",
+    "description": "src/userscript/application/metadata-editor.ts；text"
+  },
+  "cm_metadata_editor_text_6": {
+    "message": "脚本描述",
+    "description": "src/userscript/application/metadata-editor.ts；text"
+  },
+  "cm_metadata_editor_error_7": {
+    "message": "无法定位用户脚本元数据块。",
+    "description": "src/userscript/application/metadata-editor.ts；error"
+  },
+  "cm_preflight_message_1": {
+    "message": "兼容的 @$VALUE_1$ 规则已规范为 $VALUE_2$。",
+    "description": "src/userscript/application/preflight.ts；message; VALUE_1: key; VALUE_2: normalizedPattern",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "key"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "normalizedPattern"
+      }
+    }
+  },
+  "cm_preflight_message_2": {
+    "message": "非标准 @$VALUE_1$ 规则将使用兼容的用户脚本通配匹配。",
+    "description": "src/userscript/application/preflight.ts；message; VALUE_1: key",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "key"
+      }
+    }
+  },
+  "cm_preflight_message_3": {
+    "message": "$VALUE_1$：非标准规则将使用兼容的用户脚本通配匹配。",
+    "description": "src/userscript/application/preflight.ts；message; VALUE_1: kind",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "kind"
+      }
+    }
+  },
+  "cm_preinstalled_error_1": {
+    "message": "预装用户脚本 $VALUE_1$ 的元数据无效：$VALUE_2$",
+    "description": "src/userscript/application/preinstalled.ts；error; VALUE_1: input.id; VALUE_2: parsed.diagnostics\n        .map((diagnostic) => diagnostic.message)\n        .join(' ')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "input.id"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "parsed.diagnostics\n        .map((diagnostic) => diagnostic.message)\n        .join(' ')"
+      }
+    }
+  },
+  "cm_resource_loader_error_1": {
+    "message": "用户脚本资源地址无效：$VALUE_1$",
+    "description": "src/userscript/application/resource-loader.ts；error; VALUE_1: value",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "value"
+      }
+    }
+  },
+  "cm_resource_loader_error_2": {
+    "message": "不支持此用户脚本资源地址：$VALUE_1$",
+    "description": "src/userscript/application/resource-loader.ts；error; VALUE_1: value",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "value"
+      }
+    }
+  },
+  "cm_resource_loader_error_3": {
+    "message": "用户脚本资源包超过 24 MB 安全限制。",
+    "description": "src/userscript/application/resource-loader.ts；error"
+  },
+  "cm_resource_loader_error_4": {
+    "message": "用户脚本资源请求失败：HTTP $VALUE_1$ $VALUE_2$",
+    "description": "src/userscript/application/resource-loader.ts；error; VALUE_1: response.status; VALUE_2: url",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "url"
+      }
+    }
+  },
+  "cm_resource_loader_text_5": {
+    "message": "用户脚本资源超过 8 MB 安全限制。",
+    "description": "src/userscript/application/resource-loader.ts；text"
+  },
+  "cm_resource_loader_error_6": {
+    "message": "用户脚本资源请求超时：$VALUE_1$",
+    "description": "src/userscript/application/resource-loader.ts；error; VALUE_1: url",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "url"
+      }
+    }
+  },
+  "cm_script_repository_error_1": {
+    "message": "已存储脚本 $VALUE_1$ 的元数据无效：$VALUE_2$",
+    "description": "src/userscript/application/script-repository.ts；error; VALUE_1: script.id; VALUE_2: parsed.diagnostics.map((item) => item.message).join(' ')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "script.id"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "parsed.diagnostics.map((item) => item.message).join(' ')"
+      }
+    }
+  },
+  "cm_script_repository_error_2": {
+    "message": "已存储脚本 $VALUE_1$ 未通过预检：$VALUE_2$",
+    "description": "src/userscript/application/script-repository.ts；error; VALUE_1: script.id; VALUE_2: errors.map((item) => item.message).join(' ')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "script.id"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "errors.map((item) => item.message).join(' ')"
+      }
+    }
+  },
+  "cm_script_repository_error_3": {
+    "message": "用户脚本仓库包含无效 JSON。",
+    "description": "src/userscript/application/script-repository.ts；error"
+  },
+  "cm_script_repository_error_4": {
+    "message": "不支持的用户脚本仓库版本：$VALUE_1$",
+    "description": "src/userscript/application/script-repository.ts；error; VALUE_1: record(value) ? String(value.version) : '未知'",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "record(value) ? String(value.version) : '未知'"
+      }
+    }
+  },
+  "cm_script_repository_reason_5": {
+    "message": "第 $VALUE_1$ 条记录的持久化结构无效",
+    "description": "src/userscript/application/script-repository.ts；reason; VALUE_1: index + 1",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "index + 1"
+      }
+    }
+  },
+  "cm_script_repository_text_6": {
+    "message": "已隔离 $VALUE_1$ 条无效用户脚本仓库记录：$VALUE_2$",
+    "description": "src/userscript/application/script-repository.ts；text; VALUE_1: rejected.length; VALUE_2: rejected.map(({ reason }) => reason).join(' ')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "rejected.length"
+      },
+      "VALUE_2": {
+        "content": "$2",
+        "example": "rejected.map(({ reason }) => reason).join(' ')"
+      }
+    }
+  },
+  "cm_site_search_error_1": {
+    "message": "当前页面不支持查找站点脚本。",
+    "description": "src/userscript/application/site-search.ts；error"
+  },
+  "cm_site_search_error_2": {
+    "message": "当前页面不支持查找站点脚本。",
+    "description": "src/userscript/application/site-search.ts；error"
+  },
+  "cm_update_service_error_1": {
+    "message": "下载脚本的 @namespace + @name 与已安装脚本不一致。",
+    "description": "src/userscript/application/update-service.ts；error"
+  },
+  "cm_update_service_error_2": {
+    "message": "下载脚本的版本没有高于当前安装版本。",
+    "description": "src/userscript/application/update-service.ts；error"
+  },
+  "cm_update_service_reason_3": {
+    "message": "脚本没有声明 @updateURL 或 @downloadURL。",
+    "description": "src/userscript/application/update-service.ts；reason"
+  },
+  "cm_update_service_reason_4": {
+    "message": "更新元数据请求失败：$VALUE_1$",
+    "description": "src/userscript/application/update-service.ts；reason; VALUE_1: fetchFailure(error)",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "fetchFailure(error)"
+      }
+    }
+  },
+  "cm_update_service_reason_5": {
+    "message": "更新元数据请求失败：HTTP $VALUE_1$",
+    "description": "src/userscript/application/update-service.ts；reason; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_update_service_reason_6": {
+    "message": "更新源中的 @namespace + @name 与已安装脚本不一致。",
+    "description": "src/userscript/application/update-service.ts；reason"
+  },
+  "cm_update_service_error_7": {
+    "message": "发现新版本，但更新 metadata 没有提供可下载的脚本源码。",
+    "description": "src/userscript/application/update-service.ts；error"
+  },
+  "cm_update_service_error_8": {
+    "message": "脚本更新下载失败：HTTP $VALUE_1$",
+    "description": "src/userscript/application/update-service.ts；error; VALUE_1: response.status",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "response.status"
+      }
+    }
+  },
+  "cm_zip_archive_error_1": {
+    "message": "ZIP 条目路径无效：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: value",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "value"
+      }
+    }
+  },
+  "cm_zip_archive_error_2": {
+    "message": "ZIP 条目数量不能超过 $VALUE_1$。",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: MAX_ENTRY_COUNT",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "MAX_ENTRY_COUNT"
+      }
+    }
+  },
+  "cm_zip_archive_error_3": {
+    "message": "ZIP 单个条目超过 64 MB 安全上限。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_4": {
+    "message": "ZIP 总大小超过 256 MB 安全上限。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_5": {
+    "message": "无法读取 ZIP 中央目录。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_6": {
+    "message": "ZIP $VALUE_1$超出归档边界。",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: description",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "description"
+      }
+    }
+  },
+  "cm_zip_archive_error_7": {
+    "message": "当前浏览器不支持读取压缩 ZIP。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_8": {
+    "message": "ZIP 归档超过 256 MB 安全上限。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_9": {
+    "message": "不支持多磁盘 ZIP 归档。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_10": {
+    "message": "ZIP 条目数量不能超过 $VALUE_1$。",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: MAX_ENTRY_COUNT",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "MAX_ENTRY_COUNT"
+      }
+    }
+  },
+  "cm_zip_archive_text_11": {
+    "message": "中央目录",
+    "description": "src/userscript/application/zip-archive.ts；text"
+  },
+  "cm_zip_archive_error_12": {
+    "message": "ZIP 中央目录与结束记录重叠。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_text_13": {
+    "message": "中央目录条目",
+    "description": "src/userscript/application/zip-archive.ts；text"
+  },
+  "cm_zip_archive_error_14": {
+    "message": "ZIP 中央目录条目损坏。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_15": {
+    "message": "不支持加密 ZIP 归档。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_16": {
+    "message": "不支持使用数据描述符的 ZIP 条目。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_17": {
+    "message": "ZIP 单个条目超过 64 MB 安全上限。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_18": {
+    "message": "ZIP 解压后总大小超过 256 MB 安全上限。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_error_19": {
+    "message": "ZIP 条目压缩比超过安全上限。",
+    "description": "src/userscript/application/zip-archive.ts；error"
+  },
+  "cm_zip_archive_text_20": {
+    "message": "条目元数据",
+    "description": "src/userscript/application/zip-archive.ts；text"
+  },
+  "cm_zip_archive_error_21": {
+    "message": "ZIP 条目重复：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_zip_archive_text_22": {
+    "message": "条目头：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；text; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_zip_archive_error_23": {
+    "message": "ZIP 条目损坏：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_zip_archive_text_24": {
+    "message": "条目内容：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；text; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_zip_archive_error_25": {
+    "message": "ZIP 条目使用了不支持的压缩方式：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_zip_archive_error_26": {
+    "message": "ZIP 条目长度不一致：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_zip_archive_error_27": {
+    "message": "ZIP 条目校验失败：$VALUE_1$",
+    "description": "src/userscript/application/zip-archive.ts；error; VALUE_1: name",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "name"
+      }
+    }
+  },
+  "cm_matcher_text_1": {
+    "message": "需要有效的用户脚本 @match 规则。",
+    "description": "src/userscript/domain/matcher.ts；text"
+  },
+  "cm_matcher_text_2": {
+    "message": "file 匹配规则不能声明主机名。",
+    "description": "src/userscript/domain/matcher.ts；text"
+  },
+  "cm_matcher_text_3": {
+    "message": "@match 主机通配符必须是 `*` 或以 `*.` 开头。",
+    "description": "src/userscript/domain/matcher.ts；text"
+  },
+  "cm_matcher_text_4": {
+    "message": "用户脚本 @match 规则不能声明端口。需要限定端口时，请将该行改为 @include，例如：// @include $VALUE_1$",
+    "description": "src/userscript/domain/matcher.ts；text; VALUE_1: normalized",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "normalized"
+      }
+    }
+  },
+  "cm_matcher_text_5": {
+    "message": "需要有效的用户脚本 @include 正则表达式。",
+    "description": "src/userscript/domain/matcher.ts；text"
+  },
+  "cm_compatibility_message_1": {
+    "message": "@grant none 不能与其他授权同时使用。",
+    "description": "src/userscript/runtime/compatibility.ts；message"
+  },
+  "cm_compatibility_message_2": {
+    "message": "该脚本要求在页面真实环境中运行，但没有隔离桥接时无法提供以下特权授权：$VALUE_1$",
+    "description": "src/userscript/runtime/compatibility.ts；message; VALUE_1: unsupported.join(', ')",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "unsupported.join(', ')"
+      }
+    }
+  },
+  "cm_compatibility_message_3": {
+    "message": "该用户脚本授权会被保留，但当前运行时尚未实现：$VALUE_1$",
+    "description": "src/userscript/runtime/compatibility.ts；message; VALUE_1: grant",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "grant"
+      }
+    }
+  },
+  "cm_compatibility_message_4": {
+    "message": "用户脚本元数据 @$VALUE_1$ 会被保留，但不会改变当前运行时行为。",
+    "description": "src/userscript/runtime/compatibility.ts；message; VALUE_1: key",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "key"
+      }
+    }
+  },
+  "cm_compatibility_message_5": {
+    "message": "无法识别的用户脚本元数据会被保留，但不具备运行时行为：@$VALUE_1$",
+    "description": "src/userscript/runtime/compatibility.ts；message; VALUE_1: entry.key",
+    "placeholders": {
+      "VALUE_1": {
+        "content": "$1",
+        "example": "entry.key"
+      }
+    }
+  },
+  "cm_info_script_handler_1": {
+    "message": "卡牌大师",
+    "description": "src/userscript/runtime/info.ts；scriptHandler"
+  },
+  "cm_platform_compatibility_message_1": {
+    "message": "Safari 不支持此脚本声明的下载能力，GM_download / GM.download 无法运行。",
+    "description": "src/userscript/runtime/platform-compatibility.ts；message"
+  },
+  "cm_platform_compatibility_message_2": {
+    "message": "Safari 不支持此脚本声明的通知能力，GM_notification / GM.notification 无法运行。",
+    "description": "src/userscript/runtime/platform-compatibility.ts；message"
   }
 }

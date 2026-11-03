@@ -3,6 +3,7 @@ import type {
   AiSpeechRecognitionListener,
   AiSpeechRecognitionState,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import {
   type VolcengineSpeechAuthorization,
   VolcengineSpeechSession,
@@ -42,8 +43,10 @@ export class ExtensionSpeechRecognitionController
   }
 
   async startSpeechRecognition() {
-    if (this.disposed) throw new Error('语音识别控制器已释放。');
-    if (this.active) throw new Error('已有语音输入会话正在运行。');
+    if (this.disposed)
+      throw new Error(t('cm_extension_speech_recognition_error_1'));
+    if (this.active)
+      throw new Error(t('cm_extension_speech_recognition_error_2'));
     this.publish({ status: 'connecting', text: '' });
     let authorization: VolcengineSpeechAuthorization | null = null;
     let active:
@@ -113,7 +116,7 @@ export class ExtensionSpeechRecognitionController
 
   async sendSpeechAudio(pcmBase64: string) {
     const active = this.active;
-    if (!active) throw new Error('语音输入会话已经失效。');
+    if (!active) throw new Error(t('cm_extension_speech_recognition_error_3'));
     await active.session.sendAudio(decodeSpeechAudio(pcmBase64));
   }
 

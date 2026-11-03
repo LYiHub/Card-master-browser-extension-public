@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { isCardAccent } from '../../userscript/application/card-accent';
 import {
   createUserscriptSource,
@@ -70,27 +71,35 @@ export function applyAssistantSourceEdits(
   edits: readonly AssistantSourceEdit[],
 ) {
   if (edits.length === 0) {
-    throw new Error('脚本修改必须至少包含一项编辑。');
+    throw new Error(t('cm_assistant_script_changes_error_1'));
   }
   let updated = source;
   edits.forEach((edit, index) => {
     const number = index + 1;
     if (!edit.oldText) {
-      throw new Error(`第 ${number} 项脚本修改缺少旧文本。`);
+      throw new Error(
+        t('cm_assistant_script_changes_error_2', [String(number)]),
+      );
     }
     if (edit.oldText === edit.newText) {
-      throw new Error(`第 ${number} 项脚本修改没有产生变化。`);
+      throw new Error(
+        t('cm_assistant_script_changes_error_3', [String(number)]),
+      );
     }
     if (edit.oldText === updated) {
-      throw new Error(`第 ${number} 项脚本修改不能替换完整源码。`);
+      throw new Error(
+        t('cm_assistant_script_changes_error_4', [String(number)]),
+      );
     }
     const start = updated.indexOf(edit.oldText);
     if (start < 0) {
-      throw new Error(`第 ${number} 项脚本修改找不到指定的旧文本。`);
+      throw new Error(
+        t('cm_assistant_script_changes_error_5', [String(number)]),
+      );
     }
     if (updated.indexOf(edit.oldText, start + 1) >= 0) {
       throw new Error(
-        `第 ${number} 项脚本修改匹配到多处，请提供更多上下文使旧文本唯一。`,
+        t('cm_assistant_script_changes_error_6', [String(number)]),
       );
     }
     updated =
@@ -117,7 +126,11 @@ export function applyAssistantScriptChange(
         (script) => script.id === change.targetScriptId,
       );
       if (!target) {
-        throw new Error(`找不到要修改的用户脚本：${change.targetScriptId}`);
+        throw new Error(
+          t('cm_assistant_script_changes_error_7', [
+            String(change.targetScriptId),
+          ]),
+        );
       }
       return replaceUserscriptSource(
         current,
@@ -129,7 +142,11 @@ export function applyAssistantScriptChange(
     }
     case 'delete': {
       if (!current.some((script) => script.id === change.targetScriptId)) {
-        throw new Error(`找不到要删除的用户脚本：${change.targetScriptId}`);
+        throw new Error(
+          t('cm_assistant_script_changes_error_8', [
+            String(change.targetScriptId),
+          ]),
+        );
       }
       return {
         mode: 'removed',
@@ -141,7 +158,11 @@ export function applyAssistantScriptChange(
         (script) => script.id === change.targetScriptId,
       );
       if (!target) {
-        throw new Error(`找不到要设置的用户脚本：${change.targetScriptId}`);
+        throw new Error(
+          t('cm_assistant_script_changes_error_9', [
+            String(change.targetScriptId),
+          ]),
+        );
       }
       const script = {
         ...target,
@@ -164,7 +185,11 @@ export function applyAssistantScriptChange(
         (script) => script.id === change.targetScriptId,
       );
       if (!target) {
-        throw new Error(`找不到要设置的用户脚本：${change.targetScriptId}`);
+        throw new Error(
+          t('cm_assistant_script_changes_error_10', [
+            String(change.targetScriptId),
+          ]),
+        );
       }
       const withoutSite = target.manager.userExcludeMatches.filter(
         (pattern) => pattern !== change.sitePattern,
@@ -190,16 +215,20 @@ export function applyAssistantScriptChange(
     }
     case 'set-cover-image': {
       if (!isUserscriptCoverImageDataUrl(change.coverImage)) {
-        throw new Error('卡牌封面必须是格式与体积有效的 WebP Data URL。');
+        throw new Error(t('cm_assistant_script_changes_error_11'));
       }
       if (!isCardAccent(change.coverAccent)) {
-        throw new Error('卡牌边框颜色必须是有效的六位十六进制颜色。');
+        throw new Error(t('cm_assistant_script_changes_error_12'));
       }
       const target = current.find(
         (script) => script.id === change.targetScriptId,
       );
       if (!target) {
-        throw new Error(`找不到要设置封面的用户脚本：${change.targetScriptId}`);
+        throw new Error(
+          t('cm_assistant_script_changes_error_13', [
+            String(change.targetScriptId),
+          ]),
+        );
       }
       const script = {
         ...target,

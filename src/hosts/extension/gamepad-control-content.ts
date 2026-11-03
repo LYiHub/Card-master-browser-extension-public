@@ -52,6 +52,7 @@ import type { PinyinDictionary } from '../../gamepad-control/pinyin';
 import { GamepadIntentAdapter } from '../../input/gamepad-intent-adapter';
 import type { IntentEnvelope, NavigationDirection } from '../../input/intents';
 import { rewriteProjectAssetUrls } from '../../lib/project-assets';
+import { t } from '../../localization/messages';
 import { mediaSpeedWheelVisible } from '../../media-speed/domain/types';
 import {
   installExtensionContextBoundary,
@@ -211,7 +212,10 @@ function loadPinyinDictionary(api: GamepadExtensionApi) {
     .then(async (response) => {
       if (!response.ok) {
         throw new Error(
-          `拼音词库载入失败：${response.status} ${response.statusText}`,
+          t('cm_gamepad_control_content_error_1', [
+            String(response.status),
+            String(response.statusText),
+          ]),
         );
       }
       const dictionary: unknown = await response.json();
@@ -220,7 +224,7 @@ function loadPinyinDictionary(api: GamepadExtensionApi) {
         typeof dictionary !== 'object' ||
         Array.isArray(dictionary)
       ) {
-        throw new Error('拼音词库格式无效。');
+        throw new Error(t('cm_gamepad_control_content_error_2'));
       }
       return dictionary as PinyinDictionary;
     })
@@ -433,17 +437,17 @@ function mountGamepadControl(api: GamepadExtensionApi): GamepadControlRuntime {
     );
     const label =
       state.status === 'connecting'
-        ? '正在连接语音'
+        ? t('cm_gamepad_control_content_text_3')
         : state.status === 'listening'
-          ? '正在聆听'
+          ? t('cm_gamepad_control_content_text_4')
           : state.status === 'stopping'
-            ? '正在识别'
+            ? t('cm_gamepad_control_content_text_5')
             : state.status === 'complete'
               ? state.text
-                ? '已写入输入框'
-                : '未识别到文本'
+                ? t('cm_gamepad_control_content_text_6')
+                : t('cm_gamepad_control_content_text_7')
               : state.status === 'error'
-                ? state.error || '语音输入失败'
+                ? state.error || t('cm_gamepad_control_content_text_8')
                 : '';
     if (speechStatusLabel.textContent !== label) {
       speechStatusLabel.textContent = label;
@@ -494,7 +498,7 @@ function mountGamepadControl(api: GamepadExtensionApi): GamepadControlRuntime {
       tab: 'settings',
     });
     if (response.error) throw new Error(response.error);
-    if (!response.ok) throw new Error('扩展未能打开语音识别设置。');
+    if (!response.ok) throw new Error(t('cm_gamepad_control_content_error_9'));
   };
   const clearPendingSpeechStatus = () => {
     renderSpeechStatus({ status: 'idle', text: '', target: null });
@@ -1190,7 +1194,9 @@ function mountGamepadControl(api: GamepadExtensionApi): GamepadControlRuntime {
       .then((response) => {
         if (disposed) return;
         if (response.error || !isGamepadControlSettings(response)) {
-          throw new Error(response.error || '手柄示意图设置保存失败。');
+          throw new Error(
+            response.error || t('cm_gamepad_control_content_text_10'),
+          );
         }
         controlSettings = response;
         intentAdapter.configure(runtimeSettings(response));

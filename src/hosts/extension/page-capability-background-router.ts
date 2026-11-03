@@ -1,4 +1,5 @@
 import type { ContentBlockingService } from '../../content-blocking/application/service';
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 import {
   type BilibiliCapabilityService,
@@ -144,7 +145,8 @@ export async function routePageCapabilityBackgroundMessage(
       return { settings: await pageTheme.setEnabled(message.enabled) };
     case 'page-theme-toggle-current-site': {
       const pageUrl = sender.url ?? sender.tab?.url;
-      if (!pageUrl) throw new Error('暗夜降临无法确定当前站点。');
+      if (!pageUrl)
+        throw new Error(t('cm_page_capability_background_router_error_1'));
       return { settings: await pageTheme.toggleCurrentSite(pageUrl) };
     }
     case 'page-theme-settings-save':
@@ -159,14 +161,15 @@ export async function routePageCapabilityBackgroundMessage(
         !pageUrl ||
         (sender.frameId ?? 0) !== 0
       ) {
-        throw new Error('暗夜降临页面状态报告缺少顶层页面身份。');
+        throw new Error(t('cm_page_capability_background_router_error_2'));
       }
       await pageTheme.reportPage(tabId, pageUrl, message.snapshot);
       return { ok: true };
     }
     case 'page-theme-fetch': {
       const senderUrl = sender.url ?? sender.tab?.url;
-      if (!senderUrl) throw new Error('暗夜降临资源请求缺少页面来源。');
+      if (!senderUrl)
+        throw new Error(t('cm_page_capability_background_router_error_3'));
       return pageTheme.fetch({
         ...message.request,
         origin: new URL(senderUrl).origin,
@@ -176,7 +179,7 @@ export async function routePageCapabilityBackgroundMessage(
       const tabId = sender.tab?.id;
       const frameUrl = sender.url ?? sender.tab?.url;
       if (typeof tabId !== 'number' || !frameUrl) {
-        throw new Error('媒体倍速无法确定当前页面。');
+        throw new Error(t('cm_page_capability_background_router_error_4'));
       }
       return mediaSpeed.read({
         tabId,
@@ -191,7 +194,7 @@ export async function routePageCapabilityBackgroundMessage(
       const tabId = sender.tab?.id;
       const pageUrl = sender.tab?.url ?? sender.url;
       if (typeof tabId !== 'number' || !pageUrl) {
-        throw new Error('媒体倍速无法确定当前页面。');
+        throw new Error(t('cm_page_capability_background_router_error_5'));
       }
       if (message.type === 'media-speed-set-enabled') {
         return mediaSpeed.setEnabled(tabId, pageUrl, message.enabled);
@@ -205,7 +208,7 @@ export async function routePageCapabilityBackgroundMessage(
       const tabId = sender.tab?.id;
       const frameUrl = sender.url ?? sender.tab?.url;
       if (typeof tabId !== 'number' || !frameUrl) {
-        throw new Error('媒体倍速无法确定媒体所在页面。');
+        throw new Error(t('cm_page_capability_background_router_error_6'));
       }
       return {
         snapshot: await mediaSpeed.reportFrame({
@@ -224,7 +227,7 @@ export async function routePageCapabilityBackgroundMessage(
       const tabId = sender.tab?.id;
       const pageUrl = sender.tab?.url ?? sender.url;
       if (typeof tabId !== 'number' || !pageUrl) {
-        throw new Error('媒体资源发现无法确定当前页面。');
+        throw new Error(t('cm_page_capability_background_router_error_7'));
       }
       const snapshot =
         message.type === 'media-resources-read'
@@ -244,19 +247,20 @@ export async function routePageCapabilityBackgroundMessage(
     case 'media-resources-clear': {
       const tabId = message.targetTabId ?? sender.tab?.id;
       if (typeof tabId !== 'number') {
-        throw new Error('媒体资源发现无法确定当前页面。');
+        throw new Error(t('cm_page_capability_background_router_error_8'));
       }
       const targetTab =
         message.targetTabId === undefined
           ? sender.tab
           : await api.tabs.get(message.targetTabId);
       const pageUrl = targetTab?.url ?? sender.url;
-      if (!pageUrl) throw new Error('媒体资源发现无法读取目标页面地址。');
+      if (!pageUrl)
+        throw new Error(t('cm_page_capability_background_router_error_9'));
       return { snapshot: await mediaResources.clear(tabId, pageUrl) };
     }
     case 'media-resources-download':
       if (typeof message.targetTabId !== 'number') {
-        throw new Error('媒体资源下载请求缺少当前标签页身份。');
+        throw new Error(t('cm_page_capability_background_router_error_10'));
       }
       await mediaResources.download(message.targetTabId, message.resourceId);
       return { ok: true };
@@ -265,7 +269,7 @@ export async function routePageCapabilityBackgroundMessage(
       return { ok: true };
     case 'media-resources-inspect':
       if (typeof message.targetTabId !== 'number') {
-        throw new Error('播放清单分析请求缺少当前标签页身份。');
+        throw new Error(t('cm_page_capability_background_router_error_11'));
       }
       return {
         inspection: await mediaResources.inspect(
@@ -281,7 +285,7 @@ export async function routePageCapabilityBackgroundMessage(
       const tabId = sender.tab?.id;
       const pageUrl = sender.tab?.url ?? sender.url;
       if (typeof tabId !== 'number' || !pageUrl) {
-        throw new Error('缓存捕捉无法确定当前标签页。');
+        throw new Error(t('cm_page_capability_background_router_error_12'));
       }
       return {
         snapshot: await mediaResources.setCaptureEnabled(
@@ -306,7 +310,8 @@ export async function routePageCapabilityBackgroundMessage(
           ? message.pageUrl
           : undefined,
       );
-      if (!context) throw new Error('扩展能力请求缺少当前页面身份。');
+      if (!context)
+        throw new Error(t('cm_page_capability_background_router_error_13'));
       if (message.type === 'bilibili-capabilities-read') {
         return platformCapabilities.read(context);
       }

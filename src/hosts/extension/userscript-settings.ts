@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   UserscriptSettings,
   UserscriptSettingsController,
@@ -15,7 +16,7 @@ type UserscriptSettingsResponse = {
 function settingsResponse(response: UserscriptSettingsResponse) {
   if (response.error) throw new Error(response.error);
   if (!response.settings) {
-    throw new Error('扩展没有返回有效的脚本设置。');
+    throw new Error(t('cm_userscript_settings_error_1'));
   }
   return normalizeUserscriptSettings(response.settings);
 }

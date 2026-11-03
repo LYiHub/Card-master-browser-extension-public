@@ -1,4 +1,5 @@
 import type { ConfigurationMV2 } from '@adguard/tswebextension';
+import { t } from '../../localization/messages';
 
 import type { ContentBlockingState } from '../domain/types';
 
@@ -27,7 +28,9 @@ export function createAdguardFirefoxConfiguration(
     (filterId) => {
       const filter = builtInById.get(filterId);
       if (!filter) {
-        throw new Error(`Firefox 内置过滤器 ${filterId} 尚未加载。`);
+        throw new Error(
+          t('cm_adguard_firefox_configuration_error_1', [String(filterId)]),
+        );
       }
       return {
         filterId,

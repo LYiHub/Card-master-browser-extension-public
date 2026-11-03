@@ -6,6 +6,7 @@ import type {
   BilibiliCapabilitySnapshot,
   BilibiliCapabilitySnapshotListener,
 } from '../../bilibili-capabilities/domain/types';
+import { t } from '../../localization/messages';
 import {
   type ExtensionApi,
   type ExtensionMessageListener,
@@ -26,7 +27,7 @@ type CapabilityResponse = {
 function responseSnapshots(response: CapabilityResponse) {
   if (response.error) throw new Error(response.error);
   if (!Array.isArray(response.snapshots)) {
-    throw new Error('扩展没有返回有效的平台能力状态。');
+    throw new Error(t('cm_bilibili_capabilities_error_1'));
   }
   return response.snapshots;
 }
@@ -87,7 +88,7 @@ export class ExtensionBilibiliCapabilityController
     });
     if (response.error) throw new Error(response.error);
     if (!response.capability || response.capability.id !== id) {
-      throw new Error('扩展没有返回有效的平台能力设置。');
+      throw new Error(t('cm_bilibili_capabilities_error_2'));
     }
     return response.capability as BilibiliCapabilitySettings<Id>;
   }

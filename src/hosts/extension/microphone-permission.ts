@@ -4,6 +4,7 @@ import {
   readMicrophonePermissionState,
 } from '../../ai/infrastructure/microphone-permission';
 import cursorThemeStyles from '../../components/ui/theme.css?inline';
+import { t } from '../../localization/messages';
 import { requireExtensionApi } from './api';
 import { CARD_MASTER_DEFAULT_ICON_PATH } from './extension-branding';
 import { microphoneSettingsUrl } from './platform';
@@ -170,45 +171,17 @@ document.documentElement.classList.add('app-ui-theme');
 const api = requireExtensionApi();
 
 const rootElement = document.getElementById('microphone-permission-root');
-if (!rootElement) throw new Error('设备权限页面缺少挂载节点。');
+if (!rootElement) throw new Error(t('cm_microphone_permission_error_1'));
 const root = rootElement;
 
-root.innerHTML = `
-  <main class="permission-panel">
-    <header class="permission-brand">
-      <img
-        src="${CARD_MASTER_DEFAULT_ICON_PATH}"
-        alt=""
-      />
-      <div>
-        <p>卡牌大师智能体 · 设备权限</p>
-        <h1>允许使用麦克风</h1>
-      </div>
-    </header>
-    <p class="permission-copy">
-      浏览器需要先在普通扩展页面中记录一次麦克风授权，之后卡牌大师智能体
-      才能进行语音输入。
-    </p>
-    <div class="permission-status" data-state="unavailable">
-      <span>当前权限</span>
-      <strong>正在检测</strong>
-    </div>
-    <div class="permission-actions">
-      <button type="button" data-action="browser-settings">
-        浏览器麦克风设置
-      </button>
-      <button type="button" data-action="close" hidden>完成并关闭</button>
-      <button type="button" class="primary" data-action="request">
-        允许麦克风
-      </button>
-    </div>
-    <p class="permission-message" role="status"></p>
-  </main>
-`;
+root.innerHTML = t('cm_microphone_permission_text_7', [
+  String(CARD_MASTER_DEFAULT_ICON_PATH),
+]);
 
 function element<T extends Element>(selector: string) {
   const target = root.querySelector<T>(selector);
-  if (!target) throw new Error(`设备权限页面缺少元素：${selector}`);
+  if (!target)
+    throw new Error(t('cm_microphone_permission_error_8', [String(selector)]));
   return target;
 }
 
@@ -225,14 +198,16 @@ function renderState(state: MicrophonePermissionState) {
   status.dataset.state = state;
   statusValue.textContent =
     state === 'granted'
-      ? '已允许'
+      ? t('cm_microphone_permission_text_9')
       : state === 'denied'
-        ? '已阻止'
+        ? t('cm_microphone_permission_text_10')
         : state === 'prompt'
-          ? '等待授权'
-          : '无法检测';
+          ? t('cm_microphone_permission_text_11')
+          : t('cm_microphone_permission_text_12');
   requestButton.textContent =
-    state === 'granted' ? '重新检测麦克风' : '允许麦克风';
+    state === 'granted'
+      ? t('cm_microphone_permission_text_13')
+      : t('cm_microphone_permission_text_14');
   closeButton.hidden = state !== 'granted';
 }
 
@@ -243,18 +218,19 @@ async function refresh() {
 requestButton.addEventListener('click', () => {
   requestButton.disabled = true;
   message.classList.remove('is-error');
-  message.textContent = '正在请求浏览器授权…';
+  message.textContent = t('cm_microphone_permission_text_15');
   void navigator.mediaDevices
     .getUserMedia({ audio: true })
     .then(async (stream) => {
       for (const track of stream.getTracks()) track.stop();
       await refresh();
-      message.textContent =
-        '麦克风授权成功，现在可以返回卡牌大师智能体使用语音输入。';
+      message.textContent = t('cm_microphone_permission_text_16');
     })
     .catch((error) => {
       message.classList.add('is-error');
-      message.textContent = `${microphonePermissionErrorMessage(error)} 如果浏览器没有弹出询问，请检查浏览器及系统的麦克风设置。`;
+      message.textContent = t('cm_microphone_permission_text_17', [
+        String(microphonePermissionErrorMessage(error)),
+      ]);
       void refresh();
     })
     .finally(() => {
@@ -266,8 +242,7 @@ settingsButton.addEventListener('click', () => {
   const url = microphoneSettingsUrl();
   if (!url) {
     message.classList.add('is-error');
-    message.textContent =
-      '请在浏览器的网站权限与系统隐私设置中允许麦克风访问。';
+    message.textContent = t('cm_microphone_permission_text_18');
     return;
   }
   void api.tabs?.create({ url });

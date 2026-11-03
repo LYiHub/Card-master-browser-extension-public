@@ -1,4 +1,5 @@
 import { resolveSiteScope } from '../../lib/site-scope';
+import { t } from '../../localization/messages';
 
 export const MEDIA_SPEED_CARD_ID = 'system-media-speed' as const;
 export const MEDIA_SPEED_STORAGE_KEY = 'media-speed.settings.v1';
@@ -324,7 +325,7 @@ export function setMediaSpeedSiteEnabled(
   enabled: boolean,
 ) {
   const host = normalizedMediaSpeedHost(urlOrHost);
-  if (!host) throw new Error('媒体倍速无法确定当前站点。');
+  if (!host) throw new Error(t('cm_types_error_1'));
   const current = settings.siteOverrides[host] ?? {};
   const next: MediaSpeedSiteOverride = {
     ...current,
@@ -354,7 +355,7 @@ export function setMediaSpeedSiteLock(
   lockSpeed: boolean,
 ) {
   const host = normalizedMediaSpeedHost(urlOrHost);
-  if (!host) throw new Error('媒体倍速无法确定当前站点。');
+  if (!host) throw new Error(t('cm_types_error_2'));
   const current = settings.siteOverrides[host] ?? {};
   const next: MediaSpeedSiteOverride = {
     ...current,
@@ -382,7 +383,7 @@ export function setMediaSpeedSiteSelection(
   selection: MediaSpeedSelection,
 ) {
   const host = normalizedMediaSpeedHost(urlOrHost);
-  if (!host) throw new Error('媒体倍速无法确定当前站点。');
+  if (!host) throw new Error(t('cm_types_error_3'));
   return {
     ...settings,
     siteOverrides: {

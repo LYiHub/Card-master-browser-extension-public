@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 export type ZipArchiveEntry = {
   name: string;
   data: Uint8Array;
@@ -67,23 +68,23 @@ function safeEntryName(value: string) {
     !normalized ||
     normalized.split('/').some((segment) => segment === '..')
   ) {
-    throw new Error(`ZIP 条目路径无效：${value}`);
+    throw new Error(t('cm_zip_archive_error_1', [String(value)]));
   }
   return normalized;
 }
 
 export function createZipArchive(entries: readonly ZipArchiveEntry[]) {
   if (entries.length > MAX_ENTRY_COUNT) {
-    throw new Error(`ZIP 条目数量不能超过 ${MAX_ENTRY_COUNT}。`);
+    throw new Error(t('cm_zip_archive_error_2', [String(MAX_ENTRY_COUNT)]));
   }
   let expandedBytes = 0;
   for (const entry of entries) {
     if (entry.data.byteLength > MAX_ENTRY_BYTES) {
-      throw new Error('ZIP 单个条目超过 64 MB 安全上限。');
+      throw new Error(t('cm_zip_archive_error_3'));
     }
     expandedBytes += entry.data.byteLength;
     if (expandedBytes > MAX_EXPANDED_BYTES) {
-      throw new Error('ZIP 总大小超过 256 MB 安全上限。');
+      throw new Error(t('cm_zip_archive_error_4'));
     }
   }
   const encoder = new TextEncoder();
@@ -152,7 +153,7 @@ function endOfCentralDirectory(view: DataView) {
       return offset;
     }
   }
-  throw new Error('无法读取 ZIP 中央目录。');
+  throw new Error(t('cm_zip_archive_error_5'));
 }
 
 function exactArrayBuffer(bytes: Uint8Array) {
@@ -175,13 +176,13 @@ function requireRange(
     length < 0 ||
     offset + length > view.byteLength
   ) {
-    throw new Error(`ZIP ${description}超出归档边界。`);
+    throw new Error(t('cm_zip_archive_error_6', [String(description)]));
   }
 }
 
 async function inflateRaw(data: Uint8Array) {
   if (typeof DecompressionStream === 'undefined') {
-    throw new Error('当前浏览器不支持读取压缩 ZIP。');
+    throw new Error(t('cm_zip_archive_error_7'));
   }
   const stream = new Blob([exactArrayBuffer(data)])
     .stream()
@@ -191,7 +192,7 @@ async function inflateRaw(data: Uint8Array) {
 
 export async function readZipArchive(data: Uint8Array) {
   if (data.byteLength > MAX_ARCHIVE_BYTES) {
-    throw new Error('ZIP 归档超过 256 MB 安全上限。');
+    throw new Error(t('cm_zip_archive_error_8'));
   }
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
   const endOffset = endOfCentralDirectory(view);
@@ -199,26 +200,26 @@ export async function readZipArchive(data: Uint8Array) {
     view.getUint16(endOffset + 4, true) !== 0 ||
     view.getUint16(endOffset + 6, true) !== 0
   ) {
-    throw new Error('不支持多磁盘 ZIP 归档。');
+    throw new Error(t('cm_zip_archive_error_9'));
   }
   const entryCount = view.getUint16(endOffset + 10, true);
   if (entryCount > MAX_ENTRY_COUNT) {
-    throw new Error(`ZIP 条目数量不能超过 ${MAX_ENTRY_COUNT}。`);
+    throw new Error(t('cm_zip_archive_error_10', [String(MAX_ENTRY_COUNT)]));
   }
   const centralDirectorySize = view.getUint32(endOffset + 12, true);
   let cursor = view.getUint32(endOffset + 16, true);
-  requireRange(view, cursor, centralDirectorySize, '中央目录');
+  requireRange(view, cursor, centralDirectorySize, t('cm_zip_archive_text_11'));
   if (cursor + centralDirectorySize > endOffset) {
-    throw new Error('ZIP 中央目录与结束记录重叠。');
+    throw new Error(t('cm_zip_archive_error_12'));
   }
   const decoder = new TextDecoder();
   const entries = new Map<string, Uint8Array>();
   let expandedBytes = 0;
 
   for (let index = 0; index < entryCount; index += 1) {
-    requireRange(view, cursor, 46, '中央目录条目');
+    requireRange(view, cursor, 46, t('cm_zip_archive_text_13'));
     if (view.getUint32(cursor, true) !== CENTRAL_FILE_SIGNATURE) {
-      throw new Error('ZIP 中央目录条目损坏。');
+      throw new Error(t('cm_zip_archive_error_14'));
     }
     const flags = view.getUint16(cursor + 8, true);
     const method = view.getUint16(cursor + 10, true);
@@ -229,39 +230,50 @@ export async function readZipArchive(data: Uint8Array) {
     const extraLength = view.getUint16(cursor + 30, true);
     const commentLength = view.getUint16(cursor + 32, true);
     const localOffset = view.getUint32(cursor + 42, true);
-    if (flags & 1) throw new Error('不支持加密 ZIP 归档。');
-    if (flags & 0x08) throw new Error('不支持使用数据描述符的 ZIP 条目。');
+    if (flags & 1) throw new Error(t('cm_zip_archive_error_15'));
+    if (flags & 0x08) throw new Error(t('cm_zip_archive_error_16'));
     if (uncompressedSize > MAX_ENTRY_BYTES) {
-      throw new Error('ZIP 单个条目超过 64 MB 安全上限。');
+      throw new Error(t('cm_zip_archive_error_17'));
     }
     expandedBytes += uncompressedSize;
     if (expandedBytes > MAX_EXPANDED_BYTES) {
-      throw new Error('ZIP 解压后总大小超过 256 MB 安全上限。');
+      throw new Error(t('cm_zip_archive_error_18'));
     }
     if (
       compressedSize > 0 &&
       uncompressedSize / compressedSize > MAX_COMPRESSION_RATIO
     ) {
-      throw new Error('ZIP 条目压缩比超过安全上限。');
+      throw new Error(t('cm_zip_archive_error_19'));
     }
     requireRange(
       view,
       cursor + 46,
       nameLength + extraLength + commentLength,
-      '条目元数据',
+      t('cm_zip_archive_text_20'),
     );
     const name = safeEntryName(
       decoder.decode(data.subarray(cursor + 46, cursor + 46 + nameLength)),
     );
-    if (entries.has(name)) throw new Error(`ZIP 条目重复：${name}`);
-    requireRange(view, localOffset, 30, `条目头：${name}`);
+    if (entries.has(name))
+      throw new Error(t('cm_zip_archive_error_21', [String(name)]));
+    requireRange(
+      view,
+      localOffset,
+      30,
+      t('cm_zip_archive_text_22', [String(name)]),
+    );
     if (view.getUint32(localOffset, true) !== LOCAL_FILE_SIGNATURE) {
-      throw new Error(`ZIP 条目损坏：${name}`);
+      throw new Error(t('cm_zip_archive_error_23', [String(name)]));
     }
     const localNameLength = view.getUint16(localOffset + 26, true);
     const localExtraLength = view.getUint16(localOffset + 28, true);
     const contentOffset = localOffset + 30 + localNameLength + localExtraLength;
-    requireRange(view, contentOffset, compressedSize, `条目内容：${name}`);
+    requireRange(
+      view,
+      contentOffset,
+      compressedSize,
+      t('cm_zip_archive_text_24', [String(name)]),
+    );
     const compressed = data.subarray(
       contentOffset,
       contentOffset + compressedSize,
@@ -272,12 +284,12 @@ export async function readZipArchive(data: Uint8Array) {
         : method === DEFLATE_METHOD
           ? await inflateRaw(compressed)
           : null;
-    if (!content) throw new Error(`ZIP 条目使用了不支持的压缩方式：${name}`);
+    if (!content) throw new Error(t('cm_zip_archive_error_25', [String(name)]));
     if (content.byteLength !== uncompressedSize) {
-      throw new Error(`ZIP 条目长度不一致：${name}`);
+      throw new Error(t('cm_zip_archive_error_26', [String(name)]));
     }
     if (crc32(content) !== expectedCrc) {
-      throw new Error(`ZIP 条目校验失败：${name}`);
+      throw new Error(t('cm_zip_archive_error_27', [String(name)]));
     }
     entries.set(name, content);
     cursor += 46 + nameLength + extraLength + commentLength;

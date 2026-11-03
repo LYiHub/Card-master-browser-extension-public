@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   defaultMediaResourcesSettings,
   isMediaResourcesSettings,
@@ -357,7 +358,7 @@ export class ExtensionMediaResourcesService {
     const current = await this.readSettings();
     const settings = mutation(structuredClone(current));
     if (!isMediaResourcesSettings(settings)) {
-      throw new Error('顺手牵羊设置格式无效。');
+      throw new Error(t('cm_media_resources_service_error_1'));
     }
     const next = { ...settings, revision: current.revision + 1 };
     this.bridge()?.setEnabled(next.enabled);
@@ -405,13 +406,13 @@ export class ExtensionMediaResourcesService {
     const resource = this.tabs
       .get(tabId)
       ?.resources.find((candidate) => candidate.id === resourceIdValue);
-    if (!resource) throw new Error('当前页面已经没有这项媒体资源。');
+    if (!resource) throw new Error(t('cm_media_resources_service_error_2'));
     return resource;
   }
 
   async download(tabId: number, resourceIdValue: string) {
     if (!this.api.downloads) {
-      throw new Error('当前浏览器没有提供扩展下载接口。');
+      throw new Error(t('cm_media_resources_service_error_3'));
     }
     const resource = this.resource(tabId, resourceIdValue);
     await this.api.downloads.download({
@@ -427,7 +428,7 @@ export class ExtensionMediaResourcesService {
     _tabId: number,
     _resourceIdValue: string,
   ): Promise<MediaManifestInspection> {
-    throw new Error('播放清单请使用顺手牵羊原版解析器。');
+    throw new Error(t('cm_media_resources_service_error_4'));
   }
 
   async sendToAria2(tabId: number, resourceIdValue: string) {
@@ -455,7 +456,9 @@ export class ExtensionMediaResourcesService {
       }),
     });
     if (!response.ok) {
-      throw new Error(`Aria2 请求失败：HTTP ${response.status}。`);
+      throw new Error(
+        t('cm_media_resources_service_error_5', [String(response.status)]),
+      );
     }
   }
 }

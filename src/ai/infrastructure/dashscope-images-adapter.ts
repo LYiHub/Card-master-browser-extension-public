@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   ImageGenerationProtocolAdapter,
   ImageGenerationRequestInput,
@@ -10,7 +11,8 @@ const IMAGE_SIDE_STEP = 32;
 
 function dashscopeSize(value: string) {
   const match = /^(\d+)x(\d+)$/.exec(value);
-  if (!match) throw new Error(`百炼图像尺寸格式无效：${value}`);
+  if (!match)
+    throw new Error(t('cm_dashscope_images_adapter_error_1', [String(value)]));
   const width = Number(match[1]);
   const height = Number(match[2]);
   if (
@@ -27,16 +29,19 @@ function dashscopeSize(value: string) {
   const scaledHeight =
     Math.floor((height * scale) / IMAGE_SIDE_STEP) * IMAGE_SIDE_STEP;
   if (scaledWidth < MIN_IMAGE_SIDE || scaledHeight < MIN_IMAGE_SIDE) {
-    throw new Error(`百炼图像尺寸超出支持范围：${value}`);
+    throw new Error(t('cm_dashscope_images_adapter_error_2', [String(value)]));
   }
   return `${scaledWidth}*${scaledHeight}`;
 }
 
 export const dashscopeImagesAdapter: ImageGenerationProtocolAdapter = {
   protocol: 'dashscope',
-  label: '阿里云百炼（DashScope）',
-  description:
-    '使用阿里云百炼同步图像生成接口，返回临时图片 URL（24 小时有效）。',
+  get label() {
+    return t('cm_dashscope_images_adapter_label_3');
+  },
+  get description() {
+    return t('cm_dashscope_images_adapter_description_4');
+  },
   defaultBaseUrl: 'https://dashscope.aliyuncs.com',
   defaultModel: 'qwen-image-3.0',
 

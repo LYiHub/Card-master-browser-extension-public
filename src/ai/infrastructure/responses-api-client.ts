@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { normalizeAiServiceBaseUrl } from '../domain/ai-services-schema';
 import { DEFAULT_MODEL_SERVICE_MODEL } from '../domain/model-catalog';
 import type {
@@ -59,9 +60,7 @@ function parsePayload(raw: string, status: number) {
   try {
     payload = JSON.parse(raw) as ResponsesPayload;
   } catch {
-    throw new Error(
-      `AI 服务返回了非 JSON 数据（HTTP ${status}）。请确认基础地址指向 /v1 等 API 根路径。`,
-    );
+    throw new Error(t('cm_responses_api_client_error_1', [String(status)]));
   }
   return payload;
 }
@@ -140,12 +139,12 @@ function responseToolCalls(payload: ResponsesPayload) {
   const calls = (payload.output ?? []).flatMap((item) => {
     const call = responseToolCall(item);
     if (item.type === 'function_call' && !call) {
-      throw new Error('AI 服务在完整响应中返回了不完整的工具调用。');
+      throw new Error(t('cm_responses_api_client_error_2'));
     }
     return call ? [call] : [];
   });
   if (new Set(calls.map((call) => call.id)).size !== calls.length) {
-    throw new Error('AI 服务返回了重复的工具调用 ID。');
+    throw new Error(t('cm_responses_api_client_error_3'));
   }
   return calls;
 }
@@ -400,26 +399,32 @@ export class ResponsesApiClient implements AiModelClient {
           const code = failure?.code || failure?.type;
           const incompleteReason = event.response?.incomplete_details?.reason;
           throw new Error(
-            `AI 服务请求失败${code ? `（${code}）` : ''}：${
-              failure?.message ||
-              (incompleteReason
-                ? `响应未完成（${incompleteReason}）。`
-                : '服务未返回具体原因。')
-            }`,
+            t('cm_responses_api_client_error_4', [
+              String(code ? `（${code}）` : ''),
+              String(
+                failure?.message ||
+                  (incompleteReason
+                    ? `响应未完成（${incompleteReason}）。`
+                    : '服务未返回具体原因。'),
+              ),
+            ]),
           );
         }
         case 'error':
           throw new Error(
-            `AI 服务事件流失败${
-              event.error?.code || event.error?.type
-                ? `（${event.error.code || event.error.type}）`
-                : ''
-            }：${event.error?.message || '服务未返回具体原因。'}`,
+            t('cm_responses_api_client_error_5', [
+              String(
+                event.error?.code || event.error?.type
+                  ? `（${event.error.code || event.error.type}）`
+                  : '',
+              ),
+              String(event.error?.message || '服务未返回具体原因。'),
+            ]),
           );
       }
     });
     if (!completed) {
-      throw new Error('AI 服务事件流结束时没有完整响应。');
+      throw new Error(t('cm_responses_api_client_error_6'));
     }
     const result = completion(completed);
     result.model ||= request.model;
@@ -441,7 +446,7 @@ export class ResponsesApiClient implements AiModelClient {
       signal,
     );
     if (!result.text) {
-      throw new Error('AI 服务响应中没有正文。');
+      throw new Error(t('cm_responses_api_client_error_7'));
     }
     return {
       text: result.text,

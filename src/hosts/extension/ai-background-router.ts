@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { ExtensionAiServices } from './ai-services';
 import type { AssistantSurfaceCoordinator } from './assistant-surface-background';
 import type { DailyReviewWallpaperService } from './daily-review-wallpaper-service';
@@ -31,7 +32,9 @@ export async function routeAiBackgroundMessage(
   const regenerateDailyReviewWallpaper = () => {
     void dailyReview
       .run('configuration')
-      .catch((error) => reportFailure('每日回顾生成失败', error));
+      .catch((error) =>
+        reportFailure(t('cm_ai_background_router_text_1'), error),
+      );
   };
 
   switch (message.type) {
@@ -49,8 +52,7 @@ export async function routeAiBackgroundMessage(
       if (!servicesView.imageService.hasCredential) {
         return {
           configurationRequired: true,
-          error:
-            'OpenAI 兼容图像服务尚未配置，请在卡牌大师智能体的设置中配置图像生成。',
+          error: t('cm_ai_background_router_error_2'),
         };
       }
       return {

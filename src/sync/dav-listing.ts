@@ -1,4 +1,5 @@
 import { SaxesParser } from 'saxes';
+import { t } from '../localization/messages';
 import { SYNC_MAX_VERSIONS } from './model';
 
 export function parseDavListing(xml: string, directory: URL): string[] {
@@ -14,9 +15,7 @@ export function parseDavListing(xml: string, directory: URL): string[] {
   } | null = null;
   let status = '';
   const fail = () => {
-    throw new Error(
-      '目录响应不是完整的 WebDAV 列表，请检查服务地址与反向代理配置。',
-    );
+    throw new Error(t('cm_dav_listing_error_1'));
   };
   parser.on('doctype', fail);
   parser.on('error', fail);
@@ -81,9 +80,7 @@ export function parseDavListing(xml: string, directory: URL): string[] {
             if (!name || name.includes('/') || name === '.' || name === '..')
               fail();
             if (!current.statuses.some((code) => code >= 200 && code < 300)) {
-              throw new Error(
-                '目录中的文件属性不可读，已停止同步，请检查读取权限。',
-              );
+              throw new Error(t('cm_dav_listing_error_2'));
             }
             names.add(name);
           }

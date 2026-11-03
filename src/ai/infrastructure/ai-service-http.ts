@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { normalizeHttpHeaderCredential } from '../domain/ai-services-schema';
 
 export type AiServiceFetch = (
@@ -162,10 +163,10 @@ export async function requestAiService(
 ) {
   const apiKey = normalizeHttpHeaderCredential(
     credential.apiKey,
-    'AI 服务 API 密钥',
+    t('cm_ai_service_http_text_1'),
   );
   if (!apiKey) {
-    throw new Error('AI 服务 API 密钥尚未配置。');
+    throw new Error(t('cm_ai_service_http_error_2'));
   }
   const diagnostic = requestDiagnostic(url, body, context);
   const startedAt = now();
@@ -201,9 +202,10 @@ export async function requestAiService(
     });
     const debug = diagnosticText(failed);
     throw new AiServiceTransportError(
-      `AI 服务连接失败：${
-        error instanceof Error ? error.message : String(error)
-      }${debug ? `\n调试信息：${debug}` : ''}`,
+      t('cm_ai_service_http_text_3', [
+        String(error instanceof Error ? error.message : String(error)),
+        String(debug ? `\n调试信息：${debug}` : ''),
+      ]),
       failed,
       { cause: error },
     );
@@ -302,7 +304,7 @@ export async function consumeAiServiceSse(
   onData: (data: string) => void,
 ) {
   if (!response.body) {
-    throw new Error('AI 服务没有返回可读取的事件流。');
+    throw new Error(t('cm_ai_service_http_error_4'));
   }
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -369,9 +371,10 @@ export async function consumeAiServiceSse(
       `byteLength=${byteLength}`,
     ]);
     throw new AiServiceStreamError(
-      `AI 服务事件流中断：${
-        error instanceof Error ? error.message : String(error)
-      }${debug ? `\n调试信息：${debug}` : ''}`,
+      t('cm_ai_service_http_text_5', [
+        String(error instanceof Error ? error.message : String(error)),
+        String(debug ? `\n调试信息：${debug}` : ''),
+      ]),
       diagnostic,
       { cause: error },
     );
@@ -424,7 +427,7 @@ export function aiServiceHttpError(
 ) {
   const status = response.status;
   const message =
-    serviceMessage?.trim() || raw.trim() || 'AI 服务返回了空错误响应。';
+    serviceMessage?.trim() || raw.trim() || t('cm_ai_service_http_text_6');
   const baseDiagnostic = aiServiceResponseDiagnostic(response);
   const metadata = errorMetadata(raw);
   const diagnostic = {
@@ -464,7 +467,11 @@ export function aiServiceHttpError(
     diagnostic.errorCode ? `code=${diagnostic.errorCode}` : '',
   ]);
   return new AiServiceHttpError(
-    `AI 服务请求失败（HTTP ${status}）：${message}${debug ? `\n调试信息：${debug}` : ''}`,
+    t('cm_ai_service_http_text_7', [
+      String(status),
+      String(message),
+      String(debug ? `\n调试信息：${debug}` : ''),
+    ]),
     diagnostic,
   );
 }

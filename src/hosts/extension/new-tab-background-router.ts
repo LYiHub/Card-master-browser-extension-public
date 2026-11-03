@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { DailyReviewWallpaperService } from './daily-review-wallpaper-service';
 import {
   type LumnoNewTabCompatibilityService,
@@ -28,7 +29,10 @@ export function routeNewTabBackgroundMessage(
       .handle(message, sender)
       .then(sendResponse)
       .catch((error) => {
-        dependencies.reportFailure('新标签页后台请求失败', error);
+        dependencies.reportFailure(
+          t('cm_new_tab_background_router_text_1'),
+          error,
+        );
         sendResponse({ ok: false, error: errorMessage(error) });
       });
     return true;
@@ -39,7 +43,10 @@ export function routeNewTabBackgroundMessage(
       .readSnapshot()
       .then((snapshot) => sendResponse({ snapshot }))
       .catch((error) => {
-        dependencies.reportFailure('每日回顾状态读取失败', error);
+        dependencies.reportFailure(
+          t('cm_new_tab_background_router_text_2'),
+          error,
+        );
         sendResponse({ error: errorMessage(error) });
       });
     return true;
@@ -52,7 +59,10 @@ export function routeNewTabBackgroundMessage(
     });
     sendResponse({ started: task.started });
     void task.operation.catch((error) =>
-      dependencies.reportFailure('每日回顾手动生成失败', error),
+      dependencies.reportFailure(
+        t('cm_new_tab_background_router_text_3'),
+        error,
+      ),
     );
     return true;
   }
@@ -60,7 +70,10 @@ export function routeNewTabBackgroundMessage(
     .handle(message, sender)
     .then(sendResponse)
     .catch((error) => {
-      dependencies.reportFailure('新标签页后台请求失败', error);
+      dependencies.reportFailure(
+        t('cm_new_tab_background_router_text_4'),
+        error,
+      );
       sendResponse({ error: errorMessage(error) });
     });
   return true;

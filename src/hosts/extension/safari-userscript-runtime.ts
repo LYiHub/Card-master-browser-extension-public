@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   installExtensionContextBoundary,
   notifyExtensionContextInvalidated,
@@ -116,7 +117,7 @@ if (!runtimeGlobal[RUNTIME_MARKER]) {
     reportExtensionFailure(
       'safari-userscript-runtime',
       'bootstrap-failed',
-      new Error('Safari 扩展运行时不可用。'),
+      new Error(t('cm_safari_userscript_runtime_error_1')),
     );
     dispose();
   } else {

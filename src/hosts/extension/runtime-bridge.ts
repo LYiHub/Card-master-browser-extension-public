@@ -2,6 +2,7 @@ import {
   normalizeUserscriptAiRequest,
   type UserscriptAiRequest,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import {
   UserscriptRequestError,
   UserscriptRequestService,
@@ -1038,7 +1039,7 @@ export class ExtensionRuntimeBridge {
         requestId,
         error: {
           kind: 'network',
-          message: '用户脚本请求上下文不可用。',
+          message: t('cm_runtime_bridge_message_1'),
         },
       });
       return;
@@ -1105,7 +1106,7 @@ export class ExtensionRuntimeBridge {
       this.post(entry, {
         type: 'ai-response',
         requestId,
-        error: '用户脚本 AI 请求无效或未获授权。',
+        error: t('cm_runtime_bridge_error_2'),
       });
       return;
     }
@@ -1121,7 +1122,7 @@ export class ExtensionRuntimeBridge {
       this.post(entry, {
         type: 'ai-response',
         requestId,
-        error: '这个用户脚本已有两个正在进行的 AI 请求。',
+        error: t('cm_runtime_bridge_error_3'),
       });
       return;
     }
@@ -1157,7 +1158,7 @@ export class ExtensionRuntimeBridge {
       this.post(entry, {
         type: 'capability-response',
         requestId,
-        error: `用户脚本能力未获授权：${capability}`,
+        error: t('cm_runtime_bridge_error_4', [String(capability)]),
       });
       return;
     }
@@ -1166,7 +1167,7 @@ export class ExtensionRuntimeBridge {
       this.post(entry, {
         type: 'capability-response',
         requestId,
-        error: '用户脚本页面上下文不可用。',
+        error: t('cm_runtime_bridge_error_5'),
       });
       return;
     }

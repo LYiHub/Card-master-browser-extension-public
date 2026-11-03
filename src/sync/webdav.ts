@@ -1,4 +1,5 @@
 import { readResponseTextWithinLimit } from '../lib/response-text';
+import { t } from '../localization/messages';
 import { parseDavListing } from './dav-listing';
 import {
   canonical,
@@ -52,11 +53,11 @@ export class WebDavSync {
   private async request(path: string, method: string, body?: string) {
     const label =
       {
-        GET: '读取文件',
-        PUT: '写入文件',
-        MKCOL: '创建目录',
-        PROPFIND: '列举目录',
-        DELETE: '清理测试文件',
+        GET: t('cm_webdav_get_1'),
+        PUT: t('cm_webdav_put_2'),
+        MKCOL: t('cm_webdav_mkcol_3'),
+        PROPFIND: t('cm_webdav_propfind_4'),
+        DELETE: t('cm_webdav_delete_5'),
       }[method] ?? method;
     let response: Response;
     try {
@@ -82,15 +83,13 @@ export class WebDavSync {
         },
       });
     } catch {
-      this.note(`${label}：请求未完成。`);
-      throw new Error(
-        `${label}失败：请检查网络、HTTPS 证书和最终目录地址；本机数据已保留。`,
-      );
+      this.note(t('cm_webdav_text_6', [String(label)]));
+      throw new Error(t('cm_webdav_error_7', [String(label)]));
     }
     this.note(`${label}：HTTP ${response.status}`);
     if (response.status === 401 || response.status === 403)
       throw new Error(
-        `${label}被拒绝（HTTP ${response.status}），请检查账号、应用密码和目录权限。`,
+        t('cm_webdav_error_8', [String(label), String(response.status)]),
       );
     if (
       !response.ok &&
@@ -99,9 +98,15 @@ export class WebDavSync {
     ) {
       const hint =
         response.status === 409
-          ? '父目录不存在，请先在 WebDAV 中创建父目录。'
-          : '请检查服务端及反向代理是否允许该请求方法。';
-      throw new Error(`${label}失败（HTTP ${response.status}）。${hint}`);
+          ? t('cm_webdav_text_9')
+          : t('cm_webdav_text_10');
+      throw new Error(
+        t('cm_webdav_error_11', [
+          String(label),
+          String(response.status),
+          String(hint),
+        ]),
+      );
     }
     return response;
   }
@@ -109,13 +114,11 @@ export class WebDavSync {
   private async list() {
     const response = await this.request('', 'PROPFIND', LIST_BODY);
     if (response.status !== 207)
-      throw new Error(
-        `列举目录失败：返回 HTTP ${response.status}，期望 WebDAV 207。请检查最终目录地址和 PROPFIND 支持。`,
-      );
+      throw new Error(t('cm_webdav_error_12', [String(response.status)]));
     const xml = await readResponseTextWithinLimit(
       response,
       8 * 1024 * 1024,
-      '目录列表超过 8 MB，已暂停同步。',
+      t('cm_webdav_text_13'),
     );
     return parseDavListing(xml, new URL(this.directory));
   }
@@ -126,27 +129,22 @@ export class WebDavSync {
   ): Promise<{ record: SyncRecord; bytes: number }> {
     const previous = cached ? this.cache.get(id) : undefined;
     if (previous) return previous;
-    if (!isRevisionId(id)) throw new Error('同步版本标识无效。');
+    if (!isRevisionId(id)) throw new Error(t('cm_webdav_error_14'));
     const response = await this.request(`rev-${id}.json`, 'GET');
-    if (response.status === 404)
-      throw new Error(
-        '同步历史文件暂不可读或已被删除，请检查目录及代理缓存后重试。',
-      );
+    if (response.status === 404) throw new Error(t('cm_webdav_error_15'));
     const text = await readResponseTextWithinLimit(
       response,
       SYNC_MAX_SNAPSHOT_BYTES + 1024 * 1024,
-      '单个同步版本超过 65 MB，已停止读取。',
+      t('cm_webdav_text_16'),
     );
     let record: unknown;
     try {
       record = JSON.parse(text);
     } catch {
-      throw new Error(
-        '同步版本尚未完整写入或已损坏，请稍后重试。本机数据已保留。',
-      );
+      throw new Error(t('cm_webdav_error_17'));
     }
     validateRecord(record);
-    if (record.id !== id) throw new Error('版本文件名与内容不一致。');
+    if (record.id !== id) throw new Error(t('cm_webdav_error_18'));
     await verifyRecord(record);
     const item = { record, bytes: new TextEncoder().encode(text).length };
     this.cacheBytes -= this.cache.get(id)?.bytes ?? 0;
@@ -172,18 +170,13 @@ export class WebDavSync {
     // ponytail: retain immutable history; at 4096 versions pause instead of unsafe pruning of offline ancestors.
     for (let offset = 0; offset < pending.length; ) {
       if (pending.length > SYNC_MAX_VERSIONS)
-        throw new Error(
-          '同步空间已达到 4096 个版本，请保留目录备份后使用新的同步目录。',
-        );
+        throw new Error(t('cm_webdav_error_19'));
       const end = Math.min(offset + 4, pending.length);
       const batch = await Promise.all(
         pending.slice(offset, end).map(async (id) => {
           if (!listed.has(id)) {
             const published = await this.request(`done-${id}`, 'GET');
-            if (!published.ok)
-              throw new Error(
-                '同步历史缺少已发布的版本，请检查目录及代理缓存后重试。',
-              );
+            if (!published.ok) throw new Error(t('cm_webdav_error_20'));
           }
           return this.readRecord(
             id,
@@ -196,9 +189,7 @@ export class WebDavSync {
         if (records.has(record.id)) continue;
         total += bytes;
         if (total > SYNC_MAX_DOCUMENT_BYTES)
-          throw new Error(
-            '同步历史超过 257 MB，已暂停同步，请保留备份后使用新的同步目录。',
-          );
+          throw new Error(t('cm_webdav_error_21'));
         records.set(record.id, record);
         for (const parent of record.parents)
           if (!pending.includes(parent)) pending.push(parent);
@@ -215,20 +206,20 @@ export class WebDavSync {
       const body = await readResponseTextWithinLimit(
         existing,
         SYNC_MAX_SNAPSHOT_BYTES + 1024 * 1024,
-        '已有版本内容过大。',
+        t('cm_webdav_text_22'),
       );
       if (body === canonical(record)) {
         await this.publish(record.id);
         return;
       }
       // The content-addressed name permits retrying precisely these bytes after an interrupted PUT.
-      this.note('正在重新写入未完整保存的相同版本。');
+      this.note(t('cm_webdav_text_23'));
     }
     const response = await this.request(path, 'PUT', canonical(record));
-    if (!response.ok) throw new Error('版本目录不存在，请重新连接同步空间。');
+    if (!response.ok) throw new Error(t('cm_webdav_error_24'));
     const stored = await this.readRecord(record.id, false);
     if (canonical(stored.record) !== canonical(record))
-      throw new Error('版本写入后读回内容不一致，未标记为同步成功。');
+      throw new Error(t('cm_webdav_error_25'));
     await this.publish(record.id);
   }
 
@@ -240,48 +231,44 @@ export class WebDavSync {
     if (existing.ok) return;
     const response = await this.request(path, 'PUT', '');
     if (!response.ok || !(await this.request(path, 'GET')).ok)
-      throw new Error('版本发布标记未能保存，本机数据已保留，稍后会重试。');
+      throw new Error(t('cm_webdav_error_26'));
   }
 
   async test() {
     this.diagnostics.length = 0;
-    this.note(`实际同步目录：${this.directory}`);
+    this.note(t('cm_webdav_text_27', [String(this.directory)]));
     for (const path of ['../', '']) {
       const response = await this.request(path, 'MKCOL');
       if (!response.ok && response.status !== 405)
-        throw new Error('同步目录无法创建，请先确认填写的父目录存在。');
+        throw new Error(t('cm_webdav_error_28'));
     }
     const name = `probe-${crypto.randomUUID()}.json`;
     const body = JSON.stringify({ probe: crypto.randomUUID() });
     try {
       const written = await this.request(name, 'PUT', body);
-      if (!written.ok) throw new Error('同步目录不可写。');
+      if (!written.ok) throw new Error(t('cm_webdav_error_29'));
       const response = await this.request(name, 'GET');
       if (
         !response.ok ||
         (await readResponseTextWithinLimit(
           response,
           4096,
-          '测试文件返回内容过大。',
+          t('cm_webdav_text_30'),
         )) !== body
       ) {
-        throw new Error(
-          '测试文件读回失败或内容不一致，请检查代理缓存和 WebDAV 服务。',
-        );
+        throw new Error(t('cm_webdav_error_31'));
       }
       this.note(
         response.headers.has('etag')
-          ? '服务返回 ETag；独立版本同步无需条件写入。'
-          : '服务未返回 ETag；独立版本同步无需 ETag／If-Match。',
+          ? t('cm_webdav_text_32')
+          : t('cm_webdav_text_33'),
       );
       if (!(await this.list()).includes(name))
-        throw new Error(
-          'PROPFIND 未列出刚写入的测试文件，请检查目录权限、列表完整性及代理缓存。',
-        );
-      this.note('目录读写与文件可见性检查通过。');
+        throw new Error(t('cm_webdav_error_34'));
+      this.note(t('cm_webdav_text_35'));
     } finally {
       await this.request(name, 'DELETE').catch(() =>
-        this.note('测试文件清理未完成，可在 WebDAV 目录手动删除 probe 文件。'),
+        this.note(t('cm_webdav_text_36')),
       );
     }
   }

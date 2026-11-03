@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 export const DEFAULT_CARD_ACCENT = '#aeb8b6';
 
 const SAMPLE_WIDTH = 48;
@@ -130,7 +131,7 @@ export function deriveCardAccent(
   height: number,
 ) {
   if (width <= 0 || height <= 0 || pixels.length !== width * height * 4) {
-    throw new Error('卡牌封面取色需要有效的 RGBA 像素。');
+    throw new Error(t('cm_card_accent_error_1'));
   }
 
   const clusters = new Map<string, AccentCluster>();
@@ -233,7 +234,7 @@ export async function deriveCardAccentFromImageSource(
           height: SAMPLE_HEIGHT,
         });
   const context = canvas.getContext('2d', { willReadFrequently: true });
-  if (!context) throw new Error('浏览器无法创建卡牌封面取色画布。');
+  if (!context) throw new Error(t('cm_card_accent_error_2'));
   context.drawImage(source, 0, 0, SAMPLE_WIDTH, SAMPLE_HEIGHT);
   return deriveCardAccent(
     context.getImageData(0, 0, SAMPLE_WIDTH, SAMPLE_HEIGHT).data,
@@ -244,7 +245,7 @@ export async function deriveCardAccentFromImageSource(
 
 export async function deriveCardAccentFromDataUrl(dataUrl: string) {
   const response = await fetch(dataUrl);
-  if (!response.ok) throw new Error('卡牌封面无法读取，不能计算边框颜色。');
+  if (!response.ok) throw new Error(t('cm_card_accent_error_3'));
   const blob = await response.blob();
   if (typeof createImageBitmap === 'function') {
     const image = await createImageBitmap(blob);
@@ -255,14 +256,14 @@ export async function deriveCardAccentFromDataUrl(dataUrl: string) {
     }
   }
   if (typeof document === 'undefined') {
-    throw new Error('当前浏览器无法解码卡牌封面颜色。');
+    throw new Error(t('cm_card_accent_error_4'));
   }
   const objectUrl = URL.createObjectURL(blob);
   const image = new Image();
   try {
     await new Promise<void>((resolve, reject) => {
       image.onload = () => resolve();
-      image.onerror = () => reject(new Error('卡牌封面解码失败。'));
+      image.onerror = () => reject(new Error(t('cm_card_accent_error_5')));
       image.src = objectUrl;
     });
     return await deriveCardAccentFromImageSource(image);

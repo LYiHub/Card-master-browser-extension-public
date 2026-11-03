@@ -3,6 +3,7 @@ import type {
   AssistantSurfaceNavigationMessage,
   AssistantWorkbenchTab,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi, ExtensionPort } from './api';
 import {
   assistantSurfaceLifecyclePortTabId,
@@ -37,10 +38,7 @@ function sidebarUserInputRequired(error: unknown) {
 
 class FirefoxSidebarUserActionRequiredError extends Error {
   constructor(cause: unknown) {
-    super(
-      'Firefox 只允许从浏览器扩展界面打开原生侧边栏。请点击工具栏中的 卡牌大师图标，或从 Firefox 侧边栏列表打开“卡牌大师智能体”。',
-      { cause },
-    );
+    super(t('cm_assistant_surface_background_text_1'), { cause });
     this.name = 'FirefoxSidebarUserActionRequiredError';
   }
 }

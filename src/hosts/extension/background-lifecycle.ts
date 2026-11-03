@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 
 type BackgroundLifecycleOptions = {
@@ -51,7 +52,10 @@ export function installBackgroundLifecycle({
       alarm.name === alarms.sync
     ) {
       void run().catch((error) =>
-        reportFailure(`后台定时任务 ${alarm.name} 失败`, error),
+        reportFailure(
+          t('cm_background_lifecycle_text_1', [String(alarm.name)]),
+          error,
+        ),
       );
     }
   });
@@ -59,14 +63,20 @@ export function installBackgroundLifecycle({
   api.runtime.onInstalled.addListener(() => {
     void initialize()
       .then(refreshExistingPages)
-      .catch((error) => reportFailure('安装初始化失败', error));
+      .catch((error) =>
+        reportFailure(t('cm_background_lifecycle_text_2'), error),
+      );
   });
   api.runtime.onStartup.addListener(() => {
-    void initialize().catch((error) => reportFailure('启动初始化失败', error));
+    void initialize().catch((error) =>
+      reportFailure(t('cm_background_lifecycle_text_3'), error),
+    );
   });
   void initialize()
     .then(async () => {
       if (storageAvailable()) await runDailyReview('startup');
     })
-    .catch((error) => reportFailure('后台初始化失败', error));
+    .catch((error) =>
+      reportFailure(t('cm_background_lifecycle_text_4'), error),
+    );
 }

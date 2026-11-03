@@ -9,6 +9,7 @@ import type {
 import { ChatCompletionsClient } from '../../ai/infrastructure/chat-completions-client';
 import type { AiModelClient } from '../../ai/infrastructure/model-client';
 import { ResponsesCompatibilityClient } from '../../ai/infrastructure/responses-compatibility-client';
+import { t } from '../../localization/messages';
 import type { GeneratedUserscriptCover } from '../../userscript/application/card-cover';
 import {
   aiServicesView,
@@ -77,7 +78,7 @@ export class ExtensionAiServices {
       const services = await resolveModelServiceConfig(this.storage, input);
       const config = services.modelService;
       if (!config.apiKey) {
-        throw new Error('请填写模型服务的 API 密钥。');
+        throw new Error(t('cm_ai_services_error_1'));
       }
       const payload = await this.createClient(config).stream(
         {
@@ -110,7 +111,7 @@ export class ExtensionAiServices {
   async openModelSession() {
     const config = await readAiServicesConfig(this.storage);
     if (!config?.modelService.apiKey) {
-      throw new Error('模型服务尚未配置，请在卡牌大师智能体的设置中保存密钥。');
+      throw new Error(t('cm_ai_services_error_2'));
     }
     return {
       view: aiServicesView(config),
@@ -123,9 +124,7 @@ export class ExtensionAiServices {
       await readAiServicesConfig(this.storage),
     );
     if (!config.speechService.apiKey) {
-      throw new Error(
-        '语音识别尚未配置，请在卡牌大师智能体的设置中填写语音识别 API 密钥。',
-      );
+      throw new Error(t('cm_ai_services_error_3'));
     }
     return structuredClone(config.speechService);
   }

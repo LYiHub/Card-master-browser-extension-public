@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   UserscriptAudioState,
   UserscriptCapability,
@@ -155,7 +156,7 @@ function notificationDetails(value: unknown) {
   const message = text(value.text);
   if (!message) throw new TypeError('GM_notification requires text.');
   return {
-    title: text(value.title, '卡牌大师'),
+    title: text(value.title, t('cm_userscript_capability_service_text_1')),
     message,
     iconUrl: text(value.image),
     silent: value.silent === true,
@@ -355,7 +356,8 @@ export class UserscriptCapabilityService {
         : options.loadInBackground !== true;
     if (options.incognito === true && !current.incognito) {
       const windows = this.api.windows;
-      if (!windows) throw new Error('当前浏览器不支持创建隐私窗口。');
+      if (!windows)
+        throw new Error(t('cm_userscript_capability_service_error_2'));
       const created = await windows.create({
         url: currentUrl(context, payload.url),
         incognito: true,
@@ -413,7 +415,8 @@ export class UserscriptCapabilityService {
       silent: details.silent,
     };
     const notifications = this.api.notifications;
-    if (!notifications) throw new Error('当前浏览器不支持脚本通知。');
+    if (!notifications)
+      throw new Error(t('cm_userscript_capability_service_error_3'));
     let notificationId: string;
     try {
       notificationId = await notifications.create(options);
@@ -445,7 +448,8 @@ export class UserscriptCapabilityService {
     if (!notificationId) throw new TypeError('Missing notification ID.');
     this.notifications.delete(notificationId);
     const notifications = this.api.notifications;
-    if (!notifications) throw new Error('当前浏览器不支持脚本通知。');
+    if (!notifications)
+      throw new Error(t('cm_userscript_capability_service_error_4'));
     return { cleared: await notifications.clear(notificationId) };
   }
 
@@ -454,7 +458,8 @@ export class UserscriptCapabilityService {
     const eventId = text(payload.eventId);
     const details = downloadDetails(payload.details);
     const downloads = this.api.downloads;
-    if (!downloads) throw new Error('当前浏览器不支持脚本下载。');
+    if (!downloads)
+      throw new Error(t('cm_userscript_capability_service_error_5'));
     const downloadId = await downloads.download({
       ...details,
       conflictAction:
@@ -469,7 +474,8 @@ export class UserscriptCapabilityService {
       throw new TypeError('Invalid download cancellation.');
     }
     const downloads = this.api.downloads;
-    if (!downloads) throw new Error('当前浏览器不支持脚本下载。');
+    if (!downloads)
+      throw new Error(t('cm_userscript_capability_service_error_6'));
     await downloads.cancel(payload.downloadId);
     return { cancelled: true };
   }
@@ -498,7 +504,8 @@ export class UserscriptCapabilityService {
 
   private async listCookies(context: CapabilityContext, payload: unknown) {
     const cookies = this.api.cookies;
-    if (!cookies) throw new Error('当前浏览器不支持脚本 Cookie 操作。');
+    if (!cookies)
+      throw new Error(t('cm_userscript_capability_service_error_7'));
     const details = record(payload) ? payload : {};
     const explicitScope = text(details.url) || text(details.domain);
     const storeId = await this.cookieStoreId(context, details.storeId);
@@ -524,7 +531,8 @@ export class UserscriptCapabilityService {
 
   private async setCookie(context: CapabilityContext, payload: unknown) {
     const cookies = this.api.cookies;
-    if (!cookies) throw new Error('当前浏览器不支持脚本 Cookie 操作。');
+    if (!cookies)
+      throw new Error(t('cm_userscript_capability_service_error_8'));
     if (!record(payload)) throw new TypeError('Invalid cookie details.');
     const storeId = await this.cookieStoreId(context, payload.storeId);
     const details: chrome.cookies.SetDetails = {
@@ -555,7 +563,8 @@ export class UserscriptCapabilityService {
 
   private async deleteCookie(context: CapabilityContext, payload: unknown) {
     const cookies = this.api.cookies;
-    if (!cookies) throw new Error('当前浏览器不支持脚本 Cookie 操作。');
+    if (!cookies)
+      throw new Error(t('cm_userscript_capability_service_error_9'));
     if (!record(payload)) throw new TypeError('Invalid cookie details.');
     const storeId = await this.cookieStoreId(context, payload.storeId);
     return await cookies.remove({
@@ -619,7 +628,7 @@ export class UserscriptCapabilityService {
   ) {
     await this.ready;
     if (!this.api.webRequest?.onBeforeRequest) {
-      throw new Error('当前浏览器不支持脚本网络请求监听。');
+      throw new Error(t('cm_userscript_capability_service_error_10'));
     }
     if (!record(payload)) throw new TypeError('Invalid web request rules.');
     const eventId = text(payload.eventId);

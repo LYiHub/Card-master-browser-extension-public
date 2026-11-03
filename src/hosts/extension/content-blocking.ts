@@ -7,6 +7,7 @@ import type {
   ContentBlockingSnapshotListener,
   ContentBlockingUserRulesListener,
 } from '../../content-blocking/domain/types';
+import { t } from '../../localization/messages';
 import {
   ADGUARD_COSMETIC_APPLIED_EVENT,
   ADGUARD_COSMETIC_REVISION_DATASET,
@@ -275,7 +276,7 @@ export class ExtensionContentBlockingController
       diagnostics,
     };
     const error = new Error(
-      diagnostics.join(' ') || '内容拦截引擎返回了错误状态。',
+      diagnostics.join(' ') || t('cm_content_blocking_text_1'),
     );
     extensionDiagnostics.error('content-blocking', event, error, details);
     return snapshot;
@@ -521,7 +522,7 @@ export class ExtensionContentBlockingController
   dispose() {
     if (this.userRuleBatchTimer) clearTimeout(this.userRuleBatchTimer);
     this.userRuleBatchTimer = null;
-    const error = new Error('内容拦截控制器已释放。');
+    const error = new Error(t('cm_content_blocking_error_2'));
     for (const request of this.pendingUserRuleRequests) request.reject(error);
     this.pendingUserRuleRequests = [];
     this.pendingUserRuleSession = null;
@@ -561,7 +562,7 @@ export class ExtensionContentBlockingController
     this.pendingUserRuleRequests = [];
     this.pendingUserRuleSession = null;
     if (!session) {
-      const error = new Error('元素过滤批次缺少会话标识。');
+      const error = new Error(t('cm_content_blocking_error_3'));
       for (const request of requests) request.reject(error);
       throw error;
     }

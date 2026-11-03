@@ -2,6 +2,7 @@ import type {
   AiPageContext,
   AssistantTabTargetState,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 import {
   type AssistantPageAttachment,
@@ -64,7 +65,7 @@ function tabSummary(
 }
 
 export function unavailableAssistantTabTarget(
-  message = '当前没有选定可操作的页面。请先选择目标页面。',
+  message = t('cm_assistant_tab_session_text_1'),
 ): AssistantTabTargetState {
   return {
     tabId: null,
@@ -101,9 +102,7 @@ export async function readAssistantTabTargetState(
       available: true,
     };
   } catch {
-    return unavailableAssistantTabTarget(
-      '所选页面已关闭或不可访问。请重新选择目标页面。',
-    );
+    return unavailableAssistantTabTarget(t('cm_assistant_tab_session_text_2'));
   }
 }
 
@@ -128,7 +127,7 @@ export class ExtensionAssistantTabSession implements AssistantPageToolExecutor {
 
   requireSelectedTabId() {
     if (this.selectedTabId === null) {
-      throw new Error('当前没有选定可操作的页面。请先选择目标页面。');
+      throw new Error(t('cm_assistant_tab_session_error_3'));
     }
     return this.selectedTabId;
   }
@@ -180,7 +179,7 @@ export class ExtensionAssistantTabSession implements AssistantPageToolExecutor {
   async selectTab(tabId: number) {
     const tab = await this.api.tabs.get(tabId);
     const summary = tabSummary(tab, tabId);
-    if (!summary) throw new Error('所选页面无法识别。');
+    if (!summary) throw new Error(t('cm_assistant_tab_session_error_4'));
     this.updateSelectedTab(tabId);
     return {
       selected: true,
@@ -203,7 +202,7 @@ export class ExtensionAssistantTabSession implements AssistantPageToolExecutor {
     }
     const updated = await this.api.tabs.get(tabId);
     const summary = tabSummary(updated, this.selectedTabId);
-    if (!summary) throw new Error('所选页面无法识别。');
+    if (!summary) throw new Error(t('cm_assistant_tab_session_error_5'));
     return {
       activated: true,
       windowFocused,
@@ -216,7 +215,7 @@ export class ExtensionAssistantTabSession implements AssistantPageToolExecutor {
   async closeTab(tabId: number) {
     const tab = await this.api.tabs.get(tabId);
     const summary = tabSummary(tab, this.selectedTabId);
-    if (!summary) throw new Error('所选页面无法识别。');
+    if (!summary) throw new Error(t('cm_assistant_tab_session_error_6'));
     await this.api.tabs.remove(tabId);
     const selectedClosed = tabId === this.selectedTabId;
     if (selectedClosed) this.updateSelectedTab(null);
@@ -238,7 +237,7 @@ export class ExtensionAssistantTabSession implements AssistantPageToolExecutor {
         await this.api.tabs.get(tabId);
       } catch {
         this.updateSelectedTab(null);
-        throw new Error('所选页面已关闭或不可访问。请重新选择目标页面。');
+        throw new Error(t('cm_assistant_tab_session_error_7'));
       }
     }
     const attachment = await this.resolvePageAttachment(tabId);

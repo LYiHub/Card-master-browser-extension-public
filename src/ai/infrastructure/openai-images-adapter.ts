@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { AI_IMAGE_GENERATION_MODEL } from '../domain/image-generation';
 import type {
   ImageGenerationProtocolAdapter,
@@ -8,8 +9,9 @@ import type {
 export const openaiImagesAdapter: ImageGenerationProtocolAdapter = {
   protocol: 'openai-images',
   label: 'OpenAI Images API',
-  description:
-    '使用 OpenAI 图片生成接口格式（/images/generations），返回 b64 或 URL。',
+  get description() {
+    return t('cm_openai_images_adapter_description_1');
+  },
   defaultBaseUrl: 'https://api.openai.com/v1',
   defaultModel: AI_IMAGE_GENERATION_MODEL,
 

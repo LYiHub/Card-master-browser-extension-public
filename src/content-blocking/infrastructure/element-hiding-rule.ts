@@ -1,3 +1,5 @@
+import { t } from '../../localization/messages';
+
 function escapeCssIdentifier(value: string) {
   const nativeEscape = globalThis.CSS?.escape;
   if (nativeEscape) return nativeEscape(value);
@@ -116,7 +118,7 @@ export function strictElementSelector(element: Element) {
   }
 
   if (path.length === 0) {
-    throw new Error('无法为该页面元素生成稳定的过滤选择器。');
+    throw new Error(t('cm_element_hiding_rule_error_1'));
   }
   return path.join(' > ');
 }
@@ -124,9 +126,9 @@ export function strictElementSelector(element: Element) {
 export function createElementHidingRule(element: Element, pageUrl: string) {
   const url = new URL(pageUrl);
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new Error('当前页面协议不支持持久化元素过滤规则。');
+    throw new Error(t('cm_element_hiding_rule_error_2'));
   }
   const domain = url.hostname;
-  if (!domain) throw new Error('当前页面缺少可用于过滤规则的域名。');
+  if (!domain) throw new Error(t('cm_element_hiding_rule_error_3'));
   return `${domain}##${strictElementSelector(element)}`;
 }

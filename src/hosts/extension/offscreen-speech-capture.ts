@@ -2,6 +2,7 @@ import {
   SpeechAudioCapture,
   type SpeechAudioCaptureSession,
 } from '../../ai/infrastructure/speech-audio-capture';
+import { t } from '../../localization/messages';
 import type { GamepadExtensionApi } from './gamepad-extension-client';
 import {
   GAMEPAD_SPEECH_CAPTURE_PORT,
@@ -70,7 +71,7 @@ class OffscreenSpeechCapture implements SpeechAudioCaptureSession {
           const pendingReject = this.finishReject;
           this.finishResolve = null;
           this.finishReject = null;
-          pendingReject(new Error('麦克风采集未能及时结束。'));
+          pendingReject(new Error(t('cm_offscreen_speech_capture_error_1')));
         }, CAPTURE_FINISH_TIMEOUT_MS);
         const finish = this.finishResolve;
         this.finishResolve = () => {
@@ -103,7 +104,7 @@ class OffscreenSpeechCapture implements SpeechAudioCaptureSession {
       const timeout = window.setTimeout(() => {
         cleanup();
         this.disconnect();
-        reject(new Error('扩展麦克风采集服务连接超时。'));
+        reject(new Error(t('cm_offscreen_speech_capture_error_2')));
       }, CAPTURE_CONNECTION_TIMEOUT_MS);
       const handleReady = (message: unknown) => {
         if (
@@ -122,7 +123,7 @@ class OffscreenSpeechCapture implements SpeechAudioCaptureSession {
           this.disconnect();
           reject(
             new OffscreenSpeechCaptureUnsupportedError(
-              '当前浏览器不支持扩展离屏麦克风采集。',
+              t('cm_offscreen_speech_capture_text_3'),
             ),
           );
           return;
@@ -135,7 +136,7 @@ class OffscreenSpeechCapture implements SpeechAudioCaptureSession {
       };
       const handleDisconnect = () => {
         cleanup();
-        reject(new Error('扩展麦克风采集服务已经断开。'));
+        reject(new Error(t('cm_offscreen_speech_capture_error_4')));
       };
       const cleanup = () => {
         window.clearTimeout(timeout);
@@ -180,7 +181,7 @@ class OffscreenSpeechCapture implements SpeechAudioCaptureSession {
 
   private readonly handleDisconnect = () => {
     if (this.closed) return;
-    const error = new Error('扩展麦克风采集服务已经断开。');
+    const error = new Error(t('cm_offscreen_speech_capture_error_5'));
     this.finishReject?.(error);
     this.finishResolve = null;
     this.finishReject = null;

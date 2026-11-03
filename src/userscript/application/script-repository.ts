@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   parseUserscriptMetadata,
   userscriptDisplayDescription,
@@ -176,7 +177,10 @@ export function hydrateScript(script: StoredScript): InstalledUserscript {
   const parsed = parseUserscriptMetadata(script.source.code);
   if (!parsed.metadata) {
     throw new Error(
-      `已存储脚本 ${script.id} 的元数据无效：${parsed.diagnostics.map((item) => item.message).join(' ')}`,
+      t('cm_script_repository_error_1', [
+        String(script.id),
+        String(parsed.diagnostics.map((item) => item.message).join(' ')),
+      ]),
     );
   }
   const hydrated: InstalledUserscript = {
@@ -202,7 +206,10 @@ export function hydrateScript(script: StoredScript): InstalledUserscript {
   );
   if (errors.length > 0) {
     throw new Error(
-      `已存储脚本 ${script.id} 未通过预检：${errors.map((item) => item.message).join(' ')}`,
+      t('cm_script_repository_error_2', [
+        String(script.id),
+        String(errors.map((item) => item.message).join(' ')),
+      ]),
     );
   }
   return hydrated;
@@ -213,7 +220,7 @@ function parseLibrary(serialized: string) {
   try {
     value = JSON.parse(serialized);
   } catch (error) {
-    throw new Error('用户脚本仓库包含无效 JSON。', {
+    throw new Error(t('cm_script_repository_error_3'), {
       cause: error,
     });
   }
@@ -224,7 +231,9 @@ function parseLibrary(serialized: string) {
     !Array.isArray(value.scripts)
   ) {
     throw new Error(
-      `不支持的用户脚本仓库版本：${record(value) ? String(value.version) : '未知'}`,
+      t('cm_script_repository_error_4', [
+        String(record(value) ? String(value.version) : '未知'),
+      ]),
     );
   }
 
@@ -233,7 +242,7 @@ function parseLibrary(serialized: string) {
   for (const [index, candidate] of value.scripts.entries()) {
     if (!isStoredScript(candidate)) {
       rejected.push({
-        reason: `第 ${index + 1} 条记录的持久化结构无效`,
+        reason: t('cm_script_repository_reason_5', [String(index + 1)]),
         record: candidate,
       });
       continue;
@@ -346,7 +355,10 @@ export class StorageScriptRepository implements TransactionalScriptRepository {
     if (rejected.length > 0) {
       await this.writeQuarantine(rejected);
       console.error(
-        `已隔离 ${rejected.length} 条无效用户脚本仓库记录：${rejected.map(({ reason }) => reason).join(' ')}`,
+        t('cm_script_repository_text_6', [
+          String(rejected.length),
+          String(rejected.map(({ reason }) => reason).join(' ')),
+        ]),
       );
       await this.write(scripts);
     }

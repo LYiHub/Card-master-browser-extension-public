@@ -1,4 +1,5 @@
 import { parse } from 'acorn';
+import { t } from '../../localization/messages';
 
 import type { MetadataDiagnostic } from '../domain/types';
 
@@ -28,7 +29,7 @@ export function userscriptSyntaxDiagnostic(
     return {
       severity: 'error',
       code: 'invalid-userscript-syntax',
-      message: `用户脚本语法错误：${message}`,
+      message: t('cm_javascript_syntax_message_1', [String(message)]),
       line: syntaxError.loc?.line,
     };
   }

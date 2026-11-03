@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { UserscriptResourceLoader } from '../../userscript/application/resource-loader';
 import type { ScriptRepository } from '../../userscript/application/script-repository';
 import { matchInstalledUserscript } from '../../userscript/domain/matcher';
@@ -127,7 +128,7 @@ export class RegisteredUserscriptSynchronizer {
     const script = this.scripts.get(scriptId);
     const identity = this.identities.get(scriptId);
     if (!script || !identity) {
-      throw new Error('已提交的脚本未进入注册系统。');
+      throw new Error(t('cm_registration_sync_error_1'));
     }
     const bundle = await this.resourceLoader.load(script);
     return {

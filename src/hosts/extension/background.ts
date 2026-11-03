@@ -21,6 +21,7 @@ import {
   normalizeDeckEntrySettings,
 } from '../../features/userscript-deck/deck-entry';
 import { isExtensionStorageSpaceFailure } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
 import {
   NEW_TAB_PREFERENCES_STORAGE_KEY,
   NewTabPreferencesRepository,
@@ -229,7 +230,7 @@ const contentBlockingService = new ContentBlockingService(
             type: 'content-blocking-user-rules-changed',
           },
           'content-blocking-user-rules-broadcast-incomplete',
-          '部分页面没有接收自定义规则更新。',
+          t('cm_background_text_1'),
         )
         .catch((error) =>
           reportBackgroundError(
@@ -261,10 +262,7 @@ function markStorageRecoveryPending(error?: unknown) {
   extensionDiagnostics.warn(
     'background',
     'storage-recovery-pending',
-    error ??
-      new Error(
-        'Edge 当前进程仍拒绝写入旧扩展存储。内容拦截规则所有权已转入独立缓存；请完全退出并重新打开 Edge，以完成旧数据库清理。',
-      ),
+    error ?? new Error(t('cm_background_error_2')),
   );
 }
 
@@ -353,7 +351,7 @@ api.storage.onChanged.addListener((changes, areaName) => {
         ? dailyReviewWallpaper.run('configuration')
         : undefined,
     )
-    .catch((error) => reportBackgroundError('每日回顾启用后生成失败', error));
+    .catch((error) => reportBackgroundError(t('cm_background_text_3'), error));
 });
 const speechAuthorization = new VolcengineSpeechAuthorizationCoordinator(
   api.declarativeNetRequest,
@@ -420,7 +418,7 @@ installDeckToolbarEntry(api, {
     ? {
         openToolbarSurface: async (tab: chrome.tabs.Tab) => {
           if (typeof tab.id !== 'number') {
-            throw new Error('Firefox 工具栏操作缺少当前标签页身份。');
+            throw new Error(t('cm_background_error_4'));
           }
           await assistantSurface.open(tab.id);
         },
@@ -544,16 +542,16 @@ const assistantService = new ExtensionAssistantService(
       if (result.ok) return result.value;
       const { error } = result;
       if (error === 'The script instance is not running.') {
-        throw new Error('当前页面没有正在运行的脚本实例。');
+        throw new Error(t('cm_background_error_5'));
       }
       if (error === 'The runtime command is no longer registered.') {
-        throw new Error('该脚本指令已经失效，请重新读取运行时状态。');
+        throw new Error(t('cm_background_error_6'));
       }
       throw new Error(error);
     },
     readPageUrl: async (tabId) => {
       const tab = await api.tabs.get(tabId);
-      if (!tab.url) throw new Error('当前标签页没有可用地址。');
+      if (!tab.url) throw new Error(t('cm_background_error_7'));
       return tab.url;
     },
     setDeckVisibility: (tabId, visibility) =>
@@ -609,9 +607,12 @@ async function runBackgroundInitializationPhase<Result>(
   try {
     return await operation();
   } catch (error) {
-    throw new Error(`后台初始化阶段“${phase}”失败：${errorMessage(error)}`, {
-      cause: error,
-    });
+    throw new Error(
+      t('cm_background_error_8', [String(phase), String(errorMessage(error))]),
+      {
+        cause: error,
+      },
+    );
   }
 }
 
@@ -695,7 +696,7 @@ async function readAudioSettings() {
 
 async function writeAudioSettings(input: AudioSettings) {
   const settings = normalizeAudioSettings(input);
-  if (!settings) throw new Error('声音设置无效。');
+  if (!settings) throw new Error(t('cm_background_error_9'));
   await api.storage.local.set({
     [AUDIO_SETTINGS_STORAGE_KEY]: settings,
   });
@@ -706,7 +707,7 @@ async function writeAudioSettings(input: AudioSettings) {
       settings,
     },
     'audio-settings-broadcast-incomplete',
-    '部分页面没有接收声音设置更新。',
+    t('cm_background_text_10'),
   );
   return settings;
 }
@@ -892,7 +893,7 @@ contentBlockingService.subscribe((snapshot) => {
         snapshot,
       },
       'content-blocking-broadcast-incomplete',
-      '部分页面没有接收内容拦截状态更新。',
+      t('cm_background_text_11'),
     )
     .catch((error) =>
       reportBackgroundError('content blocking broadcast failed', error),
@@ -972,7 +973,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
       );
       sendResponse(
         userscriptBackgroundErrorResponse(
-          new Error('卡牌大师智能体请求缺少当前标签页身份。'),
+          new Error(t('cm_background_error_12')),
         ),
       );
       return true;
@@ -1047,7 +1048,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (aiResponse !== AI_MESSAGE_UNHANDLED) return aiResponse;
     if (message.type === 'sync-command') {
       if (sender.id !== api.runtime.id)
-        throw new Error('同步请求缺少有效的扩展身份。');
+        throw new Error(t('cm_background_error_13'));
       return syncService.request(message.command);
     }
     if (
@@ -1055,8 +1056,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
       message.action === 'reset-all'
     ) {
       const disconnected = await syncService.request({ type: 'disconnect' });
-      if (disconnected.connected)
-        throw new Error('同步连接尚未断开，请重试后再重置本机数据。');
+      if (disconnected.connected) throw new Error(t('cm_background_error_14'));
     }
     const userscriptResponse = await userscriptLibrary.route(message, sender);
     if (userscriptResponse !== USERSCRIPT_LIBRARY_MESSAGE_UNHANDLED) {
@@ -1079,19 +1079,19 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function initializeBackground() {
-  await runBackgroundInitializationPhase('配置扩展存储访问', () =>
+  await runBackgroundInitializationPhase(t('cm_background_text_15'), () =>
     configureExtensionStorageAccess(api.storage),
   );
-  await runBackgroundInitializationPhase('恢复内容拦截规则所有权', () =>
+  await runBackgroundInitializationPhase(t('cm_background_text_16'), () =>
     contentBlockingRuleGate.initializeOwnership(),
   );
   storageRecoveryStatus = 'ready';
-  await runBackgroundInitializationPhase('启动脚本安装拦截', () =>
+  await runBackgroundInitializationPhase(t('cm_background_text_17'), () =>
     installInterceptor.start(),
   );
   if (!storageRecoveryUnavailable()) {
     try {
-      await runBackgroundInitializationPhase('同步预装脚本', () =>
+      await runBackgroundInitializationPhase(t('cm_background_text_18'), () =>
         installPendingPreinstalledUserscripts(),
       );
     } catch (error) {
@@ -1105,23 +1105,23 @@ async function initializeBackground() {
         markStorageRecoveryPending(error);
         return;
       }
-      reportBackgroundError('平台能力初始化失败', error);
+      reportBackgroundError(t('cm_background_text_19'), error);
     });
   }
   const storageDependentPhases: ReadonlyArray<
     readonly [string, () => Promise<unknown>]
   > = [
     [
-      '同步用户脚本运行时',
+      t('cm_background_text_20'),
       async () => {
         await synchronizer?.schedule();
       },
     ],
-    ['读取页面光影设置', () => pageThemeService.read()],
-    ['读取媒体倍速设置', () => mediaSpeedService.readSettings()],
-    ['读取媒体资源设置', () => mediaResourcesService.readSettings()],
-    ['读取手柄设置', () => gamepadControlService.readSettings()],
-    ['安排脚本更新检查', () => scheduleUserscriptUpdateAlarm()],
+    [t('cm_background_text_21'), () => pageThemeService.read()],
+    [t('cm_background_text_22'), () => mediaSpeedService.readSettings()],
+    [t('cm_background_text_23'), () => mediaResourcesService.readSettings()],
+    [t('cm_background_text_24'), () => gamepadControlService.readSettings()],
+    [t('cm_background_text_25'), () => scheduleUserscriptUpdateAlarm()],
   ];
   for (const [phase, operation] of storageDependentPhases) {
     if (storageRecoveryUnavailable()) break;
@@ -1144,10 +1144,13 @@ async function initializeBackground() {
     delayInMinutes: 1,
     periodInMinutes: 5,
   });
-  await runBackgroundInitializationPhase('刷新工具栏卡牌数量', async () => {
-    await deckActionBadge.initialize();
-    await deckActionBadge.refreshAll(resolveDeckActionBadge);
-  });
+  await runBackgroundInitializationPhase(
+    t('cm_background_text_26'),
+    async () => {
+      await deckActionBadge.initialize();
+      await deckActionBadge.refreshAll(resolveDeckActionBadge);
+    },
+  );
 }
 
 let initializationPromise: Promise<void> | null = null;

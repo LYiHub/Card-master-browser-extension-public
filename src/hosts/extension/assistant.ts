@@ -7,6 +7,7 @@ import type {
   AssistantTabTargetListener,
   AssistantTabTargetState,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import {
   connectExtensionPort,
   type ExtensionApi,
@@ -208,7 +209,7 @@ export class ExtensionAssistantController implements AiAssistantController {
         firstSnapshot,
         new Promise<never>((_resolve, reject) => {
           timeout = setTimeout(
-            () => reject(new Error('AI 会话后台未在限定时间内返回状态。')),
+            () => reject(new Error(t('cm_assistant_error_1'))),
             10_000,
           );
         }),
@@ -309,13 +310,13 @@ export class ExtensionAssistantController implements AiAssistantController {
     this.stopHeartbeat();
     for (const pending of this.pendingRequests.values()) {
       if (pending.timer) clearTimeout(pending.timer);
-      pending.reject(new Error('AI 会话控制器已释放。'));
+      pending.reject(new Error(t('cm_assistant_error_2')));
     }
     this.pendingRequests.clear();
   }
 
   private connect() {
-    if (this.disposed) throw new Error('AI 会话控制器已释放。');
+    if (this.disposed) throw new Error(t('cm_assistant_error_3'));
     if (this.port) return this.port;
     this.resetFirstSnapshot();
     let port: ExtensionPort;
@@ -393,9 +394,7 @@ export class ExtensionAssistantController implements AiAssistantController {
         pending.timer = null;
         pending.received = false;
       }
-      this.interruptRunningSnapshot(
-        'AI 请求因扩展后台重新加载或连接中断而停止。',
-      );
+      this.interruptRunningSnapshot(t('cm_assistant_text_4'));
       this.schedulePendingRetry(this.pendingRequests.size > 0 ? 0 : undefined);
     });
     return port;
@@ -450,7 +449,7 @@ export class ExtensionAssistantController implements AiAssistantController {
     });
     if (response.error) throw new Error(response.error);
     if (!response.authorization) {
-      throw new Error('扩展未能建立语音识别鉴权会话。');
+      throw new Error(t('cm_assistant_error_5'));
     }
     return response.authorization;
   }
@@ -481,7 +480,7 @@ export class ExtensionAssistantController implements AiAssistantController {
       this.port = null;
       if (pending.attempts >= 3) {
         this.pendingRequests.delete(requestId);
-        pending.reject(new Error('AI 会话请求无法发送到扩展后台。'));
+        pending.reject(new Error(t('cm_assistant_error_6')));
         return;
       }
       this.schedulePendingRetry(150 * pending.attempts);
@@ -492,7 +491,7 @@ export class ExtensionAssistantController implements AiAssistantController {
       if (!this.pendingRequests.has(requestId)) return;
       if (pending.attempts >= 3) {
         this.pendingRequests.delete(requestId);
-        pending.reject(new Error('AI 会话后台未确认请求。'));
+        pending.reject(new Error(t('cm_assistant_error_7')));
         return;
       }
       try {

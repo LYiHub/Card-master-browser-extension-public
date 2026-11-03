@@ -3,6 +3,7 @@ import type {
   DataManagementController,
   DataManagementResult,
 } from '../../data-management/domain/types';
+import { t } from '../../localization/messages';
 import { type ExtensionApi, sendExtensionRequest } from './api';
 import { EXTENSION_CHANNEL } from './protocol';
 
@@ -26,7 +27,7 @@ export class ExtensionDataManagementController
       },
     );
     if (response.error) throw new Error(response.error);
-    if (!response.result) throw new Error('数据管理操作没有返回结果。');
+    if (!response.result) throw new Error(t('cm_data_management_error_1'));
     return response.result;
   }
 }

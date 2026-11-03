@@ -1,3 +1,4 @@
+import { t } from '../localization/messages';
 import {
   AUDIO_CHANNEL_LEVELS,
   type AudioPlaybackOutcome,
@@ -159,7 +160,10 @@ export class MediaElementAudioPlayer {
     try {
       await element.play();
       if (voice.stopped) {
-        return { result: 'rejected', error: '音效资源无法播放。' };
+        return {
+          result: 'rejected',
+          error: t('cm_media_element_audio_player_error_1'),
+        };
       }
       voice.stopTimer = setTimeout(
         () => this.stopVoice(voice),

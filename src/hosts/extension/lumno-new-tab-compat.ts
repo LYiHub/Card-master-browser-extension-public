@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 import { extensionTarget } from './platform';
 
@@ -321,7 +322,7 @@ async function remoteSearchSuggestions(
         score: local.length > 0 ? 1 : 160,
         searchQuery: value,
         forceSearch: true,
-        reasons: ['来源：搜索建议'],
+        reasons: [t('cm_lumno_new_tab_compat_text_1')],
       }));
     return [...local, ...additions].slice(0, 12);
   } catch {

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 import type { ExtensionGamepadControlService } from './gamepad-control-service';
 
@@ -38,7 +39,7 @@ export class GamepadBrowserCommandService {
   ): Promise<GamepadBrowserCommandResult> {
     const tabId = sender.tab?.id;
     if (typeof tabId !== 'number') {
-      throw new Error('手柄浏览器命令缺少当前标签页身份。');
+      throw new Error(t('cm_gamepad_browser_command_error_1'));
     }
     if (!(await this.control.readSettings()).enabled) {
       return { ok: true, outcome: 'denied' };

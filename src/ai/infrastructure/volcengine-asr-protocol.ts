@@ -1,3 +1,5 @@
+import { t } from '../../localization/messages';
+
 const PROTOCOL_VERSION = 1;
 const HEADER_SIZE_WORDS = 1;
 const FULL_CLIENT_REQUEST = 0x1;
@@ -141,7 +143,8 @@ export async function parseVolcengineAsrResponse(
   source: ArrayBuffer | Uint8Array,
 ): Promise<VolcengineAsrResult> {
   const bytes = source instanceof Uint8Array ? source : new Uint8Array(source);
-  if (bytes.length < 8) throw new Error('语音识别服务返回了不完整的数据帧。');
+  if (bytes.length < 8)
+    throw new Error(t('cm_volcengine_asr_protocol_error_1'));
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const version = bytes[0] >> 4;
   const headerSize = (bytes[0] & 0xf) * 4;
@@ -154,38 +157,40 @@ export async function parseVolcengineAsrResponse(
     headerSize < 4 ||
     headerSize > bytes.length
   ) {
-    throw new Error('语音识别服务返回了不支持的协议版本。');
+    throw new Error(t('cm_volcengine_asr_protocol_error_2'));
   }
 
   let offset = headerSize;
   let code: number | undefined;
   if ((flags & 0x1) !== 0) {
-    if (offset + 4 > bytes.length) throw new Error('语音识别响应缺少序列号。');
+    if (offset + 4 > bytes.length)
+      throw new Error(t('cm_volcengine_asr_protocol_error_3'));
     offset += 4;
   }
   if ((flags & 0x4) !== 0) {
     if (offset + 4 > bytes.length)
-      throw new Error('语音识别响应缺少事件编号。');
+      throw new Error(t('cm_volcengine_asr_protocol_error_4'));
     offset += 4;
   }
   if (messageType === SERVER_ERROR_RESPONSE) {
     if (offset + 4 > bytes.length)
-      throw new Error('语音识别错误帧缺少状态码。');
+      throw new Error(t('cm_volcengine_asr_protocol_error_5'));
     code = view.getInt32(offset);
     offset += 4;
   }
-  if (offset + 4 > bytes.length) throw new Error('语音识别响应缺少数据长度。');
+  if (offset + 4 > bytes.length)
+    throw new Error(t('cm_volcengine_asr_protocol_error_6'));
   const payloadLength = view.getUint32(offset);
   offset += 4;
   if (offset + payloadLength > bytes.length) {
-    throw new Error('语音识别响应的数据长度不正确。');
+    throw new Error(t('cm_volcengine_asr_protocol_error_7'));
   }
 
   let payloadBytes = bytes.subarray(offset, offset + payloadLength);
   if (compression === GZIP_COMPRESSION && payloadBytes.length > 0) {
     payloadBytes = await gunzip(payloadBytes);
   } else if (compression !== NO_COMPRESSION) {
-    throw new Error('语音识别服务使用了不支持的压缩方式。');
+    throw new Error(t('cm_volcengine_asr_protocol_error_8'));
   }
   const payload =
     serialization === JSON_SERIALIZATION && payloadBytes.length > 0
@@ -195,7 +200,8 @@ export async function parseVolcengineAsrResponse(
 
   if (messageType === SERVER_ERROR_RESPONSE) {
     throw new Error(
-      responseMessage(payload) ?? `语音识别服务返回错误码 ${code ?? '未知'}。`,
+      responseMessage(payload) ??
+        t('cm_volcengine_asr_protocol_text_9', [String(code ?? '未知')]),
     );
   }
   if (messageType !== FULL_SERVER_RESPONSE) {

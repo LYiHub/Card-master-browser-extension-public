@@ -6,6 +6,7 @@ import {
   defaultGamepadControlSettings,
   isGamepadControlSettings,
 } from '../../gamepad-control/domain/settings';
+import { t } from '../../localization/messages';
 import {
   type ExtensionApi,
   type ExtensionMessageListener,
@@ -16,14 +17,14 @@ import { EXTENSION_CHANNEL } from './extension-channel';
 
 function settingsResponse(response: unknown): GamepadControlSettings {
   if (!response || typeof response !== 'object' || Array.isArray(response)) {
-    throw new Error('扩展没有返回有效的手柄控制设置。');
+    throw new Error(t('cm_gamepad_control_settings_error_1'));
   }
   const candidate = response as { error?: unknown };
   if (typeof candidate.error === 'string' && candidate.error) {
     throw new Error(candidate.error);
   }
   if (!isGamepadControlSettings(response)) {
-    throw new Error('扩展没有返回有效的手柄控制设置。');
+    throw new Error(t('cm_gamepad_control_settings_error_2'));
   }
   return response;
 }

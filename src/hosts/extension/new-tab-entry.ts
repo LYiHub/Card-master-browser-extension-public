@@ -5,6 +5,7 @@ import {
   GLOBAL_LIBRARY_HOST_ID,
   GLOBAL_LIBRARY_OPEN_EVENT,
 } from '../../features/global-library/lifecycle';
+import { t } from '../../localization/messages';
 import { gsap } from '../../motion/gsap';
 import {
   buildDailyReviewWallpaperGallery,
@@ -280,7 +281,7 @@ function createWallpaperSourceControl(
   settingsUrl: string,
 ): WallpaperSourceControl {
   let source: NewTabWallpaperSource = 'default';
-  let status = '预设或本地图片';
+  let status = t('cm_new_tab_entry_text_1');
   let section: HTMLElement | null = null;
   let root: HTMLElement | null = null;
   let tabs: HTMLElement | null = null;
@@ -375,7 +376,7 @@ function createWallpaperSourceControl(
     sourceHeader.className = 'cm-new-tab-wallpaper-source__header';
     const label = document.createElement('span');
     label.className = 'cm-new-tab-wallpaper-source__label';
-    label.textContent = '壁纸来源';
+    label.textContent = t('cm_new_tab_entry_text_2');
     statusElement = document.createElement('span');
     statusElement.className = 'cm-new-tab-wallpaper-source__status';
     sourceHeader.append(label, statusElement);
@@ -389,8 +390,8 @@ function createWallpaperSourceControl(
       'x-nt-wallpaper-tabs-indicator cm-new-tab-wallpaper-source__indicator';
     tabsIndicator.setAttribute('aria-hidden', 'true');
     buttons = [
-      sourceButton('默认壁纸', 'default'),
-      sourceButton('AI 壁纸', 'daily-review'),
+      sourceButton(t('cm_new_tab_entry_text_3'), 'default'),
+      sourceButton(t('cm_new_tab_entry_text_4'), 'daily-review'),
     ];
     tabs.append(tabsIndicator, ...buttons);
     root.append(sourceHeader, tabs);
@@ -412,7 +413,7 @@ function createWallpaperSourceControl(
     const dailyReviewInner = document.createElement('div');
     dailyReviewInner.className = 'cm-new-tab-wallpaper-source-panel__inner';
     const dailyReviewTitle = document.createElement('strong');
-    dailyReviewTitle.textContent = 'AI 每日回顾壁纸';
+    dailyReviewTitle.textContent = t('cm_new_tab_entry_text_5');
     dailyReviewDescription = document.createElement('span');
     dailyReviewDescription.className =
       'cm-new-tab-wallpaper-source-panel__description';
@@ -429,7 +430,7 @@ function createWallpaperSourceControl(
     settingsLink.target = '_blank';
     settingsLink.setAttribute('aria-label', '前往完整壁纸设置');
     const settingsLinkText = document.createElement('span');
-    settingsLinkText.textContent = '前往完整壁纸设置';
+    settingsLinkText.textContent = t('cm_new_tab_entry_text_6');
     const settingsLinkIcon = document.createElement('span');
     settingsLinkIcon.className = 'x-nt-appearance-more-settings-icon';
     settingsLinkIcon.append(remixIcon(document, 'ri-arrow-right-line'));
@@ -520,15 +521,20 @@ type PhotoFrameStage = {
 
 function reviewDateLabel(sourceDate: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(sourceDate);
-  if (!match) return `${sourceDate} 回顾`;
-  return `${Number(match[2])}月${Number(match[3])}日回顾`;
+  if (!match) return t('cm_new_tab_entry_text_7', [String(sourceDate)]);
+  return t('cm_new_tab_entry_text_8', [
+    String(Number(match[2])),
+    String(Number(match[3])),
+  ]);
 }
 
 function reviewContentTitle(content: DailyReviewContent) {
   if (content.status === 'generating') {
     return content.sourceDate
-      ? `正在生成新回顾 · 当前展示${reviewDateLabel(content.sourceDate)}`
-      : '正在生成每日回顾';
+      ? t('cm_new_tab_entry_text_9', [
+          String(reviewDateLabel(content.sourceDate)),
+        ])
+      : t('cm_new_tab_entry_text_10');
   }
   return reviewDateLabel(content.sourceDate);
 }
@@ -569,7 +575,7 @@ async function copyText(document: Document, value: string) {
   textarea.select();
   const copied = document.execCommand('copy');
   textarea.remove();
-  if (!copied) throw new Error('浏览器未完成提示词复制。');
+  if (!copied) throw new Error(t('cm_new_tab_entry_error_11'));
 }
 
 function createDailyReviewSurface(document: Document): DailyReviewSurface {
@@ -588,7 +594,9 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   const excerpt = document.createElement('span');
   const detailsChevron = remixIcon(document, 'ri-arrow-down-s-line');
   const syncDetailsState = () => {
-    summary.title = details.open ? '收起每日回顾' : '展开每日回顾';
+    summary.title = details.open
+      ? t('cm_new_tab_entry_text_12')
+      : t('cm_new_tab_entry_text_13');
   };
   summary.append(title, excerpt, detailsChevron);
   details.append(summary);
@@ -601,12 +609,12 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
   promptHeader.className = `${NEW_TAB_DAILY_REVIEW_SURFACE_CLASS}__prompt-header`;
   const promptLabel = document.createElement('strong');
   promptLabel.className = `${NEW_TAB_DAILY_REVIEW_SURFACE_CLASS}__prompt-label`;
-  promptLabel.textContent = '生成提示词';
+  promptLabel.textContent = t('cm_new_tab_entry_text_14');
   const copyPromptButton = document.createElement('button');
   copyPromptButton.className = `${NEW_TAB_DAILY_REVIEW_SURFACE_CLASS}__copy-prompt`;
   copyPromptButton.type = 'button';
   copyPromptButton.disabled = true;
-  copyPromptButton.title = '复制完整生成提示词';
+  copyPromptButton.title = t('cm_new_tab_entry_text_15');
   copyPromptButton.setAttribute('aria-label', '复制完整生成提示词');
   const copyPromptIcon = remixIcon(document, 'ri-file-copy-line');
   copyPromptButton.append(copyPromptIcon);
@@ -633,7 +641,7 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
     copyPromptButton.disabled = !promptValue;
   };
   const restoreCopyButton = () => {
-    copyPromptButton.title = '复制完整生成提示词';
+    copyPromptButton.title = t('cm_new_tab_entry_text_16');
     copyPromptButton.setAttribute('aria-label', '复制完整生成提示词');
     copyPromptIcon.className = 'ri-icon ri-size-16 ri-file-copy-line';
   };
@@ -646,7 +654,7 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
         if (copyFeedbackTimer) {
           document.defaultView?.clearTimeout(copyFeedbackTimer);
         }
-        copyPromptButton.title = '已复制';
+        copyPromptButton.title = t('cm_new_tab_entry_text_17');
         copyPromptButton.setAttribute('aria-label', '提示词已复制');
         copyPromptIcon.className = 'ri-icon ri-size-16 ri-check-line';
         copyFeedbackTimer =
@@ -656,7 +664,7 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
           }, 1_400) ?? 0;
       },
       (error) => {
-        copyPromptButton.title = '复制失败';
+        copyPromptButton.title = t('cm_new_tab_entry_text_18');
         reportExtensionFailure(
           'new-tab-entry',
           'daily-review-prompt-copy-failed',
@@ -714,8 +722,8 @@ function createDailyReviewSurface(document: Document): DailyReviewSurface {
       excerpt.textContent =
         content.summary ||
         (content.status === 'generating'
-          ? '正在整理新的每日回顾'
-          : '每日回顾已生成');
+          ? t('cm_new_tab_entry_text_19')
+          : t('cm_new_tab_entry_text_20'));
       renderPrompt(content.finalPrompt);
       fullscreenButton.disabled = !content.imageDataUrl;
       element.dataset.visible = 'true';
@@ -735,7 +743,7 @@ function createPhotoFrameStage(document: Document): PhotoFrameStage {
 
   const hint = document.createElement('p');
   hint.className = `${NEW_TAB_PHOTO_FRAME_STAGE_CLASS}__hint`;
-  hint.textContent = '移动鼠标或按键即可返回';
+  hint.textContent = t('cm_new_tab_entry_text_21');
 
   const navigation = document.createElement('nav');
   navigation.className = `${NEW_TAB_PHOTO_FRAME_STAGE_CLASS}__navigation`;
@@ -753,21 +761,21 @@ function createPhotoFrameStage(document: Document): PhotoFrameStage {
   };
   const previousButton = navigationButton(
     `${NEW_TAB_PHOTO_FRAME_STAGE_CLASS}__navigation-button--previous`,
-    '查看前一天',
+    t('cm_new_tab_entry_text_22'),
     'ri-arrow-left-s-line',
   );
   const nextButton = navigationButton(
     `${NEW_TAB_PHOTO_FRAME_STAGE_CLASS}__navigation-button--next`,
-    '查看后一天',
+    t('cm_new_tab_entry_text_23'),
     'ri-arrow-right-s-line',
   );
   const latestButton = navigationButton(
     `${NEW_TAB_PHOTO_FRAME_STAGE_CLASS}__navigation-button--latest`,
-    '回到最新回顾',
+    t('cm_new_tab_entry_text_24'),
     'ri-calendar-check-line',
   );
   const latestLabel = document.createElement('span');
-  latestLabel.textContent = '回到最新';
+  latestLabel.textContent = t('cm_new_tab_entry_text_25');
   latestButton.append(latestLabel);
   navigation.append(previousButton, latestButton, nextButton);
 
@@ -1092,14 +1100,14 @@ async function readDailyReviewGallery(
   }
   const item = items[resolved.index];
   if (!item) {
-    throw new Error('每日回顾选择结果超出了可用壁纸范围。');
+    throw new Error(t('cm_new_tab_entry_error_26'));
   }
   const image = await imageRepository.read(item.imageId);
   if (!image) {
-    throw new Error('每日回顾已完成，但对应的壁纸图片记录不存在。');
+    throw new Error(t('cm_new_tab_entry_error_27'));
   }
   if (image.sourceDate !== item.sourceDate) {
-    throw new Error('每日回顾图片与浏览历史日期不一致。');
+    throw new Error(t('cm_new_tab_entry_error_28'));
   }
   return {
     content: {
@@ -1178,7 +1186,7 @@ function applyDailyReviewWallpaper(
     content.imageDataUrl,
   );
   if (!visual) {
-    throw new Error('每日回顾图片无法转换为新标签页壁纸。');
+    throw new Error(t('cm_new_tab_entry_error_29'));
   }
   let changed = false;
   const setImportantStyle = (
@@ -1546,7 +1554,7 @@ function installPhotoFrameIdleMode(
           nextReview.imageDataUrl !== previousReview?.imageDataUrl &&
           !(await waitForWallpaper(nextReview.imageDataUrl))
         ) {
-          throw new Error('切换后的每日回顾壁纸没有完成加载。');
+          throw new Error(t('cm_new_tab_entry_error_30'));
         }
         if (sequence !== reviewSequence) return;
         currentGallery = gallery.items;
@@ -1636,7 +1644,7 @@ function installPhotoFrameIdleMode(
     const prepareStageWallpaper = async () => {
       const imageDataUrl = currentReview?.imageDataUrl;
       if (!dailyReviewSelected || !imageDataUrl) {
-        throw new Error('AI 壁纸尚未准备好，不能进入电子相框。');
+        throw new Error(t('cm_new_tab_entry_error_31'));
       }
       const visual = resolvePhotoFrameWallpaperVisual(
         embeddedWindow.getComputedStyle(embeddedDocument.documentElement),
@@ -1644,10 +1652,10 @@ function installPhotoFrameIdleMode(
         imageDataUrl,
       );
       if (!visual) {
-        throw new Error('壁纸已标记为启用，但页面没有可供电子相框使用的图片。');
+        throw new Error(t('cm_new_tab_entry_error_32'));
       }
       if (!(await waitForWallpaper(visual.imageUrl))) {
-        throw new Error('电子相框无法读取当前壁纸图片。');
+        throw new Error(t('cm_new_tab_entry_error_33'));
       }
     };
 
@@ -1799,12 +1807,12 @@ function installPhotoFrameIdleMode(
       if (!wallpaperSourceControl) return;
       const source = dailyReviewSelected ? 'daily-review' : 'default';
       const status = !dailyReviewSelected
-        ? '预设或本地图片'
+        ? t('cm_new_tab_entry_text_34')
         : currentReview?.imageDataUrl
-          ? '每日回顾已就绪'
+          ? t('cm_new_tab_entry_text_35')
           : currentReview?.status === 'generating'
-            ? '正在生成，暂用默认壁纸'
-            : '等待生成，暂用默认壁纸';
+            ? t('cm_new_tab_entry_text_36')
+            : t('cm_new_tab_entry_text_37');
       wallpaperSourceControl.update(
         source,
         status,
@@ -2301,7 +2309,7 @@ function installPhotoFrameIdleMode(
 async function openConfiguredNewTab(api: ExtensionApi) {
   const frame = document.getElementById('card-master-new-tab-frame');
   if (!(frame instanceof HTMLIFrameElement)) {
-    throw new Error('新标签页缺少内置页面挂载节点。');
+    throw new Error(t('cm_new_tab_entry_error_38'));
   }
   installEmbeddedNewTabBranding(frame, cardMasterLogoUrl(api));
   installPhotoFrameIdleMode(frame, api, preferencesRepository);
@@ -2402,7 +2410,7 @@ function loadExtensionScript(url: string) {
       'error',
       () => {
         script.remove();
-        reject(new Error('全局牌库资源加载失败。'));
+        reject(new Error(t('cm_new_tab_entry_error_39')));
       },
       { once: true },
     );
@@ -2494,6 +2502,6 @@ window.setTimeout(() => {
   reportExtensionFailure(
     'new-tab-entry',
     'deck-host-missing',
-    new Error('新标签页未能挂载牌库入口。'),
+    new Error(t('cm_new_tab_entry_error_40')),
   );
 }, 1_500);

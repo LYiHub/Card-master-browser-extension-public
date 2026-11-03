@@ -4,8 +4,8 @@ import {
   MESSAGE_HANDLER_NAME,
   MessageType,
 } from '@adguard/tswebextension';
-
 import { extensionErrorMessage } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
 import type { ContentBlockingEngine } from '../application/service';
 import type {
   ContentBlockingEngineReport,
@@ -40,7 +40,7 @@ function filterList(source: string) {
 function extensionResourceUrl(path: string) {
   const runtime = globalThis.chrome?.runtime;
   if (!runtime?.getURL) {
-    throw new Error('Firefox 扩展资源 API 不可用。');
+    throw new Error(t('cm_adguard_firefox_engine_error_1'));
   }
   return runtime.getURL(path);
 }
@@ -48,7 +48,12 @@ function extensionResourceUrl(path: string) {
 async function readJsonResource<T>(path: string): Promise<T> {
   const response = await fetch(extensionResourceUrl(path));
   if (!response.ok) {
-    throw new Error(`无法读取扩展资源 ${path}：HTTP ${response.status}`);
+    throw new Error(
+      t('cm_adguard_firefox_engine_error_2', [
+        String(path),
+        String(response.status),
+      ]),
+    );
   }
   return (await response.json()) as T;
 }
@@ -72,8 +77,9 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
   private initializeStorage() {
     if (this.storageInitialized) return Promise.resolve();
     if (!this.storageInitialization) {
-      const operation = runAdguardEnginePhase('存储初始化', () =>
-        this.engine.initStorage(),
+      const operation = runAdguardEnginePhase(
+        t('cm_adguard_firefox_engine_text_3'),
+        () => this.engine.initStorage(),
       ).then(() => {
         this.storageInitialized = true;
       });
@@ -107,7 +113,9 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
           `${FILTER_ASSET_DIRECTORY}/filter_${filterId}.json`,
         );
         if (asset.filterId !== filterId || !asset.content.trim()) {
-          throw new Error(`Firefox 内置过滤器 ${filterId} 资源无效。`);
+          throw new Error(
+            t('cm_adguard_firefox_engine_error_4', [String(filterId)]),
+          );
         }
         this.filterAssets.set(filterId, asset);
       }),
@@ -153,10 +161,12 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
       this.ruleGate.prepare(state.rulesEnabled),
     ]);
     const configuration = await this.configuration(state);
-    const result = await runAdguardEnginePhase('首次规则配置', () =>
-      this.ruleGate.runManagedConfiguration(async () => {
-        return this.engine.start(configuration);
-      }),
+    const result = await runAdguardEnginePhase(
+      t('cm_adguard_firefox_engine_text_5'),
+      () =>
+        this.ruleGate.runManagedConfiguration(async () => {
+          return this.engine.start(configuration);
+        }),
     );
     this.started = true;
     this.rulesEnabled = state.rulesEnabled;
@@ -167,10 +177,12 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
 
   async configure(state: ContentBlockingState) {
     const configuration = await this.configuration(state);
-    const result = await runAdguardEnginePhase('规则重新配置', () =>
-      this.ruleGate.runManagedConfiguration(async () => {
-        return this.engine.configure(configuration);
-      }),
+    const result = await runAdguardEnginePhase(
+      t('cm_adguard_firefox_engine_text_6'),
+      () =>
+        this.ruleGate.runManagedConfiguration(async () => {
+          return this.engine.configure(configuration);
+        }),
     );
     this.rulesEnabled = state.rulesEnabled;
     this.currentState = structuredClone(state);
@@ -179,15 +191,18 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
   }
 
   async setRulesEnabled(rulesEnabled: boolean) {
-    await runAdguardEnginePhase('规则启停', async () => {
-      if (rulesEnabled) {
-        await this.ruleGate.setRulesEnabled(true);
-        await this.engine.setFilteringEnabled(true);
-        return;
-      }
-      await this.engine.setFilteringEnabled(false);
-      await this.ruleGate.setRulesEnabled(false);
-    });
+    await runAdguardEnginePhase(
+      t('cm_adguard_firefox_engine_text_7'),
+      async () => {
+        if (rulesEnabled) {
+          await this.ruleGate.setRulesEnabled(true);
+          await this.engine.setFilteringEnabled(true);
+          return;
+        }
+        await this.engine.setFilteringEnabled(false);
+        await this.ruleGate.setRulesEnabled(false);
+      },
+    );
     this.rulesEnabled = rulesEnabled;
     return this.report();
   }
@@ -243,7 +258,9 @@ export class AdguardContentBlockingEngine implements ContentBlockingEngine {
       return response;
     } catch (error) {
       throw new Error(
-        `Firefox 内容拦截请求失败：${extensionErrorMessage(error)}`,
+        t('cm_adguard_firefox_engine_error_8', [
+          String(extensionErrorMessage(error)),
+        ]),
         { cause: error },
       );
     }

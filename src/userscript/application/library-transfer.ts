@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   parseUserscriptMetadata,
   userscriptIdentity,
@@ -51,13 +52,17 @@ export function formatLibraryImportReport(
   result: LibraryImportResult,
 ) {
   const lines = [
-    `导入文件：${fileName}`,
-    `结果：${result.installed} 张新增，${result.skipped.length} 张重复跳过，${result.rejected.length} 张未导入`,
+    t('cm_library_transfer_text_1', [String(fileName)]),
+    t('cm_library_transfer_text_2', [
+      String(result.installed),
+      String(result.skipped.length),
+      String(result.rejected.length),
+    ]),
   ];
   if (result.skipped.length > 0) {
     lines.push(
       '',
-      '重复跳过：',
+      t('cm_library_transfer_text_3'),
       ...result.skipped.map(
         (entry, index) =>
           `${index + 1}. ${entry.path}\n   ${entry.reason}\n   ${entry.identity}`,
@@ -67,7 +72,7 @@ export function formatLibraryImportReport(
   if (result.rejected.length > 0) {
     lines.push(
       '',
-      '未导入：',
+      t('cm_library_transfer_text_4'),
       ...result.rejected.map(
         (entry, index) => `${index + 1}. ${entry.path}\n   ${entry.reason}`,
       ),
@@ -279,7 +284,7 @@ export async function importUserscriptLibrary(
 ): Promise<LibraryImportResult> {
   const { manifest, sources } = await archiveSources(file);
   if (sources.length === 0) {
-    throw new Error('归档中没有找到可导入的用户脚本。');
+    throw new Error(t('cm_library_transfer_error_5'));
   }
   const manifestByPath = new Map(
     manifest?.scripts.map((entry) => [entry.path, entry]) ?? [],
@@ -302,8 +307,7 @@ export async function importUserscriptLibrary(
         ? userscriptIdentity(parsed.metadata)
         : null;
       if (identity && localIdentities.has(identity)) {
-        const reason =
-          '本机已存在同一 @namespace 与 @name 的脚本，已保留本机卡牌。';
+        const reason = t('cm_library_transfer_text_6');
         skipped.push({ path: entry.path, identity, reason });
         diagnostics.push({
           path: entry.path,
@@ -314,7 +318,7 @@ export async function importUserscriptLibrary(
         continue;
       }
       if (identity && importedIdentities.has(identity)) {
-        const reason = '归档中存在重复脚本，已保留首次出现的条目。';
+        const reason = t('cm_library_transfer_text_7');
         skipped.push({ path: entry.path, identity, reason });
         diagnostics.push({
           path: entry.path,

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   isPageThemeSettings,
   nextPageThemeAutomationChange,
@@ -162,7 +163,7 @@ function mountPageThemeLoader(api: ExtensionApi) {
     });
     if (response.error) throw new Error(response.error);
     if (!isPageThemeSettings(response.settings)) {
-      throw new Error('扩展返回了无效的暗夜降临设置。');
+      throw new Error(t('cm_theme_content_error_1'));
     }
     scheduleApply(response.settings);
   };

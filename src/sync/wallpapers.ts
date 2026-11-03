@@ -1,3 +1,4 @@
+import { t } from '../localization/messages';
 import { equal, type Json, jsonValue, record } from './model';
 import { SyncLocalChanged, type SyncPortableAdapter } from './projection';
 
@@ -47,13 +48,13 @@ export function validateWallpapers(value: Json) {
         ),
     )
   ) {
-    throw new Error('自定义壁纸格式无效。');
+    throw new Error(t('cm_wallpapers_error_1'));
   }
   if (
     new Set(value.map((item) => (item as { key: string }).key)).size !==
     value.length
   )
-    throw new Error('自定义壁纸包含重复标识。');
+    throw new Error(t('cm_wallpapers_error_2'));
 }
 
 function openDatabase(factory: IDBFactory) {
@@ -64,8 +65,7 @@ function openDatabase(factory: IDBFactory) {
         request.result.createObjectStore(STORE, { keyPath: 'key' });
     };
     request.onerror = () => reject(request.error);
-    request.onblocked = () =>
-      reject(new Error('壁纸存储正在升级，请关闭旧设置页后重试。'));
+    request.onblocked = () => reject(new Error(t('cm_wallpapers_error_3')));
     request.onsuccess = () => resolve(request.result);
   });
 }
@@ -93,7 +93,7 @@ export function wallpaperSyncSettings(
           );
           if (desired === undefined) return;
           if (!equal(result, expected) && !equal(result, desired))
-            throw new SyncLocalChanged('本机壁纸刚发生变化。');
+            throw new SyncLocalChanged(t('cm_wallpapers_text_4'));
           validateWallpapers(desired);
           store.clear();
           for (const item of desired as Json[]) store.put(item);
@@ -108,7 +108,7 @@ export function wallpaperSyncSettings(
       };
       tx.onabort = tx.onerror = () => {
         database.close();
-        reject(failure ?? tx.error ?? new Error('壁纸存储操作失败。'));
+        reject(failure ?? tx.error ?? new Error(t('cm_wallpapers_error_5')));
       };
     });
   };

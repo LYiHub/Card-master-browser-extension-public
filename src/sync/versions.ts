@@ -1,3 +1,4 @@
+import { t } from '../localization/messages';
 import { mergeEntries } from './merge';
 import {
   canonical,
@@ -26,7 +27,7 @@ export async function verifyRecord(record: SyncRecord) {
   validateRecord(record);
   const { id, ...payload } = record;
   if (id !== (await recordId(payload)))
-    throw new Error('版本内容校验失败，已保留本机数据。');
+    throw new Error(t('cm_versions_error_1'));
 }
 
 export async function createRecord(
@@ -60,11 +61,9 @@ export function resolveVersions(
   records: readonly SyncRecord[],
 ): SyncRemoteState {
   if (records.length > SYNC_MAX_VERSIONS)
-    throw new Error(
-      '同步版本超过 4096 个，已暂停读取。请保留目录备份后使用新的同步目录。',
-    );
+    throw new Error(t('cm_versions_error_2'));
   const byId = new Map(records.map((record) => [record.id, record]));
-  if (byId.size !== records.length) throw new Error('同步目录存在重复版本。');
+  if (byId.size !== records.length) throw new Error(t('cm_versions_error_3'));
   const children = new Map<string, string[]>();
   const degrees = new Map<string, number>();
   const keys = new Set<string>();
@@ -75,8 +74,7 @@ export function resolveVersions(
     if (!record.parents.length) ready.push(record.id);
     for (const key of Object.keys(record.changes)) keys.add(key);
     for (const parent of record.parents) {
-      if (!byId.has(parent))
-        throw new Error('同步历史缺少父版本，请检查目录和代理缓存后重试。');
+      if (!byId.has(parent)) throw new Error(t('cm_versions_error_4'));
       const siblings = children.get(parent) ?? [];
       siblings.push(record.id);
       children.set(parent, siblings);
@@ -90,7 +88,7 @@ export function resolveVersions(
     }
   }
   if (ready.length !== records.length)
-    throw new Error('同步历史包含循环引用。');
+    throw new Error(t('cm_versions_error_5'));
   const heads = records
     .filter((record) => !children.has(record.id))
     .map((record) => record.id)
@@ -142,7 +140,12 @@ export function resolveVersions(
       alternatives.push({
         id,
         entry,
-        label: `设备 ${record.deviceId.slice(0, 6)} · ${new Date(record.at).toLocaleString('zh-CN', { hour12: false })}`,
+        label: t('cm_versions_label_6', [
+          String(record.deviceId.slice(0, 6)),
+          String(
+            new Date(record.at).toLocaleString('zh-CN', { hour12: false }),
+          ),
+        ]),
       });
     }
     entries[key] = alternatives[0]?.entry ?? null;

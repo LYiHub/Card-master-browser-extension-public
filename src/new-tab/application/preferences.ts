@@ -1,4 +1,5 @@
 import type { ExtensionStorageArea } from '../../hosts/extension/api';
+import { t } from '../../localization/messages';
 import { SYNC_OWNER_KEY } from '../../sync/model';
 import {
   NEW_TAB_SEARCH_SOURCES,
@@ -190,10 +191,10 @@ export function parseNewTabDestinationUrl(value: string) {
   try {
     url = new URL(candidate);
   } catch {
-    throw new Error('请输入有效的网址。');
+    throw new Error(t('cm_preferences_error_1'));
   }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new Error('指定页面仅支持 http 或 https 网址。');
+    throw new Error(t('cm_preferences_error_2'));
   }
   return url.toString();
 }

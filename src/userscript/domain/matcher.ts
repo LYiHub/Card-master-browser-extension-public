@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   InstalledUserscript,
   ScriptMatchContext,
@@ -57,23 +58,23 @@ export function validateMatchPattern(pattern: string) {
   const normalized = normalizeMatchPattern(pattern);
   if (normalized === '<all_urls>') return null;
   const match = /^(\*|http|https|file|ftp):\/\/([^/]*)(\/.*)$/.exec(normalized);
-  if (!match) return '需要有效的用户脚本 @match 规则。';
+  if (!match) return t('cm_matcher_text_1');
   const [, scheme, host] = match;
   if (scheme === 'file') {
-    return host === '' ? null : 'file 匹配规则不能声明主机名。';
+    return host === '' ? null : t('cm_matcher_text_2');
   }
   if (
     !host ||
     (host.includes('*') && host !== '*' && !/^\*\.[^*]+$/.test(host))
   ) {
-    return '@match 主机通配符必须是 `*` 或以 `*.` 开头。';
+    return t('cm_matcher_text_3');
   }
   const bracketedHostEnd = host.startsWith('[') ? host.indexOf(']') : -1;
   const declaresPort = host.startsWith('[')
     ? bracketedHostEnd < 0 || bracketedHostEnd !== host.length - 1
     : host.includes(':');
   if (declaresPort) {
-    return `用户脚本 @match 规则不能声明端口。需要限定端口时，请将该行改为 @include，例如：// @include ${normalized}`;
+    return t('cm_matcher_text_4', [String(normalized)]);
   }
   return null;
 }
@@ -154,9 +155,7 @@ function includePatternRegex(pattern: string) {
 }
 
 export function validateIncludePattern(pattern: string) {
-  return includePatternRegex(pattern)
-    ? null
-    : '需要有效的用户脚本 @include 正则表达式。';
+  return includePatternRegex(pattern) ? null : t('cm_matcher_text_5');
 }
 
 function urlWithoutHash(url: URL) {

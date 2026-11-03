@@ -4,6 +4,7 @@ import type {
 } from '../../ai/domain/types';
 import { microphonePermissionErrorMessage } from '../../ai/infrastructure/microphone-permission';
 import type { SpeechAudioCaptureSession } from '../../ai/infrastructure/speech-audio-capture';
+import { t } from '../../localization/messages';
 import type {
   EditableTextComposition,
   EditableTextTarget,
@@ -93,7 +94,7 @@ export class GamepadPushToTalkController {
       this.publishTerminal({
         status: 'error',
         text: '',
-        error: '先选择网页中的输入框，再按住说话。',
+        error: t('cm_gamepad_push_to_talk_error_1'),
         target: null,
       });
       return false;
@@ -204,7 +205,7 @@ export class GamepadPushToTalkController {
     if (!this.current(run) || run.cancelled) return;
     if (!run.speechReady) {
       if (run.bufferedAudio.length >= MAX_BUFFERED_AUDIO_FRAMES) {
-        throw new Error('语音识别连接过慢，音频缓冲已满。');
+        throw new Error(t('cm_gamepad_push_to_talk_error_2'));
       }
       run.bufferedAudio.push(pcmBase64);
       return;
@@ -255,7 +256,7 @@ export class GamepadPushToTalkController {
       run.finalResult,
       new Promise<never>((_resolve, reject) => {
         timeout = setTimeout(
-          () => reject(new Error('语音识别未能及时返回最终结果。')),
+          () => reject(new Error(t('cm_gamepad_push_to_talk_error_3'))),
           FINAL_RESULT_TIMEOUT_MS,
         );
       }),
@@ -268,7 +269,7 @@ export class GamepadPushToTalkController {
     if (!this.current(run) || run.cancelled) return;
     run.latestSpeechState = state;
     if (state.status === 'error') {
-      void this.fail(run, state.error || '语音识别失败。');
+      void this.fail(run, state.error || t('cm_gamepad_push_to_talk_text_4'));
       return;
     }
     try {

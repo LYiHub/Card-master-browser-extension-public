@@ -15,6 +15,7 @@ import {
   normalizeBilibiliCapabilitiesState,
   sponsorPlatformForPage,
 } from '../../bilibili-capabilities/domain/types';
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 import { extensionDiagnostics } from './diagnostics';
 import { extensionTarget } from './platform';
@@ -154,27 +155,30 @@ function stateLabel(
   recommendationSupported = true,
 ) {
   if (id === 'recommendation-control' && !recommendationSupported) {
-    return 'Safari 暂不支持';
+    return t('cm_bilibili_capability_service_text_1');
   }
-  if (!state.capabilities[id].enabled) return '已停用';
+  if (!state.capabilities[id].enabled)
+    return t('cm_bilibili_capability_service_text_2');
   if (id === 'recommendation-control') {
     return {
-      pure: '纯净',
-      explore: '探索',
-      mixed: '混合',
-      native: '原生',
+      pure: t('cm_bilibili_capability_service_pure_3'),
+      explore: t('cm_bilibili_capability_service_explore_4'),
+      mixed: t('cm_bilibili_capability_service_mixed_5'),
+      native: t('cm_bilibili_capability_service_native_6'),
     }[state.capabilities['recommendation-control'].settings.mode];
   }
   if (id === 'danmaku-compression') {
-    if (danmakuBypassed) return '本视频原弹幕';
-    return `阈值 ${state.capabilities['danmaku-compression'].settings.threshold}`;
+    if (danmakuBypassed) return t('cm_bilibili_capability_service_text_7');
+    return t('cm_bilibili_capability_service_text_8', [
+      String(state.capabilities['danmaku-compression'].settings.threshold),
+    ]);
   }
   if (id === 'segment-skipping') {
     return state.capabilities['segment-skipping'].settings.sponsor === 'auto'
-      ? '自动跳过'
-      : '按策略';
+      ? t('cm_bilibili_capability_service_text_9')
+      : t('cm_bilibili_capability_service_text_10');
   }
-  return '已启用';
+  return t('cm_bilibili_capability_service_text_11');
 }
 
 function snapshots(
@@ -196,7 +200,7 @@ function snapshots(
       id === 'recommendation-control'
         ? [
             {
-              label: '推荐身份',
+              label: t('cm_bilibili_capability_service_label_12'),
               value: stateLabel(
                 id,
                 state,
@@ -208,36 +212,40 @@ function snapshots(
         : id === 'danmaku-compression'
           ? [
               {
-                label: '合并窗口',
+                label: t('cm_bilibili_capability_service_label_13'),
                 value: `${danmaku.settings.threshold} 秒`,
               },
               {
-                label: '工作线程',
+                label: t('cm_bilibili_capability_service_label_14'),
                 value: String(danmaku.settings.workerCount),
               },
               {
-                label: '当前视频',
-                value: danmakuBypassed ? '原始弹幕' : '合成大弹幕',
+                label: t('cm_bilibili_capability_service_label_15'),
+                value: danmakuBypassed
+                  ? t('cm_bilibili_capability_service_text_16')
+                  : t('cm_bilibili_capability_service_text_17'),
               },
             ]
           : id === 'segment-skipping'
             ? [
                 {
-                  label: '当前平台',
+                  label: t('cm_bilibili_capability_service_label_18'),
                   value:
                     sponsorPlatform === 'bilibili'
                       ? 'BilibiliSponsorBlock'
                       : sponsorPlatform === 'youtube'
                         ? 'SponsorBlock'
-                        : '等待视频页面',
+                        : t('cm_bilibili_capability_service_text_19'),
                 },
                 {
-                  label: '赞助片段',
+                  label: t('cm_bilibili_capability_service_label_20'),
                   value: stateLabel(id, state),
                 },
                 {
-                  label: '跳过提示',
-                  value: segment.settings.showNotice ? '显示' : '隐藏',
+                  label: t('cm_bilibili_capability_service_label_21'),
+                  value: segment.settings.showNotice
+                    ? t('cm_bilibili_capability_service_text_22')
+                    : t('cm_bilibili_capability_service_text_23'),
                 },
               ]
             : [];
@@ -364,7 +372,11 @@ export class BilibiliCapabilityService {
   private async requireEnabled(id: BilibiliCapabilityId) {
     const state = await this.readState();
     if (!state.capabilities[id].enabled) {
-      throw new Error(`${stateLabel(id, state)}，请先从卡牌右上角启用。`);
+      throw new Error(
+        t('cm_bilibili_capability_service_error_24', [
+          String(stateLabel(id, state)),
+        ]),
+      );
     }
     return state;
   }
@@ -444,7 +456,7 @@ export class BilibiliCapabilityService {
 
   private async recommendationFingerprint() {
     if (!this.api.cookies) {
-      throw new Error('当前浏览器未开放 B 站 Cookie 读取能力。');
+      throw new Error(t('cm_bilibili_capability_service_error_25'));
     }
     const cookies = await this.api.cookies.getAll({ domain: 'bilibili.com' });
     const fingerprint = ['buvid3', 'buvid4'].flatMap((name) => {
@@ -456,7 +468,7 @@ export class BilibiliCapabilityService {
 
   private async resetRecommendationFingerprint(context: BilibiliPageContext) {
     if (!this.api.cookies) {
-      throw new Error('当前浏览器未开放 B 站 Cookie 管理能力。');
+      throw new Error(t('cm_bilibili_capability_service_error_26'));
     }
     const cookies = await this.api.cookies.getAll({ domain: 'bilibili.com' });
     await Promise.all(
@@ -630,7 +642,7 @@ export class BilibiliCapabilityService {
       enabled &&
       !this.recommendationSupported
     ) {
-      throw new Error('Safari 暂不支持切换 B 站推荐身份。');
+      throw new Error(t('cm_bilibili_capability_service_error_27'));
     }
     if (id === 'danmaku-compression') this.pakkuBypassVideos.clear();
     return this.mutate(
@@ -650,7 +662,7 @@ export class BilibiliCapabilityService {
       value.id === 'recommendation-control' &&
       !this.recommendationSupported
     ) {
-      throw new Error('Safari 暂不支持切换 B 站推荐身份。');
+      throw new Error(t('cm_bilibili_capability_service_error_28'));
     }
     return this.mutate(
       (state) => {
@@ -850,10 +862,10 @@ export class BilibiliCapabilityService {
       mode !== 'mixed' &&
       mode !== 'native'
     ) {
-      throw new Error('流量探险家收到了无效模式。');
+      throw new Error(t('cm_bilibili_capability_service_error_29'));
     }
     if (!this.recommendationSupported) {
-      throw new Error('Safari 暂不支持切换 B 站推荐身份。');
+      throw new Error(t('cm_bilibili_capability_service_error_30'));
     }
     await this.requireEnabled('recommendation-control');
     return this.mutate(
@@ -909,7 +921,7 @@ export class BilibiliCapabilityService {
       this.mixedQueues.delete(context.tabId);
     }
     if (!result) {
-      throw new Error('混合推荐切换未返回状态。');
+      throw new Error(t('cm_bilibili_capability_service_error_31'));
     }
     return result;
   }
@@ -929,20 +941,20 @@ export class BilibiliCapabilityService {
       return this.resetRecommendationFingerprint(context);
     }
     if (id === 'recommendation-control') {
-      throw new Error('流量探险家收到了无效指令。');
+      throw new Error(t('cm_bilibili_capability_service_error_32'));
     }
     if (id === 'danmaku-compression') {
       await this.requireEnabled(id);
       if (command === 'restore') {
         const identity = await this.currentVideoIdentity(context);
         if (!identity) {
-          throw new Error('当前页面没有可临时恢复原弹幕的视频。');
+          throw new Error(t('cm_bilibili_capability_service_error_33'));
         }
         this.pakkuBypassVideos.set(context.tabId, identity);
       } else if (command === 'reload') {
         this.pakkuBypassVideos.delete(context.tabId);
       } else {
-        throw new Error('合成大弹幕收到了无效指令。');
+        throw new Error(t('cm_bilibili_capability_service_error_34'));
       }
       await this.api.tabs.sendMessage(context.tabId, {
         type: 'reload_danmu',
@@ -952,10 +964,10 @@ export class BilibiliCapabilityService {
     } else if (id === 'segment-skipping') {
       await this.requireEnabled(id);
       if (command !== 'toggle-capture' && command !== 'refresh-segments') {
-        throw new Error('绯红空降收到了无效指令。');
+        throw new Error(t('cm_bilibili_capability_service_error_35'));
       }
       if (!sponsorPlatformForPage(context.url)) {
-        throw new Error('当前页面没有可操作的 B 站或 YouTube 视频。');
+        throw new Error(t('cm_bilibili_capability_service_error_36'));
       }
       await this.api.tabs.sendMessage(context.tabId, {
         message:
@@ -1018,7 +1030,7 @@ export class BilibiliCapabilityService {
     void (async () => {
       if (request.type === 'xhr_proxy') {
         if (typeof request.url !== 'string') {
-          throw new Error('pakku 请求缺少 URL。');
+          throw new Error(t('cm_bilibili_capability_service_error_37'));
         }
         const response = await fetch(request.url);
         return {

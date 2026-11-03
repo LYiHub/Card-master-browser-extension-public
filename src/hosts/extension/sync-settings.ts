@@ -18,6 +18,7 @@ import {
   isGamepadControlSettings,
   normalizeGamepadControlSettings,
 } from '../../gamepad-control/domain/settings';
+import { t } from '../../localization/messages';
 import { isMediaResourcesSettings } from '../../media-resources/domain/types';
 import {
   isMediaSpeedSettings,
@@ -79,13 +80,13 @@ export function applyPortableAiConfig(
     'apiKey' in value.modelService ||
     'apiKey' in value.imageService
   )
-    throw new Error('AI 同步配置包含无效或敏感字段。');
+    throw new Error(t('cm_sync_settings_error_1'));
   const normalized = normalizeAiServicesConfig({
     modelService: { ...value.modelService, apiKey: '' },
     imageService: { ...value.imageService, apiKey: '' },
     speechService: { apiKey: '' },
   });
-  if (!normalized) throw new Error('AI 同步配置无效。');
+  if (!normalized) throw new Error(t('cm_sync_settings_error_2'));
   return {
     modelService: {
       ...normalized.modelService,
@@ -114,7 +115,7 @@ function configuration<T>(
 ): SyncPortableAdapter {
   const validate = (value: Json) => {
     if (!equal(value, parse(value)))
-      throw new Error(`${name}包含未知字段或无效值。`);
+      throw new Error(t('cm_sync_settings_error_3', [String(name)]));
   };
   return {
     key,
@@ -186,7 +187,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
   return [
     configuration(
       'deck',
-      '牌库入口、显示与隐藏设置',
+      t('cm_sync_settings_text_4'),
       async () =>
         (await deckView())(
           (await api.storage.local.get(DECK_ENTRY_SETTINGS_STORAGE_KEY))[
@@ -224,7 +225,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'new-tab',
-      '新标签页全部偏好与自定义图标',
+      t('cm_sync_settings_text_5'),
       async () => newTabView(await newTab.read()),
       newTabView,
       (value, expected) =>
@@ -235,10 +236,11 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'theme',
-      '暗夜降临',
+      t('cm_sync_settings_text_6'),
       async () => withoutRevision(await theme.read()),
       (value) => {
-        if (!isPageThemeSettings(value)) throw new Error('主题设置无效。');
+        if (!isPageThemeSettings(value))
+          throw new Error(t('cm_sync_settings_error_7'));
         return withoutRevision(normalizePageThemeSettings(value));
       },
       (value, expected) =>
@@ -249,10 +251,11 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'speed',
-      '媒体倍速与站点档位',
+      t('cm_sync_settings_text_8'),
       async () => withoutRevision(await speed.readSettings()),
       (value) => {
-        if (!isMediaSpeedSettings(value)) throw new Error('倍速设置无效。');
+        if (!isMediaSpeedSettings(value))
+          throw new Error(t('cm_sync_settings_error_9'));
         return withoutRevision(normalizeMediaSpeedSettings(value));
       },
       (value, expected) =>
@@ -263,10 +266,11 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'gamepad',
-      '手柄映射与控制参数',
+      t('cm_sync_settings_text_10'),
       async () => withoutRevision(await gamepad.readSettings()),
       (value) => {
-        if (!isGamepadControlSettings(value)) throw new Error('手柄设置无效。');
+        if (!isGamepadControlSettings(value))
+          throw new Error(t('cm_sync_settings_error_11'));
         return withoutRevision(normalizeGamepadControlSettings(value));
       },
       (value, expected) =>
@@ -277,11 +281,11 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'resources',
-      '顺手牵羊',
+      t('cm_sync_settings_text_12'),
       async () => withoutRevision(await resources.readSettings()),
       (value) => {
         if (!isMediaResourcesSettings(value))
-          throw new Error('媒体资源设置无效。');
+          throw new Error(t('cm_sync_settings_error_13'));
         return withoutRevision(value);
       },
       (value, expected) =>
@@ -292,7 +296,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'bilibili',
-      'B 站与视频增强',
+      t('cm_sync_settings_text_14'),
       async () => withoutRevision(await bilibili.readState()),
       (value) => withoutRevision(normalizeBilibiliCapabilitiesState(value)),
       (value, expected) =>
@@ -303,7 +307,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'blocking',
-      '内容拦截、规则、白名单与订阅',
+      t('cm_sync_settings_text_15'),
       () => blocking.readPortableConfiguration(),
       (value) => portableContentBlocking(parsePortableContentBlocking(value)),
       (value, expected) =>
@@ -314,11 +318,11 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'audio',
-      '声音偏好',
+      t('cm_sync_settings_text_16'),
       services.readAudio,
       (value) => {
         const parsed = normalizeAudioSettings(value);
-        if (!parsed) throw new Error('声音设置无效。');
+        if (!parsed) throw new Error(t('cm_sync_settings_error_17'));
         return parsed;
       },
       async (value, expected) => {
@@ -328,7 +332,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'script-preferences',
-      '脚本更新与运行偏好',
+      t('cm_sync_settings_text_18'),
       async () => {
         const value = await services.readScripts();
         return {
@@ -339,7 +343,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
       },
       (value) => {
         const parsed = normalizeScriptPreferencesSyncInput(value);
-        if (!parsed) throw new Error('脚本运行设置无效。');
+        if (!parsed) throw new Error(t('cm_sync_settings_error_19'));
         return parsed;
       },
       async (value, expected) => {
@@ -352,7 +356,7 @@ export function syncSettings(services: Services): SyncPortableAdapter[] {
     ),
     configuration(
       'ai',
-      'AI 服务地址、协议与模型',
+      t('cm_sync_settings_text_20'),
       async () => portableAiConfig(await readAi()),
       (value) =>
         portableAiConfig(

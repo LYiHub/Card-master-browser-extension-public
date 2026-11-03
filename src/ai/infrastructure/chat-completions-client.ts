@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { normalizeAiServiceBaseUrl } from '../domain/ai-services-schema';
 import type {
   AiUsage,
@@ -269,30 +270,30 @@ export class ChatCompletionsClient implements AiModelClient {
       if (choice?.finish_reason) completed = true;
     });
     if (!completed) {
-      throw new Error('Chat Completions 事件流结束时缺少完成标记。');
+      throw new Error(t('cm_chat_completions_client_error_1'));
     }
     const toolCalls = [...calls.entries()]
       .sort(([left], [right]) => left - right)
       .map(([, call]) => {
         if (!call.id) {
-          throw new Error('Chat Completions 返回了缺少 ID 的工具调用。');
+          throw new Error(t('cm_chat_completions_client_error_2'));
         }
         if (!call.name) {
           throw new Error(
-            `Chat Completions 返回了缺少名称的工具调用：${call.id}`,
+            t('cm_chat_completions_client_error_3', [String(call.id)]),
           );
         }
         try {
           JSON.parse(call.arguments || '{}');
         } catch {
           throw new Error(
-            `Chat Completions 为 ${call.name} 返回了无效的 JSON 参数。`,
+            t('cm_chat_completions_client_error_4', [String(call.name)]),
           );
         }
         return call satisfies AiModelToolCall;
       });
     if (new Set(toolCalls.map((call) => call.id)).size !== toolCalls.length) {
-      throw new Error('Chat Completions 返回了重复的工具调用 ID。');
+      throw new Error(t('cm_chat_completions_client_error_5'));
     }
     return {
       model,
@@ -318,7 +319,7 @@ export class ChatCompletionsClient implements AiModelClient {
       signal,
     );
     if (!result.text) {
-      throw new Error('Chat Completions 响应中没有最终正文。');
+      throw new Error(t('cm_chat_completions_client_error_6'));
     }
     return {
       text: result.text,

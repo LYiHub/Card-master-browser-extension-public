@@ -15,6 +15,7 @@ import type {
 } from '../../ai/domain/types';
 import { DEFAULT_MODEL_SERVICE_MODEL } from '../../ai/domain/types';
 import { DEFAULT_RESPONSES_API_BASE_URL } from '../../ai/infrastructure/responses-api-client';
+import { t } from '../../localization/messages';
 import type { ExtensionStorageArea } from './api';
 
 export const AI_SERVICES_STORAGE_KEY = 'card-master.ai-services.v1';
@@ -114,18 +115,21 @@ export async function resolveModelServiceConfig(
   input: ModelServiceConfigInput,
 ) {
   if (typeof input.apiKey === 'string') {
-    normalizeHttpHeaderCredential(input.apiKey, '模型服务 API 密钥');
+    normalizeHttpHeaderCredential(
+      input.apiKey,
+      t('cm_ai_services_config_text_1'),
+    );
   }
   const normalized = normalizeModelServiceInput(input);
   if (!normalized) {
-    throw new Error('请填写有效的模型服务地址、协议和模型名称。');
+    throw new Error(t('cm_ai_services_config_error_2'));
   }
   const current = resolveAiServicesRuntimeConfig(
     await readAiServicesConfig(storage),
   );
   const apiKey = normalizeHttpHeaderCredential(
     normalized.apiKey || current.modelService.apiKey,
-    '模型服务 API 密钥',
+    t('cm_ai_services_config_text_3'),
   );
   return {
     ...current,
@@ -163,11 +167,14 @@ export async function saveImageServiceConfig(
   input: ImageServiceConfigInput,
 ) {
   if (typeof input.apiKey === 'string') {
-    normalizeHttpHeaderCredential(input.apiKey, '图像服务 API 密钥');
+    normalizeHttpHeaderCredential(
+      input.apiKey,
+      t('cm_ai_services_config_text_4'),
+    );
   }
   const normalized = normalizeImageServiceInput(input);
   if (!normalized) {
-    throw new Error('请填写有效的图像服务配置。');
+    throw new Error(t('cm_ai_services_config_error_5'));
   }
   const current = resolveAiServicesRuntimeConfig(
     await readAiServicesConfig(storage),
@@ -178,7 +185,7 @@ export async function saveImageServiceConfig(
       : '';
   const apiKey = normalizeHttpHeaderCredential(
     normalized.apiKey || previousApiKey,
-    '图像服务 API 密钥',
+    t('cm_ai_services_config_text_6'),
   );
   return writeAiServicesConfig(storage, {
     ...current,
@@ -206,16 +213,19 @@ export async function saveSpeechServiceConfig(
   input: SpeechServiceConfigInput,
 ) {
   if (typeof input.apiKey === 'string') {
-    normalizeHttpHeaderCredential(input.apiKey, '语音识别 API 密钥');
+    normalizeHttpHeaderCredential(
+      input.apiKey,
+      t('cm_ai_services_config_text_7'),
+    );
   }
   const normalized = normalizeSpeechServiceInput(input);
-  if (!normalized) throw new Error('语音识别 API 密钥格式无效。');
+  if (!normalized) throw new Error(t('cm_ai_services_config_error_8'));
   const current = resolveAiServicesRuntimeConfig(
     await readAiServicesConfig(storage),
   );
   const apiKey = normalizeHttpHeaderCredential(
     normalized.apiKey || current.speechService.apiKey,
-    '语音识别 API 密钥',
+    t('cm_ai_services_config_text_9'),
   );
   return writeAiServicesConfig(storage, {
     ...current,

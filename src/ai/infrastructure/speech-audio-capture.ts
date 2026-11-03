@@ -1,3 +1,5 @@
+import { t } from '../../localization/messages';
+
 const SPEECH_CAPTURE_WORKLET_NAME = 'card-master-speech-capture';
 
 export type SpeechAudioCaptureSession = {
@@ -16,7 +18,7 @@ function speechCaptureWorkletUrl() {
   };
   const runtime = globals.browser?.runtime ?? globals.chrome?.runtime;
   if (!runtime?.getURL) {
-    throw new Error('当前页面无法加载语音采集工作线程。');
+    throw new Error(t('cm_speech_audio_capture_error_1'));
   }
   return runtime.getURL('assistant-speech-worklet.js');
 }
@@ -68,7 +70,7 @@ function flushProcessor(processor: AudioWorkletNode) {
     };
     const timeout = window.setTimeout(() => {
       processor.port.removeEventListener('message', handleMessage);
-      reject(new Error('语音采集工作线程未能及时完成尾帧发送。'));
+      reject(new Error(t('cm_speech_audio_capture_error_2')));
     }, 1_000);
     processor.port.addEventListener('message', handleMessage);
     processor.port.postMessage({ type: 'flush', requestId });

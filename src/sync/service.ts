@@ -1,4 +1,5 @@
 import type { ExtensionStorageArea } from '../hosts/extension/api';
+import { t } from '../localization/messages';
 import { mergeEntries, restoreEntries } from './merge';
 import {
   entriesEqual,
@@ -39,7 +40,7 @@ function emptyState(): SyncStorageState {
     commit: null,
     lastSyncedAt: null,
     status: 'disconnected',
-    message: '连接后自动同步全部脚本与插件配置。',
+    message: t('cm_service_message_1'),
     diagnostics: [],
     remoteVersionCount: 0,
   };
@@ -49,14 +50,14 @@ function previewEntry(entry: import('./model').SyncEntry | null) {
   if (!entry) return null;
   const text = JSON.stringify(entry.value, (_key, value) =>
     typeof value === 'string' && value.startsWith('data:') && value.length > 256
-      ? `[媒体内容 ${(value.length / 1024).toFixed(1)} KB]`
+      ? t('cm_service_text_2', [String((value.length / 1024).toFixed(1))])
       : value,
   );
   return {
     name: entry.name,
     value:
       text.length > 8000
-        ? `${text.slice(0, 8000)}\n（预览已截断，完整内容仍保留在同步版本中）`
+        ? t('cm_service_text_3', [String(text.slice(0, 8000))])
         : JSON.parse(text),
   };
 }
@@ -84,7 +85,7 @@ function validateRemote(remote: unknown): asserts remote is SyncRemoteState {
     typeof remote.count !== 'number' ||
     !Number.isSafeInteger(remote.count)
   )
-    throw new Error('同步版本列表记录无效。');
+    throw new Error(t('cm_service_error_25'));
   validateEntries(remote.entries);
   for (const value of Object.values(remote.conflicts)) {
     if (
@@ -96,7 +97,7 @@ function validateRemote(remote: unknown): asserts remote is SyncRemoteState {
           typeof item.label === 'string',
       )
     )
-      throw new Error('同步冲突记录无效。');
+      throw new Error(t('cm_service_error_26'));
   }
 }
 
@@ -138,13 +139,13 @@ export class SyncService {
         !Array.isArray(value.diagnostics) ||
         !Object.hasOwn(value, 'commit')
       ) {
-        throw new Error('本机同步记录损坏，已停止同步。');
+        throw new Error(t('cm_service_error_27'));
       }
       validateEntries(value.base);
       if (value.connection !== null) validateConnection(value.connection);
       for (const item of value.history) validateVersion(item);
       if (value.preview) {
-        if (!record(value.preview)) throw new Error('同步预览记录损坏。');
+        if (!record(value.preview)) throw new Error(t('cm_service_error_28'));
         validateConnection(value.preview.connection);
         validateEntries(value.preview.local);
         validateEntries(value.preview.base);
@@ -152,7 +153,7 @@ export class SyncService {
         if (value.preview.restore) validateEntries(value.preview.restore);
       }
       if (value.commit) {
-        if (!record(value.commit)) throw new Error('同步提交记录损坏。');
+        if (!record(value.commit)) throw new Error(t('cm_service_error_29'));
         if (value.commit.record) validateRecord(value.commit.record);
         validateEntries(value.commit.entries);
         validateEntries(value.commit.local);
@@ -175,7 +176,7 @@ export class SyncService {
         ? { url: connection.url, username: connection.username }
         : null,
       status: this.running ? 'syncing' : state.status,
-      message: this.running ? '正在同步…' : state.message,
+      message: this.running ? t('cm_service_text_32') : state.message,
       lastSyncedAt: state.lastSyncedAt,
       preview: state.preview
         ? {
@@ -232,9 +233,7 @@ export class SyncService {
         restore,
       },
       status: 'review',
-      message: restore
-        ? '请确认恢复内容，当前数据将保留一份历史。'
-        : '请查看合并结果后确认同步。',
+      message: restore ? t('cm_service_text_33') : t('cm_service_text_34'),
       diagnostics: [...this.client(connection).diagnostics],
       remoteVersionCount: remote.count,
     });
@@ -242,7 +241,7 @@ export class SyncService {
 
   private async complete(state: SyncStorageState) {
     const commit = state.commit;
-    if (!commit) throw new Error('缺少待完成的同步记录。');
+    if (!commit) throw new Error(t('cm_service_error_35'));
     await this.projection.setOwnership(true);
     const { skipped } = await this.projection.applyEntries(
       commit.entries,
@@ -258,9 +257,7 @@ export class SyncService {
       preview: null,
       lastSyncedAt: skipped.size ? state.lastSyncedAt : Date.now(),
       status: skipped.size ? 'pending' : 'synced',
-      message: skipped.size
-        ? '本机有新的修改，已保留并等待下一次同步。'
-        : '已同步当前可见版本，其他设备的新修改将在下次检查时合并。',
+      message: skipped.size ? t('cm_service_text_36') : t('cm_service_text_37'),
       diagnostics: [
         ...(this.transport?.client.diagnostics ?? state.diagnostics),
       ],
@@ -280,9 +277,7 @@ export class SyncService {
       Object.keys(remote.conflicts).length > 0 ||
       !entriesEqual(entries, remote.entries);
     if (needsVersion && remote.count >= SYNC_MAX_VERSIONS)
-      throw new Error(
-        '同步空间已达到 4096 个版本，请保留目录备份后使用新的同步目录。',
-      );
+      throw new Error(t('cm_service_error_38'));
     const revision = needsVersion
       ? await createRecord(state.deviceId, remote, entries)
       : null;
@@ -309,7 +304,7 @@ export class SyncService {
         local,
       },
       status: 'pending',
-      message: '同步提交待完成。',
+      message: t('cm_service_message_39'),
       remoteVersionCount: remote.count + (revision ? 1 : 0),
     };
     // Persist the exact content-addressed record before upload; retrying cannot replace a different revision.
@@ -335,7 +330,7 @@ export class SyncService {
         ...emptyState(),
         deviceId: state.deviceId,
         history: state.history,
-        message: '已断开同步，本机数据和历史均保留。',
+        message: t('cm_service_message_40'),
       });
       this.transport = null;
       return;
@@ -349,7 +344,7 @@ export class SyncService {
         ...state,
         preview: null,
         status: state.connection ? 'pending' : 'disconnected',
-        message: '已取消预览，本机数据未更改。',
+        message: t('cm_service_message_41'),
       });
       return;
     }
@@ -368,7 +363,7 @@ export class SyncService {
     if (command.type === 'confirm') {
       const preview = state.preview;
       if (!preview || preview.id !== command.previewId)
-        throw new Error('预览已过期，请重新读取。');
+        throw new Error(t('cm_service_error_42'));
       const [remote, local] = await Promise.all([
         this.client(preview.connection).read(preview.remote.heads),
         this.projection.readEntries(),
@@ -389,8 +384,7 @@ export class SyncService {
         return;
       }
       const merged = plan(preview, command.choices);
-      if (merged.unresolved.length)
-        throw new Error('请选择每项冲突要保留的版本。');
+      if (merged.unresolved.length) throw new Error(t('cm_service_error_43'));
       await this.commit(
         { ...state, base: preview.base, heads: preview.remote.heads },
         preview.connection,
@@ -401,11 +395,11 @@ export class SyncService {
       return;
     }
     if (command.type === 'restore') {
-      if (!state.connection) throw new Error('请先连接同步空间。');
+      if (!state.connection) throw new Error(t('cm_service_error_44'));
       const history = state.history.find(
         (item) => item.id === command.versionId,
       );
-      if (!history) throw new Error('找不到该历史版本。');
+      if (!history) throw new Error(t('cm_service_error_45'));
       const [remote, local] = await Promise.all([
         this.client(state.connection).read(state.heads),
         this.projection.readEntries(),
@@ -449,7 +443,7 @@ export class SyncService {
         heads: remote.heads,
         lastSyncedAt: Date.now(),
         status: 'synced',
-        message: '已同步当前可见版本。',
+        message: t('cm_service_message_46'),
         diagnostics: [...this.client(state.connection).diagnostics],
         remoteVersionCount: remote.count,
       });
@@ -459,7 +453,7 @@ export class SyncService {
 
   request(command: SyncCommand): Promise<SyncSnapshot> {
     if (!isSyncCommand(command))
-      return Promise.reject(new Error('同步操作格式无效。'));
+      return Promise.reject(new Error(t('cm_service_error_47')));
     if (command.type === 'read')
       return this.state().then((state) => this.snapshot(state));
     const task = this.queue.then(async () => {
@@ -472,9 +466,7 @@ export class SyncService {
           ...state,
           status: 'error',
           message:
-            error instanceof Error
-              ? error.message
-              : '同步失败，本机数据已保留。',
+            error instanceof Error ? error.message : t('cm_service_text_48'),
           diagnostics: [
             ...(this.transport?.client.diagnostics ?? state.diagnostics),
           ],

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   isMediaSpeedSelection,
   isMediaSpeedSettings,
@@ -204,7 +205,7 @@ function mountMediaSpeedContent(api: ExtensionApi) {
         response.snapshot.selection,
       )
     ) {
-      throw new Error('扩展返回了无效的媒体倍速状态。');
+      throw new Error(t('cm_media_speed_content_error_1'));
     }
     if (!acceptRevision(response.settings.revision)) return;
     currentSettings = response.settings;

@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   DAILY_REVIEW_WALLPAPER_HISTORY_STORAGE_KEY,
   DAILY_REVIEW_WALLPAPER_STATE_STORAGE_KEY,
@@ -40,7 +41,10 @@ function openWallpaperDatabase(databaseFactory: IDBFactory) {
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () =>
-      reject(request.error ?? new Error('每日回顾数据库无法打开。'));
+      reject(
+        request.error ??
+          new Error(t('cm_daily_review_wallpaper_storage_error_1')),
+      );
   });
 }
 
@@ -377,11 +381,17 @@ export class DailyReviewWallpaperImageRepository {
         resolve(record(request.result) ? request.result : null);
       };
       request.onerror = () =>
-        reject(request.error ?? new Error('每日回顾读取失败。'));
+        reject(
+          request.error ??
+            new Error(t('cm_daily_review_wallpaper_storage_error_2')),
+        );
       transaction.oncomplete = () => database.close();
       transaction.onabort = () => {
         database.close();
-        reject(transaction.error ?? new Error('每日回顾读取已中止。'));
+        reject(
+          transaction.error ??
+            new Error(t('cm_daily_review_wallpaper_storage_error_3')),
+        );
       };
     });
   }
@@ -447,11 +457,17 @@ export class DailyReviewWallpaperImageRepository {
       };
       transaction.onabort = () => {
         database.close();
-        reject(transaction.error ?? new Error('每日回顾清理已中止。'));
+        reject(
+          transaction.error ??
+            new Error(t('cm_daily_review_wallpaper_storage_error_4')),
+        );
       };
       transaction.onerror = () => {
         database.close();
-        reject(transaction.error ?? new Error('每日回顾清理失败。'));
+        reject(
+          transaction.error ??
+            new Error(t('cm_daily_review_wallpaper_storage_error_5')),
+        );
       };
     });
   }
@@ -485,11 +501,17 @@ export class DailyReviewWallpaperImageRepository {
       };
       transaction.onabort = () => {
         database.close();
-        reject(transaction.error ?? new Error('每日回顾写入已中止。'));
+        reject(
+          transaction.error ??
+            new Error(t('cm_daily_review_wallpaper_storage_error_6')),
+        );
       };
       transaction.onerror = () => {
         database.close();
-        reject(transaction.error ?? new Error('每日回顾写入失败。'));
+        reject(
+          transaction.error ??
+            new Error(t('cm_daily_review_wallpaper_storage_error_7')),
+        );
       };
     });
   }

@@ -1,3 +1,4 @@
+import { t } from '../localization/messages';
 export const GAMEPAD_POINTER_TIMELINE_IDS = [
   'cursorEntrance',
   'cursorLocator',
@@ -50,35 +51,45 @@ const TRACK_PRESENTATION: Record<
   Omit<GamepadPointerTimelineTrack, 'property' | 'points'>
 > = {
   opacity: {
-    label: '透明度',
+    get label() {
+      return t('cm_pointer_timeline_label_1');
+    },
     color: '#75c7b4',
     min: 0,
     max: 1,
     unit: '',
   },
   scale: {
-    label: '缩放',
+    get label() {
+      return t('cm_pointer_timeline_label_2');
+    },
     color: '#edc45a',
     min: 0.6,
     max: 6,
     unit: 'x',
   },
   rotation: {
-    label: '旋转',
+    get label() {
+      return t('cm_pointer_timeline_label_3');
+    },
     color: '#e87863',
     min: -12,
     max: 12,
     unit: 'deg',
   },
   brightness: {
-    label: '亮度',
+    get label() {
+      return t('cm_pointer_timeline_label_4');
+    },
     color: '#8eb7d9',
     min: 0.6,
     max: 1.5,
     unit: 'x',
   },
   progress: {
-    label: '位移进度',
+    get label() {
+      return t('cm_pointer_timeline_label_5');
+    },
     color: '#b8cf78',
     min: 0,
     max: 1,
@@ -106,8 +117,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
   GamepadPointerTimeline
 > = {
   cursorEntrance: {
-    label: '准星出现',
-    description: '从较大尺寸快速收紧，轻微回弹后稳定在目标位置。',
+    get label() {
+      return t('cm_pointer_timeline_label_6');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_7');
+    },
     target: 'cursor',
     setInitialState: true,
     tracks: [
@@ -136,8 +151,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
     ],
   },
   cursorLocator: {
-    label: '准星定位脉冲',
-    description: '长时间未操作后重新移动时，用外环帮助快速找回准星。',
+    get label() {
+      return t('cm_pointer_timeline_label_8');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_9');
+    },
     target: 'locator',
     setInitialState: true,
     tracks: [
@@ -154,8 +173,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
     ],
   },
   cursorPress: {
-    label: '准星点击回弹',
-    description: '确认点击时先压缩，再超过原尺寸，最后回到稳定状态。',
+    get label() {
+      return t('cm_pointer_timeline_label_10');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_11');
+    },
     target: 'cursor',
     setInitialState: false,
     tracks: [
@@ -172,8 +195,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
     ],
   },
   cursorExit: {
-    label: '准星消失',
-    description: '虚拟鼠标交还给真实指针或其他界面时柔和收束。',
+    get label() {
+      return t('cm_pointer_timeline_label_12');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_13');
+    },
     target: 'cursor',
     setInitialState: false,
     tracks: [
@@ -188,8 +215,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
     ],
   },
   targetEntrance: {
-    label: '目标框出现',
-    description: '命中可选元素时先快速收紧，再轻微扩张并稳定。',
+    get label() {
+      return t('cm_pointer_timeline_label_14');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_15');
+    },
     target: 'target',
     setInitialState: true,
     tracks: [
@@ -212,8 +243,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
     ],
   },
   targetChange: {
-    label: '目标框切换',
-    description: '准星跨越到新元素时，目标框连续移动并短暂增强亮度。',
+    get label() {
+      return t('cm_pointer_timeline_label_16');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_17');
+    },
     target: 'target',
     setInitialState: false,
     tracks: [
@@ -237,8 +272,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
     ],
   },
   targetTrack: {
-    label: '目标框跟随',
-    description: '页面滚动或尺寸变化时，目标框以较短时间跟随同一元素。',
+    get label() {
+      return t('cm_pointer_timeline_label_18');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_19');
+    },
     target: 'target',
     setInitialState: false,
     tracks: [
@@ -261,8 +300,12 @@ export const GAMEPAD_POINTER_TIMELINES: Record<
     ],
   },
   targetExit: {
-    label: '目标框消失',
-    description: '失去目标或离开页面控制时降低亮度并轻微缩小。',
+    get label() {
+      return t('cm_pointer_timeline_label_20');
+    },
+    get description() {
+      return t('cm_pointer_timeline_description_21');
+    },
     target: 'target',
     setInitialState: false,
     tracks: [

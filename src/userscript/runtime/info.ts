@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { UserscriptResourceBundle } from '../application/resource-loader';
 import type { InstalledUserscript } from '../domain/types';
 
@@ -7,7 +8,7 @@ export function userscriptInfo(
   frameId?: number,
 ) {
   return {
-    scriptHandler: '卡牌大师',
+    scriptHandler: t('cm_info_script_handler_1'),
     version: '0.3.2',
     handlerVersion: '0.3.2',
     injectInto: script.metadata.grants.includes('none') ? 'page' : 'content',

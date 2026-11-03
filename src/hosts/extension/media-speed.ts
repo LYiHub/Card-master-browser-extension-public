@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   MediaSpeedController,
   MediaSpeedSelection,
@@ -43,7 +44,7 @@ function normalizedSnapshotHost(value: string) {
 function responseView(response: ReadResponse): MediaSpeedSettingsView {
   if (response.error) throw new Error(response.error);
   if (!response.settings || !response.snapshot) {
-    throw new Error('扩展返回了无效的媒体倍速状态。');
+    throw new Error(t('cm_media_speed_error_1'));
   }
   return {
     settings: response.settings,
@@ -54,7 +55,7 @@ function responseView(response: ReadResponse): MediaSpeedSettingsView {
 function responseSnapshot(response: ReadResponse) {
   if (response.error) throw new Error(response.error);
   if (!response.snapshot) {
-    throw new Error('扩展没有返回媒体倍速页面状态。');
+    throw new Error(t('cm_media_speed_error_2'));
   }
   return response.snapshot;
 }
@@ -232,7 +233,7 @@ export class ExtensionMediaSpeedController implements MediaSpeedController {
       type: 'media-speed-settings-save',
       settings,
     });
-    if (!result.settings) throw new Error('媒体倍速设置保存失败。');
+    if (!result.settings) throw new Error(t('cm_media_speed_error_3'));
     return { settings: result.settings, snapshot: result.snapshot };
   }
 

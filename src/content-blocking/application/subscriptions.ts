@@ -1,4 +1,5 @@
 import { readResponseTextWithinLimit } from '../../lib/response-text';
+import { t } from '../../localization/messages';
 import type { ContentBlockingSubscription } from '../domain/types';
 
 const MAX_SUBSCRIPTION_BYTES = 8 * 1024 * 1024;
@@ -32,16 +33,16 @@ export function normalizeSubscriptionUrl(value: string) {
   try {
     url = new URL(value.trim());
   } catch {
-    throw new Error('规则订阅地址不是有效 URL。');
+    throw new Error(t('cm_subscriptions_error_1'));
   }
   if (
     url.protocol !== 'https:' &&
     !(url.protocol === 'http:' && isLocalhost(url.hostname))
   ) {
-    throw new Error('规则订阅必须使用 HTTPS；仅本机调试允许 HTTP。');
+    throw new Error(t('cm_subscriptions_error_2'));
   }
   if (url.username || url.password) {
-    throw new Error('规则订阅地址不能包含登录凭据。');
+    throw new Error(t('cm_subscriptions_error_3'));
   }
   url.hash = '';
   return url.href;
@@ -53,7 +54,7 @@ function isRule(line: string) {
 
 export function sanitizeSubscription(source: string): SanitizedSubscription {
   if (new TextEncoder().encode(source).byteLength > MAX_SUBSCRIPTION_BYTES) {
-    throw new Error('规则订阅超过 8 MB 安全上限。');
+    throw new Error(t('cm_subscriptions_error_4'));
   }
   const accepted: string[] = [];
   let ruleCount = 0;
@@ -68,7 +69,7 @@ export function sanitizeSubscription(source: string): SanitizedSubscription {
     accepted.push(line);
     if (isRule(line)) ruleCount += 1;
     if (ruleCount > MAX_SUBSCRIPTION_RULES) {
-      throw new Error('规则订阅超过 60,000 条规则上限。');
+      throw new Error(t('cm_subscriptions_error_5'));
     }
   }
   return {
@@ -120,7 +121,7 @@ export class ContentBlockingSubscriptionFetcher {
         },
       );
       if (controller.signal.aborted) {
-        throw new Error('规则订阅下载超时。');
+        throw new Error(t('cm_subscriptions_error_6'));
       }
       if (response.url) normalizeSubscriptionUrl(response.url);
       const checkedAt = Date.now();
@@ -128,14 +129,16 @@ export class ContentBlockingSubscriptionFetcher {
         return { status: 'not-modified', checkedAt };
       }
       if (!response.ok) {
-        throw new Error(`规则订阅下载失败：HTTP ${response.status}。`);
+        throw new Error(
+          t('cm_subscriptions_error_7', [String(response.status)]),
+        );
       }
       const contentLength = Number(response.headers.get('content-length'));
       if (
         Number.isFinite(contentLength) &&
         contentLength > MAX_SUBSCRIPTION_BYTES
       ) {
-        throw new Error('规则订阅超过 8 MB 安全上限。');
+        throw new Error(t('cm_subscriptions_error_8'));
       }
       return {
         status: 'updated',
@@ -152,7 +155,7 @@ export class ContentBlockingSubscriptionFetcher {
       };
     } catch (error) {
       if (controller.signal.aborted) {
-        throw new Error('规则订阅下载超时。', { cause: error });
+        throw new Error(t('cm_subscriptions_error_9'), { cause: error });
       }
       throw error;
     } finally {

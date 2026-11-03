@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   defaultPageThemeSettings,
   isPageThemeSettings,
@@ -33,7 +34,7 @@ function errorMessage(error: unknown) {
 function safeHttpUrl(value: string) {
   const url = new URL(value);
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new Error('暗夜降临只允许读取 HTTP(S) 样式资源。');
+    throw new Error(t('cm_page_theme_service_error_1'));
   }
   return url;
 }
@@ -41,7 +42,7 @@ function safeHttpUrl(value: string) {
 async function boundedBody(response: Response) {
   const announced = Number(response.headers.get('content-length') ?? 0);
   if (announced > MAX_FETCH_BYTES) {
-    throw new Error('暗夜降临拒绝了超过 8 MiB 的页面样式资源。');
+    throw new Error(t('cm_page_theme_service_error_2'));
   }
   if (!response.body) return new Uint8Array();
   const reader = response.body.getReader();
@@ -53,7 +54,7 @@ async function boundedBody(response: Response) {
     length += value.byteLength;
     if (length > MAX_FETCH_BYTES) {
       await reader.cancel();
-      throw new Error('暗夜降临读取的页面样式资源超过 8 MiB。');
+      throw new Error(t('cm_page_theme_service_error_3'));
     }
     chunks.push(value);
   }
@@ -81,7 +82,7 @@ export async function fetchPageThemeResource(request: PageThemeFetchRequest) {
   const requestedUrl = safeHttpUrl(request.url);
   const requestedOrigin = safeHttpUrl(request.origin).origin;
   if (requestedUrl.username || requestedUrl.password) {
-    throw new Error('暗夜降临不读取包含凭据的资源地址。');
+    throw new Error(t('cm_page_theme_service_error_4'));
   }
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -93,7 +94,9 @@ export async function fetchPageThemeResource(request: PageThemeFetchRequest) {
     });
     safeHttpUrl(response.url);
     if (!response.ok) {
-      throw new Error(`页面样式资源读取失败：HTTP ${response.status}。`);
+      throw new Error(
+        t('cm_page_theme_service_error_5', [String(response.status)]),
+      );
     }
     const bytes = await boundedBody(response);
     if (request.responseType === 'text') {
@@ -106,7 +109,7 @@ export async function fetchPageThemeResource(request: PageThemeFetchRequest) {
     return `data:${mimeType};base64,${bytesToBase64(bytes)}`;
   } catch (error) {
     if (controller.signal.aborted) {
-      throw new Error('暗夜降临读取页面样式资源超时。');
+      throw new Error(t('cm_page_theme_service_error_6'));
     }
     throw error;
   } finally {
@@ -246,7 +249,7 @@ export class ExtensionPageThemeService {
 
   save(settings: PageThemeSettings) {
     if (!isPageThemeSettings(settings)) {
-      return Promise.reject(new Error('暗夜降临设置格式无效。'));
+      return Promise.reject(new Error(t('cm_page_theme_service_error_7')));
     }
     return this.mutate(() => settings);
   }

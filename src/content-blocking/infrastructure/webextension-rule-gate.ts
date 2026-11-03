@@ -1,5 +1,6 @@
 import type { ExtensionBackgroundApi } from '../../hosts/extension/api';
 import { extensionErrorMessage } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
 import type {
   AdguardBrowserApi,
   AdguardScriptInjection,
@@ -536,7 +537,11 @@ export class WebExtensionContentBlockingRuleGate
           if (css === undefined) {
             this.reportError(
               'css-payload-missing',
-              new Error(`内容拦截样式缓存缺失：${candidate.cssKey}`),
+              new Error(
+                t('cm_webextension_rule_gate_error_1', [
+                  String(candidate.cssKey),
+                ]),
+              ),
             );
             continue;
           }
@@ -585,7 +590,7 @@ export class WebExtensionContentBlockingRuleGate
   private async storeCssInjection(applied: boolean, injection: CssInjection) {
     const css = injection.css;
     if (typeof css !== 'string') {
-      throw new Error('内容拦截样式缺少 CSS 正文。');
+      throw new Error(t('cm_webextension_rule_gate_error_2'));
     }
     const cssKey = await this.cssKey(css);
     if (!this.knownCssContentKeys.has(cssKey)) {

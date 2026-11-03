@@ -8,6 +8,7 @@ import {
   requestAiService,
 } from '../../ai/infrastructure/ai-service-http';
 import { getImageGenerationAdapter } from '../../ai/infrastructure/image-generation-protocol-registry';
+import { t } from '../../localization/messages';
 import { CARD_ART_DIRECTION_PROMPT } from '../../userscript/application/card-art-direction';
 import {
   type GeneratedUserscriptCover,
@@ -51,9 +52,9 @@ export function buildCardCoverPrompt(
 ) {
   const { injectDefaultStyle = true, requireEnglish = true } = options;
   const concept = visualConcept.trim();
-  if (!concept) throw new Error('卡牌封面提示词不能为空。');
+  if (!concept) throw new Error(t('cm_image_card_cover_error_1'));
   if (requireEnglish && !isCardCoverVisualConceptText(concept)) {
-    throw new Error('卡牌封面视觉概念必须使用英文描述。');
+    throw new Error(t('cm_image_card_cover_error_2'));
   }
   if (!injectDefaultStyle) return concept;
   return [
@@ -85,12 +86,12 @@ function responseErrorMessage(status: number, responseText: string) {
         typeof error.message === 'string' && error.message.trim()
           ? error.message.trim()
           : null;
-      if (detail) return `卡牌封面生成失败：${detail}。`;
+      if (detail) return t('cm_image_card_cover_text_3', [String(detail)]);
     }
   } catch {
     // 非 JSON 错误页只返回 HTTP 状态，避免把整页内容写入会话。
   }
-  return `卡牌封面生成失败：HTTP ${status}。`;
+  return t('cm_image_card_cover_text_4', [String(status)]);
 }
 
 export class ImageCardCoverGenerator {
@@ -113,8 +114,8 @@ export class ImageCardCoverGenerator {
     if (!apiKey) {
       throw new Error(
         usesModelServiceCredential
-          ? '图像生成正在沿用模型服务，请先配置模型服务 API 密钥，或改用独立图像服务。'
-          : '图像服务尚未配置，请填写独立图像服务的 API 密钥。',
+          ? t('cm_image_card_cover_text_5')
+          : t('cm_image_card_cover_text_6'),
       );
     }
 
@@ -143,11 +144,11 @@ export class ImageCardCoverGenerator {
     try {
       payload = JSON.parse(text);
     } catch {
-      throw new Error('图像服务返回了无效 JSON。');
+      throw new Error(t('cm_image_card_cover_error_7'));
     }
     const parsed = adapter.parseResponse(payload);
     if (!parsed) {
-      throw new Error('图像服务没有返回图片。');
+      throw new Error(t('cm_image_card_cover_error_8'));
     }
 
     let source: Blob;
@@ -155,16 +156,18 @@ export class ImageCardCoverGenerator {
       source = blobFromBase64(parsed.b64);
     } else if (parsed.url) {
       if (!isSecureServiceUrl(parsed.url)) {
-        throw new Error('图像服务返回了不安全的图片地址。');
+        throw new Error(t('cm_image_card_cover_error_9'));
       }
       const imageResponse = await this.request(parsed.url, {
         signal,
       });
       if (!imageResponse.ok) {
-        throw new Error(`下载卡牌封面失败：HTTP ${imageResponse.status}。`);
+        throw new Error(
+          t('cm_image_card_cover_error_10', [String(imageResponse.status)]),
+        );
       }
       if (imageResponse.url && !isSecureServiceUrl(imageResponse.url)) {
-        throw new Error('卡牌封面下载被重定向到了不安全的地址。');
+        throw new Error(t('cm_image_card_cover_error_11'));
       }
       const mimeType =
         imageResponse.headers.get('content-type')?.split(';')[0]?.trim() ?? '';
@@ -172,10 +175,10 @@ export class ImageCardCoverGenerator {
         type: mimeType,
       });
     } else {
-      throw new Error('图像生成结果既没有图像数据，也没有图片地址。');
+      throw new Error(t('cm_image_card_cover_error_12'));
     }
     if (!source.type.startsWith('image/')) {
-      throw new Error('卡牌封面生成结果不是图片。');
+      throw new Error(t('cm_image_card_cover_error_13'));
     }
 
     return optimizeUserscriptCoverImage(source);

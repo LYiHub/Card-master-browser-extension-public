@@ -1,4 +1,5 @@
 import type { AiScriptExecution } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import type { UserscriptSettings } from '../../userscript/application/settings';
 import { matchInstalledUserscript } from '../../userscript/domain/matcher';
 import type {
@@ -263,12 +264,17 @@ export class UserscriptActivationCoordinator {
               script.id,
             );
             if (!execution) {
-              throw new Error('当前文档执行器不可用。');
+              throw new Error(
+                t('cm_userscript_activation_coordinator_error_1'),
+              );
             }
             if (execution.status === 'error') {
               this.reportError(
                 'immediate-execution-failed',
-                new Error(execution.error || '脚本即时执行失败。'),
+                new Error(
+                  execution.error ||
+                    t('cm_userscript_activation_coordinator_text_2'),
+                ),
                 { tabId, scriptId: script.id },
               );
             }

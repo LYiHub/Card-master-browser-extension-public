@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   formatMetadataDiagnostic,
   parseUserscriptMetadata,
@@ -151,7 +152,9 @@ function applyUserscriptSource(
       {
         severity: 'error',
         code: 'identity-conflict',
-        message: `已经存在同名同命名空间的脚本“${existing.metadata.name}”，请读取该脚本后执行更新。`,
+        message: t('cm_install_service_message_1', [
+          String(existing.metadata.name),
+        ]),
       },
     ]);
   }
@@ -209,7 +212,7 @@ export function replaceUserscriptSource(
   );
   const existing = existingIndex >= 0 ? current[existingIndex] : null;
   if (!existing) {
-    throw new Error(`找不到要更新的用户脚本：${targetScriptId}`);
+    throw new Error(t('cm_install_service_error_2', [String(targetScriptId)]));
   }
   const parsed = parseUserscriptMetadata(options.source);
   if (!parsed.metadata) {
@@ -225,7 +228,9 @@ export function replaceUserscriptSource(
       {
         severity: 'error',
         code: 'identity-conflict',
-        message: `脚本身份已经属于“${conflict.metadata.name}”。`,
+        message: t('cm_install_service_message_3', [
+          String(conflict.metadata.name),
+        ]),
       },
     ]);
   }

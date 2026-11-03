@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   defaultMediaSpeedSettings,
   isMediaSpeedSelection,
@@ -166,7 +167,7 @@ export class ExtensionMediaSpeedService {
     void this.broadcast(settings).catch((error) => {
       extensionDiagnostics.warn(
         'media-speed-service',
-        '后台广播倍速设置失败',
+        t('cm_media_speed_service_text_1'),
         error,
         { revision: settings.revision },
       );
@@ -218,7 +219,7 @@ export class ExtensionMediaSpeedService {
 
   async save(tabId: number, url: string, value: MediaSpeedSettings) {
     if (!isMediaSpeedSettings(value)) {
-      throw new Error('媒体倍速设置格式无效。');
+      throw new Error(t('cm_media_speed_service_error_2'));
     }
     this.urls.set(tabId, url);
     const settings = await this.mutate(() => value);
@@ -234,7 +235,7 @@ export class ExtensionMediaSpeedService {
     selection: MediaSpeedSelection,
   ) {
     if (!isMediaSpeedSelection(selection)) {
-      throw new Error('媒体倍速收到了无效的倍速档位。');
+      throw new Error(t('cm_media_speed_service_error_3'));
     }
     this.urls.set(tabId, url);
     const settings = await this.mutate((current) =>
@@ -284,7 +285,7 @@ export class ExtensionMediaSpeedService {
         (error) =>
           extensionDiagnostics.warn(
             'media-speed-service',
-            '后台发送聚合快照失败',
+            t('cm_media_speed_service_text_4'),
             error,
             {
               tabId,

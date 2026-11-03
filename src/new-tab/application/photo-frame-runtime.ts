@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 export const NEW_TAB_PHOTO_FRAME_IDLE_MS = 5_000;
 export const NEW_TAB_PHOTO_FRAME_FORCE_IDLE_MS = 60_000;
 export const NEW_TAB_PHOTO_FRAME_ATTRIBUTE = 'data-card-master-photo-frame';
@@ -25,11 +26,11 @@ export function photoFrameFullscreenButtonPresentation(active: boolean) {
   return active
     ? {
         icon: 'ri-fullscreen-exit-line',
-        label: '退出电子相框',
+        label: t('cm_photo_frame_runtime_label_1'),
       }
     : {
         icon: 'ri-fullscreen-line',
-        label: '进入电子相框',
+        label: t('cm_photo_frame_runtime_label_2'),
       };
 }
 

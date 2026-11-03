@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { parseUserscriptMetadata } from '../domain/metadata';
 
 export const MAX_EDITABLE_USERSCRIPT_NAME_LENGTH = 160;
@@ -17,11 +18,15 @@ function singleLine(
   const normalized = value.trim();
   if ((required && !normalized) || normalized.length > maxLength) {
     throw new Error(
-      `${label}${required ? '不能为空，且' : ''}不能超过 ${maxLength} 个字符。`,
+      t('cm_metadata_editor_error_1', [
+        String(label),
+        String(required ? '不能为空，且' : ''),
+        String(maxLength),
+      ]),
     );
   }
   if (/[\r\n]/.test(value)) {
-    throw new Error(`${label}不能包含换行。`);
+    throw new Error(t('cm_metadata_editor_error_2', [String(label)]));
   }
   return normalized;
 }
@@ -37,7 +42,7 @@ function replaceDirective(block: string, key: string, value: string) {
   const newline = block.includes('\r\n') ? '\r\n' : '\n';
   const closing = /^(\s*\/\/\s*==\/UserScript==\s*)$/m;
   if (!closing.test(block)) {
-    throw new Error('用户脚本元数据块缺少结束标记。');
+    throw new Error(t('cm_metadata_editor_error_3'));
   }
   return block.replace(closing, (_match, marker: string) => {
     return `// @${key}       ${value}${newline}${marker}`;
@@ -72,21 +77,21 @@ export function updateUserscriptEditableMetadata(
     );
   }
   const metadataBlock = parsed.block;
-  if (!metadataBlock) throw new Error('无法定位用户脚本元数据块。');
+  if (!metadataBlock) throw new Error(t('cm_metadata_editor_error_4'));
   const name = singleLine(
     input.name,
-    '脚本名称',
+    t('cm_metadata_editor_text_5'),
     MAX_EDITABLE_USERSCRIPT_NAME_LENGTH,
     true,
   );
   const description = singleLine(
     input.description,
-    '脚本描述',
+    t('cm_metadata_editor_text_6'),
     MAX_EDITABLE_USERSCRIPT_DESCRIPTION_LENGTH,
     false,
   );
   const start = source.indexOf(metadataBlock);
-  if (start < 0) throw new Error('无法定位用户脚本元数据块。');
+  if (start < 0) throw new Error(t('cm_metadata_editor_error_7'));
 
   let block = replaceDirective(metadataBlock, 'name', name);
   block = replaceDirective(block, 'description', description);

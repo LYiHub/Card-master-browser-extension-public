@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { type ExtensionTarget, extensionTarget } from './platform';
 
 export type ExtensionSpeechCapability = {
@@ -32,7 +33,7 @@ export function extensionSpeechCapability(
   const browser = target === 'firefox' ? 'Firefox' : 'Safari';
   return {
     available: false,
-    title: `${browser} 暂不支持语音输入`,
-    message: '请使用 Chrome、Edge 等 Chromium 浏览器。',
+    title: t('cm_speech_capability_title_1', [String(browser)]),
+    message: t('cm_speech_capability_message_2'),
   };
 }

@@ -1,3 +1,4 @@
+import { t } from '../localization/messages';
 import type { GamepadInputSnapshot } from './domain/types';
 
 export type ControllerProfile = {
@@ -149,7 +150,9 @@ async function controllerSource(url: string) {
   const request = fetch(url)
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`无法载入手柄可视化素材：${response.status}`);
+        throw new Error(
+          t('cm_controller_artwork_error_1', [String(response.status)]),
+        );
       }
       return response.text();
     })
@@ -177,7 +180,7 @@ export async function createControllerSvg({
   const parsed = new DOMParser().parseFromString(source, 'image/svg+xml');
   const svg = parsed.documentElement;
   if (!(svg instanceof SVGSVGElement)) {
-    throw new Error('手柄可视化素材不是有效的 SVG。');
+    throw new Error(t('cm_controller_artwork_error_2'));
   }
   svg.setAttribute('viewBox', `0 0 ${artwork.width} ${artwork.height}`);
   svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');

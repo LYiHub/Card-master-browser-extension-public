@@ -4,6 +4,7 @@ import {
   parseVolcengineAsrResponse,
   type VolcengineAsrResult,
 } from '../../ai/infrastructure/volcengine-asr-protocol';
+import { t } from '../../localization/messages';
 
 export const SPEECH_AUTHORIZATION_RULE_ID = 1_800_000_001;
 const SPEECH_ENDPOINT = 'wss://openspeech.bytedance.com/api/v3/sauc/bigmodel';
@@ -99,7 +100,7 @@ async function installAuthorizationRule(
   });
   const installed = await declarativeNetRequest.getSessionRules();
   if (!installed.some((rule) => rule.id === SPEECH_AUTHORIZATION_RULE_ID)) {
-    throw new Error('语音识别鉴权规则未能写入浏览器。');
+    throw new Error(t('cm_volcengine_speech_session_error_1'));
   }
 }
 
@@ -124,7 +125,7 @@ export class VolcengineSpeechAuthorizationCoordinator {
   open(apiKey: string): Promise<VolcengineSpeechAuthorization> {
     return this.enqueue(async () => {
       if (this.activeSessionId) {
-        throw new Error('已有语音识别鉴权会话正在运行。');
+        throw new Error(t('cm_volcengine_speech_session_error_2'));
       }
       const sessionId = crypto.randomUUID();
       this.activeSessionId = sessionId;
@@ -175,7 +176,7 @@ export class VolcengineSpeechSession {
   constructor(private readonly callbacks: SpeechSessionCallbacks) {}
 
   async connect(endpointValue: string) {
-    if (this.socket) throw new Error('语音识别会话已经建立。');
+    if (this.socket) throw new Error(t('cm_volcengine_speech_session_error_3'));
     const userId = crypto.randomUUID();
     const endpoint = new URL(endpointValue);
     if (
@@ -185,7 +186,7 @@ export class VolcengineSpeechSession {
       endpoint.search ||
       endpoint.hash
     ) {
-      throw new Error('语音识别服务地址配置无效。');
+      throw new Error(t('cm_volcengine_speech_session_error_4'));
     }
     const socket = await new Promise<WebSocket>((resolve, reject) => {
       const candidate = new WebSocket(endpoint.href);
@@ -195,7 +196,7 @@ export class VolcengineSpeechSession {
       });
       candidate.addEventListener(
         'error',
-        () => reject(new Error('无法连接字节跳动语音识别服务。')),
+        () => reject(new Error(t('cm_volcengine_speech_session_error_5'))),
         { once: true },
       );
     });
@@ -216,14 +217,18 @@ export class VolcengineSpeechSession {
     });
     socket.addEventListener('close', () => {
       if (!this.closed && !this.finalReceived) {
-        this.callbacks.onError(new Error('语音识别连接在返回最终结果前中断。'));
+        this.callbacks.onError(
+          new Error(t('cm_volcengine_speech_session_error_6')),
+        );
       }
       this.closed = true;
       this.callbacks.onClosed();
     });
     socket.addEventListener('error', () => {
       if (!this.closed) {
-        this.callbacks.onError(new Error('语音识别连接发生网络错误。'));
+        this.callbacks.onError(
+          new Error(t('cm_volcengine_speech_session_error_7')),
+        );
       }
     });
     socket.send(await createVolcengineAsrRequest(this.sequence++, userId));
@@ -231,11 +236,13 @@ export class VolcengineSpeechSession {
 
   sendAudio(pcm: Uint8Array) {
     if (!this.socket || this.closed) {
-      return Promise.reject(new Error('语音识别会话尚未开始。'));
+      return Promise.reject(
+        new Error(t('cm_volcengine_speech_session_error_8')),
+      );
     }
     this.audioQueue = this.audioQueue.then(async () => {
       if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-        throw new Error('语音识别连接已经关闭。');
+        throw new Error(t('cm_volcengine_speech_session_error_9'));
       }
       this.socket.send(
         await createVolcengineAsrAudioFrame(pcm, this.sequence++, false),
@@ -262,7 +269,7 @@ export class VolcengineSpeechSession {
   close() {
     if (this.closed) return;
     this.closed = true;
-    this.socket?.close(1000, '语音输入已关闭');
+    this.socket?.close(1000, t('cm_volcengine_speech_session_text_10'));
     this.socket = null;
   }
 }

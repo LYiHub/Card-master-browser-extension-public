@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   PageThemeController,
   PageThemeSettings,
@@ -34,7 +35,7 @@ function snapshotCompleted(snapshot: PageThemeSnapshot, revision: number) {
 function responseSettings(response: SettingsResponse) {
   if (response.error) throw new Error(response.error);
   if (!response.settings) {
-    throw new Error('扩展返回了无效的暗夜降临设置。');
+    throw new Error(t('cm_page_theme_error_1'));
   }
   return response.settings;
 }

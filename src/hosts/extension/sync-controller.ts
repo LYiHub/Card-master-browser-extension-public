@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   SyncCommand,
   SyncController,
@@ -19,7 +20,7 @@ export class ExtensionSyncController implements SyncController {
     });
     if (response?.error) throw new Error(response.error);
     if (!response || typeof response.status !== 'string')
-      throw new Error('同步服务未返回有效状态。');
+      throw new Error(t('cm_sync_controller_error_1'));
     return response;
   }
 }

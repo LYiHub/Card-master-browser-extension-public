@@ -3,6 +3,7 @@ import {
   type SpeechAudioCaptureSession,
 } from '../../ai/infrastructure/speech-audio-capture';
 import { MediaElementAudioPlayer } from '../../audio/MediaElementAudioPlayer';
+import { t } from '../../localization/messages';
 import {
   OFFSCREEN_AUDIO_CHANNEL,
   OFFSCREEN_AUDIO_PORT,
@@ -113,7 +114,7 @@ async function handleSpeechRecognitionCommand(
   }
   const active = speechRecognition;
   if (!active || active.recognitionId !== message.recognitionId) {
-    throw new Error('语音识别会话已经失效。');
+    throw new Error(t('cm_offscreen_audio_error_1'));
   }
   switch (message.type) {
     case 'audio':
@@ -150,7 +151,7 @@ async function handleSpeechCommand(
         return;
       case 'speech-capture-start':
         if (!speechCapture || speechCaptureId !== message.captureId) {
-          throw new Error('麦克风采集会话已经失效。');
+          throw new Error(t('cm_offscreen_audio_error_2'));
         }
         speechCapture.start(
           async (pcmBase64) => {
@@ -173,7 +174,7 @@ async function handleSpeechCommand(
       case 'speech-capture-finish': {
         const capture = speechCapture;
         if (!capture || speechCaptureId !== message.captureId) {
-          throw new Error('麦克风采集会话已经失效。');
+          throw new Error(t('cm_offscreen_audio_error_3'));
         }
         speechCapture = null;
         speechCaptureId = null;

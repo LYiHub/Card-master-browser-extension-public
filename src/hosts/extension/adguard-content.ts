@@ -1,4 +1,5 @@
 import { extensionErrorMessage } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
 import type { CosmeticData } from './adguard-cosmetic-layer';
 import { publishAdguardCosmeticRevision } from './adguard-cosmetic-protocol';
 import {
@@ -68,9 +69,10 @@ function requireBackgroundResponse<Response>(
     (response as BackgroundResponse).error
   ) {
     throw new Error(
-      `内容拦截后台请求“${requestType}”失败：${extensionErrorMessage(
-        (response as BackgroundResponse).error,
-      )}`,
+      t('cm_adguard_content_error_1', [
+        String(requestType),
+        String(extensionErrorMessage((response as BackgroundResponse).error)),
+      ]),
     );
   }
   return response;

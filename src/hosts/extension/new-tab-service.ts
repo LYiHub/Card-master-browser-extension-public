@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { rankNewTabSearchCandidates } from '../../new-tab/domain/search';
 import {
   type NewTabNavigationDisposition,
@@ -44,7 +45,7 @@ function safeNavigationUrl(value: string) {
     url.protocol !== 'opera:' &&
     url.protocol !== 'about:'
   ) {
-    throw new Error('新标签页拒绝打开不受支持的网址协议。');
+    throw new Error(t('cm_new_tab_service_error_1'));
   }
   return url.toString();
 }
@@ -114,7 +115,7 @@ export class ExtensionNewTabService {
 
   async readHistory(limit: number) {
     if (!this.capabilities().history) {
-      return unsupported('history', '当前浏览器未提供历史记录读取能力。');
+      return unsupported('history', t('cm_new_tab_service_text_2'));
     }
     return {
       supported: true as const,
@@ -124,7 +125,7 @@ export class ExtensionNewTabService {
 
   async deleteHistory(url: string) {
     if (!this.capabilities().history || !this.api.history) {
-      return unsupported('history', '当前浏览器未提供历史记录删除能力。');
+      return unsupported('history', t('cm_new_tab_service_text_3'));
     }
     await this.api.history.deleteUrl({ url });
     return { supported: true as const };
@@ -132,7 +133,7 @@ export class ExtensionNewTabService {
 
   async readBookmarkTree() {
     if (!this.capabilities().bookmarks || !this.api.bookmarks) {
-      return unsupported('bookmarks', '当前浏览器未提供书签读取能力。');
+      return unsupported('bookmarks', t('cm_new_tab_service_text_4'));
     }
     const tree = await this.api.bookmarks.getTree();
     return {
@@ -145,7 +146,7 @@ export class ExtensionNewTabService {
     request: Extract<NewTabRequest, { type: 'new-tab-bookmark-create' }>,
   ) {
     if (!this.capabilities().bookmarks || !this.api.bookmarks) {
-      return unsupported('bookmarks', '当前浏览器未提供书签编辑能力。');
+      return unsupported('bookmarks', t('cm_new_tab_service_text_5'));
     }
     const node = await this.api.bookmarks.create({
       ...(request.parentId ? { parentId: request.parentId } : {}),
@@ -163,7 +164,7 @@ export class ExtensionNewTabService {
     request: Extract<NewTabRequest, { type: 'new-tab-bookmark-update' }>,
   ) {
     if (!this.capabilities().bookmarks || !this.api.bookmarks) {
-      return unsupported('bookmarks', '当前浏览器未提供书签编辑能力。');
+      return unsupported('bookmarks', t('cm_new_tab_service_text_6'));
     }
     const node = await this.api.bookmarks.update(request.id, {
       ...(request.title !== undefined ? { title: request.title } : {}),
@@ -179,7 +180,7 @@ export class ExtensionNewTabService {
     request: Extract<NewTabRequest, { type: 'new-tab-bookmark-move' }>,
   ) {
     if (!this.capabilities().bookmarks || !this.api.bookmarks) {
-      return unsupported('bookmarks', '当前浏览器未提供书签移动能力。');
+      return unsupported('bookmarks', t('cm_new_tab_service_text_7'));
     }
     const node = await this.api.bookmarks.move(request.id, {
       ...(request.parentId ? { parentId: request.parentId } : {}),
@@ -195,7 +196,7 @@ export class ExtensionNewTabService {
     request: Extract<NewTabRequest, { type: 'new-tab-bookmark-remove' }>,
   ) {
     if (!this.capabilities().bookmarks || !this.api.bookmarks) {
-      return unsupported('bookmarks', '当前浏览器未提供书签删除能力。');
+      return unsupported('bookmarks', t('cm_new_tab_service_text_8'));
     }
     if (request.recursive) {
       await this.api.bookmarks.removeTree(request.id);
@@ -207,14 +208,11 @@ export class ExtensionNewTabService {
 
   async openBookmarkManager() {
     if (!this.capabilities().bookmarks) {
-      return unsupported('bookmarks', '当前浏览器未提供书签管理能力。');
+      return unsupported('bookmarks', t('cm_new_tab_service_text_9'));
     }
     const candidates = bookmarkManagerUrls();
     if (candidates.length === 0) {
-      return unsupported(
-        'bookmarks',
-        'Safari 未提供可由扩展直接打开的书签管理页面。',
-      );
+      return unsupported('bookmarks', t('cm_new_tab_service_text_10'));
     }
     let lastError: unknown = null;
     for (const url of candidates) {
@@ -225,7 +223,7 @@ export class ExtensionNewTabService {
         lastError = error;
       }
     }
-    throw lastError ?? new Error('浏览器书签管理页面无法打开。');
+    throw lastError ?? new Error(t('cm_new_tab_service_error_11'));
   }
 
   async openSettings() {
@@ -241,7 +239,7 @@ export class ExtensionNewTabService {
 
   async readTopSites() {
     if (!this.capabilities().topSites || !this.api.topSites) {
-      return unsupported('topSites', '当前浏览器未提供常用网站读取能力。');
+      return unsupported('topSites', t('cm_new_tab_service_text_12'));
     }
     const sites = await this.api.topSites.get();
     const items: NewTabSite[] = sites.flatMap((site) =>
@@ -254,7 +252,7 @@ export class ExtensionNewTabService {
 
   async readOpenTabs() {
     if (!this.capabilities().openTabs) {
-      return unsupported('openTabs', '当前浏览器未提供标签页读取能力。');
+      return unsupported('openTabs', t('cm_new_tab_service_text_13'));
     }
     const tabs = await readNewTabOpenTabCandidates(this.api);
     return {
@@ -272,7 +270,7 @@ export class ExtensionNewTabService {
 
   async activateOpenTab(tabId: number, windowId?: number) {
     if (!this.capabilities().openTabs) {
-      return unsupported('openTabs', '当前浏览器未提供标签页切换能力。');
+      return unsupported('openTabs', t('cm_new_tab_service_text_14'));
     }
     if (typeof windowId === 'number' && available(this.api.windows?.update)) {
       await this.api.windows?.update?.(windowId, { focused: true });
@@ -287,18 +285,12 @@ export class ExtensionNewTabService {
     sender: NewTabSender,
   ) {
     if (!this.capabilities().browserSearch || !this.api.search) {
-      return unsupported(
-        'browserSearch',
-        '当前浏览器未提供默认搜索引擎调用能力。',
-      );
+      return unsupported('browserSearch', t('cm_new_tab_service_text_15'));
     }
     const tabId = sender.tab?.id;
     if (available(this.api.search.query)) {
       if (disposition === 'new-background-tab') {
-        return unsupported(
-          'browserSearch',
-          '浏览器默认搜索接口不能在后台新标签页中打开结果。',
-        );
+        return unsupported('browserSearch', t('cm_new_tab_service_text_16'));
       }
       await this.api.search.query(
         disposition === 'current-tab' && typeof tabId === 'number'
@@ -308,10 +300,7 @@ export class ExtensionNewTabService {
       return { supported: true as const };
     }
     if (disposition === 'new-background-tab') {
-      return unsupported(
-        'browserSearch',
-        '当前浏览器不能在后台新标签页中调用默认搜索引擎。',
-      );
+      return unsupported('browserSearch', t('cm_new_tab_service_text_17'));
     }
     await this.api.search.search?.({
       query: text,
@@ -355,17 +344,11 @@ export class ExtensionNewTabService {
 
   readFavicon(url: string, size: number) {
     if (!this.capabilities().favicon) {
-      return unsupported(
-        'favicon',
-        '当前浏览器未提供 Chromium favicon 页面能力。',
-      );
+      return unsupported('favicon', t('cm_new_tab_service_text_18'));
     }
     const faviconUrl = browserPageFaviconUrl(this.api, url, size);
     if (!faviconUrl) {
-      return unsupported(
-        'favicon',
-        '浏览器内部页面不提供可由扩展加载的网站图标。',
-      );
+      return unsupported('favicon', t('cm_new_tab_service_text_19'));
     }
     return {
       supported: true as const,
@@ -401,9 +384,7 @@ export class ExtensionNewTabService {
         return this.openSettings();
       case 'new-tab-daily-review-wallpaper-read':
       case 'new-tab-daily-review-wallpaper-generate':
-        return Promise.reject(
-          new Error('每日回顾请求必须由专用后台服务处理。'),
-        );
+        return Promise.reject(new Error(t('cm_new_tab_service_error_20')));
       case 'new-tab-top-sites-read':
         return this.readTopSites();
       case 'new-tab-open-tabs-read':

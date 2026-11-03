@@ -1,9 +1,16 @@
 import { extensionErrorMessage } from '../../lib/extension-errors';
+import { t } from '../../localization/messages';
 
 export function adguardEnginePhaseError(phase: string, error: unknown) {
-  return new Error(`AdGuard ${phase}失败：${extensionErrorMessage(error)}`, {
-    cause: error,
-  });
+  return new Error(
+    t('cm_adguard_engine_error_error_1', [
+      String(phase),
+      String(extensionErrorMessage(error)),
+    ]),
+    {
+      cause: error,
+    },
+  );
 }
 
 export async function runAdguardEnginePhase<T>(

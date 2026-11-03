@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { InstalledUserscript, MetadataDiagnostic } from '../domain/types';
 
 export type UserscriptRuntimePlatform = 'chromium' | 'firefox' | 'safari';
@@ -12,14 +13,16 @@ const SAFARI_GRANT_LIMITATIONS: readonly PlatformGrantLimitation[] = [
   {
     code: 'safari-download-unsupported',
     grants: ['GM_download', 'GM.download'],
-    message:
-      'Safari 不支持此脚本声明的下载能力，GM_download / GM.download 无法运行。',
+    get message() {
+      return t('cm_platform_compatibility_message_1');
+    },
   },
   {
     code: 'safari-notification-unsupported',
     grants: ['GM_notification', 'GM.notification'],
-    message:
-      'Safari 不支持此脚本声明的通知能力，GM_notification / GM.notification 无法运行。',
+    get message() {
+      return t('cm_platform_compatibility_message_2');
+    },
   },
 ];
 

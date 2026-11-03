@@ -7,6 +7,7 @@ import type {
   SpeechServiceConfigInput,
   SpeechServiceProbe,
 } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import { type ExtensionApi, sendExtensionRequest } from './api';
 import { EXTENSION_CHANNEL, type ExtensionRequest } from './protocol';
 
@@ -40,7 +41,8 @@ export class ExtensionAiServicesController implements AiServicesController {
       config,
     });
     if (response.error) throw new Error(response.error);
-    if (!response.probe) throw new Error('扩展返回了无效的连接探测结果。');
+    if (!response.probe)
+      throw new Error(t('cm_ai_services_controller_error_1'));
     return response.probe;
   }
 
@@ -86,7 +88,8 @@ export class ExtensionAiServicesController implements AiServicesController {
       config,
     });
     if (response.error) throw new Error(response.error);
-    if (!response.probe) throw new Error('扩展返回了无效的语音连接探测结果。');
+    if (!response.probe)
+      throw new Error(t('cm_ai_services_controller_error_2'));
     return response.probe;
   }
 
@@ -103,7 +106,8 @@ export class ExtensionAiServicesController implements AiServicesController {
       error?: string;
     }>(this.api, request);
     if (response.error) throw new Error(response.error);
-    if (!response.config) throw new Error('扩展返回了无效的服务配置。');
+    if (!response.config)
+      throw new Error(t('cm_ai_services_controller_error_3'));
     return response.config;
   }
 }

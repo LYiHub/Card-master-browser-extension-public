@@ -1,4 +1,5 @@
 import { hostFetch, invokeFetch } from '../../lib/host-fetch';
+import { t } from '../../localization/messages';
 import {
   formatMetadataDiagnostic,
   parseUserscriptMetadata,
@@ -46,7 +47,7 @@ export function applyUserscriptUpdate(
   if (
     userscriptIdentity(parsed.metadata) !== userscriptIdentity(script.metadata)
   ) {
-    throw new Error('下载脚本的 @namespace + @name 与已安装脚本不一致。');
+    throw new Error(t('cm_update_service_error_1'));
   }
   if (
     compareUserscriptVersions(
@@ -54,7 +55,7 @@ export function applyUserscriptUpdate(
       script.metadata.version,
     ) <= 0
   ) {
-    throw new Error('下载脚本的版本没有高于当前安装版本。');
+    throw new Error(t('cm_update_service_error_2'));
   }
   const updated: InstalledUserscript = {
     ...script,
@@ -152,7 +153,7 @@ export class UserscriptUpdateService implements UserscriptUpdater {
     if (!metadataSource) {
       return {
         status: 'unavailable',
-        reason: '脚本没有声明 @updateURL 或 @downloadURL。',
+        reason: t('cm_update_service_reason_3'),
       };
     }
 
@@ -165,13 +166,13 @@ export class UserscriptUpdateService implements UserscriptUpdater {
     } catch (error) {
       return {
         status: 'unavailable',
-        reason: `更新元数据请求失败：${fetchFailure(error)}`,
+        reason: t('cm_update_service_reason_4', [String(fetchFailure(error))]),
       };
     }
     if (!response.ok) {
       return {
         status: 'unavailable',
-        reason: `更新元数据请求失败：HTTP ${response.status}`,
+        reason: t('cm_update_service_reason_5', [String(response.status)]),
       };
     }
     const metadataCode = await response.text();
@@ -188,7 +189,7 @@ export class UserscriptUpdateService implements UserscriptUpdater {
     ) {
       return {
         status: 'unavailable',
-        reason: '更新源中的 @namespace + @name 与已安装脚本不一致。',
+        reason: t('cm_update_service_reason_6'),
       };
     }
     if (
@@ -213,14 +214,16 @@ export class UserscriptUpdateService implements UserscriptUpdater {
 
   async download(update: AvailableUserscriptUpdate) {
     if (!update.sourceUrl) {
-      throw new Error('发现新版本，但更新 metadata 没有提供可下载的脚本源码。');
+      throw new Error(t('cm_update_service_error_7'));
     }
     const response = await invokeFetch(this.fetcher, update.sourceUrl, {
       cache: 'no-store',
       credentials: 'omit',
     });
     if (!response.ok) {
-      throw new Error(`脚本更新下载失败：HTTP ${response.status}`);
+      throw new Error(
+        t('cm_update_service_error_8', [String(response.status)]),
+      );
     }
     return { source: await response.text() };
   }

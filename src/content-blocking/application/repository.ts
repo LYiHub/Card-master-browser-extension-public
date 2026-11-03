@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   CONTENT_BLOCKER_ELEMENT_BATCH_STORAGE_KEY,
   CONTENT_BLOCKER_FIRST_CUSTOM_FILTER_ID,
@@ -507,9 +508,7 @@ export class ContentBlockingRepository {
           ...subscription,
           enabled: false,
           content: '',
-          error:
-            subscription.error ??
-            '过滤列表正文缓存缺失，请手动刷新该订阅后重新启用。',
+          error: subscription.error ?? t('cm_repository_text_1'),
         };
       }),
     );

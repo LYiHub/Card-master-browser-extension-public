@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   defaultPageThemeSettings,
   normalizePageThemeSettings,
@@ -97,7 +98,7 @@ function darkReaderEngine(
 
 function importTheme(value: unknown, fallback: PageThemeTheme): PageThemeTheme {
   const candidate = record(value);
-  if (!candidate) throw new Error('Dark Reader 配置缺少有效的主题设置。');
+  if (!candidate) throw new Error(t('cm_dark_reader_settings_error_1'));
   return {
     mode:
       candidate.mode === 0 || candidate.mode === 1
@@ -208,7 +209,7 @@ export function importDarkReaderSettings(
     typeof candidate.schemeVersion !== 'number' ||
     !record(candidate.theme)
   ) {
-    throw new Error('导入文件不是有效的 Dark Reader 设置。');
+    throw new Error(t('cm_dark_reader_settings_error_2'));
   }
 
   const defaults = defaultPageThemeSettings();

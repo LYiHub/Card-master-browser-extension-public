@@ -6,6 +6,7 @@ import {
   type PreinstalledCardVariant,
   preinstalledCardMedia,
 } from '../../lib/userscript-deck-media';
+import { t } from '../../localization/messages';
 import {
   parseUserscriptMetadata,
   userscriptIdentity,
@@ -61,9 +62,12 @@ function definition(
   const parsed = parseUserscriptMetadata(input.source);
   if (!parsed.metadata) {
     throw new Error(
-      `预装用户脚本 ${input.id} 的元数据无效：${parsed.diagnostics
-        .map((diagnostic) => diagnostic.message)
-        .join(' ')}`,
+      t('cm_preinstalled_error_1', [
+        String(input.id),
+        String(
+          parsed.diagnostics.map((diagnostic) => diagnostic.message).join(' '),
+        ),
+      ]),
     );
   }
   return {

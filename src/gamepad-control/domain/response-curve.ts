@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 export type GamepadResponseCurvePoint = {
   x: number;
   y: number;
@@ -34,8 +35,12 @@ export const GAMEPAD_SCROLL_SPEED_RANGE = {
 export const GAMEPAD_FEEL_PRESETS: readonly GamepadFeelPreset[] = [
   {
     id: 'precision',
-    label: '精准',
-    description: '光标缓启动，滚动保持低速精确',
+    get label() {
+      return t('cm_response_curve_label_1');
+    },
+    get description() {
+      return t('cm_response_curve_description_2');
+    },
     cursorSpeed: 1_300,
     scrollSpeed: 1_100,
     cursorRampMs: 900,
@@ -50,8 +55,12 @@ export const GAMEPAD_FEEL_PRESETS: readonly GamepadFeelPreset[] = [
   },
   {
     id: 'balanced',
-    label: '均衡',
-    description: '光标平顺加速，滚动即时响应',
+    get label() {
+      return t('cm_response_curve_label_3');
+    },
+    get description() {
+      return t('cm_response_curve_description_4');
+    },
     cursorSpeed: 2_600,
     scrollSpeed: 2_250,
     cursorRampMs: 780,
@@ -66,8 +75,12 @@ export const GAMEPAD_FEEL_PRESETS: readonly GamepadFeelPreset[] = [
   },
   {
     id: 'rapid',
-    label: '疾驰',
-    description: '光标快速响应，滚动保持较高上限',
+    get label() {
+      return t('cm_response_curve_label_5');
+    },
+    get description() {
+      return t('cm_response_curve_description_6');
+    },
     cursorSpeed: 3_600,
     scrollSpeed: 4_800,
     cursorRampMs: 520,

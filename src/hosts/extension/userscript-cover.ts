@@ -1,4 +1,5 @@
 import type { AiServicesConfigView } from '../../ai/domain/types';
+import { t } from '../../localization/messages';
 import { isCardAccent } from '../../userscript/application/card-accent';
 import type {
   GeneratedUserscriptCover,
@@ -28,7 +29,7 @@ function coverResponse(response: UserscriptCoverResponse) {
     !isCardAccent(cover.accent) ||
     !isUserscriptCoverImageDataUrl(cover.dataUrl)
   ) {
-    throw new Error('扩展没有返回有效的脚本卡牌封面。');
+    throw new Error(t('cm_userscript_cover_error_1'));
   }
   return cover;
 }
@@ -47,7 +48,7 @@ export class ExtensionUserscriptCoverController
       type: 'ai-services-read',
     });
     if (response.error) throw new Error(response.error);
-    if (!response.config) throw new Error('扩展没有返回图像服务配置状态。');
+    if (!response.config) throw new Error(t('cm_userscript_cover_error_2'));
     return response.config.imageService.hasCredential;
   }
 

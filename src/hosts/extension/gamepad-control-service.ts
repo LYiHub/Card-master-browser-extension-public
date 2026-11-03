@@ -5,6 +5,7 @@ import {
   isGamepadControlSettings,
   normalizeGamepadControlSettings,
 } from '../../gamepad-control/domain/settings';
+import { t } from '../../localization/messages';
 import type { ExtensionBackgroundApi } from './api';
 import { EXTENSION_CHANNEL } from './extension-channel';
 
@@ -86,7 +87,7 @@ export class ExtensionGamepadControlService {
 
   save(settings: GamepadControlSettings) {
     if (!isGamepadControlSettings(settings)) {
-      throw new Error('手柄控制设置格式无效。');
+      throw new Error(t('cm_gamepad_control_service_error_1'));
     }
     return this.mutate(() => settings);
   }

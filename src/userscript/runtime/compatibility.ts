@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { InstalledUserscript, MetadataDiagnostic } from '../domain/types';
 
 export const SUPPORTED_USERSCRIPT_GRANTS = new Set([
@@ -128,7 +129,7 @@ export function runtimeCompatibilityDiagnostics(
     diagnostics.push({
       severity: 'error',
       code: 'grant-none-conflict',
-      message: '@grant none 不能与其他授权同时使用。',
+      message: t('cm_compatibility_message_1'),
       line: metadataLine(script, 'grant', 'none'),
     });
   }
@@ -138,7 +139,9 @@ export function runtimeCompatibilityDiagnostics(
       diagnostics.push({
         severity: 'error',
         code: 'main-world-privileged-grant',
-        message: `该脚本要求在页面真实环境中运行，但没有隔离桥接时无法提供以下特权授权：${unsupported.join(', ')}`,
+        message: t('cm_compatibility_message_2', [
+          String(unsupported.join(', ')),
+        ]),
         line:
           metadataLine(script, 'sandbox', 'raw') ??
           metadataLine(script, 'grant', 'unsafeWindow'),
@@ -150,7 +153,7 @@ export function runtimeCompatibilityDiagnostics(
     diagnostics.push({
       severity: 'warning',
       code: 'unimplemented-grant',
-      message: `该用户脚本授权会被保留，但当前运行时尚未实现：${grant}`,
+      message: t('cm_compatibility_message_3', [String(grant)]),
       line: metadataLine(script, 'grant', grant),
     });
   }
@@ -159,7 +162,7 @@ export function runtimeCompatibilityDiagnostics(
     diagnostics.push({
       severity: 'warning',
       code: 'ignored-execution-metadata',
-      message: `用户脚本元数据 @${key} 会被保留，但不会改变当前运行时行为。`,
+      message: t('cm_compatibility_message_4', [String(key)]),
       line: metadataLine(script, key),
     });
   }
@@ -174,7 +177,7 @@ export function runtimeCompatibilityDiagnostics(
     diagnostics.push({
       severity: 'warning',
       code: 'unknown-metadata',
-      message: `无法识别的用户脚本元数据会被保留，但不具备运行时行为：@${entry.key}`,
+      message: t('cm_compatibility_message_5', [String(entry.key)]),
       line: entry.line,
     });
   }

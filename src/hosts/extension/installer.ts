@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   MetadataDiagnostic,
   UserscriptPresentation,
@@ -50,7 +51,7 @@ export class UserscriptInstallerError extends Error {
 export function normalizeUserscriptSourceUrl(value: string) {
   const normalized = normalizeExtensionSourceUrl(value);
   if (!new URL(normalized).pathname.toLowerCase().endsWith('.user.js')) {
-    throw new Error('安装入口只接受标准 .user.js 地址。');
+    throw new Error(t('cm_installer_error_1'));
   }
   return normalized;
 }
@@ -64,7 +65,7 @@ export function userscriptInstallerPageUrl(
 
 export function readUserscriptInstallerSource(search: string) {
   if (!search.startsWith(INSTALLER_QUERY_PREFIX)) {
-    throw new Error('安装页面缺少 .user.js 来源地址。');
+    throw new Error(t('cm_installer_error_2'));
   }
   return normalizeUserscriptSourceUrl(
     search.slice(INSTALLER_QUERY_PREFIX.length),
@@ -95,7 +96,7 @@ export class ExtensionUserscriptInstallerClient {
       }),
     );
     if (!response.preview) {
-      throw new Error('扩展没有返回有效的脚本安装预览。');
+      throw new Error(t('cm_installer_error_3'));
     }
     return response.preview;
   }
@@ -123,7 +124,7 @@ export class ExtensionUserscriptInstallerClient {
       }),
     );
     if (!response.result) {
-      throw new Error('扩展没有返回有效的脚本安装结果。');
+      throw new Error(t('cm_installer_error_4'));
     }
     return response.result;
   }

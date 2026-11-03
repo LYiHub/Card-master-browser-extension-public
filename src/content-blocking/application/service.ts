@@ -1,5 +1,6 @@
 import { extensionErrorMessage as errorMessage } from '../../lib/extension-errors';
 import { resolveSiteScope } from '../../lib/site-scope';
+import { t } from '../../localization/messages';
 import {
   CONTENT_BLOCKER_BUILTIN_FILTERS,
   CONTENT_BLOCKER_FIRST_CUSTOM_FILTER_ID,
@@ -73,7 +74,7 @@ function normalizeDomain(value: string) {
     source.includes('://') ? source : `https://${source}`,
   );
   if (!scope) {
-    throw new Error(`无效的白名单域名：${value}`);
+    throw new Error(t('cm_service_error_1', [String(value)]));
   }
   return scope.host;
 }
@@ -92,14 +93,14 @@ function elementRuleHostname(rule: string) {
   const separator = rule.indexOf('##');
   const hostname = separator > 0 ? rule.slice(0, separator).toLowerCase() : '';
   if (!hostname) {
-    throw new Error('元素过滤规则缺少有效的站点域名。');
+    throw new Error(t('cm_service_error_2'));
   }
   try {
     if (new URL(`https://${hostname}`).hostname !== hostname) {
       throw new Error();
     }
   } catch {
-    throw new Error('元素过滤规则包含无效的站点域名。');
+    throw new Error(t('cm_service_error_3'));
   }
   return hostname;
 }
@@ -124,7 +125,7 @@ function assertApplicable(report: ContentBlockingEngineReport) {
     (error) => !RULE_QUOTA_DIAGNOSTIC.test(error),
   );
   if (fatalErrors.length > 0) {
-    throw new Error(`过滤规则无法完整应用：${fatalErrors.join(' ')}`);
+    throw new Error(t('cm_service_error_4', [String(fatalErrors.join(' '))]));
   }
 }
 
@@ -279,7 +280,7 @@ export class ContentBlockingService {
   ) {
     return this.enqueue(async () => {
       if (input.length === 0 || input.length > 128) {
-        throw new Error('元素过滤规则批次必须包含 1 到 128 条规则。');
+        throw new Error(t('cm_service_error_5'));
       }
       const normalizedSessionId = session.sessionId.trim();
       if (
@@ -288,14 +289,14 @@ export class ContentBlockingService {
         !Number.isFinite(session.startedAt) ||
         session.startedAt <= 0
       ) {
-        throw new Error('元素过滤会话标识无效。');
+        throw new Error(t('cm_service_error_6'));
       }
       const normalizedRules = [
         ...new Set(
           input.map((rule) => {
             const normalizedRule = rule.trim();
             if (!normalizedRule || /[\r\n]/.test(normalizedRule)) {
-              throw new Error('元素过滤规则必须是单条非空规则。');
+              throw new Error(t('cm_service_error_7'));
             }
             return normalizedRule;
           }),
@@ -311,7 +312,7 @@ export class ContentBlockingService {
       if (addedRules.length === 0) return this.snapshot();
       const hostnames = new Set(addedRules.map(elementRuleHostname));
       if (hostnames.size !== 1) {
-        throw new Error('同一次元素过滤会话只能处理一个站点。');
+        throw new Error(t('cm_service_error_8'));
       }
       const hostname = [...hostnames][0];
       const previousBatch = this.lastElementBlockingBatch;
@@ -319,7 +320,7 @@ export class ContentBlockingService {
         previousBatch?.sessionId === normalizedSessionId &&
         previousBatch.hostname !== hostname
       ) {
-        throw new Error('元素过滤会话不能跨站点继续。');
+        throw new Error(t('cm_service_error_9'));
       }
       const nextBatch: ContentBlockingElementBatch | null =
         previousBatch?.sessionId === normalizedSessionId
@@ -350,7 +351,7 @@ export class ContentBlockingService {
   async undoLastElementBlockingBatch() {
     return this.enqueue(async () => {
       const batch = this.lastElementBlockingBatch;
-      if (!batch) throw new Error('当前没有可恢复的元素拦截批次。');
+      if (!batch) throw new Error(t('cm_service_error_10'));
       const state = this.requireReadyState();
       const lines = state.userRules.split(/\r?\n/);
       const batchRules = new Set(batch.rules);
@@ -390,7 +391,7 @@ export class ContentBlockingService {
     return this.enqueue(async () => {
       const state = this.requireReadyState();
       const hostname = normalizeDomain(pageUrl);
-      if (!hostname) throw new Error('当前页面没有可配置的站点域名。');
+      if (!hostname) throw new Error(t('cm_service_error_11'));
       const allowlist = enabled
         ? state.allowlist.filter((entry) => entry !== hostname)
         : normalizeAllowlist([...state.allowlist, hostname]);
@@ -462,7 +463,7 @@ export class ContentBlockingService {
           (filter) => filter.filterId === filterId,
         )
       ) {
-        throw new Error('找不到需要更新的内置过滤列表。');
+        throw new Error(t('cm_service_error_12'));
       }
       const selected = new Set(state.enabledStaticFilterIds);
       if (enabled) selected.add(filterId);
@@ -487,7 +488,7 @@ export class ContentBlockingService {
   async addSubscriptions(urls: readonly string[]) {
     return this.enqueue(async () => {
       if (urls.length === 0 || urls.length > 16) {
-        throw new Error('每次可以导入 1 到 16 个过滤列表地址。');
+        throw new Error(t('cm_service_error_13'));
       }
       const state = this.requireReadyState();
       const normalizedUrls = [...new Set(urls.map(normalizeSubscriptionUrl))];
@@ -498,7 +499,7 @@ export class ContentBlockingService {
         (url) => !installedUrls.has(url),
       );
       if (pendingUrls.length === 0) {
-        throw new Error('这些过滤列表已经全部导入。');
+        throw new Error(t('cm_service_error_14'));
       }
       const firstFilterId =
         Math.max(
@@ -522,7 +523,7 @@ export class ContentBlockingService {
           try {
             const downloaded = await this.subscriptionFetcher.download(base);
             if (downloaded.status !== 'updated') {
-              throw new Error(`${base.url} 没有返回可安装内容。`);
+              throw new Error(t('cm_service_error_15', [String(base.url)]));
             }
             return {
               ...base,
@@ -564,7 +565,7 @@ export class ContentBlockingService {
         (subscription) => subscription.id !== subscriptionId,
       );
       if (subscriptions.length === state.subscriptions.length) {
-        throw new Error('找不到需要删除的规则订阅。');
+        throw new Error(t('cm_service_error_16'));
       }
       await this.apply({ ...state, subscriptions });
       return this.readSettings();
@@ -580,7 +581,7 @@ export class ContentBlockingService {
         found = true;
         return { ...subscription, enabled };
       });
-      if (!found) throw new Error('找不到需要更新的规则订阅。');
+      if (!found) throw new Error(t('cm_service_error_17'));
       await this.apply({ ...state, subscriptions });
       return this.readSettings();
     });
@@ -604,7 +605,7 @@ export class ContentBlockingService {
     const requested = this.requireReadyState().subscriptions.find(
       (subscription) => subscription.id === subscriptionId,
     );
-    if (!requested) throw new Error('找不到需要刷新的规则订阅。');
+    if (!requested) throw new Error(t('cm_service_error_18'));
     let downloaded: SubscriptionDownload | null = null;
     let failure: unknown;
     const checkedAt = Date.now();
@@ -619,7 +620,7 @@ export class ContentBlockingService {
       const current = state.subscriptions.find(
         (subscription) => subscription.id === subscriptionId,
       );
-      if (!current) throw new Error('找不到需要刷新的规则订阅。');
+      if (!current) throw new Error(t('cm_service_error_19'));
       if (failure !== undefined) {
         await this.persistMetadata({
           ...current,
@@ -629,7 +630,7 @@ export class ContentBlockingService {
         throw failure;
       }
       if (!downloaded) {
-        throw new Error('过滤列表刷新没有返回结果。');
+        throw new Error(t('cm_service_error_20'));
       }
       if (downloaded.status === 'not-modified') {
         await this.persistMetadata({
@@ -786,7 +787,7 @@ export class ContentBlockingService {
           const download =
             await this.subscriptionFetcher.download(subscription);
           if (download.status !== 'updated')
-            throw new Error('新过滤订阅未返回内容。');
+            throw new Error(t('cm_service_error_21'));
           Object.assign(subscription, download.source);
         }
       }
@@ -803,7 +804,7 @@ export class ContentBlockingService {
       try {
         decoded = JSON.parse(source);
       } catch (error) {
-        throw new Error('内容拦截配置不是有效的 JSON。', { cause: error });
+        throw new Error(t('cm_service_error_22'), { cause: error });
       }
       if (
         !record(decoded) ||
@@ -814,10 +815,10 @@ export class ContentBlockingService {
         !Number.isFinite(Date.parse(decoded.exportedAt)) ||
         !Object.hasOwn(decoded, 'state')
       ) {
-        throw new Error('内容拦截配置格式或版本不受支持。');
+        throw new Error(t('cm_service_error_23'));
       }
       const imported = parseContentBlockingState(decoded.state);
-      if (!imported) throw new Error('内容拦截配置内容无效。');
+      if (!imported) throw new Error(t('cm_service_error_24'));
       const subscriptions = imported.subscriptions.map((subscription) => {
         const sanitized = sanitizeSubscription(subscription.content);
         return {
@@ -882,7 +883,9 @@ export class ContentBlockingService {
       (error) => {
         this.reportError('background-configuration-failed', error);
         this.status = 'error';
-        this.startError = `内容拦截后台更新失败：${errorMessage(error)}`;
+        this.startError = t('cm_service_text_25', [
+          String(errorMessage(error)),
+        ]);
         this.configurationPending = false;
         this.publish();
         this.finishBackgroundConfiguration(operation);
@@ -940,18 +943,16 @@ export class ContentBlockingService {
           this.reportError('configuration-rollback-failed', rollbackError);
           this.engineReady = false;
           this.pendingConfiguration = null;
-          this.startError = `内容拦截配置失败，且无法恢复上一状态：${errorMessage(
-            rollbackError,
-          )}`;
+          this.startError = t('cm_service_text_26', [
+            String(errorMessage(rollbackError)),
+          ]);
           this.status = 'error';
           this.configurationPending = false;
           this.publish();
           return;
         }
       }
-      this.startError = `内容拦截规则已保存，但引擎更新失败：${errorMessage(
-        error,
-      )}`;
+      this.startError = t('cm_service_text_27', [String(errorMessage(error))]);
       this.status = 'error';
       this.configurationPending = Boolean(this.pendingConfiguration);
       this.publish();
@@ -983,9 +984,9 @@ export class ContentBlockingService {
         this.reportError('configuration-rollback-failed', rollbackError);
         this.engineReady = false;
         this.status = 'error';
-        this.startError = `内容拦截配置失败，且无法恢复上一状态：${errorMessage(
-          rollbackError,
-        )}`;
+        this.startError = t('cm_service_text_28', [
+          String(errorMessage(rollbackError)),
+        ]);
         this.publish();
         throw new Error(`${errorMessage(error)} ${this.startError}`, {
           cause: rollbackError,
@@ -1024,9 +1025,9 @@ export class ContentBlockingService {
         this.reportError('rule-activation-rollback-failed', rollbackError);
         this.engineReady = false;
         this.status = 'error';
-        this.startError = `内容拦截规则状态切换失败，且无法恢复上一状态：${errorMessage(
-          rollbackError,
-        )}`;
+        this.startError = t('cm_service_text_29', [
+          String(errorMessage(rollbackError)),
+        ]);
         this.publish();
         throw new Error(`${errorMessage(error)} ${this.startError}`, {
           cause: rollbackError,
@@ -1053,7 +1054,7 @@ export class ContentBlockingService {
 
   private requireState() {
     if (!this.state) {
-      throw new Error(this.startError ?? '内容拦截服务尚未初始化。');
+      throw new Error(this.startError ?? t('cm_service_text_30'));
     }
     return this.state;
   }
@@ -1061,7 +1062,7 @@ export class ContentBlockingService {
   private requireReadyState() {
     const state = this.requireState();
     if (!this.engineReady) {
-      throw new Error(this.startError ?? '内容拦截引擎当前不可用。');
+      throw new Error(this.startError ?? t('cm_service_text_31'));
     }
     return state;
   }

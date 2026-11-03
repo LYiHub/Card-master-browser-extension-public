@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   ScriptRepository,
   ScriptRepositoryListener,
@@ -30,7 +31,7 @@ type LibraryMutationResponse = LibraryResponse & {
 function hydrateResponse(response: LibraryResponse) {
   if (response.error) throw new Error(response.error);
   if (!Array.isArray(response.scripts)) {
-    throw new Error('扩展返回了无效的用户脚本仓库。');
+    throw new Error(t('cm_repository_error_1'));
   }
   return response.scripts.map(hydrateScript);
 }
@@ -42,7 +43,7 @@ function hydrateMutationResponse(response: LibraryMutationResponse) {
     !response.orderedIds.every((id) => typeof id === 'string') ||
     !Array.isArray(response.scripts)
   ) {
-    throw new Error('扩展返回了无效的用户脚本变更结果。');
+    throw new Error(t('cm_repository_error_2'));
   }
   return {
     orderedIds: response.orderedIds,

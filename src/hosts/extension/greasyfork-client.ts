@@ -1,5 +1,6 @@
 import { hostFetch, invokeFetch } from '../../lib/host-fetch';
 import { readResponseTextWithinLimit } from '../../lib/response-text';
+import { t } from '../../localization/messages';
 import { MAX_USERSCRIPT_SOURCE_BYTES } from './source-fetch';
 
 const GREASY_FORK_API_ORIGIN = 'https://api.greasyfork.org';
@@ -106,13 +107,13 @@ function officialDetailUrl(scriptId: number) {
 
 function officialCodeUrl(value: unknown, scriptId: number) {
   if (typeof value !== 'string') {
-    throw new Error('Greasy Fork 没有返回可安装的脚本地址。');
+    throw new Error(t('cm_greasyfork_client_error_1'));
   }
   let url: URL;
   try {
     url = new URL(value);
   } catch {
-    throw new Error('Greasy Fork 返回了无效的脚本地址。');
+    throw new Error(t('cm_greasyfork_client_error_2'));
   }
   if (
     url.origin !== GREASY_FORK_UPDATE_ORIGIN ||
@@ -121,7 +122,7 @@ function officialCodeUrl(value: unknown, scriptId: number) {
     !url.pathname.startsWith(`/scripts/${scriptId}/`) ||
     !url.pathname.toLowerCase().endsWith('.user.js')
   ) {
-    throw new Error('Greasy Fork 返回的脚本地址不属于官方更新源。');
+    throw new Error(t('cm_greasyfork_client_error_3'));
   }
   url.hash = '';
   return url.href;
@@ -166,7 +167,9 @@ async function requestText(
       signal: scopedSignal.signal,
     });
     if (!response.ok) {
-      throw new Error(`Greasy Fork 请求失败：HTTP ${response.status}`);
+      throw new Error(
+        t('cm_greasyfork_client_error_4', [String(response.status)]),
+      );
     }
     return {
       body: await readResponseTextWithinLimit(
@@ -178,7 +181,7 @@ async function requestText(
     };
   } catch (error) {
     if (scopedSignal.signal.aborted && !signal?.aborted) {
-      throw new Error('Greasy Fork 请求超时。', { cause: error });
+      throw new Error(t('cm_greasyfork_client_error_5'), { cause: error });
     }
     throw error;
   } finally {
@@ -196,23 +199,23 @@ async function requestJson(
     url,
     'application/json',
     MAX_GREASY_FORK_API_BYTES,
-    'Greasy Fork API 响应超过安全上限。',
+    t('cm_greasyfork_client_text_6'),
     signal,
   );
   if (new URL(response.finalUrl).origin !== GREASY_FORK_API_ORIGIN) {
-    throw new Error('Greasy Fork API 请求被重定向到非官方来源。');
+    throw new Error(t('cm_greasyfork_client_error_7'));
   }
   try {
     return JSON.parse(response.body) as unknown;
   } catch (error) {
-    throw new Error('Greasy Fork 返回了无效 JSON。', { cause: error });
+    throw new Error(t('cm_greasyfork_client_error_8'), { cause: error });
   }
 }
 
 export function normalizeGreasyForkSite(value: string) {
   const input = value.trim();
   if (!input || input.length > 2_048) {
-    throw new Error('search_greasyfork_scripts 需要有效的网站域名或网址。');
+    throw new Error(t('cm_greasyfork_client_error_9'));
   }
   let url: URL;
   try {
@@ -220,7 +223,7 @@ export function normalizeGreasyForkSite(value: string) {
       /^[a-z][a-z\d+.-]*:/i.test(input) ? input : `https://${input}`,
     );
   } catch {
-    throw new Error('search_greasyfork_scripts 需要有效的网站域名或网址。');
+    throw new Error(t('cm_greasyfork_client_error_10'));
   }
   if (
     (url.protocol !== 'http:' && url.protocol !== 'https:') ||
@@ -228,7 +231,7 @@ export function normalizeGreasyForkSite(value: string) {
     url.password ||
     url.port
   ) {
-    throw new Error('Greasy Fork 站点搜索只支持无凭据、无端口的 HTTP 网站。');
+    throw new Error(t('cm_greasyfork_client_error_11'));
   }
   const hostname = url.hostname.toLowerCase().replace(/\.$/, '');
   const labels = hostname.split('.');
@@ -240,7 +243,7 @@ export function normalizeGreasyForkSite(value: string) {
     /^\d+(?:\.\d+){3}$/.test(hostname) ||
     labels.some((label) => !/^[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?$/i.test(label))
   ) {
-    throw new Error('search_greasyfork_scripts 需要有效的公开网站域名。');
+    throw new Error(t('cm_greasyfork_client_error_12'));
   }
   return hostname;
 }
@@ -271,9 +274,7 @@ export function validateGreasyForkSearchInput(input: {
     input.page < 1 ||
     input.page > 10_000
   ) {
-    throw new Error(
-      'search_greasyfork_scripts 需要有效的 site、query、sort 和 page。',
-    );
+    throw new Error(t('cm_greasyfork_client_error_13'));
   }
   return {
     site: normalizeGreasyForkSite(input.site),
@@ -334,7 +335,7 @@ export class GreasyForkClient {
         ? response.query
         : null;
     if (!candidates) {
-      throw new Error('Greasy Fork 返回了无法识别的搜索结果。');
+      throw new Error(t('cm_greasyfork_client_error_14'));
     }
     const scripts = candidates
       .slice(0, GREASY_FORK_PAGE_SIZE)
@@ -355,7 +356,7 @@ export class GreasyForkClient {
     signal?: AbortSignal,
   ): Promise<GreasyForkScriptDownload> {
     if (!Number.isSafeInteger(scriptId) || scriptId < 1) {
-      throw new Error('install_greasyfork_script 需要有效的 script_id。');
+      throw new Error(t('cm_greasyfork_client_error_15'));
     }
     const detailApiUrl = new URL(
       `/en/scripts/${scriptId}.json`,
@@ -363,7 +364,7 @@ export class GreasyForkClient {
     );
     const detail = await requestJson(this.fetcher, detailApiUrl.href, signal);
     if (!record(detail) || parseScriptId(detail.id) !== scriptId) {
-      throw new Error('Greasy Fork 没有返回匹配的脚本详情。');
+      throw new Error(t('cm_greasyfork_client_error_16'));
     }
     const name = boundedText(detail.name, 300);
     const codeUrl = officialCodeUrl(detail.code_url, scriptId);
@@ -372,12 +373,12 @@ export class GreasyForkClient {
       codeUrl,
       'text/javascript, text/plain;q=0.9',
       MAX_USERSCRIPT_SOURCE_BYTES,
-      'Greasy Fork 脚本源码超过 4 MB 安全上限。',
+      t('cm_greasyfork_client_text_17'),
       signal,
     );
     const sourceUrl = officialCodeUrl(response.finalUrl, scriptId);
     const source = response.body;
-    if (!source.trim()) throw new Error('Greasy Fork 返回了空脚本源码。');
+    if (!source.trim()) throw new Error(t('cm_greasyfork_client_error_18'));
     return {
       scriptId,
       name: name || `Greasy Fork #${scriptId}`,

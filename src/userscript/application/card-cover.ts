@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   isUserscriptCoverImageDataUrl,
   isUserscriptCoverVideoDataUrl,
@@ -20,9 +21,7 @@ export type GeneratedUserscriptCover = {
 };
 
 export class UserscriptCoverConfigurationRequiredError extends Error {
-  constructor(
-    message = 'OpenAI 兼容图像服务尚未配置，请在卡牌大师智能体的设置中完成图像生成配置。',
-  ) {
+  constructor(message = t('cm_card_cover_text_1')) {
     super(message);
     this.name = 'UserscriptCoverConfigurationRequiredError';
   }
@@ -51,7 +50,7 @@ async function dataUrl(blob: Blob) {
 
 export function userscriptCoverCropRect(width: number, height: number) {
   if (width <= 0 || height <= 0) {
-    throw new Error('封面媒体没有有效的画面尺寸。');
+    throw new Error(t('cm_card_cover_error_2'));
   }
   const sourceRatio = width / height;
   const targetRatio = USERSCRIPT_COVER_WIDTH / USERSCRIPT_COVER_HEIGHT;
@@ -84,7 +83,7 @@ async function renderUserscriptCoverFrame(
     USERSCRIPT_COVER_HEIGHT,
   );
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('浏览器无法创建卡牌封面绘图上下文。');
+  if (!context) throw new Error(t('cm_card_cover_error_3'));
   context.drawImage(
     source,
     crop.x,
@@ -104,9 +103,11 @@ async function renderUserscriptCoverFrame(
   const encoded = await dataUrl(optimized);
   if (!isUserscriptCoverImageDataUrl(encoded)) {
     throw new Error(
-      `封面转换失败，生成结果无效或超过 ${Math.floor(
-        MAX_USERSCRIPT_COVER_IMAGE_DATA_URL_LENGTH / 1024 / 1024,
-      )} MB。`,
+      t('cm_card_cover_error_4', [
+        String(
+          Math.floor(MAX_USERSCRIPT_COVER_IMAGE_DATA_URL_LENGTH / 1024 / 1024),
+        ),
+      ]),
     );
   }
   return {
@@ -122,10 +123,10 @@ export async function optimizeUserscriptCoverImage(
   source: Blob,
 ): Promise<GeneratedUserscriptCover> {
   if (!source.type.startsWith('image/')) {
-    throw new Error('封面文件必须是图片。');
+    throw new Error(t('cm_card_cover_error_5'));
   }
   if (source.size > MAX_USERSCRIPT_COVER_UPLOAD_BYTES) {
-    throw new Error('封面图片不能超过 20 MB。');
+    throw new Error(t('cm_card_cover_error_6'));
   }
 
   const bitmap = await createImageBitmap(source);
@@ -149,12 +150,7 @@ async function userscriptCoverVideoPoster(source: Blob) {
   try {
     await new Promise<void>((resolve, reject) => {
       video.onloadeddata = () => resolve();
-      video.onerror = () =>
-        reject(
-          new Error(
-            '当前浏览器无法读取这个封面视频，请换用浏览器可播放的视频格式。',
-          ),
-        );
+      video.onerror = () => reject(new Error(t('cm_card_cover_error_7')));
       video.src = objectUrl;
       video.load();
     });
@@ -183,15 +179,15 @@ export async function prepareUserscriptCoverMedia(
     };
   }
   if (!source.type.startsWith('video/')) {
-    throw new Error('封面文件必须是图片或视频。');
+    throw new Error(t('cm_card_cover_error_8'));
   }
   if (source.size > MAX_USERSCRIPT_COVER_UPLOAD_BYTES) {
-    throw new Error('封面视频不能超过 20 MB。');
+    throw new Error(t('cm_card_cover_error_9'));
   }
   const poster = await userscriptCoverVideoPoster(source);
   const video = await dataUrl(source);
   if (!isUserscriptCoverVideoDataUrl(video)) {
-    throw new Error('封面视频编码失败或文件过大。');
+    throw new Error(t('cm_card_cover_error_10'));
   }
   return {
     accent: poster.accent,

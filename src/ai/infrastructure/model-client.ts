@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   AiReasoningEffort,
   AiUsage,
@@ -71,13 +72,13 @@ export function toolContinuationMessages(
   const callsById = new Map<string, AiModelToolCall>();
   for (const call of completion.toolCalls) {
     if (!call.id.trim()) {
-      throw new Error('AI 服务返回了缺少 ID 的工具调用。');
+      throw new Error(t('cm_model_client_error_1'));
     }
     if (!call.name.trim()) {
-      throw new Error(`AI 服务返回了缺少名称的工具调用：${call.id}`);
+      throw new Error(t('cm_model_client_error_2', [String(call.id)]));
     }
     if (callsById.has(call.id)) {
-      throw new Error(`AI 服务返回了重复的工具调用 ID：${call.id}`);
+      throw new Error(t('cm_model_client_error_3', [String(call.id)]));
     }
     callsById.set(call.id, call);
   }
@@ -88,17 +89,21 @@ export function toolContinuationMessages(
   >();
   for (const result of results) {
     if (!callsById.has(result.toolCallId)) {
-      throw new Error(`工具结果无法匹配对应调用：${result.toolCallId}`);
+      throw new Error(
+        t('cm_model_client_error_4', [String(result.toolCallId)]),
+      );
     }
     if (resultsById.has(result.toolCallId)) {
-      throw new Error(`工具结果重复：${result.toolCallId}`);
+      throw new Error(
+        t('cm_model_client_error_5', [String(result.toolCallId)]),
+      );
     }
     resultsById.set(result.toolCallId, result);
   }
 
   const missing = [...callsById.keys()].filter((id) => !resultsById.has(id));
   if (missing.length > 0) {
-    throw new Error(`缺少以下工具调用的结果：${missing.join(', ')}`);
+    throw new Error(t('cm_model_client_error_6', [String(missing.join(', '))]));
   }
 
   return [
@@ -114,7 +119,7 @@ export function toolContinuationMessages(
     ...completion.toolCalls.map((call) => {
       const result = resultsById.get(call.id);
       if (!result) {
-        throw new Error(`缺少工具调用结果：${call.id}`);
+        throw new Error(t('cm_model_client_error_7', [String(call.id)]));
       }
       return result;
     }),

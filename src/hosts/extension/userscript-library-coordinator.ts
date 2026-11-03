@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   installUserscriptSource,
   UserscriptInstallError,
@@ -83,7 +84,7 @@ class UserscriptPreviewError extends UserscriptInstallError {
 export function userscriptBackgroundErrorResponse(error: unknown) {
   if (error instanceof UserscriptInstallError) {
     return {
-      error: error.message || '脚本未通过兼容性预检。',
+      error: error.message || t('cm_userscript_library_coordinator_text_1'),
       diagnostics: error.diagnostics,
       ...(error instanceof UserscriptPreviewError
         ? { source: error.source, sourceUrl: error.sourceUrl }
@@ -132,7 +133,11 @@ export class UserscriptLibraryCoordinator {
     const requestedUrl = normalizeUserscriptSourceUrl(value);
     const download = await fetchExtensionText(requestedUrl);
     if (!download.ok) {
-      throw new Error(`脚本源码下载失败：HTTP ${download.status}。`);
+      throw new Error(
+        t('cm_userscript_library_coordinator_error_2', [
+          String(download.status),
+        ]),
+      );
     }
     try {
       return {
@@ -207,7 +212,7 @@ export class UserscriptLibraryCoordinator {
         extensionDiagnostics.warn(
           'background',
           'library-broadcast-incomplete',
-          new Error('部分页面没有接收用户脚本牌库更新。'),
+          new Error(t('cm_userscript_library_coordinator_error_3')),
           {
             attemptedPageHosts: tabs.length,
             attemptedExtensionBroadcasts: 1,
@@ -275,8 +280,8 @@ export class UserscriptLibraryCoordinator {
       throw new AggregateError(
         failures.length > 0
           ? failures
-          : [new Error('用户脚本运行时协调没有返回结果。')],
-        '用户脚本仓库收尾失败。',
+          : [new Error(t('cm_userscript_library_coordinator_error_4'))],
+        t('cm_userscript_library_coordinator_text_5'),
       );
     }
     return { message: mutation.message, activation };
@@ -304,8 +309,11 @@ export class UserscriptLibraryCoordinator {
     }
     if (failures.length > 0) {
       this.dependencies.reportFailure(
-        '用户脚本仓库收尾失败',
-        new AggregateError(failures, '用户脚本仓库收尾失败。'),
+        t('cm_userscript_library_coordinator_text_6'),
+        new AggregateError(
+          failures,
+          t('cm_userscript_library_coordinator_text_7'),
+        ),
       );
     }
     return mutation.message;
@@ -336,7 +344,7 @@ export class UserscriptLibraryCoordinator {
       case 'userscript-installer-open': {
         const tabId = sender.tab?.id;
         if (typeof tabId !== 'number') {
-          throw new Error('脚本安装请求缺少当前标签页身份。');
+          throw new Error(t('cm_userscript_library_coordinator_error_8'));
         }
         await installer.open(tabId, message.url);
         return { ok: true };
@@ -431,7 +439,7 @@ export class UserscriptLibraryCoordinator {
         try {
           await this.broadcast(event);
         } catch (error) {
-          reportFailure('用户脚本牌库排序广播失败', error);
+          reportFailure(t('cm_userscript_library_coordinator_text_9'), error);
         }
         return event;
       }
@@ -460,7 +468,7 @@ export class UserscriptLibraryCoordinator {
       case 'global-library-open': {
         const tabId = sender.tab?.id;
         if (typeof tabId !== 'number') {
-          throw new Error('全局脚本牌库请求缺少当前标签页身份。');
+          throw new Error(t('cm_userscript_library_coordinator_error_10'));
         }
         await globalLibrary.prepare(tabId);
         return { ok: true };
@@ -468,7 +476,7 @@ export class UserscriptLibraryCoordinator {
       case 'site-script-search-open': {
         const pageUrl = sender.tab?.url ?? sender.url;
         if (!pageUrl) {
-          throw new Error('站点脚本检索请求缺少当前页面地址。');
+          throw new Error(t('cm_userscript_library_coordinator_error_11'));
         }
         await api.tabs.create({
           active: true,
@@ -535,12 +543,12 @@ export class UserscriptLibraryCoordinator {
       }
       case 'safari-userscript-runtime-run': {
         if (!safariRuntime || !synchronizer) {
-          throw new Error('Safari 用户脚本运行时不可用。');
+          throw new Error(t('cm_userscript_library_coordinator_error_12'));
         }
         const tabId = sender.tab?.id;
         const pageUrl = sender.url ?? sender.tab?.url;
         if (typeof tabId !== 'number' || !pageUrl) {
-          throw new Error('Safari 用户脚本请求缺少页面身份。');
+          throw new Error(t('cm_userscript_library_coordinator_error_13'));
         }
         const registrations = await synchronizer.pageExecutionRegistrations(
           {
@@ -579,7 +587,7 @@ export class UserscriptLibraryCoordinator {
           extensionDiagnostics.warn(
             'safari-userscript-runtime',
             `${message.runAt}-incomplete`,
-            new Error('部分 Safari 用户脚本未能注入。'),
+            new Error(t('cm_userscript_library_coordinator_error_14')),
             { failures, pageUrl },
           );
         }

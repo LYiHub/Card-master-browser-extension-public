@@ -10,6 +10,7 @@ import type {
 } from '../../ai/infrastructure/model-client';
 import { toolContinuationMessages } from '../../ai/infrastructure/model-client';
 import type { DeckVisibility } from '../../features/userscript-deck/deck-entry';
+import { t } from '../../localization/messages';
 import type { TransactionalScriptRepository } from '../../userscript/application/script-repository';
 import { userscriptSourceRevision } from '../../userscript/application/script-revision';
 import type { UserscriptRuntimeState } from '../../userscript/domain/types';
@@ -91,24 +92,17 @@ type AssistantGreasyForkClient = Pick<GreasyForkClient, 'search' | 'download'>;
 
 function pageContextText(context: AssistantInitialTabContext, message: string) {
   const { page, target } = context;
-  return `<browser_target>
-标题：${target.title || '（无标题）'}
-URL：${target.url || '（无）'}
-活动状态：${target.active ? '当前可见' : '未激活'}
-可用状态：${target.available ? '可用' : '不可用'}
-${context.error ? `说明：${context.error}` : ''}
-</browser_target>
-
-<page_context>
-语言：${page?.language || '（未知）'}
-选中文字：${page?.selectedText || '（无）'}
-可见文本快照：
-${page?.visibleText || '（当前没有可用页面快照）'}
-</page_context>
-
-<user_message>
-${message}
-</user_message>`;
+  return t('cm_assistant_service_text_1', [
+    String(target.title || '（无标题）'),
+    String(target.url || '（无）'),
+    String(target.active ? '当前可见' : '未激活'),
+    String(target.available ? '可用' : '不可用'),
+    String(context.error ? `说明：${context.error}` : ''),
+    String(page?.language || '（未知）'),
+    String(page?.selectedText || '（无）'),
+    String(page?.visibleText || '（当前没有可用页面快照）'),
+    String(message),
+  ]);
 }
 
 function assistantScriptMutation(change: AssistantScriptChange) {
@@ -279,7 +273,7 @@ export class ExtensionAssistantService {
     const operation = (async () => {
       try {
         if (!aiAssistantPortRequest(message)) {
-          return 'AI 会话请求格式无效。';
+          return t('cm_assistant_service_text_2');
         }
         switch (message.type) {
           case 'read':
@@ -335,7 +329,7 @@ export class ExtensionAssistantService {
       return;
     }
     if (this.activeRun) {
-      throw new Error('卡牌大师智能体正在处理另一条请求，暂时无法创建会话。');
+      throw new Error(t('cm_assistant_service_error_3'));
     }
     const services = await this.services.readView();
     const conversation = createStoredAssistantConversation(
@@ -354,10 +348,10 @@ export class ExtensionAssistantService {
   async selectConversation(conversationId: string) {
     const state = await this.readState();
     if (this.activeRun) {
-      throw new Error('生成进行中，暂时无法切换会话。');
+      throw new Error(t('cm_assistant_service_error_4'));
     }
     if (!assistantConversation(state, conversationId)) {
-      throw new Error('要切换的会话不存在。');
+      throw new Error(t('cm_assistant_service_error_5'));
     }
     state.activeConversationId = conversationId;
     await this.publish(true);
@@ -366,8 +360,8 @@ export class ExtensionAssistantService {
   async renameConversation(conversationId: string, title: string) {
     const state = await this.readState();
     const conversation = assistantConversation(state, conversationId);
-    if (!conversation) throw new Error('要重命名的会话不存在。');
-    if (!title) throw new Error('会话名称不能为空。');
+    if (!conversation) throw new Error(t('cm_assistant_service_error_6'));
+    if (!title) throw new Error(t('cm_assistant_service_error_7'));
     conversation.title = title.slice(0, 256);
     conversation.updatedAt = Date.now();
     await this.publish(true);
@@ -376,7 +370,7 @@ export class ExtensionAssistantService {
   async deleteConversation(conversationId: string) {
     const state = await this.readState();
     if (this.activeRun?.conversationId === conversationId) {
-      throw new Error('生成进行中，暂时无法删除当前会话。');
+      throw new Error(t('cm_assistant_service_error_8'));
     }
     const index = state.conversations.findIndex(
       (conversation) => conversation.id === conversationId,
@@ -393,7 +387,7 @@ export class ExtensionAssistantService {
       const next = [...state.conversations].sort(
         (left, right) => right.updatedAt - left.updatedAt,
       )[0];
-      if (!next) throw new Error('AI 会话集合不能为空。');
+      if (!next) throw new Error(t('cm_assistant_service_error_9'));
       state.activeConversationId = next.id;
     }
     await this.publish(true);
@@ -424,13 +418,13 @@ export class ExtensionAssistantService {
           (script) => script.id === change.targetScriptId,
         );
         if (!target) {
-          throw new Error(`找不到目标用户脚本：${change.targetScriptId}`);
+          throw new Error(
+            t('cm_assistant_service_error_10', [String(change.targetScriptId)]),
+          );
         }
         const actualRevision = await userscriptSourceRevision(target);
         if (actualRevision !== change.expectedRevision) {
-          throw new Error(
-            '脚本源码已经发生变化。请重新读取最新脚本后再执行修改。',
-          );
+          throw new Error(t('cm_assistant_service_error_11'));
         }
       }
       const application = applyAssistantScriptChange(scripts, change);
@@ -499,7 +493,7 @@ export class ExtensionAssistantService {
     }
 
     if (change.operation === 'delete') {
-      throw new Error('删除操作返回了无效的脚本结果。');
+      throw new Error(t('cm_assistant_service_error_12'));
     }
     return {
       persisted: true,
@@ -543,7 +537,7 @@ export class ExtensionAssistantService {
       tabId,
     );
     if (!('script' in committed)) {
-      throw new Error('创建脚本没有返回有效的脚本结果。');
+      throw new Error(t('cm_assistant_service_error_13'));
     }
     await requestDeckCreationPreview(
       this.api,
@@ -593,12 +587,15 @@ export class ExtensionAssistantService {
     signal: AbortSignal,
   ) {
     if (!this.services.generateCardCover) {
-      throw new Error('当前宿主没有提供卡牌封面生成服务。');
+      throw new Error(t('cm_assistant_service_error_14'));
     }
     const target = await this.repository.get(targetScriptId);
-    if (!target) throw new Error(`找不到用户脚本：${targetScriptId}`);
+    if (!target)
+      throw new Error(
+        t('cm_assistant_service_error_15', [String(targetScriptId)]),
+      );
     if ((await userscriptSourceRevision(target)) !== expectedRevision) {
-      throw new Error('脚本源码已经发生变化。请重新读取最新脚本后再生成封面。');
+      throw new Error(t('cm_assistant_service_error_16'));
     }
     const cover = await this.services.generateCardCover(visualConcept, signal);
     const committed = await this.applyScriptChange(
@@ -692,7 +689,7 @@ export class ExtensionAssistantService {
       return;
     }
     if (this.activeRun || state.runningConversationId) {
-      throw new Error('卡牌大师智能体正在处理另一条请求，请稍后再试。');
+      throw new Error(t('cm_assistant_service_error_17'));
     }
     const conversation = activeAssistantConversation(state);
     const controller = new AbortController();
@@ -959,7 +956,7 @@ export class ExtensionAssistantService {
         const segment: Extract<AiConversationSegment, { type: 'text' }> = {
           id: crypto.randomUUID(),
           type: 'text',
-          content: '本次生成已取消。',
+          content: t('cm_assistant_service_content_18'),
         };
         assistantMessage.segments.push(segment);
         assistantMessage.finalSegmentId = segment.id;
@@ -971,7 +968,10 @@ export class ExtensionAssistantService {
         await this.publish(true);
       } catch (persistError) {
         assistantMessage.status = 'error';
-        assistantMessage.error = `${assistantMessage.error ? `${assistantMessage.error} ` : ''}会话持久化失败：${errorMessage(persistError)}`;
+        assistantMessage.error = t('cm_assistant_service_text_19', [
+          String(assistantMessage.error ? `${assistantMessage.error} ` : ''),
+          String(errorMessage(persistError)),
+        ]);
         await this.publish().catch(() => undefined);
       }
     } finally {

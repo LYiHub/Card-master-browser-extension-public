@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import { LUMNO_PORTABLE_KEYS } from '../../new-tab/application/portable-keys';
 import type { NewTabPreferencesRepository } from '../../new-tab/application/preferences';
 import { type Json, jsonValue, record, SYNC_OWNER_KEY } from '../../sync/model';
@@ -42,13 +43,13 @@ function validateVendor(
   keys: readonly string[],
 ): asserts value is Record<string, Json> {
   if (!record(value) || !Object.keys(value).every((key) => keys.includes(key)))
-    throw new Error('上游配置包含未知或敏感字段。');
+    throw new Error(t('cm_sync_vendor_settings_error_1'));
   for (const key of ['Ext', 'Type', 'Regex', 'blockUrl']) {
     if (
       key in value &&
       (!Array.isArray(value[key]) || !value[key].every(record))
     )
-      throw new Error('媒体捕捉规则格式无效。');
+      throw new Error(t('cm_sync_vendor_settings_error_2'));
   }
 }
 
@@ -89,19 +90,19 @@ export function vendorSyncSettings(
   return [
     storagePreferences(
       'new-tab-appearance',
-      '新标签页组件外观与快捷方式',
+      t('cm_sync_vendor_settings_text_3'),
       LUMNO_PORTABLE_KEYS.filter((key) => !topbarKeys.includes(key)),
       () => newTab.runtimeStorage(),
     ),
     storagePreferences(
       'new-tab-topbar',
-      '新标签页书签顶部外观',
+      t('cm_sync_vendor_settings_text_4'),
       topbarKeys,
       async () => api.storage.local,
     ),
     storagePreferences(
       'media-advanced',
-      '顺手牵羊高级设置',
+      t('cm_sync_vendor_settings_text_5'),
       catKeys,
       async () =>
         typeof (await api.storage.local.get(SYNC_OWNER_KEY))[SYNC_OWNER_KEY] ===
@@ -111,7 +112,7 @@ export function vendorSyncSettings(
     ),
     storagePreferences(
       'media-preview',
-      '顺手牵羊预览偏好',
+      t('cm_sync_vendor_settings_text_6'),
       catLocal,
       async () => api.storage.local,
     ),

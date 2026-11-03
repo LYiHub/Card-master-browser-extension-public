@@ -8,6 +8,7 @@ import {
   requestAiService,
 } from '../../ai/infrastructure/ai-service-http';
 import { getImageGenerationAdapter } from '../../ai/infrastructure/image-generation-protocol-registry';
+import { t } from '../../localization/messages';
 import { dailyReviewPromptUsesChinese } from '../../new-tab/application/daily-review-wallpaper';
 import type { DailyReviewWallpaperResolution } from '../../new-tab/application/preferences';
 import { resolveImageServiceRuntimeConfig } from './ai-services-config';
@@ -99,12 +100,12 @@ function normalizedBase64Image(value: string) {
   const source = value.trim();
   const dataUrl = /^data:([^;,]+);base64,([\s\S]+)$/iu.exec(source);
   const encoded = (dataUrl?.[2] ?? source).replace(/\s+/gu, '');
-  if (!encoded) throw new Error('每日回顾图像服务返回了空图片。');
+  if (!encoded) throw new Error(t('cm_daily_review_image_error_1'));
   let decoded: string;
   try {
     decoded = atob(encoded);
   } catch {
-    throw new Error('每日回顾图像服务返回了无效的 Base64 图片。');
+    throw new Error(t('cm_daily_review_image_error_2'));
   }
   const mimeType = detectedImageMimeType(
     Array.from({ length: Math.min(16, decoded.length) }, (_, index) =>
@@ -112,7 +113,7 @@ function normalizedBase64Image(value: string) {
     ),
   );
   if (!mimeType) {
-    throw new Error('每日回顾图像服务返回了无法识别的图片格式。');
+    throw new Error(t('cm_daily_review_image_error_3'));
   }
   return {
     dataUrl: `data:${mimeType};base64,${encoded}`,
@@ -141,12 +142,12 @@ function responseErrorMessage(status: number, responseText: string) {
         typeof error.message === 'string' && error.message.trim()
           ? error.message.trim()
           : null;
-      if (detail) return `每日回顾生成失败：${detail}。`;
+      if (detail) return t('cm_daily_review_image_text_4', [String(detail)]);
     }
   } catch {
     // 非 JSON 错误页只返回 HTTP 状态。
   }
-  return `每日回顾生成失败：HTTP ${status}。`;
+  return t('cm_daily_review_image_text_5', [String(status)]);
 }
 
 export function buildDailyReviewImageRequest(
@@ -155,9 +156,9 @@ export function buildDailyReviewImageRequest(
   size: DailyReviewWallpaperResolution = DEFAULT_DAILY_REVIEW_SIZE,
 ) {
   const normalizedPrompt = prompt.trim();
-  if (!normalizedPrompt) throw new Error('每日回顾提示词不能为空。');
+  if (!normalizedPrompt) throw new Error(t('cm_daily_review_image_error_6'));
   if (!dailyReviewPromptUsesChinese(normalizedPrompt)) {
-    throw new Error('每日回顾提示词必须使用简体中文。');
+    throw new Error(t('cm_daily_review_image_error_7'));
   }
   return {
     model,
@@ -189,8 +190,8 @@ export class DailyReviewImageGenerator {
     if (!apiKey) {
       throw new Error(
         usesModelServiceCredential
-          ? '每日回顾正在沿用模型服务，请先配置模型服务 API 密钥，或改用独立图像服务。'
-          : '每日回顾图像服务尚未配置，请填写独立图像服务的 API 密钥。',
+          ? t('cm_daily_review_image_text_8')
+          : t('cm_daily_review_image_text_9'),
       );
     }
 
@@ -219,11 +220,11 @@ export class DailyReviewImageGenerator {
     try {
       payload = JSON.parse(text);
     } catch {
-      throw new Error('每日回顾图像服务返回了无效 JSON。');
+      throw new Error(t('cm_daily_review_image_error_10'));
     }
     const parsed = adapter.parseResponse(payload);
     if (!parsed) {
-      throw new Error('每日回顾图像服务没有返回图片。');
+      throw new Error(t('cm_daily_review_image_error_11'));
     }
 
     let dataUrl: string;
@@ -236,25 +237,27 @@ export class DailyReviewImageGenerator {
       byteLength = normalized.byteLength;
     } else if (parsed.url) {
       if (!isSecureServiceUrl(parsed.url)) {
-        throw new Error('每日回顾图像服务返回了不安全的图片地址。');
+        throw new Error(t('cm_daily_review_image_error_12'));
       }
       const imageResponse = await this.request(parsed.url, { signal });
       if (!imageResponse.ok) {
-        throw new Error(`下载每日回顾失败：HTTP ${imageResponse.status}。`);
+        throw new Error(
+          t('cm_daily_review_image_error_13', [String(imageResponse.status)]),
+        );
       }
       if (imageResponse.url && !isSecureServiceUrl(imageResponse.url)) {
-        throw new Error('每日回顾下载被重定向到了不安全的地址。');
+        throw new Error(t('cm_daily_review_image_error_14'));
       }
       const bytes = await readAiServiceBytes(imageResponse, signal);
       mimeType = detectedImageMimeType(bytes);
-      if (!mimeType) throw new Error('每日回顾生成结果不是可识别的图片。');
+      if (!mimeType) throw new Error(t('cm_daily_review_image_error_15'));
       dataUrl = `data:${mimeType};base64,${bytesToBase64(bytes)}`;
       byteLength = bytes.byteLength;
     } else {
-      throw new Error('每日回顾生成结果既没有图像数据，也没有图片地址。');
+      throw new Error(t('cm_daily_review_image_error_16'));
     }
     if (byteLength <= 0) {
-      throw new Error('每日回顾图像服务返回了空图片。');
+      throw new Error(t('cm_daily_review_image_error_17'));
     }
 
     const dimensions = DAILY_REVIEW_DIMENSIONS[size];

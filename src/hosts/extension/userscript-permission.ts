@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type { UserscriptExecutionCapability } from '../../userscript/runtime/capabilities';
 import {
   type ExtensionApi,
@@ -24,13 +25,12 @@ export async function userscriptExecutionCapability(
       if (permissionGranted) {
         return {
           status: 'unavailable',
-          message:
-            'Firefox 已授予用户脚本权限，但执行 API 尚未就绪。请重新加载扩展。',
+          message: t('cm_userscript_permission_message_1'),
         };
       }
       return {
         status: 'permission-required',
-        message: 'Firefox 需要先授权用户脚本执行权限。',
+        message: t('cm_userscript_permission_message_2'),
       };
     }
     case 'safari':
@@ -38,8 +38,7 @@ export async function userscriptExecutionCapability(
     case 'chromium':
       return {
         status: 'browser-setting-required',
-        message:
-          '请在扩展详情页开启“允许运行用户脚本”，然后重新加载扩展。Chrome 默认关闭这项开关。',
+        message: t('cm_userscript_permission_message_3'),
       };
   }
 }
@@ -54,11 +53,11 @@ export function readUserscriptExecutionCapability(api: ExtensionApi) {
 export async function requestUserscriptExecutionPermission(api: ExtensionApi) {
   const permissions = api.permissions;
   if (extensionTarget() !== 'firefox' || !permissions?.request) {
-    throw new Error('当前浏览器不支持在扩展内申请用户脚本权限。');
+    throw new Error(t('cm_userscript_permission_error_4'));
   }
   const granted = await permissions.request(FIREFOX_USER_SCRIPTS_PERMISSION);
   if (!granted) {
-    throw new Error('Firefox 没有授予用户脚本执行权限。');
+    throw new Error(t('cm_userscript_permission_error_5'));
   }
   api.runtime.reload();
 }

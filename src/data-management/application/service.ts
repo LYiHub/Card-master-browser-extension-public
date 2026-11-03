@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import type {
   DataManagementAction,
   DataManagementResult,
@@ -48,17 +49,39 @@ const ACTION_MESSAGES: Record<
   Exclude<DataManagementStepAction, 'scripts' | 'script-values'>,
   string
 > = {
-  preferences: '已恢复界面、牌阵入口、脚本运行和声音偏好。',
-  'assistant-conversations': '已清空所有智能体会话，并创建一个新的空白会话。',
-  'assistant-config': '已清除智能体、图像生成和语音识别的完整配置。',
-  'assistant-pins': '已清除智能体全部会话的置顶状态。',
-  'content-blocking': '已恢复内容拦截的默认过滤列表与规则设置。',
-  'page-theme': '已恢复暗夜降临的默认设置与站点范围。',
-  'media-speed': '已恢复媒体倍速的默认档位、站点范围和轮盘设置。',
-  'media-resources': '已清空媒体资源记录并恢复默认发现状态。',
-  'gamepad-control': '已恢复手柄控制的默认映射、摇杆职责、控制手感和站点范围。',
-  'bilibili-capabilities': '已恢复流量探险家、合成大弹幕与绯红空降的默认状态。',
-  diagnostics: '已清除脚本运行时诊断数据。',
+  get preferences() {
+    return t('cm_service_preferences_1');
+  },
+  get 'assistant-conversations'() {
+    return t('cm_service__assistant_conversations__2');
+  },
+  get 'assistant-config'() {
+    return t('cm_service__assistant_config__3');
+  },
+  get 'assistant-pins'() {
+    return t('cm_service__assistant_pins__4');
+  },
+  get 'content-blocking'() {
+    return t('cm_service__content_blocking__5');
+  },
+  get 'page-theme'() {
+    return t('cm_service__page_theme__6');
+  },
+  get 'media-speed'() {
+    return t('cm_service__media_speed__7');
+  },
+  get 'media-resources'() {
+    return t('cm_service__media_resources__8');
+  },
+  get 'gamepad-control'() {
+    return t('cm_service__gamepad_control__9');
+  },
+  get 'bilibili-capabilities'() {
+    return t('cm_service__bilibili_capabilities__10');
+  },
+  get diagnostics() {
+    return t('cm_service_diagnostics_11');
+  },
 };
 
 function errorMessage(error: unknown) {
@@ -110,10 +133,11 @@ export class DataManagementService {
       steps,
       message:
         failed.length === 0
-          ? '已恢复为全新安装状态。'
-          : `已完成其余清理，但有 ${failed.length} 项失败：${failed
-              .map((step) => step.message)
-              .join('；')}`,
+          ? t('cm_service_text_12')
+          : t('cm_service_text_13', [
+              String(failed.length),
+              String(failed.map((step) => step.message).join('；')),
+            ]),
     };
   }
 
@@ -136,8 +160,8 @@ export class DataManagementService {
           scriptsRemoved,
           message:
             scriptsRemoved > 0
-              ? `已删除 ${scriptsRemoved} 个脚本及其脚本数据。`
-              : '当前没有可删除的脚本。',
+              ? t('cm_service_text_14', [String(scriptsRemoved)])
+              : t('cm_service_text_15'),
         };
       }
       case 'script-values': {
@@ -148,8 +172,8 @@ export class DataManagementService {
           scriptValuesCleared,
           message:
             scriptValuesCleared > 0
-              ? `已清除 ${scriptValuesCleared} 份脚本 GM 数据。`
-              : '当前没有可清除的脚本 GM 数据。',
+              ? t('cm_service_text_16', [String(scriptValuesCleared)])
+              : t('cm_service_text_17'),
         };
       }
       case 'assistant-conversations':

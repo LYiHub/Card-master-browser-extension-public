@@ -1,3 +1,4 @@
+import { t } from '../../localization/messages';
 import {
   matchPatternCompatibility,
   normalizeMatchPattern,
@@ -40,7 +41,10 @@ export function userscriptInstallationDiagnostics(script: InstalledUserscript) {
         diagnostics.push({
           severity: 'warning',
           code: 'normalized-match-pattern',
-          message: `兼容的 @${key} 规则已规范为 ${normalizedPattern}。`,
+          message: t('cm_preflight_message_1', [
+            String(key),
+            String(normalizedPattern),
+          ]),
           line,
         });
       }
@@ -48,7 +52,7 @@ export function userscriptInstallationDiagnostics(script: InstalledUserscript) {
         diagnostics.push({
           severity: 'warning',
           code: 'legacy-match-pattern',
-          message: `非标准 @${key} 规则将使用兼容的用户脚本通配匹配。`,
+          message: t('cm_preflight_message_2', [String(key)]),
           line,
         });
       } else if (message) {
@@ -72,7 +76,7 @@ export function userscriptInstallationDiagnostics(script: InstalledUserscript) {
         diagnostics.push({
           severity: 'warning',
           code: 'legacy-manager-match-pattern',
-          message: `${kind}：非标准规则将使用兼容的用户脚本通配匹配。`,
+          message: t('cm_preflight_message_3', [String(kind)]),
         });
       } else if (message) {
         diagnostics.push({
