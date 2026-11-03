@@ -40,6 +40,7 @@ export function useScriptEditorActions({
       const source = updateUserscriptEditableMetadata(draft.source, {
         name: draft.name,
         description: draft.description,
+        locale: draft.metadataLocale,
       });
       const parsed = parseUserscriptMetadata(source);
       if (!parsed.metadata) {

@@ -1,4 +1,4 @@
-import { getLocale } from '../../localization/locale';
+import { type AppLocale, getLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import type {
   LocalizedUserscriptMetadata,
@@ -462,25 +462,44 @@ export function userscriptIdentity(metadata: UserscriptMetadata) {
   return `${metadata.namespace}\n${metadata.name}`;
 }
 
-function preferredLocalizedMetadata(
+export function preferredLocalizedMetadataLocale(
   metadata: UserscriptMetadata,
   field: keyof LocalizedUserscriptMetadata,
+  appLocale: AppLocale = getLocale(),
 ) {
-  for (const locale of getLocale() === 'zh-TW'
+  for (const locale of appLocale === 'zh-TW'
     ? ['zh-tw', 'zh-hant', 'zh-hk', 'zh-cn', 'zh']
     : ['zh-cn', 'zh-hans', 'zh', 'zh-tw']) {
     const value = metadata.localized[locale]?.[field]?.trim();
-    if (value) return value;
+    if (value) return locale;
   }
-  return metadata[field];
+  return null;
 }
 
-export function userscriptDisplayName(metadata: UserscriptMetadata) {
-  return preferredLocalizedMetadata(metadata, 'name');
+function preferredLocalizedMetadata(
+  metadata: UserscriptMetadata,
+  field: keyof LocalizedUserscriptMetadata,
+  appLocale: AppLocale,
+) {
+  const locale = preferredLocalizedMetadataLocale(metadata, field, appLocale);
+  return (
+    (locale ? metadata.localized[locale]?.[field]?.trim() : undefined) ??
+    metadata[field]
+  );
 }
 
-export function userscriptDisplayDescription(metadata: UserscriptMetadata) {
-  return preferredLocalizedMetadata(metadata, 'description');
+export function userscriptDisplayName(
+  metadata: UserscriptMetadata,
+  appLocale: AppLocale = getLocale(),
+) {
+  return preferredLocalizedMetadata(metadata, 'name', appLocale);
+}
+
+export function userscriptDisplayDescription(
+  metadata: UserscriptMetadata,
+  appLocale: AppLocale = getLocale(),
+) {
+  return preferredLocalizedMetadata(metadata, 'description', appLocale);
 }
 
 export function stripUserscriptMetadata(code: string) {

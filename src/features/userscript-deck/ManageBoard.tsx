@@ -11,6 +11,7 @@ import {
   UiTextField,
   UiToggle,
 } from '../../components/ui/Ui';
+import { type AppLocale, getLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
 import { useLocale } from '../../localization/react';
 import {
@@ -46,6 +47,7 @@ import { cardMedia } from './presentation';
 export type ManageScriptDraft = {
   name: string;
   description: string;
+  metadataLocale: AppLocale;
   coverPresentation: UserscriptPresentation | null;
   source: string;
   checkForUpdates: boolean;
@@ -130,6 +132,7 @@ export function ManageBoard({
   const [description, setDescription] = useState(
     userscriptDisplayDescription(item.metadata),
   );
+  const [metadataLocale, setMetadataLocale] = useState(getLocale);
   const [coverPresentation, setCoverPresentation] =
     useState<UserscriptPresentation | null>(() => item.presentation ?? null);
   const [coverPrompt, setCoverPrompt] = useState('');
@@ -173,6 +176,8 @@ export function ManageBoard({
   }, [item.source.code]);
 
   useEffect(() => {
+    // Keep unsaved metadata in its original language when UI labels change.
+    setMetadataLocale(getLocale());
     setName(userscriptDisplayName(item.metadata));
     setDescription(userscriptDisplayDescription(item.metadata));
   }, [item.metadata]);
@@ -423,6 +428,7 @@ export function ManageBoard({
               const error = onSave({
                 name,
                 description,
+                metadataLocale,
                 coverPresentation,
                 source,
                 checkForUpdates,

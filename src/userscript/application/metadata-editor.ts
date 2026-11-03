@@ -1,5 +1,11 @@
+import type { AppLocale } from '../../localization/locale';
 import { t } from '../../localization/messages';
-import { parseUserscriptMetadata } from '../domain/metadata';
+import {
+  parseUserscriptMetadata,
+  preferredLocalizedMetadataLocale,
+  userscriptDisplayDescription,
+  userscriptDisplayName,
+} from '../domain/metadata';
 
 export const MAX_EDITABLE_USERSCRIPT_NAME_LENGTH = 160;
 export const MAX_EDITABLE_USERSCRIPT_DESCRIPTION_LENGTH = 512;
@@ -7,6 +13,7 @@ export const MAX_EDITABLE_USERSCRIPT_DESCRIPTION_LENGTH = 512;
 type EditableMetadata = {
   name: string;
   description: string;
+  locale?: AppLocale;
 };
 
 function singleLine(
@@ -52,18 +59,16 @@ function replaceDirective(block: string, key: string, value: string) {
 function preferredLocalizedKey(
   parsed: ReturnType<typeof parseUserscriptMetadata>,
   field: 'name' | 'description',
+  appLocale: AppLocale | undefined,
 ) {
   const metadata = parsed.metadata;
   if (!metadata) return null;
-  for (const locale of ['zh-cn', 'zh-tw']) {
-    if (!metadata.localized[locale]?.[field]) continue;
-    return (
-      metadata.entries.find(
-        (entry) => entry.normalizedKey === `${field}:${locale}`,
-      )?.key ?? null
-    );
-  }
-  return null;
+  const locale = preferredLocalizedMetadataLocale(metadata, field, appLocale);
+  return (
+    metadata.entries.find(
+      (entry) => entry.normalizedKey === `${field}:${locale}`,
+    )?.key ?? null
+  );
 }
 
 export function updateUserscriptEditableMetadata(
@@ -93,15 +98,30 @@ export function updateUserscriptEditableMetadata(
   const start = source.indexOf(metadataBlock);
   if (start < 0) throw new Error(t('cm_metadata_editor_error_7'));
 
-  let block = replaceDirective(metadataBlock, 'name', name);
-  block = replaceDirective(block, 'description', description);
-  const localizedNameKey = preferredLocalizedKey(parsed, 'name');
-  const localizedDescriptionKey = preferredLocalizedKey(parsed, 'description');
-  if (localizedNameKey) {
-    block = replaceDirective(block, localizedNameKey, name);
+  let block = metadataBlock;
+  if (name !== userscriptDisplayName(parsed.metadata, input.locale)) {
+    block = replaceDirective(block, 'name', name);
+    const localizedNameKey = preferredLocalizedKey(
+      parsed,
+      'name',
+      input.locale,
+    );
+    if (localizedNameKey) {
+      block = replaceDirective(block, localizedNameKey, name);
+    }
   }
-  if (localizedDescriptionKey) {
-    block = replaceDirective(block, localizedDescriptionKey, description);
+  if (
+    description !== userscriptDisplayDescription(parsed.metadata, input.locale)
+  ) {
+    block = replaceDirective(block, 'description', description);
+    const localizedDescriptionKey = preferredLocalizedKey(
+      parsed,
+      'description',
+      input.locale,
+    );
+    if (localizedDescriptionKey) {
+      block = replaceDirective(block, localizedDescriptionKey, description);
+    }
   }
   return (
     source.slice(0, start) + block + source.slice(start + metadataBlock.length)
