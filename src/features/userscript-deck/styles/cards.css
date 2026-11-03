@@ -630,7 +630,7 @@
 
 .manager-card__identity strong {
   display: -webkit-box;
-  font: 800 var(--manager-card-title-size) / 1.08 var(--app-ui-font-display);
+  font: 700 var(--manager-card-title-size) / 1.08 var(--app-ui-font-display);
   overflow: hidden;
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;

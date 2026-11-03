@@ -411,7 +411,7 @@ export function buildDailyReviewModelInput(source: DailyHistorySource) {
           t('cm_daily_review_wallpaper_text_14'),
         ],
         language: t('cm_daily_review_wallpaper_language_15', [
-          String(getLocale() === 'zh-TW' ? '台灣繁體中文' : '简体中文'),
+          String(getLocale() === 'zh-TW' ? '繁體中文' : '简体中文'),
         ]),
         planning: [...DAILY_REVIEW_PLANNING_RULES],
         output: t('cm_daily_review_wallpaper_output_16'),

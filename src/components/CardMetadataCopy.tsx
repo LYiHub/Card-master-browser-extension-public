@@ -11,7 +11,7 @@ const ROOT_STYLE: CSSProperties = {
 
 const NAME_STYLE: CSSProperties = {
   display: '-webkit-box',
-  fontWeight: 800,
+  fontWeight: 700,
   minWidth: 0,
   overflow: 'hidden',
   overflowWrap: 'anywhere',

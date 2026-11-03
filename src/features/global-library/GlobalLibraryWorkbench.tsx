@@ -1400,7 +1400,7 @@ export function GlobalLibraryWorkbench({
     subscribeBilibiliCapabilities,
   ]);
 
-  const cards = useMemo<GlobalLibraryCard[]>(
+  const cards = useLocalizedMemo<GlobalLibraryCard[]>(
     () => [
       DECK_STEWARD_CARD,
       ...(systemCardOfferedOnTarget(NEW_TAB_CARD_ID, extensionTarget())

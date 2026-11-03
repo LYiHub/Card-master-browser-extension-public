@@ -28,7 +28,7 @@
     "message": "简体中文"
   },
   "cm_language_traditional": {
-    "message": "繁體中文（台灣）"
+    "message": "繁體中文"
   },
   "cm_card_metadata_copy_text_1": {
     "message": "該卡牌未提供說明。",
@@ -13057,11 +13057,11 @@
   },
   "cm_daily_review_wallpaper_service_text_5": {
     "message": "summary 和 image_prompt 必須使用$VALUE_1$。",
-    "description": "src/hosts/extension/daily-review-wallpaper-service.ts；text; VALUE_1: getLocale() === 'zh-TW' ? '台灣繁體中文' : '简体中文'",
+    "description": "src/hosts/extension/daily-review-wallpaper-service.ts；text; VALUE_1: getLocale() === 'zh-TW' ? '繁體中文' : '简体中文'",
     "placeholders": {
       "VALUE_1": {
         "content": "$1",
-        "example": "getLocale() === 'zh-TW' ? '台灣繁體中文' : '简体中文'"
+        "example": "getLocale() === 'zh-TW' ? '繁體中文' : '简体中文'"
       }
     }
   },
@@ -13175,11 +13175,11 @@
   },
   "cm_daily_review_wallpaper_language_15": {
     "message": "summary 和 image_prompt 都使用$VALUE_1$；專有名詞可以保留原文，但不得輸出英文句子。",
-    "description": "src/new-tab/application/daily-review-wallpaper.ts；language; VALUE_1: getLocale() === 'zh-TW' ? '台灣繁體中文' : '简体中文'",
+    "description": "src/new-tab/application/daily-review-wallpaper.ts；language; VALUE_1: getLocale() === 'zh-TW' ? '繁體中文' : '简体中文'",
     "placeholders": {
       "VALUE_1": {
         "content": "$1",
-        "example": "getLocale() === 'zh-TW' ? '台灣繁體中文' : '简体中文'"
+        "example": "getLocale() === 'zh-TW' ? '繁體中文' : '简体中文'"
       }
     }
   },
@@ -13734,7 +13734,7 @@
     "description": "src/hosts/extension/assistant-service.ts；text"
   },
   "cm_daily_review_wallpaper_service_text_6": {
-    "message": "臺灣繁體中文",
+    "message": "繁體中文",
     "description": "src/hosts/extension/daily-review-wallpaper-service.ts；text"
   },
   "cm_daily_review_wallpaper_service_text_13": {

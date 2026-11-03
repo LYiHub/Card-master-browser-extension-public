@@ -170,7 +170,7 @@
   margin: 0;
   overflow-wrap: anywhere;
   color: #f2e5c3;
-  font: 800 var(--context-plaque-title-size) / 1.08 var(--app-ui-font-display);
+  font: 700 var(--context-plaque-title-size) / 1.08 var(--app-ui-font-display);
   letter-spacing: 0;
   text-shadow: 0 3px 8px #000;
   transition: color var(--app-motion-duration-medium)

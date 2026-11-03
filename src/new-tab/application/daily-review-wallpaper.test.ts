@@ -25,7 +25,7 @@ describe('daily history wallpaper', () => {
     const before = JSON.stringify(history);
     setLanguagePreference('zh-TW');
     const input = JSON.parse(buildDailyReviewModelInput(history));
-    expect(input.requirements.language).toContain('台灣繁體中文');
+    expect(input.requirements.language).toContain('繁體中文');
     expect(input.history).toEqual(history);
     const plan = {
       summary: '手寫的回顧摘要。',

@@ -339,7 +339,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
     };
   }, [host.gamepadControl, host.reportError, inputRoot]);
   const gamepadConnection = useGamepadConnection();
-  const gamepadCard = useMemo(
+  const gamepadCard = useLocalizedMemo(
     () =>
       gamepadControlCard({
         connected: gamepadConnection.connected,
@@ -664,7 +664,7 @@ export function UserscriptDeckOverlay({ host }: { host: UserscriptDeckHost }) {
     (libraryActionFocus || mode === 'targeting');
   const gamepadInspectionActive =
     mode === 'targeting' && selected !== null && isGamepadControlCard(selected);
-  const actions = useMemo(() => {
+  const actions = useLocalizedMemo(() => {
     if (!actionSubject) return [];
     const available = [...actionsFor(actionSubject)];
     if (!isContentBlockingCard(actionSubject)) return available;
