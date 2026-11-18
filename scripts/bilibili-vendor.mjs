@@ -557,6 +557,14 @@ export async function prepareSponsorVendorAssets(
     const sponsorPath = relative(sponsorRoot, path);
     if (sponsorPath === 'runtime-adapter.js') continue;
     let source = await readFile(path, 'utf8');
+    if (runtimeId === 'bilibili' && sponsorPath === 'js/popup.js') {
+      source = replaceRequired(
+        source,
+        'let s=window===window.top;window.addEventListener("message",',
+        'let s=window===window.top;globalThis.__cardMasterBilibiliPopupParent(',
+        'Bilibili embedded popup parent listener',
+      );
+    }
     if (sponsorPath === 'js/content.js' && patchContent) {
       source =
         runtimeId === 'youtube'

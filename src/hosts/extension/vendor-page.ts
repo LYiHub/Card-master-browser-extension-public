@@ -2,9 +2,13 @@ import { createMessageReader } from '../../localization/format';
 import { getLocale } from '../../localization/locale';
 import { initializeLanguagePreference } from '../../localization/preferences';
 import type { ExtensionApi } from './api';
+import { listenForBilibiliPopupParent } from './bilibili-popup-messages';
 
 type ScriptEntry = Record<string, string>;
 type VendorPageScope = typeof globalThis & {
+  __cardMasterBilibiliPopupParent?: ReturnType<
+    typeof listenForBilibiliPopupParent
+  >;
   __cardMasterVendorDocumentReady?: (
     listener: EventListener,
     options?: AddEventListenerOptions | boolean,
@@ -17,6 +21,10 @@ type VendorPageScope = typeof globalThis & {
 };
 
 async function bootstrap() {
+  if (location.pathname === '/vendor/bilibili/sponsor/popup.html') {
+    (globalThis as VendorPageScope).__cardMasterBilibiliPopupParent =
+      listenForBilibiliPopupParent(window);
+  }
   const api = ((globalThis as typeof globalThis & { browser?: unknown })
     .browser ?? globalThis.chrome) as unknown as ExtensionApi;
   await initializeLanguagePreference(api);
